@@ -1,0 +1,16 @@
+{
+  "extends": "@sigma/typescript-config/node.json",
+  "include": ["./src/**/*.ts"],
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "paths": {
+      "@sigma/types": ["../types/src/index"]
+    },
+    "lib": ["DOM", "DOM.Iterable"],
+    "declaration": false,
+    "declarationMap": false,
+    "stripInternal": true
+  },
+  "exclude": ["node_modules", "dist"]
+}

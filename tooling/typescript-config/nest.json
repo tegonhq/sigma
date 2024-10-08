@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "NestJS",
+  "extends": "./base.json",
+  "compilerOptions": {
+    "forceConsistentCasingInFileNames": false,
+    "module": "commonjs",
+    "target": "ES2022",
+    "strictBindCallApply": false,
+    "incremental": true,
+    "outDir": "./dist"
+  }
+}

@@ -1,0 +1,246 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  // previewFeatures = []
+}
+
+model Attachment {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  fileName       String?
+  originalName   String
+  fileType       String
+  fileExt        String
+  size           Int
+  url            String?
+  status         AttachmentStatus
+  sourceMetadata Json?
+
+  uploadedBy   User?      @relation(fields: [uploadedById], references: [id])
+  uploadedById String?
+  workspace    Workspace? @relation(fields: [workspaceId], references: [id])
+  workspaceId  String?
+}
+
+
+// Used to authenticate users from cli
+model AuthorizationCode {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  personalAccessTokenId String?
+  workspaceId           String?
+  code                  String
+}
+
+
+model IntegrationAccount {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  integrationConfiguration Json
+  accountId                String?
+  isActive                 Boolean @default(true)
+
+  integratedBy            User                    @relation(references: [id], fields: [integratedById])
+  integratedById          String
+  integrationDefinition   IntegrationDefinitionV2 @relation(references: [id], fields: [integrationDefinitionId])
+  integrationDefinitionId String
+  workspace               Workspace               @relation(references: [id], fields: [workspaceId])
+  workspaceId             String
+
+  @@unique([accountId, integrationDefinitionId, workspaceId])
+}
+
+model IntegrationDefinitionV2 {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  name         String     @unique
+  slug         String
+  description  String
+  icon         String
+  config       Json?
+  workspace    Workspace? @relation(references: [id], fields: [workspaceId])
+  workspaceId  String?
+
+  IntegrationAccount IntegrationAccount[]
+}
+
+
+model Task {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  title             String
+  description       String?
+  dueDate           DateTime?
+
+  sourceMetadata    Json?
+  createdById String?
+  updatedById String?
+
+  labelIds      String[]
+  attachments   String[]
+}
+
+
+model PersonalAccessToken {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  name  String
+  jwt   String
+  token String
+
+  user        User   @relation(fields: [userId], references: [id])
+  userId      String
+  type        String @default("user")
+  workspaceId String
+
+  @@unique([name, userId, token])
+}
+
+model Label {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  name        String
+  color       String
+  description String?
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId String
+  group       Label?    @relation("Group", fields: [groupId], references: [id])
+  groupId     String?
+  labels      Label[]   @relation("Group")
+
+  @@unique([name, workspaceId])
+}
+
+
+
+model SyncAction {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  modelName  ModelName
+  modelId    String
+  action     ActionType
+  sequenceId BigInt
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId String
+
+  @@unique([modelId, action])
+}
+
+
+model Template {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  name         String
+  templateData Json
+
+  createdBy   User      @relation(fields: [createdById], references: [id])
+  createdById String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId String
+}
+
+model User {
+  id String @id @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  email     String   @unique
+
+  fullname                String?
+  username                String
+  initialSetupComplete    Boolean @default(false)
+  anonymousDataCollection Boolean @default(false)
+
+  workspace Workspace?
+
+  image String?
+
+  template            Template[]
+  integrationAccount  IntegrationAccount[]
+  attachment          Attachment[]
+  personalAccessToken PersonalAccessToken[]
+}
+
+
+
+model Workspace {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  name String
+  slug String  @unique
+  icon String?
+
+  userId String? @unique
+  user   User? @relation(fields: [userId], references: [id])
+
+  actionsEnabled Boolean @default(true)
+  preferences    Json?
+
+  label                 Label[]
+  template              Template[]
+  syncAction            SyncAction[]
+  integrationAccount    IntegrationAccount[]
+  integrationDefinition IntegrationDefinitionV2[]
+  attachments           Attachment[]
+}
+
+enum ModelName {
+  Attachment
+  IntegrationAccount
+  IntegrationDefinitionV2
+  Task
+  Label
+  SyncAction
+  User
+  Workspace
+}
+
+enum ActionType {
+  I
+  U
+  D
+}
+
+enum AttachmentStatus {
+  Pending
+  Failed
+  Uploaded
+  Deleted
+  External
+}

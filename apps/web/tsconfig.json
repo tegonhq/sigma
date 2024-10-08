@@ -1,6 +1,7 @@
 {
-  "extends": "@repo/typescript-config/nextjs.json",
+  "extends": "@sigma/typescript-config/next.json",
   "compilerOptions": {
+    "baseUrl": "./",
     "plugins": [
       {
         "name": "next"
@@ -9,10 +10,10 @@
   },
   "include": [
     "next-env.d.ts",
-    "next.config.mjs",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "build/types/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "src/pages/api/**.js"]
 }

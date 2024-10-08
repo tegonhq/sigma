@@ -1,18 +1,64 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  "globalEnv": [
+    "VERSION",
+    "NODE_ENV",
+
+    "LOG_LEVEL",
+    "CREATE_LOG_FILE",
+
+    "POSTGRES_USER",
+    "POSTGRES_PASSWORD",
+    "POSTGRES_DB",
+
+    "DB_HOST",
+    "DB_PORT",
+    "DB_SCHEMA",
+    "DATABASE_URL",
+    "REPLICATION_DATABASE_URL",
+    "SYNC_SERVER",
+    "SUPERTOKEN_CONNECTION_URI",
+
+    "PORT",
+    "FRONTEND_HOST",
+    "BACKEND_HOST",
+    "BACKEND_URL",
+    "PUBLIC_ATTACHMENT_URL",
+    "OAUTH_CALLBACK_URL",
+
+    "SMTP_HOST",
+    "SMTP_PORT",
+    "SMTP_USER",
+    "SMTP_PASSWORD",
+    "SMTP_DEFAULT_FROM"
+  ],
   "ui": "tui",
   "tasks": {
     "build": {
-      "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "dependsOn": [ "^build" ],
+      "outputs": [ "dist/**", ".next/**" ]
     },
-    "lint": {
-      "dependsOn": ["^lint"]
+    "compile": {
+      "dependsOn": [ "^build", "^compile" ],
+      "outputs": [ "dist/**", ".next/**" ]
+    },
+    "lint": { },
+    "generate": {
+      "dependsOn": [ "^generate" ],
+      "cache": false
     },
     "dev": {
-      "cache": false,
-      "persistent": true
+      "dependsOn": [ "generate" ],
+      "interactive": true,
+      "cache": false
+    },
+    "prisma:studio": {
+      "env": [ "DATABASE_URL" ]
+    },
+    "migrate": {
+      "env": [ "DATABASE_URL" ],
+      "interactive": true,
+      "cache": false
     }
   }
 }

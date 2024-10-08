@@ -1,0 +1,41 @@
+{
+  "name": "@sigma/types",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "module": "./dist/index.mjs",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "generate": "tsup --watch",
+    "lint": "eslint . --fix",
+    "clean": "rimraf dist",
+    "build": "npm run clean && npm run build:tsup",
+    "build:tsup": "tsup --dts-resolve",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@sigma/eslint-config": "workspace:*",
+    "@sigma/typescript-config": "workspace:*",
+    "@types/node": "^20",
+    "class-transformer": "0.5.1",
+    "rimraf": "^3.0.2",
+    "tsup": "^8.0.1",
+    "reflect-metadata": "^0.2.1",
+    "typescript": "^5.4.5"
+  },
+  ".": {
+    "import": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    },
+    "require": "./dist/index.js",
+    "types": "./dist/index.d.ts"
+  },
+  "dependencies": {
+    "class-validator": "0.14.1",
+    "ai": "^3.2.37"
+  }
+}
