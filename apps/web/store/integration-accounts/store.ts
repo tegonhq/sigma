@@ -7,7 +7,7 @@ import {
 
 import type { IntegrationAccountType } from 'common/types';
 
-import { tegonDatabase } from 'store/database';
+import { sigmaDatabase } from 'store/database';
 
 import { IntegrationAccount } from './models';
 
@@ -46,7 +46,7 @@ export const IntegrationAccountsStore: IAnyStateTreeNode = types
 
     const load = flow(function* () {
       const integrationAccounts =
-        yield tegonDatabase.integrationAccounts.toArray();
+        yield sigmaDatabase.integrationAccounts.toArray();
 
       self.integrationAccounts = integrationAccounts;
     });

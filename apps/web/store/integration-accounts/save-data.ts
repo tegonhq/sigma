@@ -2,7 +2,7 @@ import type { IntegrationAccountsStoreType } from './store';
 
 import type { SyncActionRecord } from 'common/types';
 
-import { tegonDatabase } from 'store/database';
+import { sigmaDatabase } from 'store/database';
 
 export async function saveIntegrationAccountData(
   data: SyncActionRecord[],
@@ -24,7 +24,7 @@ export async function saveIntegrationAccountData(
 
       switch (record.action) {
         case 'I': {
-          await tegonDatabase.integrationAccounts.put(integrationAccount);
+          await sigmaDatabase.integrationAccounts.put(integrationAccount);
           return (
             integrationAccountsStore &&
             (await integrationAccountsStore.update(
@@ -35,7 +35,7 @@ export async function saveIntegrationAccountData(
         }
 
         case 'U': {
-          await tegonDatabase.integrationAccounts.put(integrationAccount);
+          await sigmaDatabase.integrationAccounts.put(integrationAccount);
           return (
             integrationAccountsStore &&
             (await integrationAccountsStore.update(
@@ -46,7 +46,7 @@ export async function saveIntegrationAccountData(
         }
 
         case 'D': {
-          await tegonDatabase.integrationAccounts.delete(record.data.id);
+          await sigmaDatabase.integrationAccounts.delete(record.data.id);
           return (
             integrationAccountsStore &&
             (await integrationAccountsStore.deleteById(record.data.id))

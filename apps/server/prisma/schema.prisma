@@ -81,22 +81,25 @@ model IntegrationDefinitionV2 {
 }
 
 
-model Task {
+model Page {
   id        String    @id @default(uuid())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deleted   DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deleted     DateTime?
+  archived    DateTime?
 
-  title             String
-  description       String?
-  dueDate           DateTime?
+  title       String?
+  description String?
+  sortOrder   String   // LexoRank value for order
+  parentId    String?     // Self-referencing: Points to another page (folder)
+  parent      Page?    @relation("ParentChild", fields: [parentId], references: [id])
+  children    Page[]   @relation("ParentChild")
 
-  sourceMetadata    Json?
-  createdById String?
-  updatedById String?
+  statusId    String? // Status
+  status      Status? @relation(fields: [statusId], references: [id])
 
-  labelIds      String[]
-  attachments   String[]
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
 }
 
 
@@ -137,7 +140,24 @@ model Label {
   @@unique([name, workspaceId])
 }
 
+model Status {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
 
+  name        String
+  description String?
+  position    Int
+  color       String
+
+  workspace   Workspace?  @relation(fields: [workspaceId], references: [id])
+  workspaceId String
+
+  pages Page[]
+
+  @@unique([name, workspaceId], map: "_ci")
+}
 
 model SyncAction {
   id        String    @id @default(uuid())
@@ -218,6 +238,8 @@ model Workspace {
   integrationAccount    IntegrationAccount[]
   integrationDefinition IntegrationDefinitionV2[]
   attachments           Attachment[]
+  pages                 Page[]
+  statuses               Status[]
 }
 
 enum ModelName {
@@ -229,6 +251,8 @@ enum ModelName {
   SyncAction
   User
   Workspace
+  Page
+  Status
 }
 
 enum ActionType {

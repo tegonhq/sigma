@@ -1,8 +1,7 @@
+import axios from 'axios';
 import { useMutation } from 'react-query';
 
 import type { WorkspaceType } from 'common/types';
-import axios from 'axios';
-import { getApiURL } from 'services/utils';
 
 export interface UpdateWorkspaceParams {
   name: string;
@@ -13,7 +12,7 @@ export function updateWorkspace({
   workspaceId,
   name,
 }: UpdateWorkspaceParams): Promise<WorkspaceType> {
-  return axios.post(getApiURL(`/v1/workspaces/${workspaceId}`), { name });
+  return axios.post(`/api/v1/workspaces/${workspaceId}`, { name });
 }
 
 export interface MutationParams {

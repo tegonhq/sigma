@@ -7,7 +7,7 @@ import {
 
 import type { WorkspaceType } from 'common/types';
 
-import { tegonDatabase } from 'store/database';
+import { sigmaDatabase } from 'store/database';
 
 import { Workspace } from './models';
 
@@ -21,7 +21,7 @@ export const WorkspaceStore: IAnyStateTreeNode = types
     };
 
     const load = flow(function* (workspaceId: string) {
-      self.workspace = yield tegonDatabase.workspaces.get({
+      self.workspace = yield sigmaDatabase.workspaces.get({
         id: workspaceId,
       });
     });

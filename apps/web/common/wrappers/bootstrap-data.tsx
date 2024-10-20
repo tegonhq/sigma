@@ -44,7 +44,7 @@ export function BootstrapWrapper({ children }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const { refetch: bootstrapIssuesRecords } = useBootstrapRecords({
+  const { refetch: bootsrapRecord } = useBootstrapRecords({
     modelNames: Object.values(MODELS),
     workspaceId: workspace?.id,
     userId: user.id,
@@ -57,7 +57,7 @@ export function BootstrapWrapper({ children }: Props) {
     },
   });
 
-  const { refetch: syncIssuesRecords } = useDeltaRecords({
+  const { refetch: syncRecords } = useDeltaRecords({
     modelNames: Object.values(MODELS),
     workspaceId: workspace?.id,
     lastSequenceId,
@@ -74,9 +74,9 @@ export function BootstrapWrapper({ children }: Props) {
   const initStore = async () => {
     if (lastSequenceId) {
       setLoading(false);
-      await syncIssuesRecords();
+      await syncRecords();
     } else {
-      await bootstrapIssuesRecords();
+      await bootsrapRecord();
       setLoading(false);
     }
   };

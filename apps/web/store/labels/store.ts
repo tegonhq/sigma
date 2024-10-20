@@ -7,7 +7,7 @@ import {
 
 import type { LabelType } from 'common/types';
 
-import { tegonDatabase } from 'store/database';
+import { sigmaDatabase } from 'store/database';
 
 import { Label } from './models';
 
@@ -25,7 +25,7 @@ export const LabelsStore: IAnyStateTreeNode = types
         self.labels[indexToUpdate] = {
           ...self.labels[indexToUpdate],
           ...label,
-          // TODO fix the any and have a type with Issuetype
+
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } as any;
       } else {
@@ -41,7 +41,7 @@ export const LabelsStore: IAnyStateTreeNode = types
     };
 
     const load = flow(function* () {
-      const labels = yield tegonDatabase.labels.toArray();
+      const labels = yield sigmaDatabase.labels.toArray();
 
       self.labels = labels;
     });

@@ -1,4 +1,5 @@
 import { useToast } from '@sigma/ui/components/ui/use-toast';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 import {
   consumeCode,
@@ -8,6 +9,7 @@ import { createCode } from 'supertokens-web-js/recipe/passwordless';
 
 export function useSupertokenFunctions() {
   const [emailSent, setEmailSent] = React.useState(false);
+  const router = useRouter();
   const { toast } = useToast();
 
   async function sendOTP(email: string) {
@@ -66,7 +68,7 @@ export function useSupertokenFunctions() {
         } else {
           // user sign in success
         }
-        window.location.assign('/');
+        router.replace('/');
       } else if (response.status === 'INCORRECT_USER_INPUT_CODE_ERROR') {
         // the user entered an invalid OTP
         toast({
@@ -101,7 +103,7 @@ export function useSupertokenFunctions() {
           description: 'Oops! Something went wrong.',
         });
 
-        window.location.assign('/auth');
+        router.replace('/auth');
       }
     } catch (err: any) {
       if (err.isSuperTokensGeneralError === true) {

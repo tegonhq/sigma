@@ -121,7 +121,7 @@ const defaultPlaceholder = Placeholder.configure({
       return 'Type in your code here...';
     }
 
-    return 'Describe your issue...';
+    return 'Start writing...';
   },
   includeChildren: true,
 });

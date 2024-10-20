@@ -13,7 +13,7 @@ const logger = new LoggerService('Supertokens');
 function logOtp(email: string, otp: string) {
   const message = `##### sendEmail to ${email}, subject: Login email
 
-Log in to Tegon.ai
+Log in to mysigma.ai
 
 Click here to log in with this otp:
 ${otp}\n\n`;

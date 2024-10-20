@@ -1,10 +1,23 @@
 import {app, BrowserWindow} from 'electron';
 import {join} from 'node:path';
-import path from 'node:path';
+
+import Fastify from 'fastify';
+import fastifyHttpProxy from '@fastify/http-proxy';
+
+// Initialize Fastify
+const fastify = Fastify({logger: true});
+
+// Start Fastify server
+const startFastifyServer = async () => {
+  fastify.listen({port: 8000});
+};
 
 async function createWindow() {
   const browserWindow = new BrowserWindow({
     show: false, // Use the 'ready-to-show' event to show the instantiated BrowserWindow.
+    // frame: false,
+    minWidth: 700, // Set minimum width
+    minHeight: 700, // Set minimum height
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -33,14 +46,33 @@ async function createWindow() {
   /**
    * Load the main page of the main window.
    */
-  browserWindow.loadURL(
-    import.meta.env.DEV
-      ? 'http://localhost:3000'
-      : `file://${path.join(__dirname, '../../web/build/index.html')}`,
-  );
+  browserWindow.loadURL('http://localhost:8000');
 
   return browserWindow;
 }
+
+// Register the proxy for API requests to localhost:3001
+fastify.register(fastifyHttpProxy, {
+  upstream: 'http://localhost:3001',
+  prefix: '/api', // only proxy requests starting with /api
+  rewritePrefix: '/', // keep the /api prefix in the proxied request
+  http2: false, // set to true if using HTTP/2
+  websocket: true,
+});
+
+// Register the proxy for other requests to localhost:3000
+fastify.register(fastifyHttpProxy, {
+  upstream: 'http://localhost:3000',
+  prefix: '/', // proxy all other requests
+  rewritePrefix: '/', // keep the original path
+  http2: false, // set to true if using HTTP/2
+  websocket: true,
+});
+
+// Start everything
+app.whenReady().then(async () => {
+  await startFastifyServer();
+});
 
 /**
  * Restore an existing BrowserWindow or Create a new BrowserWindow.

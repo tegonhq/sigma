@@ -5,18 +5,20 @@ import { useRouter } from 'next/navigation';
 import React from 'react';
 import { SessionAuth } from 'supertokens-auth-react/recipe/session';
 
+import { AuthLayout } from 'modules/auth';
+
 import { UserDataWrapper } from 'common/wrappers/user-data-wrapper';
 
 import { UserContext } from 'store/user-context';
 
 import { OnboardingForm } from './onboarding-form';
-import { AuthLayout } from 'modules/auth';
 
-export function Onboarding() {
+export function OnboardingComponent() {
   const user = React.useContext(UserContext);
   const router = useRouter();
 
   React.useEffect(() => {
+    console.log(user?.workspace);
     if (user?.workspace) {
       router.replace(`/my`);
     }
@@ -40,10 +42,12 @@ export function Onboarding() {
   );
 }
 
-Onboarding.getLayout = function getLayout(page: React.ReactElement) {
+export function Onboarding() {
   return (
     <SessionAuth>
-      <UserDataWrapper>{page}</UserDataWrapper>
+      <UserDataWrapper>
+        <OnboardingComponent />
+      </UserDataWrapper>
     </SessionAuth>
   );
-};
+}

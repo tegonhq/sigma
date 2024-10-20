@@ -1,12 +1,14 @@
 import Passwordless from 'supertokens-auth-react/recipe/passwordless';
 import SessionReact from 'supertokens-auth-react/recipe/session';
 
-export const frontendConfig = () => {
+import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+
+export const frontendConfig = (router: AppRouterInstance) => {
   const appInfo = {
-    appName: 'Tegon',
-    apiDomain: process.env.NEXT_PUBLIC_BACKEND_HOST,
+    appName: 'Sigma',
+    apiDomain: process.env.NEXT_PUBLIC_BASE_HOST,
     websiteDomain: process.env.NEXT_PUBLIC_BASE_HOST,
-    apiBasePath: '/auth',
+    apiBasePath: '/api/auth',
     websiteBasePath: '/auth',
   };
 
@@ -25,7 +27,7 @@ export const frontendConfig = () => {
         location: {
           ...oI.location,
           setHref: (href: string) => {
-            window.location.href = href;
+            router.push(href);
           },
         },
       };

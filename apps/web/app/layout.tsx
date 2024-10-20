@@ -12,8 +12,8 @@ import en from 'javascript-time-ago/locale/en';
 import { initPosthog, initSuperTokens } from 'common/init-config';
 
 import { Provider } from '../modules/provider';
+import { useRouter } from 'next/navigation';
 
-initSuperTokens();
 initPosthog();
 
 TimeAgo.addDefaultLocale(en);
@@ -23,8 +23,11 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const router = useRouter();
+  initSuperTokens(router);
+
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning={true}>
       <body className={`${GeistMono.variable} ${GeistSans.variable} font-sans`}>
         <div
           className={cn(

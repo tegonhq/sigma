@@ -3,4 +3,6 @@ export enum MODELS {
   Label = 'Label',
 
   IntegrationAccount = 'IntegrationAccount',
+  Page = 'Page',
+  Status = 'Status',
 }

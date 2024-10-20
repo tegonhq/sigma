@@ -1,7 +1,7 @@
 {
   "name": "@sigma/services",
   "version": "0.0.0",
-  "description": "Tegon API services",
+  "description": "Sigma API services",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "module": "./dist/index.mjs",

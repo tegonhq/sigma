@@ -1,9 +1,9 @@
+import axios from 'axios';
 import { type UseQueryResult, useQuery } from 'react-query';
 
 import type { BootstrapResponse } from 'common/types';
 
-import { getApiURL, type XHRErrorResponse } from 'services/utils';
-import axios from 'axios';
+import { type XHRErrorResponse } from 'services/utils';
 
 /**
  * Query Key for Get bootstrap records.
@@ -15,7 +15,7 @@ export async function getBootstrapRecords(
   modelNames: string[],
   userId: string,
 ) {
-  const response = await axios.get(getApiURL(`/v1/sync_actions/bootstrap`), {
+  const response = await axios.get(`/api/v1/sync_actions/bootstrap`, {
     params: {
       workspaceId,
       userId,

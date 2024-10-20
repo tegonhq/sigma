@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import './rc.css';
+
 .text-primary {
   color: #1a89c5;
 }

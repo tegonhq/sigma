@@ -2,7 +2,7 @@ import type { WorkspaceStoreType } from './store';
 
 import type { SyncActionRecord } from 'common/types';
 
-import { tegonDatabase } from 'store/database';
+import { sigmaDatabase } from 'store/database';
 
 export async function saveWorkspaceData(
   data: SyncActionRecord[],
@@ -19,7 +19,7 @@ export async function saveWorkspaceData(
         userId: record.data.userId,
       };
 
-      await tegonDatabase.workspaces.put(workspace);
+      await sigmaDatabase.workspaces.put(workspace);
 
       // Update the store
       return workspaceStore && (await workspaceStore.update(workspace));

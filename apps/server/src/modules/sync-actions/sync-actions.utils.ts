@@ -35,6 +35,18 @@ export async function getWorkspaceId(
       });
       return label.workspaceId;
 
+    case ModelName.Page:
+      const page = await prisma.page.findUnique({
+        where: { id: modelId },
+      });
+      return page.workspaceId;
+
+    case ModelName.Status:
+      const status = await prisma.status.findUnique({
+        where: { id: modelId },
+      });
+      return status.workspaceId;
+
     case ModelName.Template:
       const template = await prisma.template.findUnique({
         where: { id: modelId },
@@ -62,6 +74,8 @@ export async function getModelData(
     Workspace: prisma.workspace,
     Label: prisma.label,
     Template: prisma.template,
+    Status: prisma.status,
+    Page: prisma.page,
     IntegrationAccount: {
       findUnique: (args: { where: { id: string } }) =>
         prisma.integrationAccount.findUnique({

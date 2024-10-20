@@ -1,9 +1,9 @@
+import axios from 'axios';
 import { type UseQueryResult, useQuery } from 'react-query';
 
 import type { User } from 'common/types';
 
-import { getApiURL, type XHRErrorResponse } from 'services/utils';
-import axios from 'axios';
+import { type XHRErrorResponse } from 'services/utils';
 
 /**
  * Query Key for Get user.
@@ -11,7 +11,7 @@ import axios from 'axios';
 export const GetUserQuery = 'getUserQuery';
 
 async function getUser() {
-  const response = await axios.get(getApiURL('/v1/users'));
+  const response = await axios.get('/api/v1/users');
 
   return response.data;
 }

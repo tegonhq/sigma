@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ModelNameEnum } from '@sigma/types';
-import { PrismaService } from 'nestjs-prisma';
+
 import { Client } from 'pg';
 import {
   LogicalReplicationService,
@@ -27,13 +27,12 @@ export default class ReplicationService {
   private readonly logger: LoggerService = new LoggerService(
     'ReplicationService',
   );
-  private replicationSlotName = `tegon_replication_slot_${uuidv4().replace(/-/g, '')}`;
+  private replicationSlotName = `sigma_replication_slot_${uuidv4().replace(/-/g, '')}`;
 
   constructor(
     private configService: ConfigService,
     private syncGateway: SyncGateway,
     private syncActionsService: SyncActionsService,
-    private prisma: PrismaService,
   ) {
     this.client = new Client({
       user: configService.get('POSTGRES_USER'),
@@ -113,8 +112,6 @@ export default class ReplicationService {
 
   async createReplicationSlot() {
     try {
-      await this.setReplicaIdentityFull();
-
       await this.checkForSlot();
 
       const createReplicationSlotQuery = `
@@ -140,27 +137,6 @@ export default class ReplicationService {
       });
     } finally {
       await this.client.end();
-    }
-  }
-
-  async setReplicaIdentityFull() {
-    try {
-      await this.prisma.$executeRaw`ALTER TABLE "Issue" REPLICA IDENTITY FULL`;
-      await this.prisma
-        .$executeRaw`ALTER TABLE "IssueComment" REPLICA IDENTITY FULL`;
-      await this.prisma
-        .$executeRaw`ALTER TABLE "LinkedIssue" REPLICA IDENTITY FULL`;
-
-      this.logger.info({
-        message: 'REPLICA IDENTITY FULL set for all specified tables.',
-        where: `ReplicationService.setReplicaIdentityFull`,
-      });
-    } catch (error) {
-      this.logger.error({
-        message: 'Error setting REPLICA IDENTITY FULL:',
-        where: `ReplicationService.setReplicaIdentityFull`,
-        error,
-      });
     }
   }
 

@@ -1,10 +1,9 @@
+import axios from 'axios';
 import { useMutation, useQueryClient } from 'react-query';
 
 import type { WorkspaceType } from 'common/types';
 
 import { GetUserQuery } from 'services/users';
-import { getApiURL } from 'services/utils';
-import axios from 'axios';
 
 export interface CreateInitialResourcesDto {
   workspaceName: string;
@@ -14,10 +13,7 @@ export interface CreateInitialResourcesDto {
 export function createInitialResources(
   createInitialResourcesDto: CreateInitialResourcesDto,
 ): Promise<WorkspaceType> {
-  return axios.post(
-    getApiURL(`/v1/workspaces/onboarding`),
-    createInitialResourcesDto,
-  );
+  return axios.post(`/api/v1/workspaces/onboarding`, createInitialResourcesDto);
 }
 
 interface MutationParams {

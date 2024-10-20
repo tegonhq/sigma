@@ -11,7 +11,7 @@ export function BottomBar() {
       <Button
         variant="link"
         onClick={() => {
-          window.open('https://docs.tegon.ai', '_blank');
+          window.open('https://docs.mysigma.ai', '_blank');
         }}
       >
         <HelpLine size={20} />

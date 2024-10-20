@@ -1,14 +1,13 @@
 import { Loader } from '@sigma/ui/components/loader';
 import { observer } from 'mobx-react-lite';
-
 import * as React from 'react';
 import { Socket, io } from 'socket.io-client';
 
+import { useContextStore } from 'store/global-context-provider';
 import { MODELS } from 'store/models';
 import { UserContext } from 'store/user-context';
 
 import { saveSocketData } from './socket-data-util';
-import { useContextStore } from 'store/global-context-provider';
 
 interface Props {
   children: React.ReactElement;
@@ -19,8 +18,13 @@ export const SocketDataSyncWrapper: React.FC<Props> = observer(
   (props: Props) => {
     const { children } = props;
 
-    const { workspaceStore, labelsStore, integrationAccountsStore } =
-      useContextStore();
+    const {
+      workspaceStore,
+      labelsStore,
+      integrationAccountsStore,
+      pagesStore,
+      statusesStore,
+    } = useContextStore();
     const user = React.useContext(UserContext);
 
     const [socket, setSocket] = React.useState<Socket | undefined>(undefined);
@@ -52,6 +56,8 @@ export const SocketDataSyncWrapper: React.FC<Props> = observer(
         [MODELS.Label]: labelsStore,
         [MODELS.Workspace]: workspaceStore,
         [MODELS.IntegrationAccount]: integrationAccountsStore,
+        [MODELS.Status]: statusesStore,
+        [MODELS.Page]: pagesStore,
       };
 
       socket.on('message', (newMessage: string) => {

@@ -4,22 +4,26 @@ import { types } from 'mobx-state-tree';
 import React from 'react';
 
 import {
-  IntegrationAccountsStore,
-  type IntegrationAccountsStoreType,
-} from './integration-accounts';
-import { LabelsStore, type LabelsStoreType } from './labels';
-import { WorkspaceStore, type WorkspaceStoreType } from './workspace';
-import {
   ApplicationStore,
   defaultApplicationStoreValue,
   type ApplicationStoreType,
 } from './application';
+import {
+  IntegrationAccountsStore,
+  type IntegrationAccountsStoreType,
+} from './integration-accounts';
+import { LabelsStore, type LabelsStoreType } from './labels';
+import { PagesStore, type PagesStoreType } from './pages';
+import { StatusesStore, type StatusesStoreType } from './status';
+import { WorkspaceStore, type WorkspaceStoreType } from './workspace';
 
 const StoreContextModel = types.model({
   labelsStore: LabelsStore,
   workspaceStore: WorkspaceStore,
   integrationAccountsStore: IntegrationAccountsStore,
   applicationStore: ApplicationStore,
+  statuesStore: StatusesStore,
+  pagesStore: PagesStore,
 });
 
 export const storeContextStore = StoreContextModel.create({
@@ -38,14 +42,24 @@ export const storeContextStore = StoreContextModel.create({
     integrationAccounts: [],
     workspaceId: undefined,
   },
+
+  pagesStore: {
+    pages: [],
+  },
+
+  statuesStore: {
+    statues: [],
+  },
 });
 
-export type StoreContextInstanceType = {
+export interface StoreContextInstanceType {
   labelsStore: LabelsStoreType;
   applicationStore: ApplicationStoreType;
   workspaceStore: WorkspaceStoreType;
   integrationAccountsStore: IntegrationAccountsStoreType;
-};
+  statusesStore: StatusesStoreType;
+  pagesStore: PagesStoreType;
+}
 export const StoreContext =
   React.createContext<null | StoreContextInstanceType>(null);
 

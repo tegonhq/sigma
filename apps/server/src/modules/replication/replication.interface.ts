@@ -18,4 +18,6 @@ export const tablesToSendMessagesFor = new Map([
   [ModelNameEnum.Workspace, true],
   [ModelNameEnum.Label, true],
   [ModelNameEnum.IntegrationAccount, true],
+  [ModelNameEnum.Page, true],
+  [ModelNameEnum.Status, true],
 ]);

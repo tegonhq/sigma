@@ -3,6 +3,7 @@
   "globalEnv": [
     "VERSION",
     "NODE_ENV",
+    "PORT",
 
     "LOG_LEVEL",
     "CREATE_LOG_FILE",
@@ -30,7 +31,10 @@
     "SMTP_PORT",
     "SMTP_USER",
     "SMTP_PASSWORD",
-    "SMTP_DEFAULT_FROM"
+    "SMTP_DEFAULT_FROM",
+
+    "GCP_BUCKET_NAME",
+    "GCP_SERVICE_ACCOUNT_FILE"
   ],
   "ui": "tui",
   "tasks": {

@@ -6,6 +6,8 @@ export enum ModelNameEnum {
   Label = 'Label',
   User = 'User',
   Workspace = 'Workspace',
+  Page = 'Page',
+  Status = 'Status',
 }
 
 export const ModelName = {
@@ -15,6 +17,8 @@ export const ModelName = {
   Label: 'Label',
   User: 'User',
   Workspace: 'Workspace',
+  Status: 'Status',
+  Page: 'Page',
 };
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
