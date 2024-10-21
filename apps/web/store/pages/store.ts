@@ -49,6 +49,34 @@ export const PagesStore: IAnyStateTreeNode = types
     return { update, deleteById, load };
   })
   .views((self) => ({
+    getPages() {
+      const buildTree = (pages: PageType[]) => {
+        const pageMap = new Map<string, PageType & { children: PageType[] }>();
+
+        // Initialize the map with all pages
+        pages.forEach((page) => {
+          pageMap.set(page.id, { ...page, children: [] });
+        });
+
+        const tree: Array<PageType & { children: PageType[] }> = [];
+
+        // Build the tree structure
+        pages.forEach((page) => {
+          if (page.parentId) {
+            const parent = pageMap.get(page.parentId);
+            if (parent) {
+              parent.children.push(pageMap.get(page.id)!);
+            }
+          } else {
+            tree.push(pageMap.get(page.id)!);
+          }
+        });
+
+        return tree;
+      };
+
+      return buildTree(self.pages);
+    },
     getPagesWithIds(ids: string[]) {
       return self.pages.filter((page: PageType) => ids.includes(page.id));
     },

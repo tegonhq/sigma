@@ -8,11 +8,11 @@ import { GeistMono } from 'geist/font/mono';
 import { GeistSans } from 'geist/font/sans';
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
+import { useRouter } from 'next/navigation';
 
 import { initPosthog, initSuperTokens } from 'common/init-config';
 
 import { Provider } from '../modules/provider';
-import { useRouter } from 'next/navigation';
 
 initPosthog();
 

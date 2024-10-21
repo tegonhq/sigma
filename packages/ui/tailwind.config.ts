@@ -25,6 +25,7 @@ const config = {
       md: '15px',
       lg: '17px',
       xl: '22px',
+      '2xl': '26px',
     },
     borderWidth: {
       DEFAULT: '0.5px',

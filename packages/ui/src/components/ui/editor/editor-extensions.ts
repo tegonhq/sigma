@@ -61,6 +61,7 @@ const heading = Heading.extend({
 
 const starterKit = StarterKit.configure({
   heading: false,
+  history: false,
   bulletList: {
     HTMLAttributes: {
       class: cx('list-disc list-outside leading-3 pl-4'),

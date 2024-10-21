@@ -14,7 +14,7 @@ export const ContentBox = observer(({ children }: ContentBoxProps) => {
   return (
     <main
       className={cn(
-        'p-3 pt-0 pl-0 flex flex-col h-[calc(100vh_-_53px)]',
+        'p-3 pl-0 flex flex-col h-full',
         applicationStore.sidebarCollapsed && 'pl-3',
       )}
     >

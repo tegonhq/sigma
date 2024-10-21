@@ -14,21 +14,21 @@ import { Status } from './models';
 export const StatusesStore: IAnyStateTreeNode = types
   .model({
     statuses: types.array(Status),
-    teamId: types.union(types.string, types.undefined),
+    workspaceId: types.union(types.string, types.undefined),
   })
   .actions((self) => {
-    const update = (workflow: StatusType, id: string) => {
+    const update = (status: StatusType, id: string) => {
       const indexToUpdate = self.statuses.findIndex((obj) => obj.id === id);
 
       if (indexToUpdate !== -1) {
         // Update the object at the found index with the new data
         self.statuses[indexToUpdate] = {
           ...self.statuses[indexToUpdate],
-          ...workflow,
+          ...status,
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } as any;
       } else {
-        self.statuses.push(workflow);
+        self.statuses.push(status);
       }
     };
 
@@ -43,36 +43,34 @@ export const StatusesStore: IAnyStateTreeNode = types
     const load = flow(function* () {
       const statuses = yield sigmaDatabase.statuses.toArray();
 
-      self.statuses = statuses.map((workflow: StatusType) =>
-        Status.create(workflow),
-      );
+      self.statuses = statuses;
     });
 
     return { update, deleteById, load };
   })
   .views((self) => ({
-    getStatusWithId(workflowId: string) {
-      return self.statuses.find(
-        (workflow: StatusType) => workflow.id === workflowId,
-      );
+    getStatusWithId(statusId: string) {
+      return self.statuses.find((status: StatusType) => status.id === statusId);
     },
     getStatussForWorkspace(workspaceId: string) {
       return self.statuses.filter(
-        (workflow: StatusType) => workflow.workspaceId === workspaceId,
+        (status: StatusType) => status.workspaceId === workspaceId,
       );
     },
     getStatusByNames(value: string[]) {
       return value
         .map((name: string) => {
-          const workflow = self.statuses.find(
-            (workflow: StatusType) =>
-              workflow.name.toLowerCase() === name.toLowerCase(),
+          const status = self.statuses.find(
+            (status: StatusType) =>
+              status.name.toLowerCase() === name.toLowerCase(),
           );
 
-          return workflow?.id;
+          return status?.id;
         })
         .filter(Boolean);
     },
   }));
 
-export type StatusesStoreType = Instance<typeof StatusesStore>;
+export type StatusesStoreType = Instance<typeof StatusesStore> & {
+  statues: StatusType[];
+};

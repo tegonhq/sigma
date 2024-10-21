@@ -8,8 +8,13 @@ import { useContextStore } from 'store/global-context-provider';
 export const WorkspaceStoreInit = observer(
   ({ children }: { children: React.ReactNode }) => {
     const [loading, setLoading] = React.useState(true);
-    const { workspaceStore, labelsStore, integrationAccountsStore } =
-      useContextStore();
+    const {
+      workspaceStore,
+      labelsStore,
+      integrationAccountsStore,
+      statusesStore,
+      pagesStore,
+    } = useContextStore();
 
     const currentWorkspace = useWorkspace();
 
@@ -30,6 +35,8 @@ export const WorkspaceStoreInit = observer(
       await workspaceStore.load(currentWorkspace.id);
       await labelsStore.load();
       await integrationAccountsStore.load();
+
+      await pagesStore.load();
 
       setLoading(false);
       // eslint-disable-next-line react-hooks/exhaustive-deps

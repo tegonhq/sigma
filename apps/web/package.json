@@ -9,6 +9,7 @@
     "lint": "next lint --fix"
   },
   "dependencies": {
+    "@hocuspocus/provider": "^2.13.7",
     "@hookform/resolvers": "3.9.0",
     "@remixicon/react": "^4.2.0",
     "@sentry/nextjs": "^7.105.0",
@@ -16,6 +17,8 @@
     "@sigma/types": "workspace:*",
     "@sigma/ui": "workspace:*",
     "@tiptap/core": "^2.3.0",
+    "@tiptap/extension-collaboration": "^2.8.0",
+    "@tiptap/extension-collaboration-cursor": "^2.8.0",
     "@tiptap/react": "^2.5.4",
     "@typeform/embed-react": "^3.17.0",
     "ai": "^3.2.37",
@@ -55,6 +58,7 @@
     "ts-key-enum": "^2.0.12",
     "use-debounce": "^10.0.0",
     "uuid": "^10.0.0",
+    "yjs": "^13.6.20",
     "zod": "3.23.8"
   },
   "devDependencies": {

@@ -39,6 +39,7 @@
   "dependencies": {
     "@devoxa/prisma-relay-cursor-connection": "3.1.1",
     "@google-cloud/storage": "^7.10.0",
+    "@hocuspocus/server": "^2.13.7",
     "@nestjs-modules/mailer": "^2.0.2",
     "@nestjs/axios": "^3.0.1",
     "@nestjs/bull": "^10.1.0",
@@ -84,7 +85,9 @@
     "socket.io": "^4.7.5",
     "supertokens-node": "^16.7.1",
     "uuid": "^10.0.0",
-    "winston": "^3.14.2"
+    "winston": "^3.14.2",
+    "y-protocols": "^1.0.6",
+    "yjs": "^13.6.20"
   },
   "devDependencies": {
     "@nestjs/cli": "10.3.0",

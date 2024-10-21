@@ -18,6 +18,7 @@ import { WorkspacesModule } from 'modules/workspaces/workspaces.module';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { PagesModule } from 'modules/pages/pages.module';
 
 @Module({
   imports: [
@@ -66,6 +67,7 @@ import { AppService } from './app.service';
     WorkspacesModule,
     SyncActionsModule,
     ReplicationModule,
+    PagesModule,
   ],
   controllers: [AppController],
   providers: [

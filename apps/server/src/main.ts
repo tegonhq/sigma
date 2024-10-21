@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { PrismaClientExceptionFilter } from 'nestjs-prisma';
 import supertokens from 'supertokens-node';
+import { Hocuspocus } from '@hocuspocus/server';
 
 import type { CorsConfig } from 'common/configs/config.interface';
 
@@ -53,5 +54,12 @@ async function bootstrap() {
   }
 
   await app.listen(process.env.PORT || 3001);
+
+  /// Start hocuspocus server
+  const contentServer = new Hocuspocus({
+    port: 1234,
+  });
+
+  contentServer.listen();
 }
 bootstrap();

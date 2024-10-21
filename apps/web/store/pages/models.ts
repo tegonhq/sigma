@@ -4,7 +4,7 @@ export const Page = types.model({
   id: types.string,
   createdAt: types.string,
   updatedAt: types.string,
-  archived: types.string,
+  archived: types.union(types.null, types.string),
 
   title: types.union(types.null, types.string),
   description: types.union(types.null, types.string),

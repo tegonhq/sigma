@@ -20,7 +20,7 @@ import { useContextStore } from 'store/global-context-provider';
 import { BottomBar } from './bottom-bar';
 import { Header } from './header';
 import { Nav } from './nav';
-import PageList from './page-list';
+import { PageList } from './page-list';
 import { WorkspaceDropdown } from './workspace-dropdown';
 import { IssuesLine } from '../../../../../packages/ui/src/icons/issues-line';
 
@@ -36,16 +36,16 @@ export const AppLayoutChild = observer(({ children }: LayoutProps) => {
     <>
       <div className="h-[100vh] w-[100vw] flex">
         <ResizablePanelGroup direction="horizontal">
-          <ResizablePanel
-            maxSize={32}
-            defaultSize={16}
-            minSize={16}
-            collapsible
-            collapsedSize={16}
-          >
-            {!applicationStore.sidebarCollapsed && (
-              <div className="min-w-[220px] flex flex-col h-full">
-                <div className="flex flex-col py-4 px-6">
+          {!applicationStore.sidebarCollapsed && (
+            <ResizablePanel
+              maxSize={25}
+              defaultSize={10}
+              minSize={10}
+              collapsible
+              collapsedSize={10}
+            >
+              <div className="min-w-[180px] flex flex-col h-full">
+                <div className="flex flex-col py-4 pt-7 px-6">
                   <div className="flex justify-between items-center">
                     <WorkspaceDropdown />
                     <Button
@@ -57,37 +57,39 @@ export const AppLayoutChild = observer(({ children }: LayoutProps) => {
                     </Button>
                   </div>
                 </div>
-                <div className="px-6 mt-4 grow">
-                  <Nav
-                    links={[
-                      {
-                        title: 'My day',
-                        icon: Inbox,
-                        href: 'my',
-                      },
-                      {
-                        title: 'All tasks',
-                        icon: IssuesLine,
-                        href: 'my/tasks',
-                      },
-                      {
-                        title: 'All pages',
-                        icon: DocumentLine,
-                        href: 'my/pages',
-                      },
-                      {
-                        title: 'Archive',
-                        icon: RiArchive2Line,
-                        href: 'my/archive',
-                      },
-                    ]}
-                  />
+                <div className="mt-4 grow">
+                  <div className="px-6 ">
+                    <Nav
+                      links={[
+                        {
+                          title: 'My day',
+                          icon: Inbox,
+                          href: 'my',
+                        },
+                        {
+                          title: 'All tasks',
+                          icon: IssuesLine,
+                          href: 'my/tasks',
+                        },
+                        {
+                          title: 'All pages',
+                          icon: DocumentLine,
+                          href: 'my/pages',
+                        },
+                        {
+                          title: 'Archive',
+                          icon: RiArchive2Line,
+                          href: 'my/archive',
+                        },
+                      ]}
+                    />
+                  </div>
                   <PageList />
                 </div>
                 <BottomBar />
               </div>
-            )}
-          </ResizablePanel>
+            </ResizablePanel>
+          )}
           <ResizableHandle />
           <ResizablePanel
             collapsible
@@ -99,12 +101,14 @@ export const AppLayoutChild = observer(({ children }: LayoutProps) => {
                 'w-full',
                 applicationStore.sidebarCollapsed && 'max-w-[100vw]',
                 !applicationStore.sidebarCollapsed &&
-                  'max-w-[calc(100vw_-_220px)]',
+                  'max-w-[calc(100vw_-_180px)]',
               )}
             >
               <main className="flex flex-col h-[100vh]">
-                <Header title="All issues" />
-                <ContentBox>{children}</ContentBox>
+                <ContentBox>
+                  <Header />
+                  {children}
+                </ContentBox>
               </main>
             </div>
           </ResizablePanel>
