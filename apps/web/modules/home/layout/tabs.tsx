@@ -24,7 +24,7 @@ export const Tabs = observer(() => {
   const getTitleComponent = (tab: TabType) => {
     const title =
       tab.type === TabViewType.PAGE
-        ? pagesStore.getPageWithId(tab.entity_id).title
+        ? pagesStore.getPageWithId(tab.entity_id)?.title
         : TITLE[tab.type as keyof typeof TITLE];
 
     return (

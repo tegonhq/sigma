@@ -187,7 +187,7 @@ export const Editor = ({
               onCreate(editor);
             }
 
-            autoFocus && editor.commands.focus();
+            autoFocus && editor.commands.focus('end');
           }}
           editorProps={{
             handlePaste: (_, event) => {

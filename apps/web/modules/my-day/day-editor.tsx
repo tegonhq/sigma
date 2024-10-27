@@ -11,37 +11,30 @@ import {
   suggestionItems,
 } from '@sigma/ui/components/editor/index';
 import Collaboration from '@tiptap/extension-collaboration';
-import { Loader } from '@sigma/ui/components/loader';
 import { format } from 'date-fns';
+import type { PageType } from 'common/types';
 
 interface DayEditorProps {
   date: Date;
 }
 
-export const DayEditor = observer(({ date }: DayEditorProps) => {
-  const { pagesStore } = useContextStore();
-  const page = pagesStore.getDailyPageWithDate(date);
-  const { mutate: createPage } = useCreatePageMutation({});
+interface EditorWithPageProps {
+  page: PageType;
+}
 
-  const [provider, setProvider] = React.useState(undefined);
+export const EditorWithPage = observer(({ page }: EditorWithPageProps) => {
+  const [_, setProvider] = React.useState(undefined);
   const [doc, setDoc] = React.useState(undefined);
-  const dateTitle = format(date, 'dd-MM-yyyy');
 
   React.useEffect(() => {
-    if (!page) {
-      createPage({
-        sortOrder: pagesStore.getSortOrderForNewPage,
-        title: dateTitle,
-        type: PageTypeEnum.Daily,
-      });
-    } else {
-      if (!provider) {
-        initPageSocket();
-      }
-    }
-  }, [dateTitle, page]);
+    initPageSocket();
+  }, [page.id]);
 
-  const initPageSocket = () => {
+  const initPageSocket = async () => {
+    setDoc(undefined);
+    setProvider(undefined);
+    // To refresh the editor with the new doc a hack
+    await new Promise((resolve) => setTimeout(resolve, 100));
     const ydoc = new Y.Doc();
 
     const provider = new HocuspocusProvider({
@@ -60,7 +53,6 @@ export const DayEditor = observer(({ date }: DayEditorProps) => {
   if (page && doc) {
     return (
       <Editor
-        value={page?.description}
         onChange={onDescriptionChange}
         extensions={[
           Collaboration.configure({
@@ -75,9 +67,28 @@ export const DayEditor = observer(({ date }: DayEditorProps) => {
     );
   }
 
-  return (
-    <div>
-      <Loader />
-    </div>
-  );
+  return null;
+});
+
+export const DayEditor = observer(({ date }: DayEditorProps) => {
+  const { mutate: createPage } = useCreatePageMutation({});
+  const { pagesStore } = useContextStore();
+  const page = pagesStore.getDailyPageWithDate(date);
+  const dateTitle = format(date, 'dd-MM-yyyy');
+
+  React.useEffect(() => {
+    if (!page) {
+      createPage({
+        sortOrder: pagesStore.getSortOrderForNewPage,
+        title: dateTitle,
+        type: PageTypeEnum.Daily,
+      });
+    }
+  }, [dateTitle, page]);
+
+  if (!page) {
+    return null;
+  }
+
+  return <EditorWithPage page={page} />;
 });

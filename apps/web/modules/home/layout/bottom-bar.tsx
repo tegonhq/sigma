@@ -1,11 +1,28 @@
+import { PageTypeEnum } from '@sigma/types';
 import { Button } from '@sigma/ui/components/button';
 import { CreateIssueLine, HelpLine, SearchLine } from '@sigma/ui/icons';
+import { useApplication } from 'hooks/application';
 import React from 'react';
-import { useHotkeys } from 'react-hotkeys-hook';
-
-import { SCOPES } from 'common/shortcut-scopes';
+import { useCreatePageMutation } from 'services/pages';
+import { TabViewType } from 'store/application';
+import { useContextStore } from 'store/global-context-provider';
 
 export function BottomBar() {
+  const { updateTabType } = useApplication();
+  const { mutate: createPage } = useCreatePageMutation({
+    onSuccess: (data) => {
+      updateTabType(TabViewType.PAGE, data.id);
+    },
+  });
+  const { pagesStore } = useContextStore();
+
+  const onCreatePage = () => {
+    createPage({
+      sortOrder: pagesStore.getSortOrderForNewPage,
+      type: PageTypeEnum.Default,
+    });
+  };
+
   return (
     <div className="w-full flex justify-between px-6 py-4">
       <Button
@@ -17,7 +34,7 @@ export function BottomBar() {
         <HelpLine size={20} />
       </Button>
 
-      <Button variant="link" isActive className="px-3">
+      <Button variant="link" isActive className="px-3" onClick={onCreatePage}>
         <CreateIssueLine size={20} />
       </Button>
 

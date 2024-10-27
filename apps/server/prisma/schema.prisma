@@ -89,7 +89,10 @@ model Page {
   archived    DateTime?
 
   title       String?
-  description String?
+  
+  description       String?
+  descriptionBinary Bytes?
+
   sortOrder   String   // LexoRank value for order
   parentId    String?     // Self-referencing: Points to another page (folder)
   parent      Page?    @relation("ParentChild", fields: [parentId], references: [id])

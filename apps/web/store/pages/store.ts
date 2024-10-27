@@ -88,8 +88,13 @@ export const PagesStore: IAnyStateTreeNode = types
 
         const tree: Array<PageType & { children: PageType[] }> = [];
 
+        // Sort pages lexically by title before building the tree
+        const sortedPages = [...pages].sort((a, b) =>
+          a.sortOrder.localeCompare(b.sortOrder),
+        );
+
         // Build the tree structure
-        pages.forEach((page) => {
+        sortedPages.forEach((page) => {
           if (page.type !== PageTypeEnum.Daily) {
             if (page.parentId) {
               const parent = pageMap.get(page.parentId);

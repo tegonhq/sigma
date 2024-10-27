@@ -33,6 +33,8 @@ const Tab = types
       self.type = type;
       if (entity_id) {
         self.entity_id = entity_id;
+      } else {
+        self.entity_id = type;
       }
     },
   }));
@@ -68,11 +70,17 @@ const TabGroup = types
     removeTab(tabId: string) {
       const tab = self.tabs.find((tab) => tab.id === tabId);
       const index = self.tabs.findIndex((tab) => tab.id === tabId);
+
+      if (self.tabs.length === 1) {
+        return;
+      }
+
       if (tab !== undefined) {
-        self.tabs.splice(index, 1);
         if (self.activeTab === tab) {
-          self.activeTab = self.tabs.length > 0 ? self.tabs[0] : undefined;
+          self.activeTab =
+            self.tabs.length > 0 ? self.tabs[index + 1] : undefined;
         }
+        self.tabs.splice(index, 1);
       }
     },
   }));

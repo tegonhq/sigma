@@ -22,9 +22,14 @@ export function PageEditor({ page, onDescriptionChange }: PageEditorProps) {
 
   React.useEffect(() => {
     initPageSocket();
-  }, [page]);
+  }, [page.id]);
 
-  const initPageSocket = () => {
+  const initPageSocket = async () => {
+    setDoc(undefined);
+    setProvider(undefined);
+
+    // To refresh the editor with the new doc a hack
+    await new Promise((resolve) => setTimeout(resolve, 100));
     const ydoc = new Y.Doc();
 
     const provider = new HocuspocusProvider({
@@ -39,7 +44,7 @@ export function PageEditor({ page, onDescriptionChange }: PageEditorProps) {
   };
 
   if (!provider) {
-    return <Loader />;
+    return null;
   }
 
   return (
