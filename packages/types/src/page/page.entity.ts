@@ -1,6 +1,17 @@
-import { Label } from '../label';
 import { Status } from '../status';
 import { Workspace } from '../workspace';
+
+export enum PageTypeEnum {
+  Default = 'Default',
+  Daily = 'Daily',
+}
+
+export const PageType = {
+  Default: 'Default',
+  Daily: 'Daily',
+};
+
+export type PageType = (typeof PageType)[keyof typeof PageType];
 
 export class Page {
   id: string;
@@ -16,5 +27,6 @@ export class Page {
   statusId?: string;
   status?: Status;
 
-  labels?: Label[];
+  tags: string[];
+  type: PageType;
 }

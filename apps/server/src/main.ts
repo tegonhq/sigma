@@ -3,7 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { PrismaClientExceptionFilter } from 'nestjs-prisma';
 import supertokens from 'supertokens-node';
-import { Hocuspocus } from '@hocuspocus/server';
 
 import type { CorsConfig } from 'common/configs/config.interface';
 
@@ -12,18 +11,26 @@ import ReplicationService from 'modules/replication/replication.service';
 
 import { AppModule } from './app.module';
 
+// import { Server } from '@hocuspocus/server';
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (BigInt.prototype as any).toJSON = function () {
   return this.toString();
 };
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
-    logger: new LoggerService('Sigma'),
-  });
+  const app = await NestFactory.create(
+    AppModule,
+
+    {
+      logger: new LoggerService('Sigma'),
+    },
+  );
 
   // Validation
   app.useGlobalPipes(new ValidationPipe({}));
+
+  // Use the custom WebSocket adapter
 
   // Initiate replication service
   const replicationService = app.get(ReplicationService);
@@ -54,12 +61,5 @@ async function bootstrap() {
   }
 
   await app.listen(process.env.PORT || 3001);
-
-  /// Start hocuspocus server
-  const contentServer = new Hocuspocus({
-    port: 1234,
-  });
-
-  contentServer.listen();
 }
 bootstrap();

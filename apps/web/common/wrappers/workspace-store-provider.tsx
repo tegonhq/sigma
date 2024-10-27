@@ -10,10 +10,10 @@ export const WorkspaceStoreInit = observer(
     const [loading, setLoading] = React.useState(true);
     const {
       workspaceStore,
-      labelsStore,
       integrationAccountsStore,
       statusesStore,
       pagesStore,
+      applicationStore,
     } = useContextStore();
 
     const currentWorkspace = useWorkspace();
@@ -32,8 +32,8 @@ export const WorkspaceStoreInit = observer(
     const initWorkspaceBasedStores = React.useCallback(async () => {
       setLoading(true);
 
+      await applicationStore.load();
       await workspaceStore.load(currentWorkspace.id);
-      await labelsStore.load();
       await integrationAccountsStore.load();
 
       await pagesStore.load();

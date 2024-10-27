@@ -1,9 +1,12 @@
 'use client';
 
-import { buttonVariants } from '@sigma/ui/components/button';
+import { Button, buttonVariants } from '@sigma/ui/components/button';
 import { cn } from '@sigma/ui/lib/utils';
+import { useApplication } from 'hooks/application';
+import { observer } from 'mobx-react-lite';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import type { TabViewType } from 'store/application';
 
 interface NavProps {
   links: Array<{
@@ -11,46 +14,26 @@ interface NavProps {
     label?: string;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     icon?: any;
-    href: string;
+    href: TabViewType;
     count?: number;
     activePaths?: string[];
   }>;
 }
 
-export function checkIsActive(
-  pathname: string,
-  href: string,
-  activePaths: string[],
-): boolean {
-  if (pathname.includes(href)) {
-    return true;
-  }
-
-  if (activePaths && activePaths.length > 0) {
-    return (
-      activePaths.filter((path: string) => {
-        return pathname.includes(path);
-      }).length > 0
-    );
-  }
-
-  return false;
-}
-
-export function Nav({ links }: NavProps) {
-  const pathname = usePathname();
+export const Nav = observer(({ links }: NavProps) => {
+  const { activeTab: tab, updateTabType } = useApplication();
 
   return (
     <nav className="grid gap-0.5">
       {links.map((link, index) => {
-        const isActive = checkIsActive(pathname, link.href, link.activePaths);
+        const isActive = tab.type === link.href;
 
         return (
           <div className="flex gap-1 items-center " key={index}>
-            <Link
-              href={link.href}
+            <Button
+              onClick={() => updateTabType(link.href)}
+              variant="link"
               className={cn(
-                buttonVariants({ variant: 'link' }),
                 'flex items-center gap-1 justify-between text-foreground bg-grayAlpha-100 w-fit',
                 isActive && 'bg-accent text-accent-foreground',
               )}
@@ -62,7 +45,7 @@ export function Nav({ links }: NavProps) {
                   <span className={cn('ml-auto')}>{link.label}</span>
                 )}
               </div>
-            </Link>
+            </Button>
             {link.count > 0 && (
               <div className="h-6 flex items-center px-1 rounded text-xs bg-accent text-accent-foreground">
                 {link.count}
@@ -73,4 +56,4 @@ export function Nav({ links }: NavProps) {
       })}
     </nav>
   );
-}
+});

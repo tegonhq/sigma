@@ -26,6 +26,12 @@ const TreeC: React.FC<TreeCProps> = ({
     defaultSelectedKey,
   );
 
+  React.useEffect(() => {
+    if (selectedKey !== defaultSelectedKey) {
+      setSelectedKey(defaultSelectedKey);
+    }
+  }, [defaultSelectedKey]);
+
   const handleExpand = (expandedKeys: string[]) => {
     setExpandedKeys(expandedKeys);
   };

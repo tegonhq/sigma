@@ -2,13 +2,14 @@
 
 import { Loader } from '@sigma/ui/components/loader';
 import { useToast } from '@sigma/ui/components/use-toast';
-import { AuthGuard } from 'common/wrappers';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React from 'react';
 import {
   consumeCode,
   clearLoginAttemptInfo,
 } from 'supertokens-web-js/recipe/passwordless';
+
+import { AuthGuard } from 'common/wrappers';
 
 export function Verify() {
   const router = useRouter();

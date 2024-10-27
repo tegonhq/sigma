@@ -14,6 +14,7 @@ import { Workspace } from './models';
 export const WorkspaceStore: IAnyStateTreeNode = types
   .model({
     workspace: types.union(Workspace, types.undefined),
+    table: 'workspaces',
   })
   .actions((self) => {
     const update = (workspace: WorkspaceType) => {

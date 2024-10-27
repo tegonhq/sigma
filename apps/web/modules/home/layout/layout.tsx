@@ -1,13 +1,12 @@
 'use client';
 
 import { RiArchive2Line } from '@remixicon/react';
-import { Button } from '@sigma/ui/components/button';
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from '@sigma/ui/components/resizable';
-import { DocumentLine, Inbox, SidebarLine } from '@sigma/ui/icons';
+import { DocumentLine, Inbox } from '@sigma/ui/icons';
 import { cn } from '@sigma/ui/lib/utils';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
@@ -18,11 +17,12 @@ import { AllProviders } from 'common/wrappers/all-providers';
 import { useContextStore } from 'store/global-context-provider';
 
 import { BottomBar } from './bottom-bar';
-import { Header } from './header';
 import { Nav } from './nav';
 import { PageList } from './page-list';
+import { Tabs } from './tabs';
 import { WorkspaceDropdown } from './workspace-dropdown';
 import { IssuesLine } from '../../../../../packages/ui/src/icons/issues-line';
+import { TabViewType } from 'store/application';
 
 interface LayoutProps {
   defaultCollapsed?: boolean;
@@ -40,21 +40,16 @@ export const AppLayoutChild = observer(({ children }: LayoutProps) => {
             <ResizablePanel
               maxSize={25}
               defaultSize={10}
+              id="sidebar"
               minSize={10}
               collapsible
+              order={1}
               collapsedSize={10}
             >
               <div className="min-w-[180px] flex flex-col h-full">
-                <div className="flex flex-col py-4 pt-7 px-6">
+                <div className="flex flex-col py-4 pt-4 px-6">
                   <div className="flex justify-between items-center">
                     <WorkspaceDropdown />
-                    <Button
-                      variant="link"
-                      size="sm"
-                      onClick={() => applicationStore.updateSideBar(true)}
-                    >
-                      <SidebarLine size={20} />
-                    </Button>
                   </div>
                 </div>
                 <div className="mt-4 grow">
@@ -64,22 +59,17 @@ export const AppLayoutChild = observer(({ children }: LayoutProps) => {
                         {
                           title: 'My day',
                           icon: Inbox,
-                          href: 'my',
+                          href: TabViewType.MY_DAY,
                         },
                         {
                           title: 'All tasks',
                           icon: IssuesLine,
-                          href: 'my/tasks',
+                          href: TabViewType.MY_TASKS,
                         },
                         {
                           title: 'All pages',
                           icon: DocumentLine,
-                          href: 'my/pages',
-                        },
-                        {
-                          title: 'Archive',
-                          icon: RiArchive2Line,
-                          href: 'my/archive',
+                          href: TabViewType.MY_PAGES,
                         },
                       ]}
                     />
@@ -90,11 +80,13 @@ export const AppLayoutChild = observer(({ children }: LayoutProps) => {
               </div>
             </ResizablePanel>
           )}
+
           <ResizableHandle />
           <ResizablePanel
             collapsible
             collapsedSize={0}
-            className="flex items-center justify-center"
+            order={2}
+            className="flex items-center justify-center pl-0"
           >
             <div
               className={cn(
@@ -105,10 +97,8 @@ export const AppLayoutChild = observer(({ children }: LayoutProps) => {
               )}
             >
               <main className="flex flex-col h-[100vh]">
-                <ContentBox>
-                  <Header />
-                  {children}
-                </ContentBox>
+                <Tabs />
+                <ContentBox>{children}</ContentBox>
               </main>
             </div>
           </ResizablePanel>

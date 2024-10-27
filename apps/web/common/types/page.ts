@@ -8,4 +8,6 @@ export interface PageType {
   sortOrder: string;
   workspaceId: string;
   parentId: string | null;
+
+  type: string;
 }

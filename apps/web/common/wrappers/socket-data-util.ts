@@ -1,7 +1,7 @@
 import type { SyncActionRecord } from 'common/types';
 
 import { saveIntegrationAccountData } from 'store/integration-accounts';
-import { saveLabelData } from 'store/labels';
+
 import { MODELS } from 'store/models';
 import { savePageData } from 'store/pages';
 import { saveStatusData } from 'store/status';
@@ -16,10 +16,6 @@ export async function saveSocketData(
   await Promise.all(
     data.map(async (record: SyncActionRecord) => {
       switch (record.modelName) {
-        case MODELS.Label: {
-          return await saveLabelData([record], MODEL_STORE_MAP[MODELS.Label]);
-        }
-
         case MODELS.Workspace: {
           return await saveWorkspaceData(
             [record],
@@ -35,7 +31,7 @@ export async function saveSocketData(
         }
 
         case MODELS.Page: {
-          return await savePageData([record], MODEL_STORE_MAP[MODELS.Status]);
+          return await savePageData([record], MODEL_STORE_MAP[MODELS.Page]);
         }
 
         case MODELS.Status: {

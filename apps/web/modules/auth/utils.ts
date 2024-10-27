@@ -52,7 +52,7 @@ export function useSupertokenFunctions() {
 
   async function handleOTPInput(otp: string) {
     try {
-      let response = await consumeCode({
+      const response = await consumeCode({
         userInputCode: otp,
       });
 
@@ -74,10 +74,10 @@ export function useSupertokenFunctions() {
         toast({
           variant: 'destructive',
           title: 'Error!',
-          description:
-            'Wrong OTP! Please try again. Number of attempts left: ' +
-            (response.maximumCodeInputAttempts -
-              response.failedCodeInputAttemptCount),
+          description: `Wrong OTP! Please try again. Number of attempts left: ${
+            response.maximumCodeInputAttempts -
+            response.failedCodeInputAttemptCount
+          }`,
         });
       } else if (response.status === 'EXPIRED_USER_INPUT_CODE_ERROR') {
         // it can come here if the entered OTP was correct, but has expired because

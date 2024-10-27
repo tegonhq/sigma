@@ -15,6 +15,7 @@ export const StatusesStore: IAnyStateTreeNode = types
   .model({
     statuses: types.array(Status),
     workspaceId: types.union(types.string, types.undefined),
+    table: 'statues',
   })
   .actions((self) => {
     const update = (status: StatusType, id: string) => {

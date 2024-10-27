@@ -21,7 +21,7 @@ export function AuthGuard(props: Props): React.ReactElement {
 
   async function checkForSession() {
     if (await Session.doesSessionExist()) {
-      router.replace('/my');
+      router.replace('/home');
     } else {
       setLoading(false);
     }

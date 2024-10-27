@@ -12,13 +12,12 @@ import {
   IntegrationAccountsStore,
   type IntegrationAccountsStoreType,
 } from './integration-accounts';
-import { LabelsStore, type LabelsStoreType } from './labels';
+
 import { PagesStore, type PagesStoreType } from './pages';
 import { StatusesStore, type StatusesStoreType } from './status';
 import { WorkspaceStore, type WorkspaceStoreType } from './workspace';
 
 const StoreContextModel = types.model({
-  labelsStore: LabelsStore,
   workspaceStore: WorkspaceStore,
   integrationAccountsStore: IntegrationAccountsStore,
   applicationStore: ApplicationStore,
@@ -27,12 +26,7 @@ const StoreContextModel = types.model({
 });
 
 export const storeContextStore = StoreContextModel.create({
-  labelsStore: {
-    labels: [],
-    workspaceId: undefined,
-  },
-
-  applicationStore: defaultApplicationStoreValue,
+  applicationStore: defaultApplicationStoreValue as any,
 
   workspaceStore: {
     workspace: undefined,
@@ -53,7 +47,6 @@ export const storeContextStore = StoreContextModel.create({
 });
 
 export interface StoreContextInstanceType {
-  labelsStore: LabelsStoreType;
   applicationStore: ApplicationStoreType;
   workspaceStore: WorkspaceStoreType;
   integrationAccountsStore: IntegrationAccountsStoreType;
@@ -68,5 +61,6 @@ export function useContextStore(): StoreContextInstanceType {
   if (store === null) {
     throw new Error('Store cannot be null, please add a context provider');
   }
+
   return store;
 }

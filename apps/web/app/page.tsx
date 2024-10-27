@@ -14,9 +14,8 @@ export function Home() {
   const router = useRouter();
 
   React.useEffect(() => {
-    console.log(user);
     if (user?.workspace) {
-      router.replace('/my');
+      router.replace('/home');
     }
 
     // Check if they have invites

@@ -20,7 +20,6 @@ export const SocketDataSyncWrapper: React.FC<Props> = observer(
 
     const {
       workspaceStore,
-      labelsStore,
       integrationAccountsStore,
       pagesStore,
       statusesStore,
@@ -53,7 +52,6 @@ export const SocketDataSyncWrapper: React.FC<Props> = observer(
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const MODEL_STORE_MAP = {
-        [MODELS.Label]: labelsStore,
         [MODELS.Workspace]: workspaceStore,
         [MODELS.IntegrationAccount]: integrationAccountsStore,
         [MODELS.Status]: statusesStore,

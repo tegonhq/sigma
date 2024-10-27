@@ -11,6 +11,8 @@ import { loggingMiddleware } from 'common/middleware/logging.middleware';
 
 import { ALSModule } from 'modules/als/als.module';
 import { AuthModule } from 'modules/auth/auth.module';
+import { ContentModule } from 'modules/content/content.module';
+import { PagesModule } from 'modules/pages/pages.module';
 import { ReplicationModule } from 'modules/replication/replication.module';
 import { SyncActionsModule } from 'modules/sync-actions/sync-actions.module';
 import { UsersModule } from 'modules/users/users.module';
@@ -18,7 +20,6 @@ import { WorkspacesModule } from 'modules/workspaces/workspaces.module';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { PagesModule } from 'modules/pages/pages.module';
 
 @Module({
   imports: [
@@ -68,6 +69,7 @@ import { PagesModule } from 'modules/pages/pages.module';
     SyncActionsModule,
     ReplicationModule,
     PagesModule,
+    ContentModule,
   ],
   controllers: [AppController],
   providers: [

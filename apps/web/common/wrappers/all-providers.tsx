@@ -16,11 +16,11 @@ export const AllProviders = ({
     <SessionAuth>
       <UserDataWrapper>
         <DatabaseWrapper>
-          <BootstrapWrapper>
-            <WorkspaceStoreInit>
+          <WorkspaceStoreInit>
+            <BootstrapWrapper>
               <SocketDataSyncWrapper>{children}</SocketDataSyncWrapper>
-            </WorkspaceStoreInit>
-          </BootstrapWrapper>
+            </BootstrapWrapper>
+          </WorkspaceStoreInit>
         </DatabaseWrapper>
       </UserDataWrapper>
     </SessionAuth>

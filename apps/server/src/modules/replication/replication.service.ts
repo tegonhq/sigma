@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ModelNameEnum } from '@sigma/types';
-
 import { Client } from 'pg';
 import {
   LogicalReplicationService,

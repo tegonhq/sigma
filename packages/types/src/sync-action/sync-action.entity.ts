@@ -3,7 +3,6 @@ import { Workspace } from '../workspace';
 export enum ModelNameEnum {
   IntegrationAccount = 'IntegrationAccount',
   IntegrationDefinitionV2 = 'IntegrationDefinitionV2',
-  Label = 'Label',
   User = 'User',
   Workspace = 'Workspace',
   Page = 'Page',
@@ -14,7 +13,6 @@ export const ModelName = {
   Template: 'Template',
   IntegrationAccount: 'IntegrationAccount',
   IntegrationDefinitionV2: 'IntegrationDefinitionV2',
-  Label: 'Label',
   User: 'User',
   Workspace: 'Workspace',
   Status: 'Status',

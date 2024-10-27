@@ -1,4 +1,6 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
+
+import { PageTypeEnum } from './page.entity';
 
 export class CreatePageDto {
   @IsString()
@@ -15,4 +17,8 @@ export class CreatePageDto {
 
   @IsString()
   sortOrder: string;
+
+  @IsString()
+  @IsEnum(['Default', 'Daily'])
+  type: PageTypeEnum;
 }

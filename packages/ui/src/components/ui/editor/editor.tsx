@@ -174,6 +174,8 @@ export const Editor = ({
         <EditorContent
           initialContent={getInitialValue()}
           extensions={getExtensions()}
+          shouldRerenderOnTransaction={false}
+          immediatelyRender={false}
           className={cn(
             'editor-container w-full min-w-full text-base sm:rounded-lg',
             className,

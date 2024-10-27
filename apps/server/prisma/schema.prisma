@@ -95,6 +95,10 @@ model Page {
   parent      Page?    @relation("ParentChild", fields: [parentId], references: [id])
   children    Page[]   @relation("ParentChild")
 
+  tags String[]
+
+  type PageType @default(Default)
+
   statusId    String? // Status
   status      Status? @relation(fields: [statusId], references: [id])
 
@@ -119,25 +123,6 @@ model PersonalAccessToken {
   workspaceId String
 
   @@unique([name, userId, token])
-}
-
-model Label {
-  id        String    @id @default(uuid())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deleted   DateTime?
-
-  name        String
-  color       String
-  description String?
-
-  workspace   Workspace @relation(fields: [workspaceId], references: [id])
-  workspaceId String
-  group       Label?    @relation("Group", fields: [groupId], references: [id])
-  groupId     String?
-  labels      Label[]   @relation("Group")
-
-  @@unique([name, workspaceId])
 }
 
 model Status {
@@ -232,7 +217,6 @@ model Workspace {
   actionsEnabled Boolean @default(true)
   preferences    Json?
 
-  label                 Label[]
   template              Template[]
   syncAction            SyncAction[]
   integrationAccount    IntegrationAccount[]
@@ -247,7 +231,6 @@ enum ModelName {
   IntegrationAccount
   IntegrationDefinitionV2
   Task
-  Label
   SyncAction
   User
   Workspace
@@ -267,4 +250,9 @@ enum AttachmentStatus {
   Uploaded
   Deleted
   External
+}
+
+enum PageType {
+  Daily
+  Default
 }

@@ -15,6 +15,7 @@ export const IntegrationAccountsStore: IAnyStateTreeNode = types
   .model({
     integrationAccounts: types.array(IntegrationAccount),
     workspaceId: types.union(types.string, types.undefined),
+    table: 'integrationAccounts',
   })
   .actions((self) => {
     const update = (integrationAccount: IntegrationAccountType, id: string) => {

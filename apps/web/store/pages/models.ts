@@ -12,4 +12,6 @@ export const Page = types.model({
 
   parentId: types.union(types.null, types.string),
   workspaceId: types.string,
+  tags: types.array(types.string),
+  type: types.enumeration(['Default', 'Daily']),
 });

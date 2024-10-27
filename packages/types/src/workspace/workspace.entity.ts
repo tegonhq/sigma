@@ -1,4 +1,3 @@
-import { Label } from '../label';
 import { Template } from '../template';
 
 export class Workspace {
@@ -10,6 +9,5 @@ export class Workspace {
   slug: string;
   icon: string | null;
   userId?: string | null;
-  label?: Label[];
   template?: Template[];
 }

@@ -21,6 +21,8 @@ export async function savePageData(
         sortOrder: record.data.sortOrder,
         parentId: record.data.parentId,
         workspaceId: record.data.workspaceId,
+        type: record.data.type,
+        tags: record.data.tags,
       };
 
       switch (record.action) {

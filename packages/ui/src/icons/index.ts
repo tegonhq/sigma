@@ -61,6 +61,8 @@ export * from './document-line';
 export * from './fullscreen-line';
 export * from './more-line';
 export * from './arrow-right';
+export * from './right-sidebar-closed';
+export * from './right-sidebar-open';
 
 export * from './team-line';
 export * from './issues-fill';

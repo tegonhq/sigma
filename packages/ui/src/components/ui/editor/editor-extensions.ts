@@ -30,7 +30,7 @@ const taskList = TaskList.configure({
 
 const taskItem = TaskItem.configure({
   HTMLAttributes: {
-    class: cx('flex items-start gap-1 my-2'),
+    class: cx('flex items-start gap-1 my-1'),
   },
   nested: true,
 });

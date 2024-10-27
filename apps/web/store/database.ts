@@ -1,5 +1,7 @@
 'use client';
 
+import type { ApplicationStoreType } from './application';
+
 import Dexie from 'dexie';
 
 import type {
@@ -7,38 +9,38 @@ import type {
   PageType,
   StatusType,
 } from 'common/types';
-import type { LabelType } from 'common/types';
+
 import type { WorkspaceType } from 'common/types';
 
 import { MODELS } from './models';
 
 export class SigmaDatabase extends Dexie {
   workspaces: Dexie.Table<WorkspaceType, string>;
-  labels: Dexie.Table<LabelType, string>;
   integrationAccounts: Dexie.Table<IntegrationAccountType, string>;
   pages: Dexie.Table<PageType, string>;
   statuses: Dexie.Table<StatusType, string>;
+  application: Dexie.Table<Partial<ApplicationStoreType>, string>;
 
   constructor(databaseName: string) {
     super(databaseName);
 
-    this.version(9).stores({
+    this.version(12).stores({
       [MODELS.Workspace]: 'id,createdAt,updatedAt,name,slug,userId',
-      [MODELS.Label]:
-        'id,createdAt,updatedAt,name,color,description,workspaceId,groupId',
+
       [MODELS.IntegrationAccount]:
         'id,createdAt,updatedAt,accountId,settings,personal,integratedById,integrationDefinitionId,workspaceId',
       [MODELS.Page]:
-        'id,createdAt,updatedAt,archived,title,description,parentId,sortOrder,workspaceId',
+        'id,createdAt,updatedAt,archived,title,description,parentId,sortOrder,workspaceId,tags,type',
       [MODELS.Status]:
         'id,createdAt,updatedAt,name,position,color,workspaceId,description',
+      Application: 'id,sidebarCollapsed,tabGroups,activeTabGroupId',
     });
 
     this.workspaces = this.table(MODELS.Workspace);
-    this.labels = this.table(MODELS.Label);
     this.integrationAccounts = this.table(MODELS.IntegrationAccount);
     this.pages = this.table(MODELS.Page);
     this.statuses = this.table(MODELS.Status);
+    this.application = this.table('Application');
   }
 }
 

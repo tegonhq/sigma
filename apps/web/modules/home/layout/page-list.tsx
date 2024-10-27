@@ -1,22 +1,20 @@
 'use client';
 
 import TreeC from '@sigma/ui/components/tree';
+import { useApplication } from 'hooks/application';
 import { observer } from 'mobx-react-lite';
-import { useParams, useRouter } from 'next/navigation';
 import * as React from 'react';
+import { TabViewType } from 'store/application';
 
 import { useContextStore } from 'store/global-context-provider';
 
 export const PageList = observer(() => {
   const containerRef = React.useRef<HTMLDivElement | null>(null);
-  const router = useRouter();
-  const { pageId } = useParams<{ pageId: string }>();
-
+  const { activeTab: tab, updateTabType } = useApplication();
   const { pagesStore } = useContextStore();
 
   const onSelect = (selectedKey: string) => {
-    console.log(selectedKey);
-    router.push(`/pages/${selectedKey}`);
+    updateTabType(TabViewType.PAGE, selectedKey);
   };
 
   return (
@@ -26,7 +24,7 @@ export const PageList = observer(() => {
         <TreeC
           initialTreeData={pagesStore.getPages()}
           onChange={onSelect}
-          defaultSelectedKey={pageId}
+          defaultSelectedKey={tab.entity_id}
         />
       </div>
     </div>

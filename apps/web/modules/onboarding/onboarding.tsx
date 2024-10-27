@@ -18,9 +18,8 @@ export function OnboardingComponent() {
   const router = useRouter();
 
   React.useEffect(() => {
-    console.log(user?.workspace);
     if (user?.workspace) {
-      router.replace(`/my`);
+      router.replace(`/home`);
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

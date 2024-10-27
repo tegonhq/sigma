@@ -12,6 +12,12 @@ interface PageTitleProps {
 export function PageTitle({ value, onChange }: PageTitleProps) {
   const [inputValue, setInputValue] = React.useState(value);
 
+  React.useEffect(() => {
+    if (value !== inputValue) {
+      setInputValue(value);
+    }
+  }, [value]);
+
   const debouncedUpdates = useDebouncedCallback(async (title: string) => {
     onChange && onChange(title);
   }, 500);
@@ -23,7 +29,7 @@ export function PageTitle({ value, onChange }: PageTitleProps) {
 
   return (
     <Textarea
-      className="border-0 px-6 py-0 font-medium resize-none bg-transparent no-scrollbar overflow-hidden outline-none focus-visible:ring-0 text-2xl"
+      className="border-0 px-0 py-0 font-medium resize-none bg-transparent no-scrollbar overflow-hidden outline-none focus-visible:ring-0 text-2xl"
       rows={1}
       cols={1}
       value={inputValue}

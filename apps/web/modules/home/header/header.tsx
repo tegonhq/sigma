@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -6,10 +8,11 @@ import {
 import { Button } from '@sigma/ui/components/ui/button';
 import { ArrowLeft, ArrowRight } from '@sigma/ui/icons';
 import { observer } from 'mobx-react-lite';
+import { useParams } from 'next/navigation';
 
-import { SidebarExpand } from './sidebar-expand';
-import { useParams, usePathname } from 'next/navigation';
 import { useContextStore } from 'store/global-context-provider';
+
+import { SidebarExpand } from '../layout/sidebar-expand';
 
 export const Header = observer(() => {
   const { pagesStore } = useContextStore();
@@ -27,9 +30,7 @@ export const Header = observer(() => {
 
   return (
     <header className="flex px-6 w-full items-center gap-2">
-      <div className="flex gap-2 py-4 items-center">
-        <SidebarExpand />
-
+      <div className="flex gap-2 py-2 items-center">
         <div className="flex">
           <Button variant="ghost" size="sm">
             <ArrowLeft size={16} />

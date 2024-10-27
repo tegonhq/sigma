@@ -32,6 +32,7 @@ ul[data-type='taskList'] li > label input[type='checkbox']::before {
   width: 0.5em;
   height: 0.5em;
   transform: scale(0);
+  border-radius: 10px;
   transition: 120ms transform ease-in-out;
   box-shadow: inset 1em 1em;
   transform-origin: center;

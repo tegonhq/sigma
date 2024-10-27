@@ -10,11 +10,11 @@ import { useWorkspace } from 'hooks/workspace';
 
 import { useBootstrapRecords, useDeltaRecords } from 'services/sync';
 
+import { useContextStore } from 'store/global-context-provider';
 import { MODELS } from 'store/models';
 import { UserContext } from 'store/user-context';
 
 import { saveSocketData } from './socket-data-util';
-import { useContextStore } from 'store/global-context-provider';
 
 interface Props {
   children: React.ReactElement;
@@ -27,11 +27,9 @@ export function BootstrapWrapper({ children }: Props) {
   const hashKey = `${workspace.id}__${user.id}`;
   const lastSequenceId =
     localStorage && localStorage.getItem(`lastSequenceId_${hashKey}`);
-  const { workspaceStore, labelsStore, integrationAccountsStore } =
-    useContextStore();
+  const { workspaceStore, integrationAccountsStore } = useContextStore();
 
   const MODEL_STORE_MAP = {
-    [MODELS.Label]: labelsStore,
     [MODELS.Workspace]: workspaceStore,
     [MODELS.IntegrationAccount]: integrationAccountsStore,
   };

@@ -29,12 +29,6 @@ export async function getWorkspaceId(
     case ModelName.Workspace:
       return modelId;
 
-    case ModelName.Label:
-      const label = await prisma.label.findUnique({
-        where: { id: modelId },
-      });
-      return label.workspaceId;
-
     case ModelName.Page:
       const page = await prisma.page.findUnique({
         where: { id: modelId },
@@ -72,7 +66,6 @@ export async function getModelData(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const modelMap: Record<ModelName, any> = {
     Workspace: prisma.workspace,
-    Label: prisma.label,
     Template: prisma.template,
     Status: prisma.status,
     Page: prisma.page,
