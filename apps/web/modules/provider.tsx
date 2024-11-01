@@ -1,16 +1,18 @@
 'use client';
 
-import { SuperTokensWrapper } from 'supertokens-auth-react';
-import posthog from 'posthog-js';
 import { ThemeProvider } from '@sigma/ui/components/theme-provider';
+import { Toaster } from '@sigma/ui/components/toaster';
+import { TooltipProvider } from '@sigma/ui/components/tooltip';
+import posthog from 'posthog-js';
 import { PostHogProvider } from 'posthog-js/react';
 import { HotkeysProvider } from 'react-hotkeys-hook';
-import { TooltipProvider } from '@sigma/ui/components/tooltip';
-import { StoreContext, storeContextStore } from 'store/global-context-provider';
-import { SCOPES } from 'common/shortcut-scopes';
 import { QueryClientProvider } from 'react-query';
-import { Toaster } from '@sigma/ui/components/toaster';
+import { SuperTokensWrapper } from 'supertokens-auth-react';
+
 import { useGetQueryClient } from 'common/lib';
+import { SCOPES } from 'common/shortcut-scopes';
+
+import { StoreContext, storeContextStore } from 'store/global-context-provider';
 
 interface ProviderProps {
   children: React.ReactNode;

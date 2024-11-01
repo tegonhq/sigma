@@ -1,22 +1,16 @@
 :root {
-  /* Ensure the outer tree node aligns properly */
-  .rc-tree-node-content-wrapper {
-    display: flex; /* Align children horizontally */
+  .rc-tree .rc-tree-treenode .rc-tree-node-content-wrapper {
+    display: inline-flex; /* Align children horizontally */
     align-items: center; /* Center them vertically */
     width: 100%; /* Take full width */
-    overflow: hidden; /* Prevent scrollbars */
     position: relative;
     display: inline-block;
     text-decoration: none;
     vertical-align: top;
+    position: relative;
     cursor: pointer;
   }
 
-  .rc-tree-node-content-wrapper > div {
-    background-color: var(--gray-500) !important;
-  }
-
-  /* Flex behavior for the title content */
   .rc-tree-title {
     flex: 1; /* Allow the title to take up remaining space */
     overflow: hidden; /* Prevent overflow */
@@ -37,5 +31,24 @@
     overflow: hidden; /* Truncate overflowing content */
     text-overflow: ellipsis; /* Apply ellipsis */
     white-space: nowrap; /* Prevent wrapping */
+  }
+
+  .rc-tree-node-content-wrapper > div {
+    background-color: var(--gray-700) !important;
+  }
+
+  .rc-tree .rc-tree-treenode.drop-target {
+    background-color: oklch(0% 0 0 / 6.27%) !important;
+  }
+
+  .rc-tree-indent {
+    display: inline-block;
+    vertical-align: bottom;
+    height: 10px;
+  }
+
+  .rc-tree-indent-unit {
+    display: inline-block;
+    width: 8px;
   }
 }

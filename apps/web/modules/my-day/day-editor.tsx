@@ -1,10 +1,5 @@
-import { PageTypeEnum } from '@sigma/types';
-import { observer } from 'mobx-react-lite';
-import React from 'react';
-import { useCreatePageMutation } from 'services/pages';
-import { useContextStore } from 'store/global-context-provider';
-import * as Y from 'yjs';
 import { HocuspocusProvider } from '@hocuspocus/provider';
+import { PageTypeEnum } from '@sigma/types';
 import {
   Editor,
   EditorExtensions,
@@ -12,7 +7,15 @@ import {
 } from '@sigma/ui/components/editor/index';
 import Collaboration from '@tiptap/extension-collaboration';
 import { format } from 'date-fns';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
+import * as Y from 'yjs';
+
 import type { PageType } from 'common/types';
+
+import { useCreatePageMutation } from 'services/pages';
+
+import { useContextStore } from 'store/global-context-provider';
 
 interface DayEditorProps {
   date: Date;
@@ -28,6 +31,7 @@ export const EditorWithPage = observer(({ page }: EditorWithPageProps) => {
 
   React.useEffect(() => {
     initPageSocket();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page.id]);
 
   const initPageSocket = async () => {
@@ -84,6 +88,7 @@ export const DayEditor = observer(({ date }: DayEditorProps) => {
         type: PageTypeEnum.Daily,
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateTitle, page]);
 
   if (!page) {

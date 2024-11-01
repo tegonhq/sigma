@@ -114,7 +114,6 @@ export const Editor = ({
   onFocus,
   onBlur,
   onCreate,
-  onSubmit,
   children,
   extensions = [],
   editable = true,
@@ -202,10 +201,8 @@ export const Editor = ({
 
             handleDOMEvents: {
               keydown: (_view, event) => {
-                if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
-                  onSubmit && onSubmit();
-                  event.preventDefault();
-                  return false;
+                if (event.key === 'Escape') {
+                  return editor.commands.blur();
                 }
                 return handleCommandNavigation(event);
               },

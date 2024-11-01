@@ -3,9 +3,11 @@ export interface TabType {
   entity_id: string;
   type: string;
   order: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any;
 
   // Functions
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   updateData: (data: any) => void;
   changeType: (type: TabViewType, entityId?: string) => void;
 }
@@ -31,11 +33,14 @@ export interface TabGroupType {
 export interface ApplicationStoreType {
   id: string;
   sidebarCollapsed: boolean;
-  tabGroups: Array<TabGroupType>;
+  rightScreenCollapsed: boolean;
+  tabGroups: TabGroupType[];
   activeTabGroupId: TabGroupType;
 
-  //Functions
+  // Functions
   getTabGroup: () => TabGroupType;
   getTabs: () => TabType[];
   load: () => Promise<void>;
+  updateRightScreen: (collapsed: boolean) => void;
+  updateSideBar: (collapsed: boolean) => void;
 }

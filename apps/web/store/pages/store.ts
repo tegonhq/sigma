@@ -6,7 +6,7 @@ import { sigmaDatabase } from 'store/database';
 
 import { Page } from './models';
 
-import fractionalIndex from 'fractional-index'; // Import the fractional-index package
+import { generateKeyBetween } from 'fractional-indexing'; // Import the fractional-index package
 import { format } from 'date-fns';
 import { PageTypeEnum } from '@sigma/types';
 
@@ -42,39 +42,15 @@ export const PagesStore: IAnyStateTreeNode = types
 
     const load = flow(function* () {
       const pages = yield sigmaDatabase.pages.toArray();
+      // Sort pages lexically by title before building the tree
+      const sortedPages: any = [...pages].sort((a, b) =>
+        a.sortOrder.localeCompare(b.sortOrder),
+      );
 
-      self.pages = pages;
+      self.pages = sortedPages;
     });
 
-    const getSortOrder = (
-      firstPageId: string | null,
-      nextPageId: string | null,
-    ) => {
-      const firstPage = firstPageId
-        ? self.pages.find((page) => page.id === firstPageId)
-        : null;
-      const nextPage = nextPageId
-        ? self.pages.find((page) => page.id === nextPageId)
-        : null;
-
-      if (!nextPage && !firstPage) {
-        return 'a';
-      }
-      // Calculate the new sort order using fractional-index
-      return fractionalIndex(firstPage?.sortOrder, nextPage?.sortOrder);
-    };
-
-    const getSortOrderForNewPage = () => {
-      const lastPage = self.pages[self.pages.length - 1];
-
-      if (!lastPage) {
-        return 'a';
-      }
-      // Calculate the new sort order using fractional-index
-      return fractionalIndex(lastPage?.sortOrder, null);
-    };
-
-    return { update, deleteById, load, getSortOrder, getSortOrderForNewPage };
+    return { update, deleteById, load };
   })
   .views((self) => ({
     getPages() {
@@ -128,10 +104,10 @@ export const PagesStore: IAnyStateTreeNode = types
       const lastPage = self.pages[self.pages.length - 1];
 
       if (!lastPage) {
-        return 'a';
+        return generateKeyBetween(null, null);
       }
       // Calculate the new sort order using fractional-index
-      return fractionalIndex(lastPage?.sortOrder, null);
+      return generateKeyBetween(lastPage?.sortOrder, null);
     },
   }));
 
@@ -150,7 +126,9 @@ export type PagesStoreType = {
   getPageWithId: (id: string) => PageType | undefined;
   getPages: () => Array<{
     key: string;
+    id: string;
     title: string;
     children?: any[];
+    sortOrder?: string;
   }>;
 };

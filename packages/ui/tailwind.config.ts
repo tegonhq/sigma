@@ -28,7 +28,6 @@ const config = {
       '2xl': '26px',
     },
     borderWidth: {
-      DEFAULT: '0.5px',
       '0': '0',
       '1': '1px',
       '2': '2px',
@@ -36,6 +35,7 @@ const config = {
       '4': '4px',
       '6': '6px',
       '8': '8px',
+      DEFAULT: '0.5px',
     },
     extend: {
       fontFamily: {
@@ -50,9 +50,9 @@ const config = {
         input: 'oklch(var(--input))',
         ring: 'oklch(var(--ring))',
         background: {
+          '2': 'oklch(var(--background-2) / <alpha-value>)',
+          '3': 'oklch(var(--background-3) / <alpha-value>)',
           DEFAULT: 'oklch(var(--background) / <alpha-value>)',
-          2: 'oklch(var(--background-2) / <alpha-value>)',
-          3: 'oklch(var(--background-3) / <alpha-value>)',
         },
         foreground: 'oklch(var(--foreground) / <alpha-value>)',
         primary: {
@@ -88,30 +88,30 @@ const config = {
           foreground: 'oklch(var(--popover-foreground) / <alpha-value>)',
         },
         gray: {
-          50: 'var(--gray-50)',
-          100: 'var(--gray-100)',
-          200: 'var(--gray-200)',
-          300: 'var(--gray-300)',
-          400: 'var(--gray-400)',
-          500: 'var(--gray-500)',
-          600: 'var(--gray-600)',
-          700: 'var(--gray-700)',
-          800: 'var(--gray-800)',
-          900: 'var(--gray-900)',
-          950: 'var(--gray-950)',
+          '50': 'var(--gray-50)',
+          '100': 'var(--gray-100)',
+          '200': 'var(--gray-200)',
+          '300': 'var(--gray-300)',
+          '400': 'var(--gray-400)',
+          '500': 'var(--gray-500)',
+          '600': 'var(--gray-600)',
+          '700': 'var(--gray-700)',
+          '800': 'var(--gray-800)',
+          '900': 'var(--gray-900)',
+          '950': 'var(--gray-950)',
         },
         grayAlpha: {
-          50: 'oklch(var(--grayAlpha-50))',
-          100: 'oklch(var(--grayAlpha-100))',
-          200: 'oklch(var(--grayAlpha-200))',
-          300: 'oklch(var(--grayAlpha-300))',
-          400: 'oklch(var(--grayAlpha-400))',
-          500: 'oklch(var(--grayAlpha-500))',
-          600: 'oklch(var(--grayAlpha-600))',
-          700: 'oklch(var(--grayAlpha-700))',
-          800: 'oklch(var(--grayAlpha-800))',
-          900: 'oklch(var(--grayAlpha-900))',
-          950: 'oklch(var(--grayAlpha-950))',
+          '50': 'oklch(var(--grayAlpha-50))',
+          '100': 'oklch(var(--grayAlpha-100))',
+          '200': 'oklch(var(--grayAlpha-200))',
+          '300': 'oklch(var(--grayAlpha-300))',
+          '400': 'oklch(var(--grayAlpha-400))',
+          '500': 'oklch(var(--grayAlpha-500))',
+          '600': 'oklch(var(--grayAlpha-600))',
+          '700': 'oklch(var(--grayAlpha-700))',
+          '800': 'oklch(var(--grayAlpha-800))',
+          '900': 'oklch(var(--grayAlpha-900))',
+          '950': 'oklch(var(--grayAlpha-950))',
         },
         red: {
           '50': '#fdf3f3',
@@ -152,6 +152,18 @@ const config = {
           '900': '#6b4118',
           '950': '#3e220a',
         },
+        sidebar: {
+          DEFAULT: 'oklch(var(--background-2) / <alpha-value>)',
+          foreground: 'oklch(var(--foreground) / <alpha-value>)',
+          primary: 'oklch(var(--primary) / <alpha-value>)',
+          'primary-foreground':
+            'oklch(var(--primary-foreground) / <alpha-value>)',
+          accent: 'oklch(var(--accent) / <alpha-value>)',
+          'accent-foreground':
+            'oklch(var(--accent-foreground) / <alpha-value>)',
+          border: 'oklch(var(--border))',
+          ring: 'oklch(var(--ring))',
+        },
       },
       borderRadius: {
         DEFAULT: 'var(--radius)',
@@ -160,17 +172,25 @@ const config = {
         sm: 'calc(var(--radius) - 2px)',
       },
       boxShadow: {
-        1: '0px 6px 20px 0px rgba(0, 0, 0, 0.15), 0px 0px 2px 0px rgba(0, 0, 0, 0.2)',
-        2: '',
+        '1': '0px 6px 20px 0px rgba(0, 0, 0, 0.15), 0px 0px 2px 0px rgba(0, 0, 0, 0.2)',
+        '2': '',
       },
       keyframes: {
         'accordion-down': {
-          from: { height: '0' },
-          to: { height: 'var(--radix-accordion-content-height)' },
+          from: {
+            height: '0',
+          },
+          to: {
+            height: 'var(--radix-accordion-content-height)',
+          },
         },
         'accordion-up': {
-          from: { height: 'var(--radix-accordion-content-height)' },
-          to: { height: '0' },
+          from: {
+            height: 'var(--radix-accordion-content-height)',
+          },
+          to: {
+            height: '0',
+          },
         },
       },
       animation: {

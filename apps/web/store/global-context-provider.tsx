@@ -12,7 +12,6 @@ import {
   IntegrationAccountsStore,
   type IntegrationAccountsStoreType,
 } from './integration-accounts';
-
 import { PagesStore, type PagesStoreType } from './pages';
 import { StatusesStore, type StatusesStoreType } from './status';
 import { WorkspaceStore, type WorkspaceStoreType } from './workspace';
@@ -21,7 +20,7 @@ const StoreContextModel = types.model({
   workspaceStore: WorkspaceStore,
   integrationAccountsStore: IntegrationAccountsStore,
   applicationStore: ApplicationStore,
-  statuesStore: StatusesStore,
+  statusesStore: StatusesStore,
   pagesStore: PagesStore,
 });
 
@@ -41,7 +40,7 @@ export const storeContextStore = StoreContextModel.create({
     pages: [],
   },
 
-  statuesStore: {
+  statusesStore: {
     statues: [],
   },
 });

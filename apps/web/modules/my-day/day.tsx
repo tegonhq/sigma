@@ -1,21 +1,20 @@
 import { ScrollArea } from '@sigma/ui/components/scroll-area';
 import { format } from 'date-fns';
+import { observer } from 'mobx-react-lite';
 import React from 'react';
 
-import { PageEditor } from 'modules/pages/page-editor';
+import { useTab } from 'hooks/application/use-tab';
 
-import { Navigation } from './navigation';
-import { observer } from 'mobx-react-lite';
-import { useApplication } from 'hooks/application';
 import { DayEditor } from './day-editor';
+import { Navigation } from './navigation';
 
 // A component to render individual date items.
 export const Day = observer(() => {
-  const { activeTab: tab } = useApplication();
+  const { tab } = useTab();
   const { date = new Date() } = tab.data;
 
   return (
-    <ScrollArea className="grow flex h-full justify-center w-full mt-3">
+    <ScrollArea className="grow flex h-full justify-center w-full p-6">
       <div className="flex h-full justify-center w-full">
         <div className="grow flex flex-col gap-1 h-full max-w-[97ch] pt-10">
           <Navigation />

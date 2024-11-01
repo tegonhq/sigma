@@ -1,6 +1,7 @@
 import { Calendar } from '@sigma/ui/components/calendar';
-import { useApplication } from 'hooks/application';
 import { observer } from 'mobx-react-lite';
+
+import { useApplication } from 'hooks/application';
 
 export const RightSidebar = observer(() => {
   const { updateTabData, activeTab: tab } = useApplication();
@@ -18,7 +19,6 @@ export const RightSidebar = observer(() => {
           onSelect={(date: Date) => {
             updateDate(date);
           }}
-          className=""
         />
       </div>
     </div>

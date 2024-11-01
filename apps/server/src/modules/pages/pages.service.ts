@@ -27,7 +27,9 @@ export class PagesService {
       where: { id: pageId },
       data: {
         ...pageData,
-        ...(parentId && { parent: { connect: { id: parentId } } }),
+        ...(parentId
+          ? { parent: { connect: { id: parentId } } }
+          : { parentId }),
       },
     });
   }

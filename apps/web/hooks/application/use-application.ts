@@ -34,8 +34,10 @@ export const useApplication = () => {
   };
 
   // Tab related function
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const updateTabData = (data: any) => {
     tabGroup.activeTab.updateData(data);
+    saveSnapshot();
   };
 
   const updateTabType = (type: TabViewType, entityId?: string) => {
@@ -53,5 +55,9 @@ export const useApplication = () => {
     setActiveTab,
     updateTabData,
     updateTabType,
+    sidebarCollapsed: applicationStore.sidebarCollapsed,
+    rightScreenCollapsed: applicationStore.rightScreenCollapsed,
+    updateRightScreen: applicationStore.updateRightScreen,
+    updateSideBar: applicationStore.updateSideBar,
   };
 };

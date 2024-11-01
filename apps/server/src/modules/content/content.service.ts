@@ -1,5 +1,6 @@
 import { Database } from '@hocuspocus/extension-database';
 import { Server } from '@hocuspocus/server';
+import { TiptapTransformer } from '@hocuspocus/transformer';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { PrismaService } from 'nestjs-prisma';
 
@@ -27,10 +28,15 @@ export class ContentService implements OnModuleInit {
             return page.descriptionBinary;
           },
           // … and a Promise to store data:
-          store: async ({ documentName, state }) => {
+          store: async ({ documentName, document, state }) => {
             await this.prisma.page.update({
               where: { id: documentName },
-              data: { descriptionBinary: state },
+              data: {
+                descriptionBinary: state,
+                description: JSON.stringify(
+                  TiptapTransformer.fromYdoc(document).default,
+                ),
+              },
             });
           },
         }),

@@ -11,17 +11,22 @@ interface TreeCProps {
     key: string;
     title: string;
     children?: any[];
+    sortOrder?: string;
   }>;
   defaultSelectedKey?: string;
   onChange?: (selectedKey: string) => void;
+  onDrop?: (dropKey: string, dragKey: string, dropPostition: number) => void;
 }
 
-const TreeC: React.FC<TreeCProps> = ({
+export const TreeC: React.FC<TreeCProps> = ({
   initialTreeData,
   onChange,
   defaultSelectedKey,
+  onDrop: onDropParent,
 }) => {
-  const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
+  const [expandedKeys, setExpandedKeys] = useState<string[]>([
+    defaultSelectedKey,
+  ]);
   const [selectedKey, setSelectedKey] = useState<string | undefined>(
     defaultSelectedKey,
   );
@@ -51,6 +56,16 @@ const TreeC: React.FC<TreeCProps> = ({
     );
   };
 
+  const onDrop = (info: any) => {
+    const dropKey = info.node.key;
+    const dragKey = info.dragNode.key;
+    const dropPos = info.node.pos.split('-');
+    const dropPosition =
+      info.dropPosition - Number(dropPos[dropPos.length - 1]);
+
+    onDropParent && onDropParent(dropKey, dragKey, dropPosition);
+  };
+
   const renderTreeNodes = (data: any[], depth: number) =>
     data.map((item) => {
       const paddingLeft = depth === 0 ? '0.25rem' : `${depth * 5 * 0.25}rem`;
@@ -65,15 +80,19 @@ const TreeC: React.FC<TreeCProps> = ({
           style={{
             paddingLeft,
           }}
+          onClick={() => {
+            handleSelect([item.id]);
+          }}
         >
           {hasChildren ? ( // Use hasChildren instead of item.children
             <>
               <Button
                 variant="link"
                 size="xs"
-                className="px-0 pr-0.5 hidden group-hover/button:block h-4 w-4"
+                className="px-0 pr-0.5 h-4 w-4 hidden group-hover/button:block"
                 onClick={(e) => {
                   e.preventDefault();
+                  e.stopPropagation();
                   handleIconClick(item.id);
                 }}
               >
@@ -95,7 +114,7 @@ const TreeC: React.FC<TreeCProps> = ({
               />
             </>
           ) : (
-            <DocumentLine className="flex-shrink-0" />
+            <DocumentLine className="flex-shrink-0" size={16} />
           )}
           <span className="truncate flex-1">{item.title ?? 'Untitled'}</span>
         </div>
@@ -113,7 +132,9 @@ const TreeC: React.FC<TreeCProps> = ({
                 : 'hover:bg-grayAlpha-100',
             )}
             title={title}
+            pos={item.sortOrder}
             key={item.id}
+            expanded={isSelected}
           >
             {renderTreeNodes(item.children, depth + 1)}
           </TreeNode>
@@ -122,7 +143,7 @@ const TreeC: React.FC<TreeCProps> = ({
 
       return (
         <TreeNode
-          dragOver
+          dragOver={false}
           className={cn(
             'flex items-center rounded flex-nowrap px-1 mt-0.5',
             isSelected
@@ -130,8 +151,9 @@ const TreeC: React.FC<TreeCProps> = ({
               : 'hover:bg-grayAlpha-100',
           )}
           title={title}
+          pos={item.sortOrder}
           key={item.id}
-          isLeaf
+          isLeaf={false}
         />
       );
     });
@@ -144,11 +166,9 @@ const TreeC: React.FC<TreeCProps> = ({
       onExpand={handleExpand}
       expandedKeys={expandedKeys}
       selectedKeys={[selectedKey]}
-      onSelect={handleSelect}
+      onDrop={onDrop}
     >
       {renderTreeNodes(initialTreeData, 0)}
     </Tree>
   );
 };
-
-export default TreeC;

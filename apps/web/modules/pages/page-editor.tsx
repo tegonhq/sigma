@@ -1,27 +1,32 @@
+import { HocuspocusProvider } from '@hocuspocus/provider';
 import {
   Editor,
   EditorExtensions,
   suggestionItems,
 } from '@sigma/ui/components/editor/index';
 import Collaboration from '@tiptap/extension-collaboration';
+import React from 'react';
 import * as Y from 'yjs';
 
 import type { PageType } from 'common/types';
-import { HocuspocusProvider } from '@hocuspocus/provider';
-import React from 'react';
-import { Loader } from '@sigma/ui/components/loader';
 
 interface PageEditorProps {
   page: PageType;
   onDescriptionChange: (description: string) => void;
+  autoFocus?: boolean;
 }
 
-export function PageEditor({ page, onDescriptionChange }: PageEditorProps) {
+export function PageEditor({
+  page,
+  onDescriptionChange,
+  autoFocus,
+}: PageEditorProps) {
   const [provider, setProvider] = React.useState(undefined);
   const [doc, setDoc] = React.useState(undefined);
 
   React.useEffect(() => {
     initPageSocket();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page.id]);
 
   const initPageSocket = async () => {
@@ -49,14 +54,13 @@ export function PageEditor({ page, onDescriptionChange }: PageEditorProps) {
 
   return (
     <Editor
-      value={page.description}
       onChange={onDescriptionChange}
       extensions={[
         Collaboration.configure({
           document: doc,
         }),
       ]}
-      autoFocus
+      autoFocus={autoFocus}
       className="min-h-[50px] my-2 text-md"
     >
       <EditorExtensions suggestionItems={suggestionItems}></EditorExtensions>

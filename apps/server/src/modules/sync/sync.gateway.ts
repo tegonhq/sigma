@@ -31,7 +31,6 @@ export class SyncGateway implements OnGatewayInit, OnGatewayConnection {
   }
 
   async handleConnection(client: Socket) {
-    console.log('asdf');
     this.logger.info({
       message: `Connection is made by ${client.id}`,
       where: `SyncGateway.handleConnection`,

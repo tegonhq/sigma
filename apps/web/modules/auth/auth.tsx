@@ -12,12 +12,14 @@ import {
   FormMessage,
 } from '@sigma/ui/components/form';
 import { Input } from '@sigma/ui/components/input';
+import { ArrowRight } from '@sigma/ui/icons';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import { AuthLayout } from './layout';
 import { AuthGuard } from 'common/wrappers';
+
+import { AuthLayout } from './layout';
 import { useSupertokenFunctions } from './utils';
 
 export const AuthSchema = z.object({
@@ -112,7 +114,15 @@ export function Auth() {
                     isLoading={loading}
                     variant="secondary"
                   >
-                    <RiMailFill size={18} /> Send OTP
+                    {emailSent ? (
+                      <>
+                        Continue <ArrowRight size={18} />
+                      </>
+                    ) : (
+                      <>
+                        <RiMailFill size={18} /> Send OTP
+                      </>
+                    )}
                   </Button>
                 </div>
               </form>

@@ -1,12 +1,13 @@
 import { applySnapshot, flow, types, type Instance } from 'mobx-state-tree';
 import { v4 as uuidv4 } from 'uuid'; // Make sure to install and import uuid
 
+import { sigmaDatabase } from 'store/database';
+
 import {
   type ApplicationStoreType,
   type TabType,
   type TabGroupType,
 } from './types';
-import { sigmaDatabase } from 'store/database';
 
 const initialId = uuidv4();
 
@@ -20,12 +21,13 @@ const Tab = types
       'my_pages',
       'my_tasks',
       'my_events',
-      'new',
+      'empty',
     ]),
     order: types.number,
     data: types.frozen(),
   })
   .actions((self) => ({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     updateData(data: any) {
       self.data = { ...self.data, ...data };
     },
@@ -77,8 +79,13 @@ const TabGroup = types
 
       if (tab !== undefined) {
         if (self.activeTab === tab) {
-          self.activeTab =
-            self.tabs.length > 0 ? self.tabs[index + 1] : undefined;
+          if (self.tabs.length === 1) {
+            self.activeTab = undefined;
+          } else {
+            const nextIndex =
+              index + 1 < self.tabs.length ? index + 1 : index - 1;
+            self.activeTab = self.tabs[nextIndex];
+          }
         }
         self.tabs.splice(index, 1);
       }
@@ -87,9 +94,11 @@ const TabGroup = types
 
 export const defaultApplicationStoreValue: {
   sidebarCollapsed: boolean;
+  rightScreenCollapsed: boolean;
   tabGroups: Array<Instance<typeof TabGroup>>;
 } = {
   sidebarCollapsed: false,
+  rightScreenCollapsed: true,
   tabGroups: [
     TabGroup.create({
       id: uuidv4(),
@@ -101,6 +110,13 @@ export const defaultApplicationStoreValue: {
           order: 0,
           data: { date: new Date() },
         },
+        {
+          id: uuidv4(),
+          entity_id: 'empty',
+          type: 'empty',
+          order: 0,
+          data: {},
+        },
       ],
       activeTab: initialId,
     }),
@@ -110,6 +126,7 @@ export const defaultApplicationStoreValue: {
 const ApplicationStore = types
   .model({
     sidebarCollapsed: types.boolean,
+    rightScreenCollapsed: types.boolean,
     tabGroups: types.array(TabGroup),
     activeTabGroupId: types.maybe(types.reference(TabGroup)),
     id: initialId,
@@ -119,6 +136,10 @@ const ApplicationStore = types
       self.sidebarCollapsed = collapsed;
     };
 
+    const updateRightScreen = (collapsed: boolean) => {
+      self.rightScreenCollapsed = collapsed;
+    };
+
     const load = flow(function* () {
       const data = yield sigmaDatabase.application.toArray();
       if (data[0] && data[0].id !== self.id) {
@@ -126,7 +147,7 @@ const ApplicationStore = types
       }
     });
 
-    return { load, updateSideBar };
+    return { load, updateSideBar, updateRightScreen };
   })
   .views((self) => ({
     getTabs() {
