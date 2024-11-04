@@ -29,7 +29,6 @@ model Attachment {
   workspaceId  String?
 }
 
-
 // Used to authenticate users from cli
 model AuthorizationCode {
   id        String    @id @default(uuid())
@@ -42,6 +41,39 @@ model AuthorizationCode {
   code                  String
 }
 
+model Conversation {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  context Json
+
+  user        User?      @relation(fields: [userId], references: [id])
+  userId      String
+  workspace   Workspace? @relation(fields: [workspaceId], references: [id])
+  workspaceId String?
+
+  ConversationHistory ConversationHistory[]
+}
+
+model ConversationHistory {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  message  String
+  userType UserType
+
+  files Json?
+
+  thoughts Json
+  userId   String?
+
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  conversationId String
+}
 
 model IntegrationAccount {
   id        String    @id @default(uuid())
@@ -69,46 +101,44 @@ model IntegrationDefinitionV2 {
   updatedAt DateTime  @updatedAt
   deleted   DateTime?
 
-  name         String     @unique
-  slug         String
-  description  String
-  icon         String
-  config       Json?
-  workspace    Workspace? @relation(references: [id], fields: [workspaceId])
-  workspaceId  String?
+  name        String     @unique
+  slug        String
+  description String
+  icon        String
+  config      Json?
+  workspace   Workspace? @relation(references: [id], fields: [workspaceId])
+  workspaceId String?
 
   IntegrationAccount IntegrationAccount[]
 }
 
-
 model Page {
   id        String    @id @default(uuid())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  deleted     DateTime?
-  archived    DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+  archived  DateTime?
 
-  title       String?
-  
+  title String?
+
   description       String?
   descriptionBinary Bytes?
 
-  sortOrder   String   // LexoRank value for order
-  parentId    String?     // Self-referencing: Points to another page (folder)
-  parent      Page?    @relation("ParentChild", fields: [parentId], references: [id])
-  children    Page[]   @relation("ParentChild")
+  sortOrder String // LexoRank value for order
+  parentId  String? // Self-referencing: Points to another page (folder)
+  parent    Page?   @relation("ParentChild", fields: [parentId], references: [id])
+  children  Page[]  @relation("ParentChild")
 
   tags String[]
 
   type PageType @default(Default)
 
-  statusId    String? // Status
-  status      Status? @relation(fields: [statusId], references: [id])
+  statusId String? // Status
+  status   Status? @relation(fields: [statusId], references: [id])
 
   workspaceId String
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
 }
-
 
 model PersonalAccessToken {
   id        String    @id @default(uuid())
@@ -139,7 +169,7 @@ model Status {
   position    Int
   color       String
 
-  workspace   Workspace?  @relation(fields: [workspaceId], references: [id])
+  workspace   Workspace? @relation(fields: [workspaceId], references: [id])
   workspaceId String
 
   pages Page[]
@@ -163,7 +193,6 @@ model SyncAction {
 
   @@unique([modelId, action])
 }
-
 
 model Template {
   id        String    @id @default(uuid())
@@ -200,9 +229,8 @@ model User {
   integrationAccount  IntegrationAccount[]
   attachment          Attachment[]
   personalAccessToken PersonalAccessToken[]
+  Conversation        Conversation[]
 }
-
-
 
 model Workspace {
   id        String    @id @default(uuid())
@@ -215,7 +243,7 @@ model Workspace {
   icon String?
 
   userId String? @unique
-  user   User? @relation(fields: [userId], references: [id])
+  user   User?   @relation(fields: [userId], references: [id])
 
   actionsEnabled Boolean @default(true)
   preferences    Json?
@@ -226,7 +254,8 @@ model Workspace {
   integrationDefinition IntegrationDefinitionV2[]
   attachments           Attachment[]
   pages                 Page[]
-  statuses               Status[]
+  statuses              Status[]
+  Conversation          Conversation[]
 }
 
 enum ModelName {
@@ -258,4 +287,9 @@ enum AttachmentStatus {
 enum PageType {
   Daily
   Default
+}
+
+enum UserType {
+  Agent
+  User
 }

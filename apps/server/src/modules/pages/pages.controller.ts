@@ -2,12 +2,15 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
   CreatePageDto,
+  GetPageByTitleDto,
   Page,
   PageRequestParamsDto,
   UpdatePageDto,
@@ -24,6 +27,23 @@ import { PagesService } from './pages.service';
 })
 export class PagesController {
   constructor(private pagesService: PagesService) {}
+  @Get(':pageId')
+  @UseGuards(AuthGuard)
+  async getPage(@Param() pageParams: PageRequestParamsDto): Promise<Page> {
+    return await this.pagesService.getPage(pageParams.pageId);
+  }
+
+  @Get()
+  @UseGuards(AuthGuard)
+  async getPageByTitle(
+    @Workspace() workspaceId: string,
+    @Query() getPageByTitleDto: GetPageByTitleDto,
+  ): Promise<Page> {
+    return await this.pagesService.getPageByTitle(
+      workspaceId,
+      getPageByTitleDto,
+    );
+  }
 
   @Post()
   @UseGuards(AuthGuard)
