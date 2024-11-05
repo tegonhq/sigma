@@ -4,11 +4,13 @@ import { Conversation } from '../conversation';
 export enum UserTypeEnum {
   Agent = 'Agent',
   User = 'User',
+  System = 'System',
 }
 
 export const UserType = {
   Agent: 'Agent',
   User: 'User',
+  System: 'System',
 };
 
 export type UserType = (typeof UserType)[keyof typeof UserType];
@@ -22,10 +24,10 @@ export class ConversationHistory {
   message: string;
   userType: UserType;
 
-  files?: JsonValue | null;
+  context?: JsonValue | null;
   thoughts: JsonValue;
   userId?: string | null;
 
-  conversation?: Conversation;
+  conversation?: Conversation | null;
   conversationId: string;
 }

@@ -1,9 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  Conversation,
-  CreateConversationDto,
-  UpdateConversationDto,
-} from '@sigma/types';
+import { Conversation, CreateConversationDto } from '@sigma/types';
 import { PrismaService } from 'nestjs-prisma';
 
 @Injectable()
@@ -15,22 +11,13 @@ export class ConversationService {
     workspaceId: string,
   ): Promise<Conversation> {
     return this.prisma.conversation.create({
-      data: {
-        ...conversationData,
-        workspaceId,
-      },
+      data: conversationData,
     });
   }
 
-  async updateConversation(
-    updateConversationData: UpdateConversationDto,
-    conversationId: string,
-  ): Promise<Conversation> {
-    return this.prisma.conversation.update({
+  async getConversation(conversationId: string): Promise<Conversation> {
+    return this.prisma.conversation.findUnique({
       where: { id: conversationId },
-      data: {
-        ...updateConversationData,
-      },
     });
   }
 

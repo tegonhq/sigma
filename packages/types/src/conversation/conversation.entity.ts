@@ -1,4 +1,3 @@
-import { JsonValue } from '../common';
 import { ConversationHistory } from '../conversation-history';
 import { User } from '../user';
 import { Workspace } from '../workspace';
@@ -9,12 +8,10 @@ export class Conversation {
   updatedAt: Date;
   deleted: Date | null;
 
-  context: JsonValue;
-
-  user?: User;
+  user?: User | null;
   userId: string;
 
-  workspace?: Workspace;
+  workspace?: Workspace | null;
   workspaceId: string;
 
   conversationHistory?: ConversationHistory[];

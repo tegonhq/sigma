@@ -12,6 +12,9 @@ import { loggingMiddleware } from 'common/middleware/logging.middleware';
 import { ALSModule } from 'modules/als/als.module';
 import { AuthModule } from 'modules/auth/auth.module';
 import { ContentModule } from 'modules/content/content.module';
+import { ConversationModule } from 'modules/conversation/conversation.module';
+import { ConversationHistoryModule } from 'modules/conversation-history/conversation-history.module';
+import { IntegrationAccountModule } from 'modules/integration-account/integration-account.module';
 import { PagesModule } from 'modules/pages/pages.module';
 import { ReplicationModule } from 'modules/replication/replication.module';
 import { SyncActionsModule } from 'modules/sync-actions/sync-actions.module';
@@ -78,6 +81,8 @@ import { OAuthCallbackModule } from 'modules/oauth-callback/oauth-callback.modul
     IntegrationAccountModule,
     IntegrationDefinitionModule,
     OAuthCallbackModule,
+    ConversationModule,
+    ConversationHistoryModule,
   ],
   controllers: [AppController],
   providers: [

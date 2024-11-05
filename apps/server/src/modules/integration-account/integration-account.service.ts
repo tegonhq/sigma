@@ -8,6 +8,8 @@ import { PrismaService } from 'nestjs-prisma';
 
 import { IntegrationAccountSelect } from './integration-account.interface';
 
+import { GetIntegrationAccountByNames } from '@sigma/types';
+
 @Injectable()
 export class IntegrationAccountService {
   constructor(private prisma: PrismaService) {}
@@ -90,6 +92,27 @@ export class IntegrationAccountService {
     return await this.prisma.integrationAccount.findFirst({
       where: { accountId, deleted: null },
       select: IntegrationAccountSelect,
+  async getIntegrationAccountsByName(
+    integrationdata: GetIntegrationAccountByNames,
+  ) {
+    return await this.prisma.integrationAccount.findMany({
+      where: {
+        workspaceId: integrationdata.workspaceId,
+        integrationDefinition: {
+          slug: {
+            in: integrationdata.integrations,
+          },
+        },
+      },
+    });
+  }
+
+  async getIntegrationAccounts(workspaceId: string) {
+    return await this.prisma.integrationAccount.findMany({
+      where: {
+        workspaceId,
+        deleted: null,
+      },
     });
   }
 }

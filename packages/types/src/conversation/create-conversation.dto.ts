@@ -1,9 +1,9 @@
-import { IsObject, IsString } from 'class-validator';
+import { IsString } from 'class-validator';
 
 export class CreateConversationDto {
-  @IsObject()
-  context: any;
-
   @IsString()
   userId: string;
+
+  @IsString()
+  workspaceId: string;
 }

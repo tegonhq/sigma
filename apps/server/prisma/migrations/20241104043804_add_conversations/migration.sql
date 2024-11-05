@@ -23,7 +23,7 @@ CREATE TABLE "ConversationHistory" (
     "message" TEXT NOT NULL,
     "userType" "UserType" NOT NULL,
     "files" JSONB,
-    "thoughts" JSONB NOT NULL,
+    "thoughts" JSONB,
     "userId" TEXT,
     "conversationId" TEXT NOT NULL,
 

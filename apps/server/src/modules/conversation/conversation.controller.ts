@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   Post,
   UseGuards,
@@ -10,17 +11,19 @@ import {
   Conversation,
   ConversationParamsDto,
   CreateConversationDto,
+<<<<<<< HEAD
   UpdateConversationDto,
+=======
+>>>>>>> 4ae9cfc (Feat: add activity and conversation related APIs)
 } from '@sigma/types';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
-import { Workspace } from 'modules/auth/session.decorator';
 
 import { ConversationService } from './conversation.service';
 
 @Controller({
   version: '1',
-  path: 'conversations',
+  path: 'conversation',
 })
 export class ConversationController {
   constructor(private conversationService: ConversationService) {}
@@ -28,23 +31,17 @@ export class ConversationController {
   @Post()
   @UseGuards(AuthGuard)
   async createConversation(
-    @Workspace() workspaceId: string,
     @Body() conversationData: CreateConversationDto,
   ): Promise<Conversation> {
-    return await this.conversationService.createConversation(
-      conversationData,
-      workspaceId,
-    );
+    return await this.conversationService.createConversation(conversationData);
   }
 
-  @Post(':conversationId')
+  @Get(':conversationId')
   @UseGuards(AuthGuard)
-  async updateConversation(
+  async getConversation(
     @Param() conversationParams: ConversationParamsDto,
-    @Body() conversationData: UpdateConversationDto,
   ): Promise<Conversation> {
-    return await this.conversationService.updateConversation(
-      conversationData,
+    return await this.conversationService.getConversation(
       conversationParams.conversationId,
     );
   }

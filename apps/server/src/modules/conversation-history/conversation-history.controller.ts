@@ -2,53 +2,79 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   Post,
   UseGuards,
 } from '@nestjs/common';
 import {
-  CreatePageDto,
-  Page,
-  PageRequestParamsDto,
-  UpdatePageDto,
+  ConversationContext,
+  ConversationHistory,
+  ConversationHistoryParamsDto,
+  CreateConversationHistoryDto,
+  UpdateConversationHistoryDto,
 } from '@sigma/types';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
-import { Workspace } from 'modules/auth/session.decorator';
 
-import { ConversationService } from './conversation-history.service';
+import { ConversationHistoryService } from './conversation-history.service';
 
 @Controller({
   version: '1',
   path: 'conversation_history',
 })
-export class ConversationController {
-  constructor(private conversationService: ConversationService) {}
+export class ConversationHistoryController {
+  constructor(private conversationHistoryService: ConversationHistoryService) {}
 
   @Post()
   @UseGuards(AuthGuard)
-  async createConversation(
-    @Workspace() workspaceId: string,
-    @Body() pageData: CreatePageDto,
-  ): Promise<Page> {
-    return await this.conversationService.createPage(pageData, workspaceId);
-  }
-
-  @Post(':pageId')
-  @UseGuards(AuthGuard)
-  async updateIssue(
-    @Param() pageParams: PageRequestParamsDto,
-    @Body() pageData: UpdatePageDto,
-  ): Promise<Page> {
-    return await this.conversationService.updatePage(
-      pageData,
-      pageParams.pageId,
+  async createConversationHistory(
+    @Body() conversationHistoryData: CreateConversationHistoryDto,
+  ): Promise<ConversationHistory> {
+    return await this.conversationHistoryService.createConversationHistory(
+      conversationHistoryData,
     );
   }
 
-  @Delete(':pageId')
+  @Post(':conversationHistoryId')
   @UseGuards(AuthGuard)
-  async deletePage(@Param() pageParams: PageRequestParamsDto): Promise<Page> {
-    return await this.conversationService.deletePage(pageParams.pageId);
+  async updateConversationHistory(
+    @Param() params: ConversationHistoryParamsDto,
+    @Body() conversationHistoryData: UpdateConversationHistoryDto,
+  ): Promise<ConversationHistory> {
+    return await this.conversationHistoryService.updateConversationHistory(
+      conversationHistoryData,
+      params.conversationHistoryId,
+    );
+  }
+
+  @Delete(':conversationHistoryId')
+  @UseGuards(AuthGuard)
+  async deleteConversationHistory(
+    @Param() params: ConversationHistoryParamsDto,
+  ): Promise<ConversationHistory> {
+    return await this.conversationHistoryService.deleteConversationHistory(
+      params.conversationHistoryId,
+    );
+  }
+
+  @Get(':conversationHistoryId/context')
+  @UseGuards(AuthGuard)
+  async getConversation(
+    @Param() conversationParams: ConversationHistoryParamsDto,
+  ): Promise<ConversationContext> {
+    return await this.conversationHistoryService.getConversationContext(
+      conversationParams.conversationHistoryId,
+    );
+  }
+
+  @Get(':conversationHistoryId')
+  @UseGuards(AuthGuard)
+  async getConversationHistory(
+    @Param() params: ConversationHistoryParamsDto,
+  ): Promise<ConversationHistory> {
+    return await this.conversationHistoryService.getConversationHistory(
+      params.conversationHistoryId,
+    );
   }
 }
