@@ -35,6 +35,7 @@ export const TreeC: React.FC<TreeCProps> = ({
     if (selectedKey !== defaultSelectedKey) {
       setSelectedKey(defaultSelectedKey);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultSelectedKey]);
 
   const handleExpand = (expandedKeys: string[]) => {
@@ -68,7 +69,7 @@ export const TreeC: React.FC<TreeCProps> = ({
 
   const renderTreeNodes = (data: any[], depth: number) =>
     data.map((item) => {
-      const paddingLeft = depth === 0 ? '0.25rem' : `${depth * 5 * 0.25}rem`;
+      const paddingLeft = depth === 0 ? '5px' : `${depth * 4 * 5}px`;
       const isOpen = expandedKeys.includes(item.id);
       const isSelected = selectedKey === item.id; // Check if the node is selected
 

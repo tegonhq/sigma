@@ -9,7 +9,6 @@ import type {
   PageType,
   StatusType,
 } from 'common/types';
-
 import type { WorkspaceType } from 'common/types';
 
 import { MODELS } from './models';
@@ -24,11 +23,11 @@ export class SigmaDatabase extends Dexie {
   constructor(databaseName: string) {
     super(databaseName);
 
-    this.version(12).stores({
+    this.version(13).stores({
       [MODELS.Workspace]: 'id,createdAt,updatedAt,name,slug,userId',
 
       [MODELS.IntegrationAccount]:
-        'id,createdAt,updatedAt,accountId,settings,personal,integratedById,integrationDefinitionId,workspaceId',
+        'id,createdAt,updatedAt,accountId,settings,integratedById,integrationDefinitionId,workspaceId',
       [MODELS.Page]:
         'id,createdAt,updatedAt,archived,title,description,parentId,sortOrder,workspaceId,tags,type',
       [MODELS.Status]:

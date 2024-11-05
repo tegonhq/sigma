@@ -5,8 +5,9 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from '@sigma/ui/components/resizable';
-import { DocumentLine, Inbox, IssuesLine } from '@sigma/ui/icons';
-import { cn } from '@sigma/ui/lib/utils';
+import { ScrollArea } from '@sigma/ui/components/scroll-area';
+import { AI, Inbox, IssuesLine } from '@sigma/ui/icons';
+import { MessageSquare } from 'lucide-react';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 
@@ -19,7 +20,6 @@ import { BottomBar } from './bottom-bar';
 import { Nav } from './nav';
 import { PageList } from './page-list';
 import { WorkspaceDropdown } from './workspace-dropdown';
-import { ScrollArea } from '@sigma/ui/components/scroll-area';
 
 interface LayoutProps {
   defaultCollapsed?: boolean;
@@ -40,7 +40,7 @@ const AppLayoutChild = observer(({ children }: LayoutProps) => {
             minSize={10}
             collapsible
             order={1}
-            collapsedSize={10}
+            collapsedSize={0}
           >
             <ScrollArea className="h-full">
               <div className="min-w-[180px] flex flex-col h-full">
@@ -59,13 +59,13 @@ const AppLayoutChild = observer(({ children }: LayoutProps) => {
                           href: TabViewType.MY_DAY,
                         },
                         {
-                          title: 'All tasks',
+                          title: 'Tasks',
                           icon: IssuesLine,
                           href: TabViewType.MY_TASKS,
                         },
                         {
-                          title: 'All pages',
-                          icon: DocumentLine,
+                          title: 'Chat',
+                          icon: AI,
                           href: TabViewType.MY_PAGES,
                         },
                       ]}
@@ -85,16 +85,7 @@ const AppLayoutChild = observer(({ children }: LayoutProps) => {
           order={2}
           className="flex items-center justify-center pl-0"
         >
-          <div
-            className={cn(
-              'w-full',
-              applicationStore.sidebarCollapsed && 'max-w-[100vw]',
-              !applicationStore.sidebarCollapsed &&
-                'max-w-[calc(100vw_-_180px)]',
-            )}
-          >
-            {children}
-          </div>
+          <div className="w-full">{children}</div>
         </ResizablePanel>
       </ResizablePanelGroup>
     </div>

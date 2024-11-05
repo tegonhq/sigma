@@ -11,10 +11,10 @@ export class Conversation {
 
   context: JsonValue;
 
-  user: User;
+  user?: User;
   userId: string;
 
-  workspace: Workspace;
+  workspace?: Workspace;
   workspaceId: string;
 
   conversationHistory?: ConversationHistory[];

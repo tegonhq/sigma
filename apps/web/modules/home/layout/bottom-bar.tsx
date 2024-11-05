@@ -1,9 +1,12 @@
 import { PageTypeEnum } from '@sigma/types';
 import { Button } from '@sigma/ui/components/button';
 import { CreateIssueLine, HelpLine, SearchLine } from '@sigma/ui/icons';
-import { useApplication } from 'hooks/application';
 import React from 'react';
+
+import { useApplication } from 'hooks/application';
+
 import { useCreatePageMutation } from 'services/pages';
+
 import { TabViewType } from 'store/application';
 import { useContextStore } from 'store/global-context-provider';
 

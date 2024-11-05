@@ -9,3 +9,5 @@ export * from './workspace';
 export * from './page';
 export * from './conversation';
 export * from './conversation-history';
+export * from './integration-definition';
+export * from './integration-account';

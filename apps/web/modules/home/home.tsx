@@ -19,6 +19,7 @@ import { TabContext } from 'store/tab-context';
 
 import { useShortcuts } from './use-shortcuts';
 import { Tabs } from './tabs';
+import { cn } from '@sigma/ui/lib/utils';
 
 function getComponent(componentType: string, props: any) {
   if (componentType === 'page') {
@@ -33,7 +34,8 @@ function getComponent(componentType: string, props: any) {
 }
 
 export const Home = observer(() => {
-  const { tabs, setActiveTab, rightScreenCollapsed } = useApplication();
+  const { tabs, setActiveTab, rightScreenCollapsed, sidebarCollapsed } =
+    useApplication();
   useShortcuts();
   const secondTab = tabs[1];
   const firstTab = tabs[0];
@@ -49,7 +51,7 @@ export const Home = observer(() => {
           }}
           order={1}
           id="home"
-          className="flex pl-0 samp1"
+          className={cn('flex samp1', sidebarCollapsed ? 'pl-3' : 'pl-0')}
         >
           <TabContext.Provider value={{ tabId: firstTab.id }}>
             <ContentBox>

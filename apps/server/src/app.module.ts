@@ -20,6 +20,10 @@ import { WorkspacesModule } from 'modules/workspaces/workspaces.module';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { IntegrationsModule } from 'modules/integrations/integrations.module';
+import { IntegrationAccountModule } from 'modules/integration-account/integration-account.module';
+import { IntegrationDefinitionModule } from 'modules/integration-definition/integration-definition.module';
+import { OAuthCallbackModule } from 'modules/oauth-callback/oauth-callback.module';
 
 @Module({
   imports: [
@@ -70,6 +74,10 @@ import { AppService } from './app.service';
     ReplicationModule,
     PagesModule,
     ContentModule,
+    IntegrationsModule,
+    IntegrationAccountModule,
+    IntegrationDefinitionModule,
+    OAuthCallbackModule,
   ],
   controllers: [AppController],
   providers: [

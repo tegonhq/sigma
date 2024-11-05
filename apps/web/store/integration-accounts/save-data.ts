@@ -19,7 +19,6 @@ export async function saveIntegrationAccountData(
         integratedById: record.data.integratedById,
         integrationDefinitionId: record.data.integrationDefinitionId,
         workspaceId: record.data.workspaceId,
-        personal: record.data.personal,
       };
 
       switch (record.action) {

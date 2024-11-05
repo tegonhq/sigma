@@ -10,7 +10,6 @@ import {
   Conversation,
   ConversationParamsDto,
   CreateConversationDto,
-  Page,
   UpdateConversationDto,
 } from '@sigma/types';
 
@@ -31,7 +30,7 @@ export class ConversationController {
   async createConversation(
     @Workspace() workspaceId: string,
     @Body() conversationData: CreateConversationDto,
-  ): Promise<Page> {
+  ): Promise<Conversation> {
     return await this.conversationService.createConversation(
       conversationData,
       workspaceId,
