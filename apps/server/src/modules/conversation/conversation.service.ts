@@ -8,7 +8,6 @@ export class ConversationService {
 
   async createConversation(
     conversationData: CreateConversationDto,
-    workspaceId: string,
   ): Promise<Conversation> {
     return this.prisma.conversation.create({
       data: conversationData,

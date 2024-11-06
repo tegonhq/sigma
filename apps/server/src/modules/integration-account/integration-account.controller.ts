@@ -13,7 +13,6 @@ import {
   IntegrationAccountIdDto,
   UpdateIntegrationAccountDto,
 } from '@sigma/types';
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { GetIntegrationAccountByNames } from '@sigma/types';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
@@ -107,7 +106,7 @@ export class IntegrationAccountController {
 
   @Get()
   @UseGuards(AuthGuard)
-  async getIntegrationAccounts(@Workspace() workspaceId: string) {
+  async getIntegrationAccountsInWorkspace(@Workspace() workspaceId: string) {
     return await this.integrationAccountService.getIntegrationAccounts(
       workspaceId,
     );

@@ -4,11 +4,10 @@ import {
   IntegrationAccountIdDto,
   UpdateIntegrationAccountDto,
 } from '@sigma/types';
+import { GetIntegrationAccountByNames } from '@sigma/types';
 import { PrismaService } from 'nestjs-prisma';
 
 import { IntegrationAccountSelect } from './integration-account.interface';
-
-import { GetIntegrationAccountByNames } from '@sigma/types';
 
 @Injectable()
 export class IntegrationAccountService {
@@ -92,6 +91,9 @@ export class IntegrationAccountService {
     return await this.prisma.integrationAccount.findFirst({
       where: { accountId, deleted: null },
       select: IntegrationAccountSelect,
+    });
+  }
+
   async getIntegrationAccountsByName(
     integrationdata: GetIntegrationAccountByNames,
   ) {

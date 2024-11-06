@@ -11,10 +11,6 @@ import {
   Conversation,
   ConversationParamsDto,
   CreateConversationDto,
-<<<<<<< HEAD
-  UpdateConversationDto,
-=======
->>>>>>> 4ae9cfc (Feat: add activity and conversation related APIs)
 } from '@sigma/types';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
