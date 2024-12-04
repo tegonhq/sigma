@@ -7,33 +7,51 @@ import {
 } from '@sigma/ui/components/resizable';
 import { observer } from 'mobx-react-lite';
 
-import { EmptyTab } from 'modules/empty-tab';
+import { Activity } from 'modules/activity';
+import { AI } from 'modules/ai';
+import { Instructions } from 'modules/instructions';
 import { MyDay } from 'modules/my-day';
-import { Page } from 'modules/pages';
+import { Tasks } from 'modules/tasks';
 
 import { ContentBox } from 'common/content-box';
+import { useLocalCommonState } from 'common/use-local-state';
 
 import { useApplication } from 'hooks/application';
 
+import { TabViewType } from 'store/application';
 import { TabContext } from 'store/tab-context';
 
-import { useShortcuts } from './use-shortcuts';
 import { Tabs } from './tabs';
+import { useShortcuts } from './use-shortcuts';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getComponent(componentType: string, props: any) {
-  if (componentType === 'page') {
-    return <Page {...props} />;
-  }
-
-  if (componentType === 'my_day') {
+  if (componentType === TabViewType.MY_DAY) {
     return <MyDay {...props} />;
   }
 
-  return <EmptyTab />;
+  if (componentType === TabViewType.MY_TASKS) {
+    return <Tasks {...props} />;
+  }
+
+  if (componentType === TabViewType.INSTRUCTIONS) {
+    return <Instructions {...props} />;
+  }
+
+  if (componentType === TabViewType.ACTIVITY) {
+    return <Activity {...props} />;
+  }
+
+  if (componentType === TabViewType.AI) {
+    return <AI {...props} />;
+  }
+
+  return <MyDay />;
 }
 
 export const Home = observer(() => {
   const { tabs, setActiveTab, rightScreenCollapsed } = useApplication();
+  const [size, setSize] = useLocalCommonState('panelSize', 15);
   useShortcuts();
   const secondTab = tabs[1];
   const firstTab = tabs[0];
@@ -49,7 +67,7 @@ export const Home = observer(() => {
           }}
           order={1}
           id="home"
-          className="flex pl-0 samp1"
+          className="flex pl-0"
         >
           <TabContext.Provider value={{ tabId: firstTab.id }}>
             <ContentBox>
@@ -63,14 +81,15 @@ export const Home = observer(() => {
             collapsible={false}
             maxSize={50}
             minSize={10}
-            defaultSize={15}
+            defaultSize={size}
+            onResize={(size) => setSize(size)}
             order={2}
             id="rightScreen"
             onClick={() => secondTab && setActiveTab(secondTab.id)} // Change activeTab on focus
             className="flex pl-0 samp2"
           >
             <TabContext.Provider value={{ tabId: secondTab?.id }}>
-              <ContentBox>
+              <ContentBox className="pl-0">
                 {getComponent(secondTab?.type, {
                   pageId: secondTab?.entity_id,
                 })}

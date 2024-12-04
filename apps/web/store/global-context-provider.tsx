@@ -13,18 +13,17 @@ import {
   type IntegrationAccountsStoreType,
 } from './integration-accounts';
 import { PagesStore, type PagesStoreType } from './pages';
-import { StatusesStore, type StatusesStoreType } from './status';
 import { WorkspaceStore, type WorkspaceStoreType } from './workspace';
 
 const StoreContextModel = types.model({
   workspaceStore: WorkspaceStore,
   integrationAccountsStore: IntegrationAccountsStore,
   applicationStore: ApplicationStore,
-  statusesStore: StatusesStore,
   pagesStore: PagesStore,
 });
 
 export const storeContextStore = StoreContextModel.create({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   applicationStore: defaultApplicationStoreValue as any,
 
   workspaceStore: {
@@ -39,17 +38,12 @@ export const storeContextStore = StoreContextModel.create({
   pagesStore: {
     pages: [],
   },
-
-  statusesStore: {
-    statues: [],
-  },
 });
 
 export interface StoreContextInstanceType {
   applicationStore: ApplicationStoreType;
   workspaceStore: WorkspaceStoreType;
   integrationAccountsStore: IntegrationAccountsStoreType;
-  statusesStore: StatusesStoreType;
   pagesStore: PagesStoreType;
 }
 export const StoreContext =

@@ -45,7 +45,7 @@ const config = {
       colors: {
         border: {
           DEFAULT: 'oklch(var(--border))',
-          'border-1': 'rgba(255, 255, 255, 0.22)',
+          dark: 'oklch(var(--border-dark))',
         },
         input: 'oklch(var(--input))',
         ring: 'oklch(var(--ring))',

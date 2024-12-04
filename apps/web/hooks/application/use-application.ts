@@ -1,9 +1,10 @@
-import type { TabViewType } from 'store/application';
+import { TabViewType } from 'store/application';
 import { useContextStore } from 'store/global-context-provider';
 import { historyManager } from 'store/history';
 
 export const useApplication = () => {
   const { applicationStore } = useContextStore();
+  const { rightScreenCollapsed } = applicationStore;
   const tabGroup = applicationStore.getTabGroup();
 
   const addTab = () => {
@@ -45,6 +46,20 @@ export const useApplication = () => {
     saveSnapshot();
   };
 
+  const updateRightScreen = (tab: string) => {
+    const secondTab = tabGroup.tabs[1];
+    if (secondTab.type !== tab) {
+      secondTab.changeType(tab as TabViewType);
+      applicationStore.updateRightScreen(false);
+    } else if (secondTab.type === tab && rightScreenCollapsed) {
+      applicationStore.updateRightScreen(false);
+    } else if (!rightScreenCollapsed && secondTab.type === tab) {
+      applicationStore.updateRightScreen(true);
+    }
+
+    saveSnapshot();
+  };
+
   return {
     activeTab: tabGroup.activeTab,
     addTab,
@@ -57,7 +72,6 @@ export const useApplication = () => {
     updateTabType,
     sidebarCollapsed: applicationStore.sidebarCollapsed,
     rightScreenCollapsed: applicationStore.rightScreenCollapsed,
-    updateRightScreen: applicationStore.updateRightScreen,
-    updateSideBar: applicationStore.updateSideBar,
+    updateRightScreen,
   };
 };

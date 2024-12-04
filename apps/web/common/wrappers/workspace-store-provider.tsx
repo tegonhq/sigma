@@ -11,7 +11,7 @@ export const WorkspaceStoreInit = observer(
     const {
       workspaceStore,
       integrationAccountsStore,
-      statusesStore,
+
       pagesStore,
       applicationStore,
     } = useContextStore();

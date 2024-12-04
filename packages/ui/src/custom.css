@@ -13,7 +13,7 @@ ul[data-type='taskList'] li > label {
 }
 
 ul[data-type='taskList'] li > label input[type='checkbox'] {
-  @apply border border-border rounded-sm;
+  @apply border border-border-dark rounded-sm;
 
   -webkit-appearance: none;
   appearance: none;

@@ -18,12 +18,8 @@ export const SocketDataSyncWrapper: React.FC<Props> = observer(
   (props: Props) => {
     const { children } = props;
 
-    const {
-      workspaceStore,
-      integrationAccountsStore,
-      pagesStore,
-      statusesStore,
-    } = useContextStore();
+    const { workspaceStore, integrationAccountsStore, pagesStore } =
+      useContextStore();
     const user = React.useContext(UserContext);
 
     const [socket, setSocket] = React.useState<Socket | undefined>(undefined);
@@ -54,7 +50,7 @@ export const SocketDataSyncWrapper: React.FC<Props> = observer(
       const MODEL_STORE_MAP = {
         [MODELS.Workspace]: workspaceStore,
         [MODELS.IntegrationAccount]: integrationAccountsStore,
-        [MODELS.Status]: statusesStore,
+
         [MODELS.Page]: pagesStore,
       };
 

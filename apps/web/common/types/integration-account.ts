@@ -29,7 +29,6 @@ export interface IntegrationAccountType {
 
   accountId: string;
   settings: string;
-  personal: boolean;
 
   integratedById: string;
   integrationDefinitionId: string;

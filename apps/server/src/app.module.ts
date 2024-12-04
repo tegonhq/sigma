@@ -12,6 +12,12 @@ import { loggingMiddleware } from 'common/middleware/logging.middleware';
 import { ALSModule } from 'modules/als/als.module';
 import { AuthModule } from 'modules/auth/auth.module';
 import { ContentModule } from 'modules/content/content.module';
+import { ConversationModule } from 'modules/conversation/conversation.module';
+import { ConversationHistoryModule } from 'modules/conversation-history/conversation-history.module';
+import { IntegrationAccountModule } from 'modules/integration-account/integration-account.module';
+import { IntegrationDefinitionModule } from 'modules/integration-definition/integration-definition.module';
+import { IntegrationsModule } from 'modules/integrations/integrations.module';
+import { OAuthCallbackModule } from 'modules/oauth-callback/oauth-callback.module';
 import { PagesModule } from 'modules/pages/pages.module';
 import { ReplicationModule } from 'modules/replication/replication.module';
 import { SyncActionsModule } from 'modules/sync-actions/sync-actions.module';
@@ -20,6 +26,8 @@ import { WorkspacesModule } from 'modules/workspaces/workspaces.module';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { WebhookModule } from 'modules/webhook/webhook.module';
+import { ActivityModule } from 'modules/activity/activity.module';
 
 @Module({
   imports: [
@@ -70,6 +78,14 @@ import { AppService } from './app.service';
     ReplicationModule,
     PagesModule,
     ContentModule,
+    IntegrationsModule,
+    IntegrationAccountModule,
+    IntegrationDefinitionModule,
+    OAuthCallbackModule,
+    ConversationModule,
+    ConversationHistoryModule,
+    WebhookModule,
+    ActivityModule,
   ],
   controllers: [AppController],
   providers: [
