@@ -22,21 +22,21 @@ export class IntegrationsService {
       where: 'IntegrationsService.loadIntegration',
     });
 
-    try {
-      // Dynamically build the path based on the slug (e.g., 'slack', 'github')
-      const modulePath = join(__dirname, `../../integrations/${slug}`);
+    // try {
+    // Dynamically build the path based on the slug (e.g., 'slack', 'github')
+    const modulePath = join(__dirname, `../../integrations/${slug}`);
 
-      // Dynamically import the module
-      const integrationModule = await import(modulePath);
+    // Dynamically import the module
+    const integrationModule = await import(modulePath);
 
-      // Call the default function exported by the module
-      if (typeof integrationModule.default === 'function') {
-        return integrationModule.default(payload); // Call the default function
-      }
-
-      return undefined;
-    } catch (error) {
-      this.logger.error(error);
+    // Call the default function exported by the module
+    if (typeof integrationModule.default === 'function') {
+      return integrationModule.default(payload); // Call the default function
     }
+
+    return undefined;
+    // } catch (error) {
+    //   this.logger.error(error);
+    // }
   }
 }

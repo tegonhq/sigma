@@ -4,6 +4,8 @@ import {
 } from '@sigma/types';
 
 import { integrationCreate } from './account-create';
+import { createActivity } from './activity';
+import indexRepo from './functions/workflow';
 import { getToken } from './get-token';
 import { spec } from './spec';
 
@@ -25,6 +27,12 @@ export default async function run(eventPayload: IntegrationEventPayload) {
 
     case IntegrationPayloadEventType.GET_TOKEN:
       return await getToken(eventPayload.integrationAccountId);
+
+    case IntegrationPayloadEventType.CREATE_ACTIVITY:
+      return await createActivity(eventPayload.eventBody);
+
+    case IntegrationPayloadEventType.INDEX:
+      return await indexRepo(eventPayload);
 
     default:
       return {

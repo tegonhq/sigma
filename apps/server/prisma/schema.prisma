@@ -91,6 +91,24 @@ model ConversationHistory {
   conversationId String
 }
 
+model IndexJob {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  type     String
+  status   String
+  sourceId String
+  metadata Json?
+
+  integrationAccount   IntegrationAccount @relation(fields: [integrationAccountId], references: [id])
+  integrationAccountId String
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId String
+}
+
 model IntegrationAccount {
   id        String    @id @default(uuid())
   createdAt DateTime  @default(now())
@@ -109,6 +127,8 @@ model IntegrationAccount {
   workspace               Workspace               @relation(references: [id], fields: [workspaceId])
   workspaceId             String
   Activity                Activity[]
+  IndexJob                IndexJob[]
+  task                    Task[]
 
   @@unique([accountId, integrationDefinitionId, workspaceId])
 }
@@ -124,6 +144,9 @@ model IntegrationDefinitionV2 {
   description String
   icon        String
   config      Json?
+  version     String?
+  url         String?
+
   workspace   Workspace? @relation(references: [id], fields: [workspaceId])
   workspaceId String?
 
@@ -156,6 +179,7 @@ model Page {
 
   workspaceId String
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  task        Task[]
 }
 
 model PersonalAccessToken {
@@ -210,6 +234,24 @@ model SyncAction {
   workspaceId String
 
   @@unique([modelId, action])
+}
+
+model Task {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  sourceId String?
+  url      String?
+  status   String?
+  metadata Json    @default("{}")
+
+  page   Page   @relation(fields: [pageId], references: [id])
+  pageId String
+
+  integrationAccountId String?
+  integrationAccount   IntegrationAccount? @relation(fields: [integrationAccountId], references: [id])
 }
 
 model Template {
@@ -276,6 +318,7 @@ model Workspace {
   statuses              Status[]
   Conversation          Conversation[]
   Activity              Activity[]
+  IndexJob              IndexJob[]
 }
 
 enum ModelName {

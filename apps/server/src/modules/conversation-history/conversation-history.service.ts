@@ -64,6 +64,20 @@ export class ConversationHistoryService {
     });
   }
 
+  async getAllConversationHistory(
+    conversationId: string,
+  ): Promise<ConversationHistory[]> {
+    return this.prisma.conversationHistory.findMany({
+      where: {
+        conversationId,
+        deleted: null,
+      },
+      orderBy: {
+        createdAt: 'asc',
+      },
+    });
+  }
+
   async getConversationContext(
     conversationHistoryId: string,
   ): Promise<ConversationContext> {
@@ -75,10 +89,11 @@ export class ConversationHistoryService {
     if (!conversationHistory) {
       return null;
     }
-    const context = conversationHistory.context as ConversationContextIds;
+    const context =
+      (conversationHistory.context as ConversationContextIds) || {};
     // Get pages data if pageIds exist
-    let page: Page[];
-    if (context.pages?.length) {
+    let page: Page[] = [];
+    if (context?.pages?.length) {
       page = await Promise.all(
         context.pages.map(async (pageContext) => {
           const page = await this.prisma.page.findUnique({
@@ -104,8 +119,8 @@ export class ConversationHistoryService {
 
     // Get activities data if activityIds exist
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let activity: Activity[];
-    if (context.activityIds?.length) {
+    let activity: Activity[] = [];
+    if (context?.activityIds?.length) {
       activity = await this.prisma.activity.findMany({
         where: {
           id: {
@@ -124,6 +139,7 @@ export class ConversationHistoryService {
           id: {
             not: conversationHistoryId,
           },
+          deleted: null,
         },
         orderBy: {
           createdAt: 'desc',
@@ -132,12 +148,11 @@ export class ConversationHistoryService {
       });
 
       if (previousMessages.length > 0) {
-        previousHistory = {
-          message: previousMessages[0].message,
-        };
+        previousHistory = previousMessages.slice(0, 2);
       }
     }
 
+    console.log({ page, activity, previousHistory });
     return {
       page,
       activity,

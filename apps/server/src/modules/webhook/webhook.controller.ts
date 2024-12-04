@@ -1,0 +1,39 @@
+import { Body, Controller, Post, Headers, Param, Res } from '@nestjs/common';
+import { EventBody, EventHeaders } from '@sigma/types';
+import { Response } from 'express';
+
+import WebhookService from './webhook.service';
+
+@Controller({
+  version: '1',
+  path: 'webhook',
+})
+export class WebhookController {
+  constructor(private webhookService: WebhookService) {}
+
+  @Post('index')
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async indexData(@Body() eventBody: any) {
+    return await this.webhookService.indexData(
+      eventBody.repoName,
+      eventBody.owner,
+    );
+  }
+
+  @Post(':sourceName')
+  async slackEvents(
+    @Headers() eventHeaders: EventHeaders,
+    @Param('sourceName') sourceName: string,
+    @Body() eventBody: EventBody,
+    @Res() response: Response,
+  ) {
+    console.log('here');
+    const eventResponse = await this.webhookService.handleEvents(
+      response,
+      sourceName,
+      eventHeaders,
+      eventBody,
+    );
+    return eventResponse;
+  }
+}

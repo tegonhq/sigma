@@ -26,6 +26,8 @@ import { WorkspacesModule } from 'modules/workspaces/workspaces.module';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { WebhookModule } from 'modules/webhook/webhook.module';
+import { ActivityModule } from 'modules/activity/activity.module';
 
 @Module({
   imports: [
@@ -82,6 +84,8 @@ import { AppService } from './app.service';
     OAuthCallbackModule,
     ConversationModule,
     ConversationHistoryModule,
+    WebhookModule,
+    ActivityModule,
   ],
   controllers: [AppController],
   providers: [

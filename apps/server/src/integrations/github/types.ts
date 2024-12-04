@@ -1,5 +1,5 @@
 export const githubHeaders = {
-  Accept: 'application/vnd.github+json',
+  Accept: 'application/vnd.github.v3+json',
   'X-GitHub-Api-Version': '2022-11-28',
 };
 

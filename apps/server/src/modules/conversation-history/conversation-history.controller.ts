@@ -11,6 +11,7 @@ import {
   ConversationContext,
   ConversationHistory,
   ConversationHistoryParamsDto,
+  ConversationParamsDto,
   CreateConversationHistoryDto,
   UpdateConversationHistoryDto,
 } from '@sigma/types';
@@ -55,6 +56,16 @@ export class ConversationHistoryController {
   ): Promise<ConversationHistory> {
     return await this.conversationHistoryService.deleteConversationHistory(
       params.conversationHistoryId,
+    );
+  }
+
+  @Get()
+  @UseGuards(AuthGuard)
+  async getAllConversationHistory(
+    @Param() conversationParams: ConversationParamsDto,
+  ): Promise<ConversationHistory[]> {
+    return await this.conversationHistoryService.getAllConversationHistory(
+      conversationParams.conversationId,
     );
   }
 
