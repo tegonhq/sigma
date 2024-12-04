@@ -5,34 +5,31 @@ import { SCOPES } from 'common/shortcut-scopes';
 
 import { useApplication } from 'hooks/application';
 
+import { TabViewType } from 'store/application';
+
 export const useShortcuts = () => {
-  const {
-    rightScreenCollapsed,
-    updateRightScreen,
-    updateSideBar,
-    sidebarCollapsed,
-    back,
-    forward,
-  } = useApplication();
+  const { updateRightScreen } = useApplication();
 
   useHotkeys(
-    `${Key.Meta}+${Key.Shift}+b, ${Key.Meta}+${Key.Shift}, ${Key.Meta}+[ , ${Key.Meta}+]`,
+    [`${Key.Meta}+u`, `${Key.Meta}+i`, `${Key.Meta}+o`],
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (event) => {
-      const isShiftPressed = event.shiftKey;
+      const isMetaKey = event.metaKey;
       switch (event.key) {
-        case 'b':
-          if (isShiftPressed) {
-            updateRightScreen(!rightScreenCollapsed);
-          } else {
-            updateSideBar(!sidebarCollapsed);
+        case 'u':
+          if (isMetaKey) {
+            updateRightScreen(TabViewType.ACTIVITY);
           }
           break;
-        case '[':
-          back();
+        case 'i':
+          if (isMetaKey) {
+            updateRightScreen(TabViewType.AI);
+          }
           break;
-        case ']':
-          forward();
+        case 'o':
+          if (isMetaKey) {
+            updateRightScreen(TabViewType.MY_TASKS);
+          }
           break;
         default:
           break;

@@ -17,11 +17,10 @@ const Tab = types
     entity_id: types.string,
     type: types.enumeration([
       'my_day',
-      'page',
-      'my_pages',
       'my_tasks',
-      'my_events',
-      'empty',
+      'instructions',
+      'activity',
+      'ai',
     ]),
     order: types.number,
     data: types.frozen(),
@@ -93,11 +92,9 @@ const TabGroup = types
   }));
 
 export const defaultApplicationStoreValue: {
-  sidebarCollapsed: boolean;
   rightScreenCollapsed: boolean;
   tabGroups: Array<Instance<typeof TabGroup>>;
 } = {
-  sidebarCollapsed: false,
   rightScreenCollapsed: true,
   tabGroups: [
     TabGroup.create({
@@ -112,8 +109,8 @@ export const defaultApplicationStoreValue: {
         },
         {
           id: uuidv4(),
-          entity_id: 'empty',
-          type: 'empty',
+          entity_id: 'ai',
+          type: 'ai',
           order: 0,
           data: {},
         },
@@ -125,17 +122,12 @@ export const defaultApplicationStoreValue: {
 
 const ApplicationStore = types
   .model({
-    sidebarCollapsed: types.boolean,
     rightScreenCollapsed: types.boolean,
     tabGroups: types.array(TabGroup),
     activeTabGroupId: types.maybe(types.reference(TabGroup)),
     id: initialId,
   })
   .actions((self) => {
-    const updateSideBar = (collapsed: boolean) => {
-      self.sidebarCollapsed = collapsed;
-    };
-
     const updateRightScreen = (collapsed: boolean) => {
       self.rightScreenCollapsed = collapsed;
     };
@@ -147,7 +139,7 @@ const ApplicationStore = types
       }
     });
 
-    return { load, updateSideBar, updateRightScreen };
+    return { load, updateRightScreen };
   })
   .views((self) => ({
     getTabs() {

@@ -26,6 +26,13 @@ strong {
     /* -webkit-font-smoothing: subpixel-antialiased; */
   }
 
+  *,
+  a,
+  button {
+    cursor: default;
+    user-select: none;
+  }
+
   @supports (scrollbar-width: auto) {
     .overflow-y-auto,
     .overflow-x-auto,

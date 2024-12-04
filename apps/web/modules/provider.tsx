@@ -26,7 +26,7 @@ export function Provider({ children }: ProviderProps) {
       <PostHogProvider client={posthog}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="light"
+          defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
         >
@@ -35,7 +35,6 @@ export function Provider({ children }: ProviderProps) {
               <StoreContext.Provider value={storeContextStore}>
                 <QueryClientProvider client={queryClientRef.current}>
                   {children}
-
                   <Toaster />
                 </QueryClientProvider>
               </StoreContext.Provider>

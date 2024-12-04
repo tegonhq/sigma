@@ -1,11 +1,11 @@
 'use client';
 
-import { Button, buttonVariants } from '@sigma/ui/components/button';
+import { Button } from '@sigma/ui/components/button';
 import { cn } from '@sigma/ui/lib/utils';
-import { useApplication } from 'hooks/application';
 import { observer } from 'mobx-react-lite';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+
+import { useApplication } from 'hooks/application';
+
 import type { TabViewType } from 'store/application';
 
 interface NavProps {

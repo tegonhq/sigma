@@ -15,8 +15,9 @@ export interface TabType {
 export enum TabViewType {
   MY_DAY = 'my_day',
   MY_TASKS = 'my_tasks',
-  MY_PAGES = 'my_pages',
-  PAGE = 'page',
+  INSTRUCTIONS = 'instructions',
+  ACTIVITY = 'activity',
+  AI = 'ai',
 }
 
 export interface TabGroupType {
@@ -32,7 +33,6 @@ export interface TabGroupType {
 
 export interface ApplicationStoreType {
   id: string;
-  sidebarCollapsed: boolean;
   rightScreenCollapsed: boolean;
   tabGroups: TabGroupType[];
   activeTabGroupId: TabGroupType;
@@ -42,5 +42,4 @@ export interface ApplicationStoreType {
   getTabs: () => TabType[];
   load: () => Promise<void>;
   updateRightScreen: (collapsed: boolean) => void;
-  updateSideBar: (collapsed: boolean) => void;
 }

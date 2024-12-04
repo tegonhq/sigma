@@ -1,12 +1,15 @@
-import {app, BrowserWindow} from 'electron';
-import {join} from 'node:path';
+import {app, BrowserWindow, Tray, nativeImage} from 'electron';
+import path, {dirname, join} from 'node:path';
 
 import Fastify from 'fastify';
 import fastifyHttpProxy from '@fastify/http-proxy';
+import {fileURLToPath} from 'node:url';
 
 // Initialize Fastify
 const fastify = Fastify({logger: true});
-
+let tray;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 // Start Fastify server
 const startFastifyServer = async () => {
   fastify.listen({port: 8000});
@@ -18,6 +21,11 @@ async function createWindow() {
     // frame: false,
     minWidth: 700, // Set minimum width
     minHeight: 700, // Set minimum height
+    resizable: true,
+    movable: true,
+    icon: path.join(__dirname, '/../../../buildResources/icon.png'),
+    frame: false,
+    transparent: true,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -49,6 +57,17 @@ async function createWindow() {
   browserWindow.loadURL('http://localhost:8000');
 
   return browserWindow;
+}
+
+async function setTray(window: BrowserWindow) {
+  const icon = nativeImage.createFromPath(
+    path.join(__dirname, '/../../../buildResources/iconTemplate.png'),
+  );
+  tray = new Tray(icon);
+
+  tray.on('click', () => {
+    window.show();
+  });
 }
 
 // Register the proxy for API requests to localhost:3001
@@ -89,4 +108,6 @@ export async function restoreOrCreateWindow() {
   }
 
   window.focus();
+
+  await setTray(window);
 }

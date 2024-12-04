@@ -16,7 +16,7 @@ export const Day = observer(() => {
   return (
     <ScrollArea className="grow flex h-full justify-center w-full p-6">
       <div className="flex h-full justify-center w-full">
-        <div className="grow flex flex-col gap-1 h-full max-w-[97ch] pt-10">
+        <div className="grow flex flex-col gap-1 h-full max-w-[97ch]">
           <Navigation />
 
           <div className="flex flex-col">

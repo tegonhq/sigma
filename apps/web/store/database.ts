@@ -23,22 +23,18 @@ export class SigmaDatabase extends Dexie {
   constructor(databaseName: string) {
     super(databaseName);
 
-    this.version(13).stores({
+    this.version(14).stores({
       [MODELS.Workspace]: 'id,createdAt,updatedAt,name,slug,userId',
-
       [MODELS.IntegrationAccount]:
         'id,createdAt,updatedAt,accountId,settings,integratedById,integrationDefinitionId,workspaceId',
       [MODELS.Page]:
         'id,createdAt,updatedAt,archived,title,description,parentId,sortOrder,workspaceId,tags,type',
-      [MODELS.Status]:
-        'id,createdAt,updatedAt,name,position,color,workspaceId,description',
       Application: 'id,sidebarCollapsed,tabGroups,activeTabGroupId',
     });
 
     this.workspaces = this.table(MODELS.Workspace);
     this.integrationAccounts = this.table(MODELS.IntegrationAccount);
     this.pages = this.table(MODELS.Page);
-    this.statuses = this.table(MODELS.Status);
     this.application = this.table('Application');
   }
 }

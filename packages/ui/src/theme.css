@@ -23,6 +23,7 @@
     --success: 64.93% 0.107 154.24;
     --success-foreground: 100% 0 0;
     --border: 0% 0 0 / 19.22%;
+    --border-dark: 0% 0 0 / 39.22%;
     --input: 0% 0 0 / 6.27%;
     --ring: 221.2 83.2% 53.3%;
     --radius: 8px;
@@ -50,6 +51,7 @@
     --success: 64.93% 0.107 154.24;
     --success-foreground: 100% 0 0;
     --border: 100% 0 0 / 13.33%;
+    --border-dark: 100% 0 0 / 39.33%;
     --input: 100% 0 0 / 10.59%;
     --ring: 221.2 83.2% 53.3%;
   }
