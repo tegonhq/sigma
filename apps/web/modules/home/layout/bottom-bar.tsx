@@ -1,6 +1,6 @@
 import { PageTypeEnum } from '@sigma/types';
-import { Button } from '@sigma/ui/components/button';
-import { CreateIssueLine, HelpLine, SearchLine } from '@sigma/ui/icons';
+import { Button, CreateIssueLine, HelpLine, SearchLine } from '@tegonhq/ui';
+
 import React from 'react';
 
 import { useApplication } from 'hooks/application';

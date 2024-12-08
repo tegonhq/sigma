@@ -1,12 +1,12 @@
-import { AvatarText } from '@sigma/ui/components/avatar';
-import { Button } from '@sigma/ui/components/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@sigma/ui/components/dropdown-menu';
+  Button,
+  AvatarText,
+} from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import { useRouter } from 'next/navigation';
 import React from 'react';

@@ -1,7 +1,6 @@
 'use client';
 
-import { Button } from '@sigma/ui/components/button';
-import { cn } from '@sigma/ui/lib/utils';
+import { cn, Button } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 
 import { useApplication } from 'hooks/application';

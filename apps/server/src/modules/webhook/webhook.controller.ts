@@ -21,13 +21,12 @@ export class WebhookController {
   }
 
   @Post(':sourceName')
-  async slackEvents(
+  async webhookEvents(
     @Headers() eventHeaders: EventHeaders,
     @Param('sourceName') sourceName: string,
     @Body() eventBody: EventBody,
     @Res() response: Response,
   ) {
-    console.log('here');
     const eventResponse = await this.webhookService.handleEvents(
       response,
       sourceName,

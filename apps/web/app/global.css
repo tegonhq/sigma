@@ -17,7 +17,7 @@ strong {
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground text-base;
+    @apply text-foreground text-base;
     @apply antialiased;
     overflow: hidden;
 
@@ -62,10 +62,20 @@ strong {
       max-width: 5px;
     }
   }
+
+  .tiptap p.is-editor-empty:first-child::before {
+    font-size: 17px !important;
+  }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+.title-bar-sigma {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-app-region: drag;
 }

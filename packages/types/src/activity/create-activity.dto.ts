@@ -1,14 +1,14 @@
-import { IsObject, IsString } from 'class-validator';
-
-import { type JsonObject } from '../common';
+import { IsString } from 'class-validator';
 
 export class CreateActivityDto {
   @IsString()
   type: string;
 
-  @IsObject()
-  eventData: JsonObject;
+  eventData: any;
 
   @IsString()
   name: string;
+
+  @IsString()
+  integrationAccountId: string;
 }

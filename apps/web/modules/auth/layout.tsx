@@ -2,7 +2,7 @@
 
 import type { ReactElement } from 'react';
 
-import { Logo } from '@sigma/ui/components/dynamic-logo';
+import { Logo } from '@tegonhq/ui';
 
 interface Props {
   children: React.ReactNode;

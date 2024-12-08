@@ -4,7 +4,7 @@ module.exports = (phase, { defaultConfig }) => {
 
   return {
     reactStrictMode: false,
-    transpilePackages: ['geist', '@sigma/ui'],
+    transpilePackages: ['geist', '@tegonhq/ui'],
     devIndicators: {
       buildActivityPosition: 'bottom-right',
     },

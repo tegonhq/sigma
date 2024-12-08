@@ -1,8 +1,10 @@
 import {app} from 'electron';
 import './security-restrictions';
-import {restoreOrCreateWindow} from '/@/mainWindow.js';
+
+import {restoreOrCreateWindow} from '../windows';
 import {platform} from 'node:process';
 import updater from 'electron-updater';
+import {startAPI} from './api';
 
 /**
  * Prevent electron from running multiple instances.
@@ -78,3 +80,5 @@ if (import.meta.env.PROD) {
     .then(() => updater.autoUpdater.checkForUpdatesAndNotify())
     .catch(e => console.error('Failed check and install updates:', e));
 }
+
+startAPI(app);

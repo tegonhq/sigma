@@ -1,7 +1,6 @@
 'use client';
 
-import { Logo } from '@sigma/ui/components/dynamic-logo';
-import { useRouter } from 'next/navigation';
+import { Logo } from '@tegonhq/ui';
 import React from 'react';
 import { SessionAuth } from 'supertokens-auth-react/recipe/session';
 
@@ -12,7 +11,6 @@ import { useAuthorizeMutation } from 'services/users';
 import { UserContext } from 'store/user-context';
 
 export function Authorize() {
-  const router = useRouter();
   const user = React.useContext(UserContext);
   const code = '';
 

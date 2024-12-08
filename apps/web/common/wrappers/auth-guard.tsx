@@ -1,6 +1,6 @@
 'use client';
 
-import { Loader } from '@sigma/ui/components/loader';
+import { Loader } from '@tegonhq/ui';
 import { useRouter } from 'next/navigation';
 import React, { cloneElement } from 'react';
 import Session from 'supertokens-web-js/recipe/session';

@@ -3,16 +3,16 @@
 /* eslint-disable react/no-unescaped-entities */
 import { zodResolver } from '@hookform/resolvers/zod';
 import { RiMailFill } from '@remixicon/react';
-import { Button } from '@sigma/ui/components/button';
 import {
+  Button,
   Form,
   FormControl,
   FormField,
   FormItem,
   FormMessage,
-} from '@sigma/ui/components/form';
-import { Input } from '@sigma/ui/components/input';
-import { ArrowRight } from '@sigma/ui/icons';
+  Input,
+  ArrowRight,
+} from '@tegonhq/ui';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';

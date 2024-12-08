@@ -1,6 +1,6 @@
 'use client';
 
-import { Loader } from '@sigma/ui/components/loader';
+import { Loader } from '@tegonhq/ui';
 import posthog from 'posthog-js';
 import * as React from 'react';
 

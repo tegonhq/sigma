@@ -6,10 +6,10 @@ import {
   IntegrationPayloadEventType,
 } from '@sigma/types';
 import { Response } from 'express';
+import { PrismaService } from 'nestjs-prisma';
 
 import { IntegrationsService } from 'modules/integrations/integrations.service';
 import { LoggerService } from 'modules/logger/logger.service';
-import { PrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export default class WebhookService {
@@ -34,7 +34,7 @@ export default class WebhookService {
     response.status(200);
 
     const activity = await this.integrations.loadIntegration(sourceName, {
-      event: IntegrationPayloadEventType.CREATE_ACTIVITY,
+      event: IntegrationPayloadEventType.CREATE,
       eventBody,
       eventHeaders,
     });

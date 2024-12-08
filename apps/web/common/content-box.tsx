@@ -1,4 +1,4 @@
-import { cn } from '@sigma/ui/lib/utils';
+import { cn } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 
 interface ContentBoxProps {

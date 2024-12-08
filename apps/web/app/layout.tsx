@@ -1,9 +1,9 @@
 'use client';
 
 import './global.css';
-import '@sigma/ui/index.css';
-import '@sigma/ui/global.css';
-import { cn } from '@sigma/ui/lib/utils';
+import '@tegonhq/ui/index.css';
+import '@tegonhq/ui/global.css';
+import { cn } from '@tegonhq/ui';
 import { GeistMono } from 'geist/font/mono';
 import { GeistSans } from 'geist/font/sans';
 import TimeAgo from 'javascript-time-ago';
@@ -11,6 +11,7 @@ import en from 'javascript-time-ago/locale/en';
 import { useRouter } from 'next/navigation';
 
 import { initPosthog, initSuperTokens } from 'common/init-config';
+import { IPCWrapper } from 'common/ipc-wrapper';
 
 import { Provider } from '../modules/provider';
 
@@ -31,11 +32,12 @@ export default function RootLayout({
       <body className={`${GeistMono.variable} ${GeistSans.variable} font-sans`}>
         <div
           className={cn(
-            'min-h-screen font-sans antialiased flex',
+            'min-h-screen font-sans antialiased flex flex-col h-full',
             GeistSans.variable,
             GeistMono.variable,
           )}
         >
+          <IPCWrapper />
           <Provider>{children}</Provider>
         </div>
       </body>

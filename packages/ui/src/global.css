@@ -1,7 +1,0 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@import './palette.css';
-@import './custom.css';
-@import './theme.css';

@@ -1,4 +1,4 @@
-import { cn } from '@sigma/ui/lib/utils';
+import { cn } from '@tegonhq/ui';
 import React, { useEffect, useRef } from 'react';
 
 interface AdjustableTextareaProps {

@@ -1,8 +1,6 @@
 'use client';
 
-import { ThemeProvider } from '@sigma/ui/components/theme-provider';
-import { Toaster } from '@sigma/ui/components/toaster';
-import { TooltipProvider } from '@sigma/ui/components/tooltip';
+import { TooltipProvider, Toaster } from '@tegonhq/ui';
 import posthog from 'posthog-js';
 import { PostHogProvider } from 'posthog-js/react';
 import { HotkeysProvider } from 'react-hotkeys-hook';
@@ -11,6 +9,7 @@ import { SuperTokensWrapper } from 'supertokens-auth-react';
 
 import { useGetQueryClient } from 'common/lib';
 import { SCOPES } from 'common/shortcut-scopes';
+import { ThemeProvider } from 'common/theme-provider';
 
 import { StoreContext, storeContextStore } from 'store/global-context-provider';
 

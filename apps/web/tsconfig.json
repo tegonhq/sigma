@@ -10,6 +10,7 @@
   },
   "include": [
     "next-env.d.ts",
+    "electron.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",

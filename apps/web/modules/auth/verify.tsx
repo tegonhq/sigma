@@ -1,7 +1,6 @@
 'use client';
 
-import { Loader } from '@sigma/ui/components/loader';
-import { useToast } from '@sigma/ui/components/use-toast';
+import { Loader, useToast } from '@tegonhq/ui';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React from 'react';
 import {

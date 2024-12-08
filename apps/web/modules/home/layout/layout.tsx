@@ -1,9 +1,6 @@
 'use client';
 
-import {
-  ResizablePanel,
-  ResizablePanelGroup,
-} from '@sigma/ui/components/resizable';
+import { ResizablePanel, ResizablePanelGroup } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 

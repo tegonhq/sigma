@@ -24,5 +24,5 @@ export class PreviousHistory {
 export class ConversationContext {
   page: Page[];
   activity: Activity[];
-  previousHistory: PreviousHistory;
+  previousHistory: PreviousHistory[];
 }

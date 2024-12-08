@@ -1,4 +1,4 @@
-import { Loader } from '@sigma/ui/components/loader';
+import { Loader } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 

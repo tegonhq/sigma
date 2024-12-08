@@ -1,4 +1,4 @@
-import { useToast } from '@sigma/ui/components/ui/use-toast';
+import { useToast } from '@tegonhq/ui';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import {

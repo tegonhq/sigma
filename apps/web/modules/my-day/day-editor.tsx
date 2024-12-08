@@ -1,16 +1,12 @@
 import { HocuspocusProvider } from '@hocuspocus/provider';
 import { PageTypeEnum } from '@sigma/types';
-import {
-  Editor,
-  EditorExtensions,
-  suggestionItems,
-} from '@sigma/ui/components/editor/index';
 import Collaboration from '@tiptap/extension-collaboration';
 import { format } from 'date-fns';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import * as Y from 'yjs';
 
+import { Editor, EditorExtensions, suggestionItems } from 'common/editor';
 import type { PageType } from 'common/types';
 
 import { useCreatePageMutation } from 'services/pages';

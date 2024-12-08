@@ -1,6 +1,4 @@
-import { Button } from '@sigma/ui/components/ui/button';
-import { Separator } from '@sigma/ui/components/ui/separator';
-import { AI, Inbox, IssuesLine } from '@sigma/ui/icons';
+import { AI, Inbox, IssuesLine, Separator, Button, cn } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 
 export const TITLE = {
@@ -12,15 +10,18 @@ export const TITLE = {
 
 import { useApplication } from 'hooks/application/use-application';
 
-import { WorkspaceDropdown } from './layout/workspace-dropdown';
 import { TabViewType } from 'store/application';
 
+import { WorkspaceDropdown } from './layout/workspace-dropdown';
+import { useWindowState } from './use-window-state';
+
 export const Tabs = observer(() => {
-  const { updateRightScreen, rightScreenCollapsed } = useApplication();
+  const { updateRightScreen } = useApplication();
+  const minimised = useWindowState();
 
   return (
-    <div className="flex gap-1 px-3 py-2 items-center justify-between w-full">
-      <div className="flex items-center">
+    <div className="flex gap-1 px-3 py-2 items-center w-full">
+      <div className={cn('flex items-center', minimised ? 'ml-14' : 'ml-2')}>
         <WorkspaceDropdown />
 
         <Separator orientation="vertical" className="h-[20px] mr-2" />
@@ -33,6 +34,8 @@ export const Tabs = observer(() => {
           </Button>
         </div>
       </div>
+
+      <div className="title-bar-sigma h-[20px] flex-1"></div>
 
       <div className="flex ml-2">
         <Button

@@ -1,4 +1,4 @@
-import { Loader } from '@sigma/ui/components/loader';
+import { Loader } from '@tegonhq/ui';
 import * as React from 'react';
 
 import { hash } from 'common/common-utils';

@@ -1,4 +1,4 @@
-import { Calendar } from '@sigma/ui/components/calendar';
+import { Calendar } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 
 import { useApplication } from 'hooks/application';

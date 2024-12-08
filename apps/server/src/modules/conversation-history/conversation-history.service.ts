@@ -152,7 +152,6 @@ export class ConversationHistoryService {
       }
     }
 
-    console.log({ page, activity, previousHistory });
     return {
       page,
       activity,

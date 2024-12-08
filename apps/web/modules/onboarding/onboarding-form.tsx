@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from '@sigma/ui/components/button';
+
 import {
   Form,
   FormControl,
@@ -7,9 +7,11 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@sigma/ui/components/form';
-import { Input } from '@sigma/ui/components/input';
-import { useToast } from '@sigma/ui/components/use-toast';
+  useToast,
+  Input,
+  Button,
+} from '@tegonhq/ui';
+
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 

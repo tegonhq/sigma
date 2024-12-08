@@ -1,11 +1,13 @@
-import { Button } from '@sigma/ui/components/button';
-import { Calendar } from '@sigma/ui/components/calendar';
 import {
+  ArrowLeft,
+  ArrowRight,
+  CalendarLine,
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@sigma/ui/components/popover';
-import { ArrowLeft, ArrowRight, CalendarLine } from '@sigma/ui/icons';
+  Calendar,
+  Button,
+} from '@tegonhq/ui';
 import { addDays, isSameDay, subDays } from 'date-fns';
 import { observer } from 'mobx-react-lite';
 import { useHotkeys } from 'react-hotkeys-hook';
@@ -68,7 +70,7 @@ export const Navigation = observer(() => {
   );
 
   return (
-    <div className="flex -mx-2 justify-between">
+    <div className="flex -mx-2 mr-0 justify-between">
       <div className="flex gap-0.5">
         <Button variant="ghost" onClick={onBackDate}>
           <ArrowLeft size={18} />

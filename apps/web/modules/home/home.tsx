@@ -4,7 +4,7 @@ import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
-} from '@sigma/ui/components/resizable';
+} from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 
 import { Activity } from 'modules/activity';
