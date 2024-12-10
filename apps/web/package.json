@@ -12,6 +12,7 @@
     "@hocuspocus/provider": "^2.13.7",
     "@hocuspocus/transformer": "^2.13.7",
     "@hookform/resolvers": "3.9.0",
+    "@paciolan/remote-component": "^2.13.0",
     "@remixicon/react": "^4.2.0",
     "@sentry/nextjs": "^7.105.0",
     "@sigma/services": "workspace:*",

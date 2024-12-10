@@ -6,4 +6,6 @@ export enum MODELS {
   Status = 'Status',
   Task = 'Task',
   Activity = 'Activity',
+  Conversation = 'Conversation',
+  ConversationHistory = 'ConversationHistory',
 }

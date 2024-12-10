@@ -1,4 +1,4 @@
-import { AI, Inbox, IssuesLine, Separator, Button, cn } from '@tegonhq/ui';
+import { AI, Inbox, IssuesLine, Button, cn } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 
 export const TITLE = {
@@ -23,16 +23,6 @@ export const Tabs = observer(() => {
     <div className="flex gap-1 px-3 py-2 items-center w-full">
       <div className={cn('flex items-center', minimised ? 'ml-14' : 'ml-2')}>
         <WorkspaceDropdown />
-
-        <Separator orientation="vertical" className="h-[20px] mr-2" />
-        <div className="flex gap-0.5 items-center">
-          <Button variant="secondary" size="sm" isActive>
-            My day
-          </Button>
-          <Button variant="secondary" size="sm">
-            Instructions
-          </Button>
-        </div>
       </div>
 
       <div className="title-bar-sigma h-[20px] flex-1"></div>

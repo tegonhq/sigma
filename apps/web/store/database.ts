@@ -6,6 +6,8 @@ import Dexie from 'dexie';
 
 import type {
   ActivityType,
+  ConversationHistoryType,
+  ConversationType,
   IntegrationAccountType,
   PageType,
   StatusType,
@@ -23,11 +25,13 @@ export class SigmaDatabase extends Dexie {
   tasks: Dexie.Table<Partial<TaskType>, string>;
   activity: Dexie.Table<Partial<ActivityType>, string>;
   application: Dexie.Table<Partial<ApplicationStoreType>, string>;
+  conversations: Dexie.Table<ConversationType, string>;
+  conversationHistory: Dexie.Table<ConversationHistoryType, string>;
 
   constructor(databaseName: string) {
     super(databaseName);
 
-    this.version(15).stores({
+    this.version(16).stores({
       [MODELS.Workspace]: 'id,createdAt,updatedAt,name,slug,userId',
       [MODELS.IntegrationAccount]:
         'id,createdAt,updatedAt,accountId,settings,integratedById,integrationDefinitionId,workspaceId',
@@ -37,6 +41,9 @@ export class SigmaDatabase extends Dexie {
         'id,createdAt,updatedAt,sourceId,url,status,metadata,workspaceId,pageId,integrationAccountId',
       [MODELS.Activity]:
         'id,createdAt,updatedAt,type,eventData,name,workspaceId,integrationAccountId',
+      [MODELS.Conversation]: 'id,createdAt,updatedAt,title,userId,workspaceId',
+      [MODELS.ConversationHistory]:
+        'id,createdAt,updatedAt,message,userType,context,thoughts,userId,conversationId',
       Application: 'id,sidebarCollapsed,tabGroups,activeTabGroupId',
     });
 
@@ -45,6 +52,8 @@ export class SigmaDatabase extends Dexie {
     this.pages = this.table(MODELS.Page);
     this.tasks = this.table(MODELS.Task);
     this.activity = this.table(MODELS.Activity);
+    this.conversations = this.table(MODELS.Conversation);
+    this.conversationHistory = this.table(MODELS.ConversationHistory);
     this.application = this.table('Application');
   }
 }

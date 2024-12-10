@@ -19,6 +19,7 @@ const electronHandler = {
     },
     onWindowStateChange: (callback: (state: string) => void) =>
       ipcRenderer.on('window-state', (event, state) => callback(state)),
+    convertPathToUrl: (filePath: string) => ipcRenderer.invoke('convert-path-to-url', filePath),
     on(channel: Channels, func: (...args: unknown[]) => void) {
       const subscription = (_event: IpcRendererEvent, ...args: unknown[]) => func(...args);
       ipcRenderer.on(channel, subscription);
