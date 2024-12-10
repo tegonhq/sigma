@@ -4,4 +4,6 @@ export enum MODELS {
   IntegrationAccount = 'IntegrationAccount',
   Page = 'Page',
   Status = 'Status',
+  Task = 'Task',
+  Activity = 'Activity',
 }

@@ -5,3 +5,5 @@ export * from './workspace';
 export * from './user';
 export * from './page';
 export * from './status';
+export * from './activity';
+export * from './task';

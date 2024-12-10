@@ -18,8 +18,13 @@ export const SocketDataSyncWrapper: React.FC<Props> = observer(
   (props: Props) => {
     const { children } = props;
 
-    const { workspaceStore, integrationAccountsStore, pagesStore } =
-      useContextStore();
+    const {
+      workspaceStore,
+      integrationAccountsStore,
+      pagesStore,
+      tasksStore,
+      activityStore,
+    } = useContextStore();
     const user = React.useContext(UserContext);
 
     const [socket, setSocket] = React.useState<Socket | undefined>(undefined);
@@ -52,6 +57,8 @@ export const SocketDataSyncWrapper: React.FC<Props> = observer(
         [MODELS.IntegrationAccount]: integrationAccountsStore,
 
         [MODELS.Page]: pagesStore,
+        [MODELS.Task]: tasksStore,
+        [MODELS.Activity]: activityStore,
       };
 
       socket.on('message', (newMessage: string) => {

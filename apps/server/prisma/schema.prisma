@@ -250,6 +250,9 @@ model Task {
   page   Page   @relation(fields: [pageId], references: [id])
   pageId String
 
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId String
+
   integrationAccountId String?
   integrationAccount   IntegrationAccount? @relation(fields: [integrationAccountId], references: [id])
 }
@@ -319,6 +322,7 @@ model Workspace {
   Conversation          Conversation[]
   Activity              Activity[]
   IndexJob              IndexJob[]
+  tasks                 Task[]
 }
 
 enum ModelName {
@@ -331,6 +335,7 @@ enum ModelName {
   Workspace
   Page
   Status
+  Activity
 }
 
 enum ActionType {

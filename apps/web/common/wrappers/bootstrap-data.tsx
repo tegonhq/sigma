@@ -27,11 +27,20 @@ export function BootstrapWrapper({ children }: Props) {
   const hashKey = `${workspace.id}__${user.id}`;
   const lastSequenceId =
     localStorage && localStorage.getItem(`lastSequenceId_${hashKey}`);
-  const { workspaceStore, integrationAccountsStore } = useContextStore();
+  const {
+    workspaceStore,
+    integrationAccountsStore,
+    pagesStore,
+    activityStore,
+    tasksStore,
+  } = useContextStore();
 
   const MODEL_STORE_MAP = {
     [MODELS.Workspace]: workspaceStore,
     [MODELS.IntegrationAccount]: integrationAccountsStore,
+    [MODELS.Activity]: activityStore,
+    [MODELS.Task]: tasksStore,
+    [MODELS.Page]: pagesStore,
   };
 
   React.useEffect(() => {

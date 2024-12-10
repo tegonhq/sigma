@@ -28,6 +28,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { WebhookModule } from 'modules/webhook/webhook.module';
 import { ActivityModule } from 'modules/activity/activity.module';
+import { TasksModule } from 'modules/tasks/tasks.module';
 
 @Module({
   imports: [
@@ -86,6 +87,7 @@ import { ActivityModule } from 'modules/activity/activity.module';
     ConversationHistoryModule,
     WebhookModule,
     ActivityModule,
+    TasksModule,
   ],
   controllers: [AppController],
   providers: [
