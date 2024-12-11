@@ -14,7 +14,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "build/types/**/*.ts"
+    "build/types/**/*.ts",
+    "remote-component.config.js"
   ],
   "exclude": ["node_modules", "src/pages/api/**.js"]
 }

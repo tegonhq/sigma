@@ -337,6 +337,8 @@ enum ModelName {
   Page
   Status
   Activity
+  Conversation
+  ConversationHistory
 }
 
 enum ActionType {

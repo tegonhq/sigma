@@ -1,10 +1,10 @@
-import React from 'react';
+import { useLocalCommonState } from 'common/use-local-state';
 
 import { useIPC } from 'hooks/ipc';
 
 export const useWindowState = () => {
   const ipcRenderer = useIPC();
-  const [minimised, setMinimised] = React.useState(true);
+  const [minimised, setMinimised] = useLocalCommonState('minimized', true);
 
   ipcRenderer.onWindowStateChange((state: string) => {
     if (state === 'maximized') {

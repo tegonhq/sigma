@@ -32,7 +32,7 @@ export default function RootLayout({
       <body className={`${GeistMono.variable} ${GeistSans.variable} font-sans`}>
         <div
           className={cn(
-            'min-h-screen font-sans antialiased flex flex-col',
+            'min-h-screen font-sans antialiased flex flex-col justify-center',
             GeistSans.variable,
             GeistMono.variable,
           )}

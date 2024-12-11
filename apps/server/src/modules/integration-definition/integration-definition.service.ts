@@ -2,19 +2,12 @@ import { Injectable } from '@nestjs/common';
 import {
   IntegrationDefinition,
   IntegrationDefinitionIdDto,
-  IntegrationEventPayload,
-  IntegrationPayloadEventType,
 } from '@sigma/types';
 import { PrismaService } from 'nestjs-prisma';
 
-import { IntegrationsService } from 'modules/integrations/integrations.service';
-
 @Injectable()
 export class IntegrationDefinitionService {
-  constructor(
-    private prisma: PrismaService,
-    private integrations: IntegrationsService,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
   async getIntegrationDefinitions(
     workspaceId: string,
@@ -48,15 +41,7 @@ export class IntegrationDefinitionService {
       integrationDefinitionId,
     });
 
-    const payload: IntegrationEventPayload = {
-      event: IntegrationPayloadEventType.SPEC,
-    };
-
-    const spec = await this.integrations.loadIntegration(
-      integrationDefinition.slug,
-      payload,
-    );
-
-    return { ...integrationDefinition, spec };
+    // TODO: spec
+    return { ...integrationDefinition };
   }
 }

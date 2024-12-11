@@ -1,13 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import {
-  IntegrationEventPayload,
-  IntegrationPayloadEventType,
-} from '@sigma/types';
 import * as simpleOauth2 from 'simple-oauth2';
 
 import { IntegrationDefinitionService } from 'modules/integration-definition/integration-definition.service';
-import { IntegrationsService } from 'modules/integrations/integrations.service';
 import { LoggerService } from 'modules/logger/logger.service';
 
 import {
@@ -31,7 +26,6 @@ export class OAuthCallbackService {
   constructor(
     private integrationDefinitionService: IntegrationDefinitionService,
     private configService: ConfigService,
-    private integrations: IntegrationsService,
   ) {
     this.CALLBACK_URL = this.configService.get<string>('OAUTH_CALLBACK_URL');
   }
@@ -201,22 +195,7 @@ export class OAuthCallbackService {
         },
       );
 
-      const payload: IntegrationEventPayload = {
-        event: IntegrationPayloadEventType.CREATE,
-        userId: sessionRecord.userId,
-        workspaceId: sessionRecord.workspaceId,
-        data: {
-          oauthResponse: tokensResponse.token,
-          oauthParams: params,
-          integrationDefinition,
-          personal: sessionRecord.personal,
-        },
-      };
-
-      await this.integrations.loadIntegration(
-        integrationDefinition.slug,
-        payload,
-      );
+      console.log(tokensResponse);
 
       res.redirect(
         `${sessionRecord.redirectURL}?success=true&integrationName=${integrationDefinition.name}${accountIdentifier}${integrationKeys}`,
