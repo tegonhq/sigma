@@ -7,10 +7,25 @@ export class ConversationService {
   constructor(private prisma: PrismaService) {}
 
   async createConversation(
+    workspaceId: string,
+    userId: string,
     conversationData: CreateConversationDto,
   ): Promise<Conversation> {
     return this.prisma.conversation.create({
-      data: conversationData,
+      data: {
+        workspaceId,
+        userId,
+        title: conversationData.message.substring(0, 100),
+        ConversationHistory: {
+          create: {
+            userId,
+            ...conversationData,
+          },
+        },
+      },
+      include: {
+        ConversationHistory: true,
+      },
     });
   }
 

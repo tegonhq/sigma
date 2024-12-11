@@ -4,10 +4,12 @@ import {
   IntegrationAccountIdDto,
   UpdateIntegrationAccountDto,
 } from '@sigma/types';
-import { GetIntegrationAccountByNames } from '@sigma/types';
 import { PrismaService } from 'nestjs-prisma';
 
-import { IntegrationAccountSelect } from './integration-account.interface';
+import {
+  IntegrationAccountSelect,
+  IntegrationAccountSelectByNames,
+} from './integration-account.interface';
 
 @Injectable()
 export class IntegrationAccountService {
@@ -95,18 +97,30 @@ export class IntegrationAccountService {
   }
 
   async getIntegrationAccountsByName(
-    integrationdata: GetIntegrationAccountByNames,
+    integrations: string,
+    workspaceId: string,
   ) {
-    return await this.prisma.integrationAccount.findMany({
+    const accounts = await this.prisma.integrationAccount.findMany({
       where: {
-        workspaceId: integrationdata.workspaceId,
+        workspaceId,
         integrationDefinition: {
           slug: {
-            in: integrationdata.integrations,
+            in: integrations.split(','),
           },
         },
+        deleted: null,
       },
+      select: IntegrationAccountSelectByNames,
     });
+
+    return accounts.reduce(
+      (acc, account) => {
+        acc[account.integrationDefinition.slug] = account;
+        return acc;
+      },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      {} as Record<string, any>,
+    );
   }
 
   async getIntegrationAccounts(workspaceId: string) {

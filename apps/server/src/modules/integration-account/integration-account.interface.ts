@@ -12,3 +12,19 @@ export const IntegrationAccountSelect = {
   integrationDefinition: true,
   workspace: true,
 };
+
+export const IntegrationAccountSelectByNames = {
+  id: true,
+  accountId: true,
+  settings: true,
+  integratedById: true,
+  integrationConfiguration: true,
+  createdAt: true,
+  updatedAt: true,
+  deleted: true,
+  workspaceId: true,
+  isActive: true,
+  integrationDefinitionId: true,
+  integrationDefinition: true,
+  workspace: true,
+};

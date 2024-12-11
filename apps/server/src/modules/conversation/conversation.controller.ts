@@ -14,6 +14,7 @@ import {
 } from '@sigma/types';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
+import { UserId, Workspace } from 'modules/auth/session.decorator';
 
 import { ConversationService } from './conversation.service';
 
@@ -27,9 +28,15 @@ export class ConversationController {
   @Post()
   @UseGuards(AuthGuard)
   async createConversation(
+    @Workspace() workspaceId: string,
+    @UserId() userId: string,
     @Body() conversationData: CreateConversationDto,
   ): Promise<Conversation> {
-    return await this.conversationService.createConversation(conversationData);
+    return await this.conversationService.createConversation(
+      workspaceId,
+      userId,
+      conversationData,
+    );
   }
 
   @Get(':conversationId')

@@ -1,4 +1,6 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsObject, IsOptional, IsString } from 'class-validator';
+
+import { type TaskMetadata } from './task.entity';
 
 export class CreateTaskDto {
   @IsString()
@@ -12,4 +14,12 @@ export class CreateTaskDto {
   @IsString()
   @IsOptional()
   title: string;
+
+  @IsObject()
+  @IsOptional()
+  metadata?: TaskMetadata;
+
+  @IsString()
+  @IsOptional()
+  sourceId: string;
 }

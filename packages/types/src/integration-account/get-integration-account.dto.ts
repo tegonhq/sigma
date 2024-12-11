@@ -1,9 +1,6 @@
-import { IsArray, IsString } from 'class-validator';
+import { IsArray } from 'class-validator';
 
 export class GetIntegrationAccountByNames {
   @IsArray()
   integrations: string[];
-
-  @IsString()
-  workspaceId: string;
 }

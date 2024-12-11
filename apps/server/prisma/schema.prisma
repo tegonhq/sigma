@@ -64,6 +64,7 @@ model Conversation {
   updatedAt DateTime  @updatedAt
   deleted   DateTime?
 
+  title       String?
   user        User       @relation(fields: [userId], references: [id])
   userId      String
   workspace   Workspace? @relation(fields: [workspaceId], references: [id])
@@ -139,7 +140,7 @@ model IntegrationDefinitionV2 {
   updatedAt DateTime  @updatedAt
   deleted   DateTime?
 
-  name        String     @unique
+  name        String  @unique
   slug        String
   description String
   icon        String

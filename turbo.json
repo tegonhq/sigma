@@ -4,14 +4,11 @@
     "VERSION",
     "NODE_ENV",
     "PORT",
-
     "LOG_LEVEL",
     "CREATE_LOG_FILE",
-
     "POSTGRES_USER",
     "POSTGRES_PASSWORD",
     "POSTGRES_DB",
-
     "DB_HOST",
     "DB_PORT",
     "DB_SCHEMA",
@@ -19,48 +16,66 @@
     "REPLICATION_DATABASE_URL",
     "SYNC_SERVER",
     "SUPERTOKEN_CONNECTION_URI",
-
     "PORT",
     "FRONTEND_HOST",
     "BACKEND_HOST",
     "BACKEND_URL",
     "PUBLIC_ATTACHMENT_URL",
     "OAUTH_CALLBACK_URL",
-
     "SMTP_HOST",
     "SMTP_PORT",
     "SMTP_USER",
     "SMTP_PASSWORD",
     "SMTP_DEFAULT_FROM",
-
     "GCP_BUCKET_NAME",
-    "GCP_SERVICE_ACCOUNT_FILE"
+    "GCP_SERVICE_ACCOUNT_FILE",
+    "REDIS_URL",
+    "REDIS_PORT"
   ],
   "ui": "tui",
   "tasks": {
     "build": {
-      "dependsOn": [ "^build" ],
-      "outputs": [ "dist/**", ".next/**" ]
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "dist/**",
+        ".next/**"
+      ]
     },
     "compile": {
-      "dependsOn": [ "^build", "^compile" ],
-      "outputs": [ "dist/**", ".next/**" ]
+      "dependsOn": [
+        "^build",
+        "^compile"
+      ],
+      "outputs": [
+        "dist/**",
+        ".next/**"
+      ]
     },
-    "lint": { },
+    "lint": {},
     "generate": {
-      "dependsOn": [ "^generate" ],
+      "dependsOn": [
+        "^generate"
+      ],
       "cache": false
     },
     "dev": {
-      "dependsOn": [ "generate" ],
+      "dependsOn": [
+        "generate"
+      ],
       "interactive": true,
       "cache": false
     },
     "prisma:studio": {
-      "env": [ "DATABASE_URL" ]
+      "env": [
+        "DATABASE_URL"
+      ]
     },
     "migrate": {
-      "env": [ "DATABASE_URL" ],
+      "env": [
+        "DATABASE_URL"
+      ],
       "interactive": true,
       "cache": false
     }

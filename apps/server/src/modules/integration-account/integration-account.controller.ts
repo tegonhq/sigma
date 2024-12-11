@@ -13,7 +13,6 @@ import {
   IntegrationAccountIdDto,
   UpdateIntegrationAccountDto,
 } from '@sigma/types';
-import { GetIntegrationAccountByNames } from '@sigma/types';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
 import { Workspace } from 'modules/auth/session.decorator';
@@ -47,6 +46,18 @@ export class IntegrationAccountController {
   ): Promise<IntegrationAccount> {
     return await this.integrationAccountService.getIntegrationAccountByAccountId(
       accountId,
+    );
+  }
+
+  @Get('/names')
+  @UseGuards(AuthGuard)
+  async getIntegrationAccountsByName(
+    @Query('integrations') integrations: string,
+    @Workspace() workspaceId: string,
+  ) {
+    return await this.integrationAccountService.getIntegrationAccountsByName(
+      integrations,
+      workspaceId,
     );
   }
 
@@ -92,23 +103,6 @@ export class IntegrationAccountController {
     return await this.integrationAccountService.updateIntegrationAccount(
       integrationAccountIdRequestIdBody.integrationAccountId,
       updateIntegrationAccountBody,
-    );
-  }
-  @Get('/names')
-  @UseGuards(AuthGuard)
-  async getIntegrationAccountsByName(
-    @Query() integrationData: GetIntegrationAccountByNames,
-  ) {
-    return await this.integrationAccountService.getIntegrationAccountsByName(
-      integrationData,
-    );
-  }
-
-  @Get()
-  @UseGuards(AuthGuard)
-  async getIntegrationAccountsInWorkspace(@Workspace() workspaceId: string) {
-    return await this.integrationAccountService.getIntegrationAccounts(
-      workspaceId,
     );
   }
 }

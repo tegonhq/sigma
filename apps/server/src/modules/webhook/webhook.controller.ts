@@ -11,15 +11,6 @@ import WebhookService from './webhook.service';
 export class WebhookController {
   constructor(private webhookService: WebhookService) {}
 
-  @Post('index')
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async indexData(@Body() eventBody: any) {
-    return await this.webhookService.indexData(
-      eventBody.repoName,
-      eventBody.owner,
-    );
-  }
-
   @Post(':sourceName')
   async webhookEvents(
     @Headers() eventHeaders: EventHeaders,
