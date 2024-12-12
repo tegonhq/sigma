@@ -37,7 +37,6 @@ fastify.get('/local/*', async (request, reply) => {
     const filePath = (request.params as any)['*'];
     // Ensure the path is safe and absolute
     const absolutePath = path.join('/', filePath);
-    console.log(absolutePath);
 
     // Read and return the file contents
     const content = fs.readFileSync(absolutePath, 'utf-8');

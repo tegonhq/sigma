@@ -30,6 +30,7 @@ const Tab = types
     updateData(data: any) {
       self.data = { ...self.data, ...data };
     },
+
     changeType(type: string, entity_id?: string) {
       self.type = type;
       if (entity_id) {

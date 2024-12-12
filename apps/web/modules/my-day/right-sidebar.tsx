@@ -7,7 +7,7 @@ export const RightSidebar = observer(() => {
   const { updateTabData, activeTab: tab } = useApplication();
 
   const updateDate = (date: Date) => {
-    updateTabData({ date });
+    updateTabData(0, { date });
   };
 
   return (

@@ -6,20 +6,19 @@ import {
   Param,
   Post,
   Query,
+  Req,
+  Res,
   UseGuards,
 } from '@nestjs/common';
-import {
-  CodeDto,
-  CodeDtoWithWorkspace,
-  CreatePatDto,
-  PatIdDto,
-  User,
-} from '@sigma/types';
+import { CodeDto, CreatePatDto, PatIdDto, User } from '@sigma/types';
 import { SessionContainer } from 'supertokens-node/recipe/session';
-
+import { Request, Response } from 'express';
+import supertokens from 'supertokens-node';
+import Session from 'supertokens-node/recipe/session';
 import { AuthGuard } from 'modules/auth/auth.guard';
 import {
   Session as SessionDecorator,
+  UserId,
   Workspace,
 } from 'modules/auth/session.decorator';
 
@@ -77,6 +76,23 @@ export class UsersController {
     );
   }
 
+  @Get('pat-authentication')
+  @UseGuards(AuthGuard)
+  async getPatAuthentication(
+    @UserId() userId: string,
+    @Res() res: Response,
+    @Req() req: Request,
+  ) {
+    await Session.createNewSession(
+      req,
+      res,
+      'public',
+      supertokens.convertToRecipeUserId(userId),
+    );
+
+    res.send({ status: 200 });
+  }
+
   @Get('pats')
   @UseGuards(AuthGuard)
   async getPats(@SessionDecorator() session: SessionContainer) {
@@ -98,12 +114,12 @@ export class UsersController {
   @Post('authorization')
   @UseGuards(AuthGuard)
   async authorizeCode(
-    @SessionDecorator() session: SessionContainer,
+    @UserId() userId: string,
+    @Workspace() workspaceId: string,
     @Body()
-    codeBody: CodeDtoWithWorkspace,
+    codeBody: CodeDto,
   ) {
-    const userId = session.getUserId();
-    return this.users.authorizeCode(userId, codeBody);
+    return this.users.authorizeCode(userId, workspaceId, codeBody);
   }
 
   @Post(':userId')

@@ -1,9 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  EventBody,
-  EventHeaders,
-  IntegrationPayloadEventType,
-} from '@sigma/types';
+import { EventBody, EventHeaders } from '@sigma/types';
 import { Response } from 'express';
 import { PrismaService } from 'nestjs-prisma';
 
@@ -40,8 +36,7 @@ export default class WebhookService {
       `file:///Users/manoj/work/sigma-integrations/github/dist/backend/index.js`,
     );
 
-    const { accountId, activity, task } = await integration.run({
-      event: IntegrationPayloadEventType.WEBHOOK_RESPONSE,
+    const { accountId, activity, task } = await integration.webhookHandler({
       eventBody,
       eventHeaders,
     });

@@ -33,10 +33,10 @@ export class OAuthCallbackService {
   async getRedirectURL(
     oAuthBody: OAuthBodyInterface,
     userId: string,
+    workspaceId: string,
     specificScopes?: string,
   ) {
-    const { integrationDefinitionId, workspaceId, redirectURL, personal } =
-      oAuthBody;
+    const { integrationDefinitionId, redirectURL, personal } = oAuthBody;
 
     this.logger.info({
       message: `We got OAuth request for ${workspaceId}: ${integrationDefinitionId}`,

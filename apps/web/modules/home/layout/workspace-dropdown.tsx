@@ -12,43 +12,50 @@ import { useRouter } from 'next/navigation';
 import React from 'react';
 import { signOut } from 'supertokens-auth-react/recipe/session';
 
+import { Settings } from 'modules/settings';
+
 import { useContextStore } from 'store/global-context-provider';
 
 export const WorkspaceDropdown = observer(() => {
   const { workspaceStore } = useContextStore();
-  const { push, replace } = useRouter();
+  const { replace } = useRouter();
+  const [settingsOpen, setSettingsOpen] = React.useState(false);
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm">
-          <div className="flex justify-between gap-2 items-center">
-            <AvatarText text={workspaceStore.workspace.name} noOfChar={1} />
-            <div className="truncate"> {workspaceStore.workspace.name}</div>
-          </div>
-        </Button>
-      </DropdownMenuTrigger>
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="sm">
+            <div className="flex justify-between gap-2 items-center">
+              <AvatarText text={workspaceStore.workspace.name} noOfChar={1} />
+              <div className="truncate"> {workspaceStore.workspace.name}</div>
+            </div>
+          </Button>
+        </DropdownMenuTrigger>
 
-      <DropdownMenuContent className="min-w-60" align="start">
-        <DropdownMenuGroup>
+        <DropdownMenuContent className="min-w-60" align="start">
+          <DropdownMenuGroup>
+            <DropdownMenuItem
+              onClick={() => {
+                setSettingsOpen(true);
+              }}
+            >
+              Preferences
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
           <DropdownMenuItem
-            onClick={() => {
-              push(`/settings/account/profile`);
+            onClick={async () => {
+              await signOut();
+
+              replace('/auth');
             }}
           >
-            Preferences
+            Log out
           </DropdownMenuItem>
-        </DropdownMenuGroup>
-        <DropdownMenuItem
-          onClick={async () => {
-            await signOut();
+        </DropdownMenuContent>
+      </DropdownMenu>
 
-            replace('/auth');
-          }}
-        >
-          Log out
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+      <Settings open={settingsOpen} setOpen={setSettingsOpen} />
+    </>
   );
 });

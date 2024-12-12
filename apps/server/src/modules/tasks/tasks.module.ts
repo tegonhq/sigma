@@ -2,6 +2,7 @@ import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
 import { PrismaModule, PrismaService } from 'nestjs-prisma';
 
+import { ConversationModule } from 'modules/conversation/conversation.module';
 import { UsersService } from 'modules/users/users.service';
 
 import { TasksController } from './tasks.controller';
@@ -12,6 +13,7 @@ import { TasksService } from './tasks.service';
 @Module({
   imports: [
     PrismaModule,
+    ConversationModule,
     BullModule.registerQueue({
       name: 'tasks',
       connection: {
@@ -35,6 +37,6 @@ import { TasksService } from './tasks.service';
     TasksProcessor,
     TasksQueue,
   ],
-  exports: [TasksService],
+  exports: [TasksService, TasksProcessor],
 })
 export class TasksModule {}

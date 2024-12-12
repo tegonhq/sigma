@@ -75,9 +75,11 @@ export const IntegrationAccountsStore: IAnyStateTreeNode = types
     },
   }));
 
-export type IntegrationAccountsStoreType = Instance<
-  typeof IntegrationAccountsStore
-> & {
+export interface IntegrationAccountsStoreType {
   integrationAccounts: IntegrationAccountType[];
   workspaceId: string;
-};
+
+  update: (task: IntegrationAccountType, id: string) => Promise<void>;
+  deleteById: (id: string) => Promise<void>;
+  load: () => Promise<void>;
+}

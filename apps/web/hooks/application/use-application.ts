@@ -36,13 +36,27 @@ export const useApplication = () => {
 
   // Tab related function
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const updateTabData = (data: any) => {
+  const updateActiveTabData = (data: any) => {
     tabGroup.activeTab.updateData(data);
     saveSnapshot();
   };
 
-  const updateTabType = (type: TabViewType, entityId?: string) => {
-    tabGroup.activeTab.changeType(type, entityId);
+  // Tab related function
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const updateTabData = (index: number, data: any) => {
+    const tab = tabGroup.tabs[index];
+    tab.updateData(data);
+    saveSnapshot();
+  };
+
+  const updateTabType = (
+    index: number,
+    type: TabViewType,
+    entityId?: string,
+  ) => {
+    const tab = tabGroup.tabs[index];
+
+    tab.changeType(type, entityId);
     saveSnapshot();
   };
 
@@ -69,8 +83,8 @@ export const useApplication = () => {
     back,
     setActiveTab,
     updateTabData,
+    updateActiveTabData,
     updateTabType,
-    sidebarCollapsed: applicationStore.sidebarCollapsed,
     rightScreenCollapsed: applicationStore.rightScreenCollapsed,
     updateRightScreen,
   };

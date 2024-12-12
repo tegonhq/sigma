@@ -9,6 +9,8 @@ export enum ModelNameEnum {
   Task = 'Task',
   Activity = 'Activity',
   Status = 'Status',
+  Conversation = 'Conversation',
+  ConversationHistory = 'ConversationHistory',
 }
 
 export const ModelName = {
@@ -21,6 +23,8 @@ export const ModelName = {
   Page: 'Page',
   Task: 'Task',
   Activity: 'Activity',
+  Conversation: 'Conversation',
+  ConversationHistory: 'ConversationHistory',
 };
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];

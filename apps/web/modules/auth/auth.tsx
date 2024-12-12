@@ -13,14 +13,23 @@ import {
   Input,
   ArrowRight,
 } from '@tegonhq/ui';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { AuthGuard } from 'common/wrappers';
 
+import { useIPC } from 'hooks/ipc';
+import { useIsElectron } from 'hooks/use-is-electron';
+
+import {
+  useCreateAuthCodeMutation,
+  type AuthCodeResponse,
+} from 'services/users';
+
 import { AuthLayout } from './layout';
-import { useSupertokenFunctions } from './utils';
+import { getCookies, useSupertokenFunctions } from './utils';
 
 export const AuthSchema = z.object({
   email: z.string().email(),
@@ -28,6 +37,7 @@ export const AuthSchema = z.object({
 });
 
 export function Auth() {
+  const router = useRouter();
   const form = useForm<z.infer<typeof AuthSchema>>({
     resolver: zodResolver(AuthSchema),
     defaultValues: {
@@ -37,6 +47,23 @@ export function Auth() {
   });
   const [loading, setLoading] = React.useState(false);
   const { emailSent, sendOTP, handleOTPInput } = useSupertokenFunctions();
+  const { mutate: createAuthCode, isLoading } = useCreateAuthCodeMutation({
+    onSuccess: async (data: AuthCodeResponse) => {
+      setLoading(true);
+      ipc.openUrl(
+        `${process.env.NEXT_PUBLIC_BASE_HOST}/authorize?code=${data.code}`,
+      );
+
+      try {
+        await getCookies(data.code);
+        router.replace('/home');
+      } catch (e) {}
+
+      setLoading(false);
+    },
+  });
+  const isElectron = useIsElectron();
+  const ipc = useIPC();
 
   const onSubmit = async ({ email, otp }: { email: string; otp: string }) => {
     setLoading(true);
@@ -50,6 +77,33 @@ export function Auth() {
 
     setLoading(false);
   };
+
+  const onLogin = () => {
+    createAuthCode();
+  };
+
+  if (isElectron) {
+    return (
+      <AuthGuard>
+        <AuthLayout>
+          <div className="flex flex-col w-[360px] items-center">
+            <h1 className="text-lg text-center">Welcome</h1>
+            <div className="text-center text-muted-foreground mt-1 mb-8">
+              Your second brain, supercharging dev life with AI.
+            </div>
+            <Button
+              variant="secondary"
+              className="w-fit"
+              onClick={onLogin}
+              isLoading={isLoading || loading}
+            >
+              Login
+            </Button>
+          </div>
+        </AuthLayout>
+      </AuthGuard>
+    );
+  }
 
   return (
     <AuthGuard>

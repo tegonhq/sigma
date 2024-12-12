@@ -9,6 +9,7 @@ export const Task = types.model({
   url: types.union(types.null, types.string),
   status: types.string,
   metadata: types.union(types.null, types.string),
+  dueDate: types.union(types.null, types.string, types.undefined),
 
   integrationAccountId: types.union(types.null, types.string),
   pageId: types.union(types.null, types.string),

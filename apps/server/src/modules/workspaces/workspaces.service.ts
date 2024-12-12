@@ -1,6 +1,9 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Workspace, WorkspaceRequestParamsDto } from '@sigma/types';
+import { Request, Response } from 'express';
 import { PrismaService } from 'nestjs-prisma';
+import supertokens from 'supertokens-node';
+import Session from 'supertokens-node/recipe/session';
 
 import {
   CreateInitialResourcesDto,
@@ -16,16 +19,18 @@ export default class WorkspacesService {
   async createInitialResources(
     userId: string,
     workspaceData: CreateInitialResourcesDto,
-  ): Promise<Workspace> {
-    const workspace = await this.prisma.workspace.findFirst({
+    res: Response,
+    req: Request,
+  ) {
+    const existingWorkspace = await this.prisma.workspace.findFirst({
       where: { userId },
     });
 
-    if (workspace) {
+    if (existingWorkspace) {
       throw new BadRequestException('Already workspace exist');
     }
 
-    return await this.prisma.$transaction(async (prisma) => {
+    const workspace = await this.prisma.$transaction(async (prisma) => {
       await prisma.user.update({
         where: { id: userId },
         data: {
@@ -46,6 +51,15 @@ export default class WorkspacesService {
 
       return workspace;
     });
+
+    await Session.createNewSession(
+      req,
+      res,
+      'public',
+      supertokens.convertToRecipeUserId(userId),
+    );
+
+    res.send({ status: 200, ...workspace });
   }
 
   async createWorkspace(

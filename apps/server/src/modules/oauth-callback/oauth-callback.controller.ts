@@ -10,7 +10,10 @@ import {
 import { SessionContainer } from 'supertokens-node/recipe/session';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
-import { Session as SessionDecorator } from 'modules/auth/session.decorator';
+import {
+  Session as SessionDecorator,
+  Workspace,
+} from 'modules/auth/session.decorator';
 
 import { OAuthBodyInterface, CallbackParams } from './oauth-callback.interface';
 import { OAuthCallbackService } from './oauth-callback.service';
@@ -26,10 +29,15 @@ export class OAuthCallbackController {
   @UseGuards(AuthGuard)
   async getRedirectURL(
     @SessionDecorator() session: SessionContainer,
+    @Workspace() workspaceId: string,
     @Body() body: OAuthBodyInterface,
   ) {
     const userId = session.getUserId();
-    return await this.oAuthCallbackService.getRedirectURL(body, userId);
+    return await this.oAuthCallbackService.getRedirectURL(
+      body,
+      userId,
+      workspaceId,
+    );
   }
 
   @Get('callback')

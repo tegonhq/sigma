@@ -248,6 +248,8 @@ model Task {
   status   String?
   metadata Json    @default("{}")
 
+  dueDate  DateTime?
+
   page   Page   @relation(fields: [pageId], references: [id])
   pageId String
 

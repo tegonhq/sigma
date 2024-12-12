@@ -48,7 +48,22 @@ export const TasksStore: IAnyStateTreeNode = types
 
     return { update, deleteById, load };
   })
-  .views(() => ({}));
+  .views((self) => ({
+    getTasks() {
+      return self.tasks;
+    },
+    getTasksWithNoIntegration() {
+      return self.tasks.filter((task: TaskType) => !task.integrationAccountId);
+    },
+    getTasksWithIntegration(integrationAccountId: string) {
+      return self.tasks.filter(
+        (task: TaskType) => task.integrationAccountId === integrationAccountId,
+      );
+    },
+    getTaskWithId(taskId: string) {
+      return self.tasks.find((task: TaskType) => task.id === taskId);
+    },
+  }));
 
 export interface TasksStoreType {
   tasks: TaskType[];
@@ -57,4 +72,9 @@ export interface TasksStoreType {
   update: (task: TaskType, id: string) => Promise<void>;
   deleteById: (id: string) => Promise<void>;
   load: () => Promise<void>;
+
+  getTasks: () => TaskType[];
+  getTaskWithId: (taskId: string) => TaskType;
+  getTasksWithNoIntegration: () => TaskType[];
+  getTasksWithIntegration: (integrationAccountId: string) => TaskType[];
 }

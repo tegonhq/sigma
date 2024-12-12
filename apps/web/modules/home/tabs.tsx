@@ -13,15 +13,13 @@ import { useApplication } from 'hooks/application/use-application';
 import { TabViewType } from 'store/application';
 
 import { WorkspaceDropdown } from './layout/workspace-dropdown';
-import { useWindowState } from './use-window-state';
 
 export const Tabs = observer(() => {
   const { updateRightScreen } = useApplication();
-  const minimised = useWindowState();
 
   return (
     <div className="flex gap-1 px-3 py-2 items-center w-full">
-      <div className={cn('flex items-center', minimised ? 'ml-14' : 'ml-2')}>
+      <div className={cn('flex items-center ml-1')}>
         <WorkspaceDropdown />
       </div>
 

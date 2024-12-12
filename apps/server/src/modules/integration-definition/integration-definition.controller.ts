@@ -1,11 +1,11 @@
-import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import {
   IntegrationDefinition,
   IntegrationDefinitionIdDto,
-  WorkspaceRequestParamsDto,
 } from '@sigma/types';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
+import { Workspace } from 'modules/auth/session.decorator';
 
 import { IntegrationDefinitionService } from './integration-definition.service';
 
@@ -23,12 +23,9 @@ export class IntegrationDefinitionController {
    */
   @Get()
   @UseGuards(AuthGuard)
-  async getIntegrationDefinitionsByWorkspace(
-    @Query()
-    workspaceDto: WorkspaceRequestParamsDto,
-  ) {
+  async getIntegrationDefinitionsByWorkspace(@Workspace() workspaceId: string) {
     return await this.integrationDefinitionService.getIntegrationDefinitions(
-      workspaceDto.workspaceId,
+      workspaceId,
     );
   }
 

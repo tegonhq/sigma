@@ -3,10 +3,10 @@
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 
-import { SearchEditor } from './editor';
+import { CommandComponent } from './command';
 
 export const Search = observer(() => {
-  return <SearchEditor />;
+  return <CommandComponent />;
 });
 
 export const SearchWrapper = () => {

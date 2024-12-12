@@ -7,7 +7,6 @@ import { useTab } from 'hooks/application/use-tab';
 
 import { DayEditor } from './day-editor';
 import { Navigation } from './navigation';
-import { Preview } from './preview';
 
 // A component to render individual date items.
 export const Day = observer(() => {
@@ -27,8 +26,6 @@ export const Day = observer(() => {
 
             <DayEditor date={date} />
           </div>
-
-          <Preview />
         </div>
       </div>
     </ScrollArea>

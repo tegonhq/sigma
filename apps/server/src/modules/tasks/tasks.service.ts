@@ -27,12 +27,14 @@ export class TasksService {
       status: taskStatus,
       ...otherTaskData
     } = createTaskDto;
-    const metadata = {
-      type: rawMetadata.type || TaskType.NORMAL,
-      ...(rawMetadata.type === TaskType.SCHEDULED && {
-        schedule: rawMetadata?.schedule,
-      }),
-    };
+    const metadata = rawMetadata
+      ? {
+          type: rawMetadata.type || TaskType.NORMAL,
+          ...(rawMetadata.type === TaskType.SCHEDULED && {
+            schedule: rawMetadata?.schedule,
+          }),
+        }
+      : {};
 
     const task = await this.prisma.task.create({
       data: {
@@ -57,7 +59,7 @@ export class TasksService {
     });
 
     // If it's a scheduled task, add it to the queue
-    if (rawMetadata.type === TaskType.SCHEDULED) {
+    if (rawMetadata && rawMetadata.type === TaskType.SCHEDULED) {
       await this.tasksQueue.addCronJob(task);
     }
 

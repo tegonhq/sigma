@@ -31,6 +31,8 @@ const electronHandler = {
     once(channel: Channels, func: (...args: unknown[]) => void) {
       ipcRenderer.once(channel, (_event, ...args) => func(...args));
     },
+
+    openUrl: (url: string) => ipcRenderer.send('open-url', url),
   },
 };
 

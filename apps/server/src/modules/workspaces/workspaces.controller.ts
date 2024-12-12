@@ -5,10 +5,13 @@ import {
   Get,
   Param,
   Post,
+  Req,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import { Workspace, WorkspaceRequestParamsDto } from '@sigma/types';
 import { SessionContainer } from 'supertokens-node/recipe/session';
+import { Request, Response } from 'express';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
 import { Session as SessionDecorator } from 'modules/auth/session.decorator';
@@ -31,11 +34,15 @@ export class WorkspacesController {
   async createIntialResources(
     @SessionDecorator() session: SessionContainer,
     @Body() workspaceData: CreateInitialResourcesDto,
-  ): Promise<Workspace> {
+    @Res() res: Response,
+    @Req() req: Request,
+  ) {
     const userId = session.getUserId();
     return await this.workspacesService.createInitialResources(
       userId,
       workspaceData,
+      res,
+      req,
     );
   }
 

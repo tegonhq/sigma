@@ -1,5 +1,5 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { CodeDtoWithWorkspace, User } from '@sigma/types';
+import { CodeDto, User } from '@sigma/types';
 import { PrismaService } from 'nestjs-prisma';
 
 import {
@@ -149,7 +149,7 @@ export class UsersService {
     });
   }
 
-  async authorizeCode(userId: string, codeBody: CodeDtoWithWorkspace) {
+  async authorizeCode(userId: string, workspaceId: string, codeBody: CodeDto) {
     // only allow authorization codes that were created less than 10 mins ago
     const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
     const code = await this.prisma.authorizationCode.findFirst({
@@ -185,7 +185,7 @@ export class UsersService {
         },
         data: {
           personalAccessTokenId: existingCliPersonalAccessToken.id,
-          workspaceId: codeBody.workspaceId,
+          workspaceId,
         },
       });
 
@@ -217,7 +217,7 @@ export class UsersService {
       },
       data: {
         personalAccessTokenId: token.id,
-        workspaceId: codeBody.workspaceId,
+        workspaceId,
       },
     });
 

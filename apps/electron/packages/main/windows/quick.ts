@@ -57,7 +57,7 @@ export async function createQuickWindow() {
 
 export function registerQuickStates(window: BrowserWindow) {
   window.on('blur', () => {
-    window.hide();
+    // window.hide();
   });
 
   // Listen for events from the renderer process

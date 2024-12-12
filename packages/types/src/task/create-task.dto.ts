@@ -5,7 +5,7 @@ import { type TaskMetadata } from './task.entity';
 export class CreateTaskDto {
   @IsString()
   @IsOptional()
-  url: string;
+  url?: string;
 
   @IsString()
   @IsOptional()
@@ -21,5 +21,5 @@ export class CreateTaskDto {
 
   @IsString()
   @IsOptional()
-  sourceId: string;
+  sourceId?: string;
 }

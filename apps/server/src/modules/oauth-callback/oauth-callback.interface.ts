@@ -1,5 +1,5 @@
 import { OAuth2Params } from '@sigma/types';
-import { IsBoolean, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsString } from 'class-validator';
 
 export interface RedirectURLParams {
   workspaceSlug: string;
@@ -27,10 +27,6 @@ export class OAuthBodyInterface {
 
   @IsBoolean()
   personal: boolean = false;
-
-  @IsString()
-  @IsOptional()
-  workspaceId?: string;
 
   @IsString()
   integrationDefinitionId: string;

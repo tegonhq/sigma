@@ -5,6 +5,7 @@ import {restoreOrCreateWindow} from '../windows';
 import {platform} from 'node:process';
 import updater from 'electron-updater';
 import {startAPI} from './api';
+import {listeners} from '../windows/listeners';
 
 /**
  * Prevent electron from running multiple instances.
@@ -82,3 +83,4 @@ if (import.meta.env.PROD) {
 }
 
 startAPI(app);
+listeners();
