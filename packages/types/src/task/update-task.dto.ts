@@ -3,9 +3,13 @@ import { IsOptional, IsString } from 'class-validator';
 export class UpdateTaskDto {
   @IsString()
   @IsOptional()
-  url: string;
+  url?: string;
 
   @IsString()
   @IsOptional()
-  status: string;
+  status?: string;
+
+  @IsString()
+  @IsOptional()
+  dueDate?: string;
 }

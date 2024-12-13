@@ -18,6 +18,7 @@ export async function saveTaskData(
         sourceId: record.data.sourceId,
         url: record.data.url,
         status: record.data.status,
+        dueDate: record.data.dueDate,
         metadata: JSON.stringify(record.data.metadata),
         pageId: record.data.pageId,
         integrationAccountId: record.data.integrationAccountId,

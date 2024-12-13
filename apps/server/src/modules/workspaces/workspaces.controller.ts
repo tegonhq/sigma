@@ -10,8 +10,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Workspace, WorkspaceRequestParamsDto } from '@sigma/types';
-import { SessionContainer } from 'supertokens-node/recipe/session';
 import { Request, Response } from 'express';
+import { SessionContainer } from 'supertokens-node/recipe/session';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
 import { Session as SessionDecorator } from 'modules/auth/session.decorator';

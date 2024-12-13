@@ -32,9 +32,16 @@ export const AddTask = observer(({ onCancel }: AddTaskProps) => {
   };
 
   useHotkeys(
-    [Key.Enter],
-    () => {
-      addTask();
+    [Key.Enter, Key.Escape],
+    (event) => {
+      switch (event.key) {
+        case Key.Enter:
+          addTask();
+          break;
+        case Key.Escape:
+          onCancel();
+          break;
+      }
     },
     {
       scopes: [SCOPES.Task],

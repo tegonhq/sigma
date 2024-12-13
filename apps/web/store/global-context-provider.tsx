@@ -16,8 +16,25 @@ import {
 import { PagesStore, type PagesStoreType } from './pages';
 import { TasksStore, type TasksStoreType } from './tasks';
 import { WorkspaceStore, type WorkspaceStoreType } from './workspace';
+import {
+  CommonStore,
+  defaultCommonStoreValue,
+  type CommonStoreType,
+} from './common';
+import {
+  ConversationsStore,
+  type ConversationStoreType,
+} from './conversations';
+import {
+  ConversationHistoryStore,
+  type ConversationHistoryStoreType,
+} from './conversation-history';
 
 const StoreContextModel = types.model({
+  commonStore: CommonStore,
+
+  conversationsStore: ConversationsStore,
+  conversationHistoryStore: ConversationHistoryStore,
   workspaceStore: WorkspaceStore,
   integrationAccountsStore: IntegrationAccountsStore,
   applicationStore: ApplicationStore,
@@ -50,6 +67,13 @@ export const storeContextStore = StoreContextModel.create({
   activityStore: {
     activities: [],
   },
+  conversationsStore: {
+    conversations: [],
+  },
+  conversationHistoryStore: {
+    conversationHistory: [],
+  },
+  commonStore: defaultCommonStoreValue,
 });
 
 export interface StoreContextInstanceType {
@@ -59,6 +83,9 @@ export interface StoreContextInstanceType {
   pagesStore: PagesStoreType;
   tasksStore: TasksStoreType;
   activityStore: ActivityStoreType;
+  conversationsStore: ConversationStoreType;
+  conversationHistoryStore: ConversationHistoryStoreType;
+  commonStore: CommonStoreType;
 }
 export const StoreContext =
   React.createContext<null | StoreContextInstanceType>(null);

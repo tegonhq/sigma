@@ -12,7 +12,7 @@ export const Conversation = types.model({
 });
 
 export interface ConversationStoreType {
-  conversations: ConversationType;
+  conversations: ConversationType[];
   getConversationWithId: (id: string) => ConversationType;
   update: (
     conversation: Partial<ConversationType>,

@@ -1,4 +1,11 @@
-import { ArrowLeft, Button, ChevronLeft } from '@tegonhq/ui';
+import {
+  ArrowLeft,
+  Button,
+  ChevronLeft,
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+} from '@tegonhq/ui';
 
 import { SettingSection } from 'modules/settings/setting-section';
 
@@ -23,20 +30,28 @@ export function Integration({
       {!isLoading && (
         <SettingSection
           title={
-            <div className="flex gap-1">
-              <Button
-                variant="ghost"
-                onClick={onBack}
-                className="group my-2 p-0 my-0 flex justify-start hover:bg-transparent text-md"
-              >
-                <ArrowLeft className="mr-1" size={14} />
-                Integrations
-              </Button>
-            </div>
+            <Breadcrumb className="text-base">
+              <BreadcrumbItem>
+                <BreadcrumbLink
+                  onClick={onBack}
+                  className="flex items-center gap-2"
+                >
+                  <span className="inline-block">Integrations</span>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbItem>
+                <BreadcrumbLink>
+                  <div className="inline-flex items-center gap-1 min-w-[0px]">
+                    <div className="truncate">{integrationDefinition.name}</div>
+                  </div>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+            </Breadcrumb>
           }
           description={integrationDefinition.description}
         >
           <>
+            <h2 className="text-md">{integrationDefinition.name}</h2>
             <IntegrationAuth integrationDefinition={integrationDefinition} />
             {integrationDefinition.spec && (
               <IntegrationAuth

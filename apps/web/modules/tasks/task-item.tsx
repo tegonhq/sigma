@@ -7,6 +7,8 @@ import { useContextStore } from 'store/global-context-provider';
 import { IntegrationTaskItem } from './integration-task-item';
 import { StatusDropdown, StatusDropdownVariant } from './status-dropdown';
 import { useApplication } from 'hooks/application';
+import { useUpdateTaskMutation } from 'services/tasks';
+import { TaskDueDate } from './task-duedate';
 
 interface TaskListItemProps {
   taskId: string;
@@ -17,8 +19,14 @@ export const TaskListItem = observer(({ taskId }: TaskListItemProps) => {
 
   const task = tasksStore.getTaskWithId(taskId);
   const page = pagesStore.getPageWithId(task.pageId);
+  const { mutate: updateTask } = useUpdateTaskMutation({});
 
-  const statusChange = (stateId: string) => {};
+  const statusChange = (status: string) => {
+    updateTask({
+      taskId: task.id,
+      status,
+    });
+  };
 
   if (task.integrationAccountId) {
     return (
@@ -57,7 +65,7 @@ export const TaskListItem = observer(({ taskId }: TaskListItemProps) => {
               </div>
 
               <div className="flex items-center gap-2 flex-wrap pr-1 shrink-0">
-                {/* <IssueDueDate dueDate={task.dueDate} /> */}
+                <TaskDueDate dueDate={task.dueDate} />
               </div>
             </div>
           </div>

@@ -1,6 +1,6 @@
 import { MailerService } from '@nestjs-modules/mailer';
-import jwt from 'supertokens-node/recipe/jwt';
 import { TypePasswordlessEmailDeliveryInput } from 'supertokens-node/lib/build/recipe/passwordless/types';
+import jwt from 'supertokens-node/recipe/jwt';
 import Passwordless from 'supertokens-node/recipe/passwordless';
 import Session from 'supertokens-node/recipe/session';
 import UserRoles from 'supertokens-node/recipe/userroles';

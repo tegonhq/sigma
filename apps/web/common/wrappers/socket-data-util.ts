@@ -1,6 +1,8 @@
 import type { SyncActionRecord } from 'common/types';
 
 import { saveActivityData } from 'store/activity';
+import { saveConversationHistorytData } from 'store/conversation-history';
+import { saveConversationData } from 'store/conversations';
 import { saveIntegrationAccountData } from 'store/integration-accounts';
 import { MODELS } from 'store/models';
 import { savePageData } from 'store/pages';
@@ -42,6 +44,20 @@ export async function saveSocketData(
           return await saveActivityData(
             [record],
             MODEL_STORE_MAP[MODELS.Activity],
+          );
+        }
+
+        case MODELS.Conversation: {
+          return await saveConversationData(
+            [record],
+            MODEL_STORE_MAP[MODELS.Conversation],
+          );
+        }
+
+        case MODELS.Activity: {
+          return await saveConversationHistorytData(
+            [record],
+            MODEL_STORE_MAP[MODELS.ConversationHistory],
           );
         }
       }

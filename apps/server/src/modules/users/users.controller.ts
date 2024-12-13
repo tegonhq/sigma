@@ -11,10 +11,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CodeDto, CreatePatDto, PatIdDto, User } from '@sigma/types';
-import { SessionContainer } from 'supertokens-node/recipe/session';
 import { Request, Response } from 'express';
 import supertokens from 'supertokens-node';
+import { SessionContainer } from 'supertokens-node/recipe/session';
 import Session from 'supertokens-node/recipe/session';
+
 import { AuthGuard } from 'modules/auth/auth.guard';
 import {
   Session as SessionDecorator,

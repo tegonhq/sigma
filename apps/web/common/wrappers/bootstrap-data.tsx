@@ -33,6 +33,8 @@ export function BootstrapWrapper({ children }: Props) {
     pagesStore,
     activityStore,
     tasksStore,
+    conversationStore,
+    conversationHistoryStore,
   } = useContextStore();
 
   const MODEL_STORE_MAP = {
@@ -41,6 +43,8 @@ export function BootstrapWrapper({ children }: Props) {
     [MODELS.Activity]: activityStore,
     [MODELS.Task]: tasksStore,
     [MODELS.Page]: pagesStore,
+    [MODELS.Conversation]: conversationStore,
+    [MODELS.ConversationHistory]: conversationHistoryStore,
   };
 
   React.useEffect(() => {

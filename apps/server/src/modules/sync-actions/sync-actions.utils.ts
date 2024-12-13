@@ -65,6 +65,20 @@ export async function getWorkspaceId(
       });
       return integrationAccount.workspaceId;
 
+    case ModelName.Conversation:
+      const conversationEntity = await prisma.conversation.findUnique({
+        where: { id: modelId },
+      });
+      return conversationEntity.workspaceId;
+
+    case ModelName.ConversationHistory:
+      const conversationHistoryEntity =
+        await prisma.conversationHistory.findUnique({
+          where: { id: modelId },
+          include: { conversation: true },
+        });
+      return conversationHistoryEntity.conversation.workspaceId;
+
     default:
       return undefined;
   }
@@ -83,6 +97,8 @@ export async function getModelData(
     Page: prisma.page,
     Task: prisma.task,
     Activity: prisma.activity,
+    Conversation: prisma.conversation,
+    ConversationHistory: prisma.conversationHistory,
     IntegrationAccount: {
       findUnique: (args: { where: { id: string } }) =>
         prisma.integrationAccount.findUnique({

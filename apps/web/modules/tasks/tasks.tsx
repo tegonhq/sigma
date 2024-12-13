@@ -1,6 +1,8 @@
 import { Button, ScrollArea } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
+import { useHotkeys } from 'react-hotkeys-hook';
+import { Key } from 'ts-key-enum';
 
 import { SCOPES } from 'common/shortcut-scopes';
 import type { IntegrationAccountType } from 'common/types';
@@ -21,8 +23,18 @@ export const Tasks = observer(() => {
   const { integrationAccountsStore } = useContextStore();
   const [newTask, setNewTask] = React.useState(false);
 
+  useHotkeys(
+    [`${Key.Meta}+n`, `${Key.Control}+n`],
+    () => {
+      setNewTask(true);
+    },
+    {
+      scopes: [SCOPES.Task],
+    },
+  );
+
   if (secondTab.entity_id && secondTab.entity_id !== 'my_tasks') {
-    return <SingleTask />;
+    return <SingleTask index={1} />;
   }
 
   return (

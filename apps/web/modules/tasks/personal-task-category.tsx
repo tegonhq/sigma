@@ -14,11 +14,11 @@ import type { TaskType } from 'common/types';
 
 import { useApplication } from 'hooks/application';
 
+import { TabViewType } from 'store/application';
 import { useContextStore } from 'store/global-context-provider';
 
 import { AddTask } from './add-task';
 import { TaskListItem } from './task-item';
-import { TabViewType } from 'store/application';
 
 interface PersonalTaskCategoryProps {
   newTask: boolean;

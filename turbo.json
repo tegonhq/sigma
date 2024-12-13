@@ -30,7 +30,8 @@
     "GCP_BUCKET_NAME",
     "GCP_SERVICE_ACCOUNT_FILE",
     "REDIS_URL",
-    "REDIS_PORT"
+    "REDIS_PORT",
+    "NEXT_PUBLIC_AI_HOST"
   ],
   "ui": "tui",
   "tasks": {
@@ -53,7 +54,7 @@
         ".next/**"
       ]
     },
-    "lint": {},
+    "lint": { },
     "generate": {
       "dependsOn": [
         "^generate"
