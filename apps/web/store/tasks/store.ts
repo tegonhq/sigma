@@ -40,7 +40,7 @@ export const TasksStore: IAnyStateTreeNode = types
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const sortedTasks: any = [...tasks].sort((a, b) =>
-        a.updatedAt.localeCompare(b.updatedAt),
+        b.updatedAt.localeCompare(a.updatedAt),
       );
 
       self.tasks = sortedTasks;

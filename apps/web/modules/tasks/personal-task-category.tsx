@@ -19,6 +19,7 @@ import { useContextStore } from 'store/global-context-provider';
 
 import { AddTask } from './add-task';
 import { TaskListItem } from './task-item';
+import { sort } from 'fast-sort';
 
 interface PersonalTaskCategoryProps {
   newTask: boolean;
@@ -35,6 +36,8 @@ export const PersonalTaskCategory = observer(
     const taskSelect = (taskId: string) => {
       updateTabType(1, TabViewType.MY_TASKS, taskId);
     };
+
+    const sortedTasks = sort(tasks).asc((task) => new Date(task.updatedAt));
 
     return (
       <Collapsible
@@ -62,13 +65,13 @@ export const PersonalTaskCategory = observer(
           </CollapsibleTrigger>
 
           <div className="rounded-2xl bg-grayAlpha-100 p-1.5 px-2 font-mono">
-            {tasks.length}
+            {sortedTasks.length}
           </div>
         </div>
 
         {newTask && <AddTask onCancel={() => setNewTask(false)} />}
         <CollapsibleContent>
-          {tasks.map((task: TaskType) => (
+          {sortedTasks.map((task: TaskType) => (
             <div key={task.id} onClick={() => taskSelect(task.id)}>
               <TaskListItem taskId={task.id} />
             </div>

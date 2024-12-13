@@ -14,11 +14,10 @@ import { useIntegrationAccount } from './integration-util';
 
 interface IntegrationAuthProps {
   integrationDefinition: IntegrationDefinition;
-  personal?: boolean;
 }
 
 export const IntegrationAuth = observer(
-  ({ integrationDefinition, personal }: IntegrationAuthProps) => {
+  ({ integrationDefinition }: IntegrationAuthProps) => {
     const integrationAccount = useIntegrationAccount(integrationDefinition.id);
     const ipc = useIPC();
 
@@ -38,27 +37,13 @@ export const IntegrationAuth = observer(
         <div className="flex flex-col items-start justify-center">
           {integrationAccount ? (
             <>
-              <p className="font-medium">
-                Connected {personal ? 'Personal' : 'Organisation'} account
-              </p>
+              <p className="font-medium">Connected your account</p>
               <p className="text-muted-foreground">
-                {personal ? (
-                  <>
-                    Your personal
-                    <span className="mx-1 font-medium">
-                      {integrationDefinition.name}
-                    </span>
-                    account is connected
-                  </>
-                ) : (
-                  <>
-                    Your organization
-                    <span className="mx-1 font-medium">
-                      {integrationDefinition.name}
-                    </span>
-                    account is connected
-                  </>
-                )}
+                Your
+                <span className="mx-1 font-medium">
+                  {integrationDefinition.name}
+                </span>
+                account is connected
               </p>
             </>
           ) : (

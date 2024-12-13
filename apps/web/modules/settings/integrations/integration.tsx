@@ -53,10 +53,7 @@ export function Integration({
           <>
             <h2 className="text-md">{integrationDefinition.name}</h2>
             {integrationDefinition.spec && (
-              <IntegrationAuth
-                integrationDefinition={integrationDefinition}
-                personal
-              />
+              <IntegrationAuth integrationDefinition={integrationDefinition} />
             )}
           </>
         </SettingSection>
