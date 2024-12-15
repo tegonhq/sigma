@@ -1,9 +1,18 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { IntegrationPayloadEventType } from '@sigma/types';
 import * as simpleOauth2 from 'simple-oauth2';
 
+import {
+  createAxiosInstance,
+  getRequires,
+  loadRemoteModule,
+} from 'common/remote-loader/load-remote-module';
+
 import { IntegrationDefinitionService } from 'modules/integration-definition/integration-definition.service';
+import { IntegrationsQueue } from 'modules/integrations/integrations.queue';
 import { LoggerService } from 'modules/logger/logger.service';
+import { UsersService } from 'modules/users/users.service';
 
 import {
   CallbackParams,
@@ -26,6 +35,8 @@ export class OAuthCallbackService {
   constructor(
     private integrationDefinitionService: IntegrationDefinitionService,
     private configService: ConfigService,
+    private usersService: UsersService,
+    private integrationsQueue: IntegrationsQueue,
   ) {
     this.CALLBACK_URL = this.configService.get<string>('OAUTH_CALLBACK_URL');
   }
@@ -36,7 +47,9 @@ export class OAuthCallbackService {
     workspaceId: string,
     specificScopes?: string,
   ) {
-    const { integrationDefinitionId, redirectURL, personal } = oAuthBody;
+    const { integrationDefinitionId, personal } = oAuthBody;
+
+    const redirectURL = 'https://app.mysigma.ai/integrations';
 
     this.logger.info({
       message: `We got OAuth request for ${workspaceId}: ${integrationDefinitionId}`,
@@ -195,7 +208,32 @@ export class OAuthCallbackService {
         },
       );
 
-      console.log(tokensResponse);
+      // const integration = await loadRemoteModule(integrationDefinition.url);
+
+      const pat = await this.usersService.getOrCreatePat(
+        sessionRecord.userId,
+        sessionRecord.workspaceId,
+      );
+
+      const integrationFunction = await loadRemoteModule(
+        getRequires(createAxiosInstance(pat)),
+      );
+      const integration = await integrationFunction(
+        `file:///Users/manoj/work/sigma-integrations/${integrationDefinition.slug}/dist/backend/index.js`,
+      );
+
+      const integrationAccount = await integration.run({
+        event: IntegrationPayloadEventType.CREATE,
+        userId: sessionRecord.userId,
+        workspaceId: sessionRecord.workspaceId,
+        eventBody: {
+          oauthResponse: tokensResponse.token,
+          oauthParams: params,
+          integrationDefinition,
+        },
+      });
+
+      this.integrationsQueue.syncInitialTasks(integrationAccount.id);
 
       res.redirect(
         `${sessionRecord.redirectURL}?success=true&integrationName=${integrationDefinition.name}${accountIdentifier}${integrationKeys}`,

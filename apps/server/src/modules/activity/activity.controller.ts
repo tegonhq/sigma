@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Query } from '@nestjs/common';
 import { CreateActivityDto } from '@sigma/types';
 
 import { Workspace } from 'modules/auth/session.decorator';
@@ -22,5 +22,21 @@ export class ActivityController {
       activityDto,
     );
     return eventResponse;
+  }
+
+  @Post('bulk')
+  async createBulkActivities(
+    @Query('workspaceId') workspaceId: string,
+    @Body() activitiesDto: CreateActivityDto[],
+  ) {
+    const activities = [];
+    for (const activityDto of activitiesDto) {
+      const activity = await this.activityService.createActivity(
+        workspaceId,
+        activityDto,
+      );
+      activities.push(activity);
+    }
+    return activities;
   }
 }

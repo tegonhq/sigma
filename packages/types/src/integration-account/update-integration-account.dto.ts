@@ -5,21 +5,21 @@ import { type JsonObject } from '../common';
 export class UpdateIntegrationAccountDto {
   @IsOptional()
   @IsObject()
-  integrationConfiguration: JsonObject;
+  integrationConfiguration?: JsonObject;
 
   @IsString()
   @IsOptional()
-  accountIdentifier: string;
+  accountIdentifier?: string;
 
   @IsString()
   @IsOptional()
-  accountId: string;
+  accountId?: string;
 
   @IsObject()
   @IsOptional()
-  settings: JsonObject;
+  settings?: JsonObject;
 
   @IsString()
   @IsOptional()
-  userId: string;
+  userId?: string;
 }

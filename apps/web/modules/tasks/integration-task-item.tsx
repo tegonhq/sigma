@@ -13,7 +13,7 @@ interface IntegrationTaskItemProps {
 
 export const IntegrationTaskItem = observer(
   ({ task, page, statusChange }: IntegrationTaskItemProps) => {
-    const url = `http://localhost:8000/local/Users/harshithmullapudi/Documents/sigma-integrations/github/dist/frontend/index.js`;
+    const url = `http://localhost:8000/local/Users/manoj/work/sigma-integrations/github/dist/frontend/index.js`;
     const [loading, err, Component] = useRemoteComponent(url, 'Preview');
 
     if (loading) {

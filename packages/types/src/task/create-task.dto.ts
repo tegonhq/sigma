@@ -22,4 +22,8 @@ export class CreateTaskDto {
   @IsString()
   @IsOptional()
   sourceId?: string;
+
+  @IsString()
+  @IsOptional()
+  integrationAccountId?: string;
 }

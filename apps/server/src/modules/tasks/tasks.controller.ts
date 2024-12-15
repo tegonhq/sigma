@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { CreateTaskDto, Task } from '@sigma/types';
@@ -32,6 +33,20 @@ export class TasksController {
     @Body() taskData: CreateTaskDto,
   ): Promise<Task> {
     return await this.tasks.createTask(taskData, workspaceId);
+  }
+
+  @Post('bulk')
+  @UseGuards(AuthGuard)
+  async createBulkTasks(
+    @Query('workspaceId') workspaceId: string,
+    @Body() tasksData: CreateTaskDto[],
+  ): Promise<Task[]> {
+    const tasks = [];
+    for (const taskData of tasksData) {
+      const task = await this.tasks.createTask(taskData, workspaceId);
+      tasks.push(task);
+    }
+    return tasks;
   }
 
   @Get('scheduled')

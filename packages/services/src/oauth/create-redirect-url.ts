@@ -13,5 +13,7 @@ export interface RedirectURLResponse {
 export async function createRedirectURL(
   params: CreateRedirectURLParams,
 ): Promise<RedirectURLResponse> {
-  return await axios.post('/api/v1/oauth', params);
+  const response = await axios.post('/api/v1/oauth', params);
+
+  return response.data;
 }

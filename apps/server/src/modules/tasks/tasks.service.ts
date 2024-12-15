@@ -25,8 +25,22 @@ export class TasksService {
       title,
       metadata: rawMetadata,
       status: taskStatus,
+      url,
+      integrationAccountId,
       ...otherTaskData
     } = createTaskDto;
+
+    // Check if task with same URL exists in workspace
+    const existingTask = url
+      ? await this.prisma.task.findFirst({
+          where: {
+            url,
+            workspaceId,
+            deleted: null,
+          },
+        })
+      : null;
+
     const metadata = rawMetadata
       ? {
           type: rawMetadata.type || TaskType.NORMAL,
@@ -34,18 +48,44 @@ export class TasksService {
             schedule: rawMetadata?.schedule,
           }),
         }
-      : {};
+      : { type: TaskType.NORMAL };
 
+    if (existingTask) {
+      // Update existing task
+      const task = await this.prisma.task.update({
+        where: { id: existingTask.id },
+        data: {
+          status: taskStatus ? taskStatus : existingTask.status,
+          metadata,
+          ...otherTaskData,
+          page: {
+            update: {
+              title,
+            },
+          },
+          deleted: null,
+        },
+      });
+
+      // Update schedule if needed
+      if (rawMetadata?.type === TaskType.SCHEDULED) {
+        await this.tasksQueue.addCronJob(task);
+      }
+
+      return task;
+    }
+
+    // Create new task
     const task = await this.prisma.task.create({
       data: {
         status: taskStatus ? taskStatus : 'Todo',
         ...otherTaskData,
+        url,
         metadata,
-        workspace: {
-          connect: {
-            id: workspaceId,
-          },
-        },
+        workspace: { connect: { id: workspaceId } },
+        ...(integrationAccountId
+          ? { integrationAccount: { connect: { id: integrationAccountId } } }
+          : {}),
         page: {
           create: {
             title,

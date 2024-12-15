@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import {
+  CreateIntegrationAccountDto,
   InputJsonValue,
   IntegrationAccountIdDto,
   UpdateIntegrationAccountDto,
@@ -14,6 +15,46 @@ import {
 @Injectable()
 export class IntegrationAccountService {
   constructor(private prisma: PrismaService) {}
+
+  async createIntegrationAccount(
+    createIntegrationAccountDto: CreateIntegrationAccountDto,
+  ) {
+    const {
+      config: integrationConfiguration,
+      userId,
+      settings,
+      accountId,
+      integrationDefinitionId,
+      workspaceId,
+    } = createIntegrationAccountDto;
+    // Update the integration account with the new configuration in the database
+    const integrationAccount = await this.prisma.integrationAccount.upsert({
+      where: {
+        accountId_integrationDefinitionId_workspaceId: {
+          accountId,
+          integrationDefinitionId,
+          workspaceId,
+        },
+      },
+      create: {
+        integrationConfiguration,
+        settings,
+        accountId,
+        integratedById: userId,
+        workspaceId,
+        integrationDefinitionId,
+        isActive: true,
+      },
+      update: {
+        deleted: null,
+        integrationConfiguration,
+        settings,
+        isActive: true,
+      },
+    });
+
+    return integrationAccount;
+  }
 
   async getIntegrationAccountWithId(integrationAccountId: string) {
     return await this.prisma.integrationAccount.findUnique({

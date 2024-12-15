@@ -9,6 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import {
+  CreateIntegrationAccountDto,
   IntegrationAccount,
   IntegrationAccountIdDto,
   UpdateIntegrationAccountDto,
@@ -86,6 +87,17 @@ export class IntegrationAccountController {
   ) {
     return await this.integrationAccountService.deleteIntegrationAccount(
       integrationAccountIdRequestIdBody,
+    );
+  }
+
+  @Post()
+  @UseGuards(AuthGuard)
+  async createIntegrationAccount(
+    @Body()
+    createIntegrationAccountDto: CreateIntegrationAccountDto,
+  ): Promise<IntegrationAccount> {
+    return await this.integrationAccountService.createIntegrationAccount(
+      createIntegrationAccountDto,
     );
   }
 

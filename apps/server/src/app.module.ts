@@ -17,6 +17,7 @@ import { ConversationModule } from 'modules/conversation/conversation.module';
 import { ConversationHistoryModule } from 'modules/conversation-history/conversation-history.module';
 import { IntegrationAccountModule } from 'modules/integration-account/integration-account.module';
 import { IntegrationDefinitionModule } from 'modules/integration-definition/integration-definition.module';
+import { IntegrationsModule } from 'modules/integrations/integrations.module';
 import { OAuthCallbackModule } from 'modules/oauth-callback/oauth-callback.module';
 import { PagesModule } from 'modules/pages/pages.module';
 import { ReplicationModule } from 'modules/replication/replication.module';
@@ -86,6 +87,7 @@ import { AppService } from './app.service';
     WebhookModule,
     ActivityModule,
     TasksModule,
+    IntegrationsModule,
   ],
   controllers: [AppController],
   providers: [

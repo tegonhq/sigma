@@ -5,6 +5,8 @@ import {
 } from '@sigma/types';
 import { PrismaService } from 'nestjs-prisma';
 
+import { fetcher } from 'common/remote-loader/load-remote-module';
+
 @Injectable()
 export class IntegrationDefinitionService {
   constructor(private prisma: PrismaService) {}
@@ -41,7 +43,16 @@ export class IntegrationDefinitionService {
       integrationDefinitionId,
     });
 
-    // TODO: spec
-    return { ...integrationDefinition };
+    // const spec = await loadRemoteModule(
+    //   `${integrationDefinition.url}/spec.json`,
+    // );
+
+    const spec = JSON.parse(
+      await fetcher(
+        `file:///Users/manoj/work/sigma-integrations/${integrationDefinition.slug}/spec.json`,
+      ),
+    );
+
+    return { ...integrationDefinition, spec };
   }
 }

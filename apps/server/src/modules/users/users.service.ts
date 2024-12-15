@@ -149,6 +149,31 @@ export class UsersService {
     });
   }
 
+  async getOrCreatePat(userId: string, workspaceId: string) {
+    // First try to find an existing active PAT
+    const existingPat = await this.prisma.personalAccessToken.findFirst({
+      where: {
+        userId,
+        type: 'user',
+        deleted: null,
+        workspaceId,
+      },
+    });
+
+    if (existingPat) {
+      return existingPat.token;
+    }
+
+    // If no active PAT exists, create a new one
+    const pat = await this.createPersonalAccessToken(
+      'default',
+      userId,
+      workspaceId,
+      'user',
+    );
+    return pat.token;
+  }
+
   async authorizeCode(userId: string, workspaceId: string, codeBody: CodeDto) {
     // only allow authorization codes that were created less than 10 mins ago
     const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);

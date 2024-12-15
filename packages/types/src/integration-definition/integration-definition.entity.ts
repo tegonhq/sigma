@@ -31,6 +31,8 @@ export class IntegrationDefinition {
   icon: string;
   config?: any;
   spec?: Spec;
+  version?: string;
+  url?: string;
   workspace?: Workspace;
   workspaceId?: string;
   IntegrationAccount?: IntegrationAccount[];
