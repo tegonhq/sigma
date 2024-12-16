@@ -38,7 +38,6 @@ export default class WebhookService {
     });
 
     response.status(200);
-    console.log(eventBody, eventHeaders);
 
     if (!accountId) {
       const integrationFunction = await loadRemoteModule(
@@ -49,10 +48,16 @@ export default class WebhookService {
         `file:///Users/manoj/work/sigma-integrations/${sourceName}/dist/backend/index.js`,
       );
 
-      accountId = await integration.run({
+      const accountIdResponse = await integration.run({
         event: IntegrationPayloadEventType.GET_CONNECTED_ACCOUNT_ID,
         eventBody,
       });
+
+      if (accountIdResponse?.message?.startsWith('The event payload type is')) {
+        accountId = undefined;
+      } else {
+        accountId = accountIdResponse;
+      }
     }
 
     if (accountId) {
@@ -77,7 +82,7 @@ export default class WebhookService {
         event: IntegrationPayloadEventType.WEBHOOK_RESPONSE,
         eventBody: {
           integrationAccount,
-          eventData: eventBody,
+          eventData: { eventBody, eventHeaders },
         },
       });
     } else {
