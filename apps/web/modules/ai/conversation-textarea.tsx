@@ -11,7 +11,7 @@ export function ConversationTextarea({ onSend }: ConversationTextareaProps) {
   const [text, setText] = useState('');
 
   return (
-    <div className="p-3 px-5">
+    <div className="p-4">
       <div className="flex flex-col border border-border rounded pt-2">
         <AdjustableTextArea
           className="bg-transparent max-h-[500px] overflow-auto px-2"
@@ -21,7 +21,7 @@ export function ConversationTextarea({ onSend }: ConversationTextareaProps) {
           onChange={(e) => setText(e)}
           placeholder="Ask AI anything..."
         />
-        <div className="flex justify-end">
+        <div className="flex justify-end p-2">
           <Button
             variant="ghost"
             className="transition-all duration-500 ease-in-out"

@@ -11,7 +11,7 @@ export const AI = observer(() => {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex justify-between items-center gap-2 p-6 font-mono">
+      <div className="flex justify-between items-center gap-2 p-4 font-mono">
         <div className="flex gap-2">
           <AIIcon />
           Sigma AI

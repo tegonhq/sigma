@@ -16,9 +16,7 @@ export const IPCWrapper = observer(() => {
   }, [isElectron]);
 
   const onMessage = () => {
-    ipcRenderer.on(['ipc'], (data) => {
-      console.log(data);
-    });
+    ipcRenderer.on(['ipc'], (data) => {});
   };
   return <></>;
 });

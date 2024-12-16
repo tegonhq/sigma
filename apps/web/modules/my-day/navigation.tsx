@@ -74,7 +74,7 @@ export const Navigation = observer(() => {
   );
 
   return (
-    <div className="flex -mx-2 mr-0 justify-between">
+    <div className="flex justify-between">
       <div className="flex gap-0.5">
         <Button variant="ghost" onClick={onBackDate}>
           <ArrowLeft size={18} />

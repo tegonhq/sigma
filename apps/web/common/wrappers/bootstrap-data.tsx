@@ -33,7 +33,7 @@ export function BootstrapWrapper({ children }: Props) {
     pagesStore,
     activityStore,
     tasksStore,
-    conversationStore,
+    conversationsStore,
     conversationHistoryStore,
   } = useContextStore();
 
@@ -43,7 +43,7 @@ export function BootstrapWrapper({ children }: Props) {
     [MODELS.Activity]: activityStore,
     [MODELS.Task]: tasksStore,
     [MODELS.Page]: pagesStore,
-    [MODELS.Conversation]: conversationStore,
+    [MODELS.Conversation]: conversationsStore,
     [MODELS.ConversationHistory]: conversationHistoryStore,
   };
 

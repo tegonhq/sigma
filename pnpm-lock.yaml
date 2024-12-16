@@ -413,8 +413,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/types
       '@tegonhq/ui':
-        specifier: 0.2.16
-        version: 0.2.16(@opentelemetry/api@1.9.0)(@tiptap/extension-code-block@2.8.0(@tiptap/core@2.8.0(@tiptap/pm@2.8.0))(@tiptap/pm@2.8.0))(@types/react-dom@18.2.19)(@types/react@18.2.61)(encoding@0.1.13)(highlight.js@11.10.0)(javascript-time-ago@2.5.11)(lowlight@3.1.0)(react-dom@18.3.1(react@18.3.1))(react-hook-form@7.49.3(react@18.3.1))(react@18.3.1)(sswr@2.1.0(svelte@4.2.19))(svelte@4.2.19)(tailwindcss@3.4.13(ts-node@10.9.2(@types/node@20.11.24)(typescript@5.6.2)))(vue@3.5.11(typescript@5.6.2))(zod@3.23.8)
+        specifier: 0.2.17
+        version: 0.2.17(@opentelemetry/api@1.9.0)(@tiptap/extension-code-block@2.8.0(@tiptap/core@2.8.0(@tiptap/pm@2.8.0))(@tiptap/pm@2.8.0))(@types/react-dom@18.2.19)(@types/react@18.2.61)(encoding@0.1.13)(highlight.js@11.10.0)(javascript-time-ago@2.5.11)(lowlight@3.1.0)(react-dom@18.3.1(react@18.3.1))(react-hook-form@7.49.3(react@18.3.1))(react@18.3.1)(sswr@2.1.0(svelte@4.2.19))(svelte@4.2.19)(tailwindcss@3.4.13(ts-node@10.9.2(@types/node@20.11.24)(typescript@5.6.2)))(vue@3.5.11(typescript@5.6.2))(zod@3.23.8)
       '@tiptap/core':
         specifier: ^2.3.0
         version: 2.8.0(@tiptap/pm@2.8.0)
@@ -4132,8 +4132,8 @@ packages:
     resolution: {integrity: sha512-P9dF7XbibHph2PFRz8gfBKEXEY/HJPOhym8CHmjF8y3q5mWpKx9xtZapXQUWCgkqvsK0R46Azuz+VaxD4Xl+Tg==}
     engines: {node: '>=12'}
 
-  '@tegonhq/ui@0.2.16':
-    resolution: {integrity: sha512-WAsjoqVWt14wRvphEx2E2sOgLopEzQZgWBuX41nrVpSOxELc9ARN2t5WBOX572V7VqWgfgGqr0ZuzUE9YzhaRg==}
+  '@tegonhq/ui@0.2.17':
+    resolution: {integrity: sha512-B/ooA0dEvzG4jx77BRfynajsL3R0P736hE8d0cU1bDcS11c/ySI3NxQLrvns8fIFEtWNlrF5RwQ86S72ttxxqQ==}
     peerDependencies:
       react: ^18
       react-hook-form: 7.49.3
@@ -16705,7 +16705,7 @@ snapshots:
 
   '@tanstack/table-core@8.20.5': {}
 
-  '@tegonhq/ui@0.2.16(@opentelemetry/api@1.9.0)(@tiptap/extension-code-block@2.8.0(@tiptap/core@2.8.0(@tiptap/pm@2.8.0))(@tiptap/pm@2.8.0))(@types/react-dom@18.2.19)(@types/react@18.2.61)(encoding@0.1.13)(highlight.js@11.10.0)(javascript-time-ago@2.5.11)(lowlight@3.1.0)(react-dom@18.3.1(react@18.3.1))(react-hook-form@7.49.3(react@18.3.1))(react@18.3.1)(sswr@2.1.0(svelte@4.2.19))(svelte@4.2.19)(tailwindcss@3.4.13(ts-node@10.9.2(@types/node@20.11.24)(typescript@5.6.2)))(vue@3.5.11(typescript@5.6.2))(zod@3.23.8)':
+  '@tegonhq/ui@0.2.17(@opentelemetry/api@1.9.0)(@tiptap/extension-code-block@2.8.0(@tiptap/core@2.8.0(@tiptap/pm@2.8.0))(@tiptap/pm@2.8.0))(@types/react-dom@18.2.19)(@types/react@18.2.61)(encoding@0.1.13)(highlight.js@11.10.0)(javascript-time-ago@2.5.11)(lowlight@3.1.0)(react-dom@18.3.1(react@18.3.1))(react-hook-form@7.49.3(react@18.3.1))(react@18.3.1)(sswr@2.1.0(svelte@4.2.19))(svelte@4.2.19)(tailwindcss@3.4.13(ts-node@10.9.2(@types/node@20.11.24)(typescript@5.6.2)))(vue@3.5.11(typescript@5.6.2))(zod@3.23.8)':
     dependencies:
       '@hello-pangea/dnd': 16.6.0(@types/react-dom@18.2.19)(@types/react@18.2.61)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@radix-ui/react-accordion': 1.2.1(@types/react-dom@18.2.19)(@types/react@18.2.61)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)

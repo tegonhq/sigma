@@ -76,10 +76,10 @@ export function DueDate({
       <Popover>
         <PopoverTrigger asChild>
           <Button
-            variant="link"
+            variant="ghost"
             role="combobox"
             className={cn(
-              'flex items-center bg-transparent px-0 shadow-none justify-between focus-visible:ring-1 focus-visible:border-primary',
+              'flex items-center shadow-none justify-between focus-visible:ring-1 focus-visible:border-primary',
             )}
           >
             {getTrigger()}

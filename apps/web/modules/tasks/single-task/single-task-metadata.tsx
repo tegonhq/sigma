@@ -6,6 +6,7 @@ import { useUpdateTaskMutation } from 'services/tasks';
 
 import { StatusDropdown } from '../status-dropdown';
 import { DueDate } from './due-date';
+import { Separator } from '@tegonhq/ui';
 
 interface SingleTaskMetadataProps {
   task: TaskType;
@@ -30,10 +31,16 @@ export const SingleTaskMetadata = observer(
     };
 
     return (
-      <div className="bg-grayAlpha-100 p-3 flex gap-2 rounded">
-        <StatusDropdown value={task.status} onChange={statusChange} />
+      <div className="py-3 flex flex-col gap-2 rounded">
+        <div className="flex gap-2 items-center justify-start">
+          <div className="label min-w-[100px]">Status</div>
+          <StatusDropdown value={task.status} onChange={statusChange} />
+        </div>
 
-        <DueDate dueDate={task.dueDate} dueDateChange={dueDateChange} />
+        <div className="flex gap-2 items-center">
+          <div className="label min-w-[100px]">Due date</div>
+          <DueDate dueDate={task.dueDate} dueDateChange={dueDateChange} />
+        </div>
       </div>
     );
   },

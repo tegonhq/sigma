@@ -3,6 +3,7 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
+  Separator,
 } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import { useHotkeys } from 'react-hotkeys-hook';
@@ -61,7 +62,7 @@ export const SingleTask = observer(({ index }: SingleTaskProps) => {
   }
 
   return (
-    <ScrollArea className="w-full h-full p-6" id="status-list">
+    <ScrollArea className="w-full h-full p-4" id="status-list">
       <Breadcrumb className="pb-3">
         <BreadcrumbItem>
           <BreadcrumbLink onClick={onBack} className="flex items-center gap-2">
@@ -83,6 +84,8 @@ export const SingleTask = observer(({ index }: SingleTaskProps) => {
         </div>
 
         <SingleTaskMetadata task={task} />
+        <Separator />
+
         <SingleTaskEditor page={page} autoFocus />
       </div>
     </ScrollArea>

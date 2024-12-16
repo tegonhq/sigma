@@ -48,7 +48,11 @@ export const ActivityStore: IAnyStateTreeNode = types
 
     return { update, deleteById, load };
   })
-  .views(() => ({}));
+  .views((self) => ({
+    getActivityWithId(activityId: string) {
+      return self.activities.find((activity) => activity.id === activityId);
+    },
+  }));
 
 export interface ActivityStoreType {
   activities: ActivityType[];
@@ -57,4 +61,6 @@ export interface ActivityStoreType {
   update: (activity: ActivityType, id: string) => Promise<void>;
   deleteById: (id: string) => Promise<void>;
   load: () => Promise<void>;
+
+  getActivityWithId: (activityId: string) => ActivityType;
 }

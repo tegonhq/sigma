@@ -44,7 +44,7 @@ export async function restoreOrCreateWindow() {
 
 export function registerShortcut() {
   // Register a global shortcut
-  const isRegistered = globalShortcut.register('CommandOrControl+Shift+K', () => {
+  const isRegistered = globalShortcut.register('CommandOrControl+K', () => {
     restoreOrCreateQuickWindow();
   });
 

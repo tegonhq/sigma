@@ -24,6 +24,8 @@ export const SocketDataSyncWrapper: React.FC<Props> = observer(
       pagesStore,
       tasksStore,
       activityStore,
+      conversationsStore,
+      conversationHistoryStore,
     } = useContextStore();
     const user = React.useContext(UserContext);
 
@@ -59,6 +61,8 @@ export const SocketDataSyncWrapper: React.FC<Props> = observer(
         [MODELS.Page]: pagesStore,
         [MODELS.Task]: tasksStore,
         [MODELS.Activity]: activityStore,
+        [MODELS.Conversation]: conversationsStore,
+        [MODELS.ConversationHistory]: conversationHistoryStore,
       };
 
       socket.on('message', (newMessage: string) => {

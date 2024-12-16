@@ -69,7 +69,7 @@ export const StatusDropdown = observer(
 
       return (
         <Button
-          variant="link"
+          variant="ghost"
           role="combobox"
           aria-expanded={open}
           className="flex items-center gap-2 justify-between shadow-none focus-visible:ring-1 focus-visible:border-primary "

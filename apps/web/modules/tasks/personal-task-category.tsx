@@ -7,6 +7,7 @@ import {
   CollapsibleTrigger,
   IssuesLine,
 } from '@tegonhq/ui';
+import { sort } from 'fast-sort';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 
@@ -19,7 +20,6 @@ import { useContextStore } from 'store/global-context-provider';
 
 import { AddTask } from './add-task';
 import { TaskListItem } from './task-item';
-import { sort } from 'fast-sort';
 
 interface PersonalTaskCategoryProps {
   newTask: boolean;
@@ -31,7 +31,7 @@ export const PersonalTaskCategory = observer(
     const [isOpen, setIsOpen] = React.useState(true);
     const { tasksStore } = useContextStore();
     const tasks = tasksStore.getTasksWithNoIntegration();
-    const { updateTabType, tabs } = useApplication();
+    const { updateTabType } = useApplication();
 
     const taskSelect = (taskId: string) => {
       updateTabType(1, TabViewType.MY_TASKS, taskId);

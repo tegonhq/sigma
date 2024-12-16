@@ -38,7 +38,7 @@ export const Tasks = observer(() => {
   }
 
   return (
-    <ScrollArea className="w-full h-full p-6" id="status-list">
+    <ScrollArea className="w-full h-full p-4" id="status-list">
       <div className="flex justify-between pb-4 items-center">
         <h2 className="text-lg"> Tasks</h2>
 

@@ -80,7 +80,7 @@ export const Home = observer(() => {
           <ResizablePanel
             collapsible={false}
             maxSize={50}
-            minSize={10}
+            minSize={25}
             defaultSize={size}
             onResize={(size) => setSize(size)}
             order={2}
