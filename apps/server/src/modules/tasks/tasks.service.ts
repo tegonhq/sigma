@@ -184,4 +184,20 @@ export class TasksService {
       },
     });
   }
+
+  async deleteTaskByUrl(url: string, workspaceId: string) {
+    const task = await this.prisma.task.findFirst({
+      where: { url, workspaceId },
+    });
+
+    if (task) {
+      return await this.prisma.task.update({
+        where: { id: task.id },
+        data: {
+          deleted: new Date().toISOString(),
+        },
+      });
+    }
+    return true;
+  }
 }

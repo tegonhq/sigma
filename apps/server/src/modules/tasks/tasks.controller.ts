@@ -76,6 +76,15 @@ export class TasksController {
     return await this.tasks.update(taskId, taskData);
   }
 
+  @Delete('url')
+  @UseGuards(AuthGuard)
+  async deleteTaskByUrl(
+    @Query('workspaceId') workspaceId: string,
+    @Query('url') url: string,
+  ) {
+    return await this.tasks.deleteTaskByUrl(url, workspaceId);
+  }
+
   @Delete(':taskId')
   @UseGuards(AuthGuard)
   async deleteTask(@Param('taskId') taskId: string) {

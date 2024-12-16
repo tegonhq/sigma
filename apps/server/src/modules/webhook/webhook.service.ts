@@ -1,18 +1,34 @@
 import { Injectable } from '@nestjs/common';
-import { EventBody, EventHeaders } from '@sigma/types';
+import {
+  EventBody,
+  EventHeaders,
+  IntegrationPayloadEventType,
+} from '@sigma/types';
 import { Response } from 'express';
+import { PrismaService } from 'nestjs-prisma';
+
+import {
+  createAxiosInstance,
+  getRequires,
+  loadRemoteModule,
+} from 'common/remote-loader';
 
 import { LoggerService } from 'modules/logger/logger.service';
+import { UsersService } from 'modules/users/users.service';
 
 @Injectable()
 export default class WebhookService {
   private readonly logger: LoggerService = new LoggerService('WebhookService'); // Logger instance for logging
 
-  constructor() {}
+  constructor(
+    private prisma: PrismaService,
+    private usersService: UsersService,
+  ) {}
 
   async handleEvents(
     response: Response,
     sourceName: string,
+    accountId: string | undefined,
     eventHeaders: EventHeaders,
     eventBody: EventBody,
   ) {
@@ -24,35 +40,52 @@ export default class WebhookService {
     response.status(200);
     console.log(eventBody, eventHeaders);
 
-    // const integration = await loadRemoteModule(
-    //   `file:///Users/manoj/work/sigma-integrations/github/dist/backend/index.js`,
-    // );
+    if (!accountId) {
+      const integrationFunction = await loadRemoteModule(
+        getRequires(createAxiosInstance('')),
+      );
 
-    // const { accountId, activity, task } = await integration.webhookHandler({
-    //   eventBody,
-    //   eventHeaders,
-    // });
+      const integration = await integrationFunction(
+        `file:///Users/manoj/work/sigma-integrations/${sourceName}/dist/backend/index.js`,
+      );
 
-    // const integrationAccount = await this.prisma.integrationAccount.findFirst({
-    //   where: { accountId, deleted: null },
-    // });
+      accountId = await integration.run({
+        event: IntegrationPayloadEventType.GET_CONNECTED_ACCOUNT_ID,
+        eventBody,
+      });
+    }
 
-    // console.log(activity);
-    // await this.activityService.createActivity(integrationAccount.workspaceId, {
-    //   ...activity,
-    //   integrationAccountId: integrationAccount.id,
-    // });
+    if (accountId) {
+      const integrationAccount = await this.prisma.integrationAccount.findFirst(
+        { where: { accountId }, include: { integrationDefinition: true } },
+      );
 
-    // await this.tasksService.createTask(
-    //   { ...task },
-    //   integrationAccount.workspaceId,
-    // );
+      const pat = await this.usersService.getOrCreatePat(
+        integrationAccount.integratedById,
+        integrationAccount.workspaceId,
+      );
 
-    // if (!activity) {
-    //   response.status(401).send('Not valid signature');
-    // } else {
-    //   response.status(200).json(activity);
-    // }
+      const integrationFunction = await loadRemoteModule(
+        getRequires(createAxiosInstance(pat)),
+      );
+
+      const integration = await integrationFunction(
+        `file:///Users/manoj/work/sigma-integrations/${sourceName}/dist/backend/index.js`,
+      );
+
+      await integration.run({
+        event: IntegrationPayloadEventType.WEBHOOK_RESPONSE,
+        eventBody: {
+          integrationAccount,
+          eventData: eventBody,
+        },
+      });
+    } else {
+      this.logger.log({
+        message: `Could not find accountId for webhook ${sourceName}`,
+        where: 'WebhookService.handleEvents',
+      });
+    }
 
     return { status: 200 };
   }

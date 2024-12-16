@@ -11,16 +11,18 @@ import WebhookService from './webhook.service';
 export class WebhookController {
   constructor(private webhookService: WebhookService) {}
 
-  @Post(':sourceName')
+  @Post(':sourceName/:accountId?')
   async webhookEvents(
     @Headers() eventHeaders: EventHeaders,
     @Param('sourceName') sourceName: string,
+    @Param('accountId') accountId: string | undefined,
     @Body() eventBody: EventBody,
     @Res() response: Response,
   ) {
     const eventResponse = await this.webhookService.handleEvents(
       response,
       sourceName,
+      accountId || undefined,
       eventHeaders,
       eventBody,
     );
