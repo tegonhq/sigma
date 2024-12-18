@@ -82,4 +82,6 @@ export interface IntegrationAccountsStoreType {
   update: (task: IntegrationAccountType, id: string) => Promise<void>;
   deleteById: (id: string) => Promise<void>;
   load: () => Promise<void>;
+
+  getAccountWithId: (id: string) => IntegrationAccountType;
 }

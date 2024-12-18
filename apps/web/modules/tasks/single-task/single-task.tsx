@@ -21,6 +21,7 @@ import { useContextStore } from 'store/global-context-provider';
 import { SingleTaskEditor } from './single-task-editor';
 import { SingleTaskMetadata } from './single-task-metadata';
 import { PageTitle } from './single-task-title';
+import { SingleTaskIntegration } from './single-task-integration';
 
 interface SingleTaskProps {
   index: number;
@@ -61,8 +62,12 @@ export const SingleTask = observer(({ index }: SingleTaskProps) => {
     return null;
   }
 
+  if (task.integrationAccountId) {
+    return <SingleTaskIntegration task={task} page={page} onBack={onBack} />;
+  }
+
   return (
-    <ScrollArea className="w-full h-full p-4" id="status-list">
+    <ScrollArea className="w-full h-full p-4">
       <Breadcrumb className="pb-3">
         <BreadcrumbItem>
           <BreadcrumbLink onClick={onBack} className="flex items-center gap-2">

@@ -7,29 +7,35 @@ import {fileURLToPath} from 'node:url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-export async function createQuickWindow() {
+export async function createQuickWindow(show = true) {
   const smallerWindow = new BrowserWindow({
     show: false, // Use the 'ready-to-show' event to show the instantiated BrowserWindow.
-    minWidth: 700, // Set minimum width
-    minHeight: 303, // Set minimum height
+    minWidth: 600, // Set minimum width
+    minHeight: 300, // Set minimum height
     icon: path.join(__dirname, '/../../../buildResources/icon.png'),
-    frame: false,
-    alwaysOnTop: true,
+    resizable: false,
+    movable: true,
+    minimizable: false,
+    maximizable: false,
     fullscreenable: false,
-    useContentSize: true,
     autoHideMenuBar: true,
+    frame: false,
     transparent: true,
+    useContentSize: true,
+    skipTaskbar: true,
+    hasShadow: false,
+    alwaysOnTop: true,
+    center: true,
     webPreferences: {
-      nodeIntegration: false,
-      contextIsolation: true,
-      sandbox: false, // Sandbox disabled because the demo of preload script depend on the Node.js api
-      webviewTag: false, // The webview tag is not recommended. Consider alternatives like an iframe or Electron's BrowserView. @see https://www.electronjs.org/docs/latest/api/webview-tag#warning
+      nodeIntegration: true,
       preload: join(app.getAppPath(), 'packages/preload/dist/index.mjs'),
     },
   });
 
-  smallerWindow.setAlwaysOnTop(true, 'screen-saver'); // Ensure it stays on top
-  smallerWindow.setSkipTaskbar(true); // Hide it from the taskbar
+  smallerWindow.setAlwaysOnTop(true, 'screen-saver');
+  smallerWindow.setVisibleOnAllWorkspaces(true, {
+    visibleOnFullScreen: true,
+  });
 
   /**
    * If the 'show' property of the BrowserWindow's constructor is omitted from the initialization options,
@@ -40,10 +46,12 @@ export async function createQuickWindow() {
    * @see https://github.com/electron/electron/issues/25012 for the afford mentioned issue.
    */
   smallerWindow.on('ready-to-show', () => {
-    smallerWindow.show();
+    if (show) {
+      smallerWindow.show();
 
-    if (import.meta.env.DEV) {
-      smallerWindow?.webContents.openDevTools();
+      if (import.meta.env.DEV) {
+        smallerWindow?.webContents.openDevTools();
+      }
     }
   });
 
@@ -57,11 +65,25 @@ export async function createQuickWindow() {
 
 export function registerQuickStates(window: BrowserWindow) {
   window.on('blur', () => {
-    // window.hide();
+    window.destroy();
   });
 
   // Listen for events from the renderer process
   ipcMain.on('frontend', () => {
-    window.hide();
+    window.destroy();
   });
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const recalculatePositionToDisplay = (position: any, from: any, to: any) => {
+  const normalizedPosition = {
+    x: (position.x - from.bounds.x) / from.bounds.width,
+    y: (position.y - from.bounds.y) / from.bounds.height,
+  };
+
+  const newPosition = {
+    x: Math.floor(to.bounds.x + normalizedPosition.x * to.bounds.width),
+    y: Math.floor(to.bounds.y + normalizedPosition.y * to.bounds.height),
+  };
+  return newPosition;
+};

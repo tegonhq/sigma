@@ -42,22 +42,19 @@ export const Navigation = observer(() => {
   };
 
   useHotkeys(
-    [
-      `${Key.Meta}+${Key.Shift}+${Key.ArrowRight}`,
-      `${Key.Meta}+${Key.Shift}+${Key.ArrowLeft}`,
-    ],
+    [`${Key.Meta}+[`, `${Key.Meta}+]`],
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (event) => {
       const isMetaKey = event.metaKey;
-      const isShiftKey = event.shiftKey;
+
       switch (event.key) {
-        case Key.ArrowRight:
-          if (isMetaKey && isShiftKey) {
+        case '[':
+          if (isMetaKey) {
             onNextDate();
           }
           break;
-        case Key.ArrowLeft:
-          if (isMetaKey && isShiftKey) {
+        case ']':
+          if (isMetaKey) {
             onBackDate();
           }
           break;

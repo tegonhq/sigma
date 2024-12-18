@@ -6,6 +6,7 @@ import {platform} from 'node:process';
 import updater from 'electron-updater';
 import {startAPI} from './api';
 import {listeners} from '../windows/listeners';
+import {registerStore} from './store';
 
 /**
  * Prevent electron from running multiple instances.
@@ -41,30 +42,12 @@ app.on('activate', restoreOrCreateWindow);
  */
 app
   .whenReady()
-  .then(restoreOrCreateWindow)
+  .then(() => {
+    registerStore();
+    restoreOrCreateWindow();
+    listeners();
+  })
   .catch(e => console.error('Failed create window:', e));
-
-/**
- * Install Vue.js or any other extension in development mode only.
- * Note: You must install `electron-devtools-installer` manually
- */
-// if (import.meta.env.DEV) {
-//   app
-//     .whenReady()
-//     .then(() => import('electron-devtools-installer'))
-//     .then(module => {
-//       const {default: installExtension, VUEJS_DEVTOOLS} =
-//         //@ts-expect-error Hotfix for https://github.com/cawa-93/vite-electron-builder/issues/915
-//         typeof module.default === 'function' ? module : (module.default as typeof module);
-//
-//       return installExtension(VUEJS_DEVTOOLS, {
-//         loadExtensionOptions: {
-//           allowFileAccess: true,
-//         },
-//       });
-//     })
-//     .catch(e => console.error('Failed install extension:', e));
-// }
 
 /**
  * Check for app updates, install it in background and notify user that new version was installed.
@@ -83,4 +66,3 @@ if (import.meta.env.PROD) {
 }
 
 startAPI(app);
-listeners();

@@ -29,13 +29,6 @@ export const Tabs = observer(() => {
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => updateRightScreen(TabViewType.ACTIVITY)}
-        >
-          <Inbox />
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
           onClick={() => updateRightScreen(TabViewType.AI)}
         >
           <AI />

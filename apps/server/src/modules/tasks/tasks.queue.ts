@@ -98,7 +98,6 @@ export class TasksQueue implements OnModuleInit {
 
       // Format the jobs for better readability
       return repeatableJobs.map((job) => {
-        console.log(JSON.stringify(job));
         return {
           id: job.id,
           name: job.name,

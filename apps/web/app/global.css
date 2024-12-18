@@ -64,7 +64,7 @@ strong {
   }
 
   .tiptap p.is-editor-empty:first-child::before {
-    font-size: 17px !important;
+    font-size: 14px !important;
   }
 }
 

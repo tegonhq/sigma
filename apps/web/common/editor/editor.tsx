@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import type { Editor as EditorT, Extension, Mark, Node } from '@tiptap/core';
 
@@ -62,12 +63,7 @@ export const EditorExtensions = ({
         ))}
       </EditorCommand>
 
-      <EditorBubble
-        tippyOptions={{
-          placement: 'top',
-        }}
-        className="flex w-fit items-center max-w-[90vw] overflow-hidden rounded bg-background-2 shadow-1 border-[#ffffff38] p-1"
-      >
+      <EditorBubble className="flex w-fit items-center max-w-[90vw] overflow-hidden rounded bg-background-2 shadow-1 border-[#ffffff38] p-1">
         <Separator orientation="vertical" />
         <NodeSelector open={openNode} onOpenChange={setOpenNode} />
         <Separator orientation="vertical" />

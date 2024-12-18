@@ -16,7 +16,6 @@ export enum TabViewType {
   MY_DAY = 'my_day',
   MY_TASKS = 'my_tasks',
   INSTRUCTIONS = 'instructions',
-  ACTIVITY = 'activity',
   AI = 'ai',
 }
 

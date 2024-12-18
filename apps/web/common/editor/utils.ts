@@ -34,6 +34,7 @@ export const createImageUpload =
     const reader = new FileReader();
     reader.readAsDataURL(file);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onUpload(file).then((response: any) => {
       editor
         .chain()
@@ -124,6 +125,7 @@ export const createFileUpload =
     const reader = new FileReader();
     reader.readAsDataURL(file);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onUpload(file).then((response: any) => {
       editor
         .chain()

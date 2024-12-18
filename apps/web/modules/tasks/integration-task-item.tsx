@@ -1,9 +1,13 @@
 import { observer } from 'mobx-react-lite';
+import React from 'react';
 
 import { useRemoteComponent } from 'common/RemoteComponent';
 import type { PageType, TaskType } from 'common/types';
 
-import { StatusDropdown, StatusDropdownVariant } from './status-dropdown';
+import { useIntegrationFromAccount } from 'hooks/integration';
+import { useIPC } from 'hooks/ipc';
+
+import { getIntegrationURL } from './utils';
 
 interface IntegrationTaskItemProps {
   task: TaskType;
@@ -12,11 +16,32 @@ interface IntegrationTaskItemProps {
 }
 
 export const IntegrationTaskItem = observer(
-  ({ task, page, statusChange }: IntegrationTaskItemProps) => {
-    const url = `http://localhost:8000/local/Users/manoj/work/sigma-integrations/github/dist/frontend/index.js`;
-    const [loading, err, Component] = useRemoteComponent(url, 'Preview');
+  ({ task, page }: IntegrationTaskItemProps) => {
+    const ipc = useIPC();
+    const [url, setUrl] = React.useState(undefined);
+    const { isLoading, integration } = useIntegrationFromAccount(
+      task.integrationAccountId,
+    );
+    const [loading, err, Component] = useRemoteComponent(url, 'TaskItem');
 
-    if (loading) {
+    React.useEffect(() => {
+      if (integration) {
+        getUrl();
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [integration]);
+
+    const getUrl = async () => {
+      const url = await getIntegrationURL(
+        ipc,
+        integration.name,
+        integration.version,
+      );
+
+      setUrl(url);
+    };
+
+    if (loading || isLoading) {
       return <div>Loading...</div>;
     }
 
@@ -24,16 +49,6 @@ export const IntegrationTaskItem = observer(
       return <div>Unknown Error: {err.toString()}</div>;
     }
 
-    const statusNode = (
-      <StatusDropdown
-        value={task.status}
-        onChange={statusChange}
-        variant={StatusDropdownVariant.NO_BACKGROUND}
-      />
-    );
-
-    return (
-      <Component view="task" task={task} page={page} statusNode={statusNode} />
-    );
+    return <Component task={task} page={page} />;
   },
 );

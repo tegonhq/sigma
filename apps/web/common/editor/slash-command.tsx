@@ -1,5 +1,6 @@
 import {
   BulletListLine,
+  CheckLine,
   CodingLine,
   HeadingLine,
   IssuesLine,
@@ -33,7 +34,7 @@ export const suggestionItems = createSuggestionItems([
     title: 'To-do List',
     description: 'Track tasks with a to-do list.',
     searchTerms: ['todo', 'task', 'list', 'check', 'checkbox'],
-    icon: <IssuesLine size={20} />,
+    icon: <CheckLine size={20} />,
     command: ({ editor, range }) => {
       editor.chain().focus().deleteRange(range).toggleTaskList().run();
     },
@@ -146,6 +147,23 @@ export const suggestionItems = createSuggestionItems([
         }
       };
       input.click();
+    },
+  },
+  {
+    title: 'Task',
+    description: 'Search or create task',
+    searchTerms: ['task'],
+    icon: <IssuesLine size={20} />,
+    command: ({ editor, range }) => {
+      editor.commands.command(({ tr, state }) => {
+        const node = state.schema.nodes['taskExtension'].create({
+          type: 'inline',
+        });
+
+        tr.replaceWith(range.from, range.to, node);
+
+        return true;
+      });
     },
   },
 ]);

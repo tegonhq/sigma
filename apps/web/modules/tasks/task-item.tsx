@@ -2,12 +2,12 @@ import { cn } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 
+import { useUpdateTaskMutation } from 'services/tasks';
+
 import { useContextStore } from 'store/global-context-provider';
 
 import { IntegrationTaskItem } from './integration-task-item';
 import { StatusDropdown, StatusDropdownVariant } from './status-dropdown';
-import { useApplication } from 'hooks/application';
-import { useUpdateTaskMutation } from 'services/tasks';
 import { TaskDueDate } from './task-duedate';
 
 interface TaskListItemProps {
@@ -65,7 +65,9 @@ export const TaskListItem = observer(({ taskId }: TaskListItemProps) => {
               </div>
 
               <div className="flex items-center gap-2 flex-wrap pr-1 shrink-0">
-                <TaskDueDate dueDate={task.dueDate} />
+                {task.status !== 'Done' && (
+                  <TaskDueDate dueDate={task.dueDate} />
+                )}
               </div>
             </div>
           </div>

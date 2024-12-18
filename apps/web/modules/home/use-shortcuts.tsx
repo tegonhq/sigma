@@ -11,22 +11,17 @@ export const useShortcuts = () => {
   const { updateRightScreen } = useApplication();
 
   useHotkeys(
-    [`${Key.Meta}+u`, `${Key.Meta}+i`, `${Key.Meta}+o`],
+    [`${Key.Meta}+l`, `${Key.Meta}+;`],
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (event) => {
       const isMetaKey = event.metaKey;
       switch (event.key) {
-        case 'u':
-          if (isMetaKey) {
-            updateRightScreen(TabViewType.ACTIVITY);
-          }
-          break;
-        case 'i':
+        case 'l':
           if (isMetaKey) {
             updateRightScreen(TabViewType.AI);
           }
           break;
-        case 'o':
+        case ';':
           if (isMetaKey) {
             updateRightScreen(TabViewType.MY_TASKS);
           }

@@ -12,13 +12,15 @@ import {
   CreateIntegrationAccountDto,
   IntegrationAccount,
   IntegrationAccountIdDto,
+  IntegrationAccountWithToken,
   UpdateIntegrationAccountDto,
 } from '@sigma/types';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
-import { Workspace } from 'modules/auth/session.decorator';
+import { Session, Workspace } from 'modules/auth/session.decorator';
 
 import { IntegrationAccountService } from './integration-account.service';
+import { SessionContainer } from 'supertokens-node/recipe/session';
 
 @Controller({
   version: '1',
@@ -59,6 +61,25 @@ export class IntegrationAccountController {
     return await this.integrationAccountService.getIntegrationAccountsByName(
       integrations,
       workspaceId,
+    );
+  }
+
+  /**
+   * Get a integration accounts in a workspace
+   */
+  @Get(':integrationAccountId/token')
+  @UseGuards(AuthGuard)
+  async getIntegrationAccountToken(
+    @Session() session: SessionContainer,
+    @Workspace() workspaceId: string,
+    @Param()
+    integrationAccountIdRequestIdBody: IntegrationAccountIdDto,
+  ): Promise<IntegrationAccountWithToken> {
+    const token = session.getAccessToken();
+    return await this.integrationAccountService.getIntegrationAccountWithToken(
+      integrationAccountIdRequestIdBody.integrationAccountId,
+      workspaceId,
+      token,
     );
   }
 

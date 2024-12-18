@@ -49,7 +49,7 @@ export class OAuthCallbackService {
   ) {
     const { integrationDefinitionId, personal } = oAuthBody;
 
-    const redirectURL = 'https://app.mysigma.ai/integrations';
+    const redirectURL = `${this.configService.get('FRONTEND_HOST')}/integrations`;
 
     this.logger.info({
       message: `We got OAuth request for ${workspaceId}: ${integrationDefinitionId}`,
@@ -218,8 +218,9 @@ export class OAuthCallbackService {
       const integrationFunction = await loadRemoteModule(
         getRequires(createAxiosInstance(pat)),
       );
+
       const integration = await integrationFunction(
-        `file:///Users/manoj/work/sigma-integrations/${integrationDefinition.slug}/dist/backend/index.js`,
+        `${integrationDefinition.url}/backend/index.js`,
       );
 
       const integrationAccount = await integration.run({

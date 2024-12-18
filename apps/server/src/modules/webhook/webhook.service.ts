@@ -74,8 +74,10 @@ export default class WebhookService {
         getRequires(createAxiosInstance(pat)),
       );
 
+      const integrationDefinition = integrationAccount.integrationDefinition;
+
       const integration = await integrationFunction(
-        `file:///Users/manoj/work/sigma-integrations/${sourceName}/dist/backend/index.js`,
+        `${integrationDefinition}/backend/index.js`,
       );
 
       await integration.run({

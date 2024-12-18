@@ -13,7 +13,8 @@ export const fetcher = async (url: string) => {
     return content;
   }
   // Handle remote URLs with axios
-  return axios.get(url).then((request) => request.data);
+  const response = await axios.get(url);
+  return response.data;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

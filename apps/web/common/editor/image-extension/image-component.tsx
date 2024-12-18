@@ -18,6 +18,7 @@ export const ImageComponent = (props: any) => {
   }, []);
 
   React.useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleKeyDown = (event: any) => {
       if (event.key === 'Escape') {
         setOpen(false);

@@ -1,9 +1,10 @@
-import {globalShortcut, nativeImage, Tray, type BrowserWindow} from 'electron';
+import {globalShortcut, nativeImage, Tray, type BrowserWindow, screen} from 'electron';
 import {createMainWindow, registerMainWindowStates} from './main';
-import {createQuickWindow, registerQuickStates} from './quick';
+import {createQuickWindow, recalculatePositionToDisplay, registerQuickStates} from './quick';
 
 import path, {dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {registerDeepLink} from '/@/deeplink';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -27,6 +28,7 @@ export async function restoreOrCreateWindow() {
   if (!appWindows.main || appWindows.main.isDestroyed()) {
     appWindows.main = await createMainWindow();
     registerMainWindowStates(appWindows.main);
+    registerDeepLink(appWindows.main);
     registerShortcut();
   }
 
@@ -58,21 +60,36 @@ export function registerShortcut() {
 /**
  * Restore an existing BrowserWindow or Create a new BrowserWindow.
  */
-export async function restoreOrCreateQuickWindow() {
-  if (appWindows.quick) {
-    appWindows.quick.show();
-  }
-
+export async function restoreOrCreateQuickWindow(show = true) {
   if (!appWindows.quick || appWindows.quick.isDestroyed()) {
     appWindows.quick = await createQuickWindow();
     registerQuickStates(appWindows.quick);
   }
 
-  if (appWindows.quick.isMinimized()) {
-    appWindows.quick.restore();
+  const focusScreen = screen.getDisplayNearestPoint(screen.getCursorScreenPoint());
+
+  const winBounds = appWindows.quick.getBounds();
+
+  const originalScreen = screen.getDisplayNearestPoint({
+    x: winBounds.x,
+    y: winBounds.y,
+  });
+
+  if (focusScreen.id !== originalScreen.id) {
+    const newPosition = recalculatePositionToDisplay(
+      {x: winBounds.x, y: winBounds.y},
+      originalScreen,
+      focusScreen,
+    );
+    appWindows.quick.setPosition(newPosition.x, newPosition.y);
   }
 
-  appWindows.quick.focus();
+  if (show) {
+    console.log(appWindows.quick.isAlwaysOnTop());
+    appWindows.quick.show();
+    appWindows.quick.focus();
+    appWindows.quick.setVisibleOnAllWorkspaces(true, {visibleOnFullScreen: true});
+  }
 }
 
 export async function setTray() {

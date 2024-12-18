@@ -54,6 +54,8 @@ export const useApplication = () => {
     type: TabViewType,
     entityId?: string,
   ) => {
+    applicationStore.updateRightScreen(false);
+
     const tab = tabGroup.tabs[index];
 
     tab.changeType(type, entityId);

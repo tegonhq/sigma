@@ -38,10 +38,6 @@ function getComponent(componentType: string, props: any) {
     return <Instructions {...props} />;
   }
 
-  if (componentType === TabViewType.ACTIVITY) {
-    return <Activity {...props} />;
-  }
-
   if (componentType === TabViewType.AI) {
     return <AI {...props} />;
   }

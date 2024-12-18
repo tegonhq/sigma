@@ -15,13 +15,7 @@ const Tab = types
   .model({
     id: types.identifier,
     entity_id: types.string,
-    type: types.enumeration([
-      'my_day',
-      'my_tasks',
-      'instructions',
-      'activity',
-      'ai',
-    ]),
+    type: types.enumeration(['my_day', 'my_tasks', 'instructions', 'ai']),
     order: types.number,
     data: types.frozen(),
   })

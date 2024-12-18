@@ -1,7 +1,18 @@
-import {ipcMain, shell} from 'electron';
+import {app, ipcMain, shell} from 'electron';
+import {integrationsInit} from '/@/integrations-init';
+import path from 'node:path';
+
 export function listeners() {
   // Listen for URL open requests
-  ipcMain.on('open-url', (event, url) => {
+  ipcMain.on('open-url', (_event, url) => {
     shell.openExternal(url);
+  });
+
+  ipcMain.on('integrations-init', async () => {
+    await integrationsInit();
+  });
+
+  ipcMain.handle('get-integrations-folder', () => {
+    return path.join(app.getPath('userData'), 'integrations');
   });
 }

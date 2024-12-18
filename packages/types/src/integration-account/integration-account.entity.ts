@@ -22,3 +22,7 @@ export class IntegrationAccount {
   workspace?: Workspace;
   workspaceId: string;
 }
+
+export interface IntegrationAccountWithToken extends IntegrationAccount {
+  token: string;
+}

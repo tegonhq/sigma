@@ -54,7 +54,7 @@ async function bootstrap() {
   // Cors
   if (corsConfig.enabled) {
     app.enableCors({
-      origin: configService.get('FRONTEND_HOST').split(',') || '',
+      origin: 'https://app.mysigma.com',
       allowedHeaders: ['content-type', ...supertokens.getAllCORSHeaders()],
       credentials: true,
     });

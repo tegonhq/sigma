@@ -1,11 +1,4 @@
-import {
-  ArrowLeft,
-  Button,
-  ChevronLeft,
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-} from '@tegonhq/ui';
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from '@tegonhq/ui';
 
 import { SettingSection } from 'modules/settings/setting-section';
 
@@ -51,7 +44,6 @@ export function Integration({
           description={integrationDefinition.description}
         >
           <>
-            <h2 className="text-md">{integrationDefinition.name}</h2>
             {integrationDefinition.spec && (
               <IntegrationAuth integrationDefinition={integrationDefinition} />
             )}

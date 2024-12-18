@@ -6,7 +6,6 @@ import { useUpdateTaskMutation } from 'services/tasks';
 
 import { StatusDropdown } from '../status-dropdown';
 import { DueDate } from './due-date';
-import { Separator } from '@tegonhq/ui';
 
 interface SingleTaskMetadataProps {
   task: TaskType;

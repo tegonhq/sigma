@@ -3,6 +3,7 @@ import {
   CreateIntegrationAccountDto,
   InputJsonValue,
   IntegrationAccountIdDto,
+  IntegrationPayloadEventType,
   UpdateIntegrationAccountDto,
 } from '@sigma/types';
 import { PrismaService } from 'nestjs-prisma';
@@ -11,6 +12,11 @@ import {
   IntegrationAccountSelect,
   IntegrationAccountSelectByNames,
 } from './integration-account.interface';
+import {
+  createAxiosInstance,
+  getRequires,
+  loadRemoteModule,
+} from 'common/remote-loader';
 
 @Injectable()
 export class IntegrationAccountService {
@@ -96,6 +102,43 @@ export class IntegrationAccountService {
     });
 
     return integrationAccount;
+  }
+
+  async getIntegrationAccountWithToken(
+    integrationAccountId: string,
+    workspaceId: string,
+    token: string,
+  ) {
+    const integrationAccount =
+      await this.prisma.integrationAccount.findUniqueOrThrow({
+        where: {
+          workspaceId,
+          id: integrationAccountId,
+        },
+        include: {
+          integrationDefinition: true,
+        },
+      });
+
+    const integrationFunction = await loadRemoteModule(
+      getRequires(createAxiosInstance(token)),
+    );
+    const integration = await integrationFunction(
+      `${integrationAccount.integrationDefinition.url}/backend/index.js`,
+    );
+
+    const accessToken = await integration.run({
+      event: IntegrationPayloadEventType.GET_TOKEN,
+      workspaceId: workspaceId,
+      eventBody: {
+        integrationAccount,
+      },
+    });
+
+    return {
+      ...integrationAccount,
+      token: accessToken,
+    };
   }
 
   async getIntegrationAccountsForWorkspace(workspaceId: string) {

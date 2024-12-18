@@ -96,8 +96,11 @@ export class IntegrationsProcessor extends WorkerHost {
     const integrationFunction = await loadRemoteModule(
       getRequires(createAxiosInstance(pat)),
     );
+
+    const integrationDefinition = integrationAccount.integrationDefinition;
+
     const integration = await integrationFunction(
-      `file:///Users/manoj/work/sigma-integrations/${integrationAccount.integrationDefinition.slug}/dist/backend/index.js`,
+      `${integrationDefinition.url}/backend/index.js`,
     );
 
     await integration.run({

@@ -15,6 +15,7 @@ import {
 
 import { fileExtension } from './file-extension';
 import { imageExtension } from './image-extension';
+import { taskExtension } from './task-extension/task-extension';
 
 const tiptapLink = TiptapLink.configure({
   HTMLAttributes: {
@@ -156,4 +157,5 @@ export const defaultExtensions = [
   imageExtension,
   markdown,
   HighlightExtension,
+  taskExtension,
 ];

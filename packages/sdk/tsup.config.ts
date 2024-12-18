@@ -16,6 +16,7 @@ const options: Options = {
   treeshake: {
     preset: 'recommended',
   },
+  external: ['axios'],
 };
 
 export default defineConfigTSUP(options);

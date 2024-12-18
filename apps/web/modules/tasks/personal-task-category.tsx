@@ -20,6 +20,7 @@ import { useContextStore } from 'store/global-context-provider';
 
 import { AddTask } from './add-task';
 import { TaskListItem } from './task-item';
+import { getStatusPriority } from './utils';
 
 interface PersonalTaskCategoryProps {
   newTask: boolean;
@@ -33,11 +34,14 @@ export const PersonalTaskCategory = observer(
     const tasks = tasksStore.getTasksWithNoIntegration();
     const { updateTabType } = useApplication();
 
+    const sortedTasks = sort(tasks).by([
+      { desc: (task) => getStatusPriority(task.status) },
+      { asc: (task) => new Date(task.updatedAt) },
+    ]);
+
     const taskSelect = (taskId: string) => {
       updateTabType(1, TabViewType.MY_TASKS, taskId);
     };
-
-    const sortedTasks = sort(tasks).asc((task) => new Date(task.updatedAt));
 
     return (
       <Collapsible

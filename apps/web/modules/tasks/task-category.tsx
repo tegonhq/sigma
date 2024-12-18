@@ -9,19 +9,23 @@ import {
   CollapsibleTrigger,
   Loader,
 } from '@tegonhq/ui';
+import { sort } from 'fast-sort';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 
 import { getIcon, type IconType } from 'common/icon-utils';
 import type { IntegrationAccountType, TaskType } from 'common/types';
+import { useLocalCommonState } from 'common/use-local-state';
 
 import { useApplication } from 'hooks/application';
 
 import { useGetIntegrationDefinitions } from 'services/integration-definition';
 
+import { TabViewType } from 'store/application';
 import { useContextStore } from 'store/global-context-provider';
 
 import { TaskListItem } from './task-item';
+import { getStatusPriority } from './utils';
 
 interface TaskCategoryProps {
   integrationAccount: IntegrationAccountType;
@@ -29,11 +33,18 @@ interface TaskCategoryProps {
 
 export const TaskCategory = observer(
   ({ integrationAccount }: TaskCategoryProps) => {
-    const [isOpen, setIsOpen] = React.useState(true);
+    const [isOpen, setIsOpen] = useLocalCommonState(
+      `${integrationAccount.id}__collapsed`,
+      true,
+    );
     const { tasksStore } = useContextStore();
-    const { tabs } = useApplication();
-    const secondTab = tabs[1];
+    const { updateTabType } = useApplication();
+
     const tasks = tasksStore.getTasksWithIntegration(integrationAccount.id);
+    const sortedTasks = sort(tasks).by([
+      { desc: (task) => getStatusPriority(task.status) },
+      { asc: (task) => new Date(task.updatedAt) },
+    ]);
 
     const { data: integrations, isLoading } = useGetIntegrationDefinitions();
 
@@ -49,7 +60,7 @@ export const TaskCategory = observer(
     const Icon = getIcon(integration.icon as IconType);
 
     const taskSelect = (taskId: string) => {
-      secondTab.updateData({ entity_id: taskId });
+      updateTabType(1, TabViewType.MY_TASKS, taskId);
     };
 
     return (
@@ -83,7 +94,7 @@ export const TaskCategory = observer(
         </div>
 
         <CollapsibleContent>
-          {tasks.map((task: TaskType) => (
+          {sortedTasks.map((task: TaskType) => (
             <div key={task.id} onClick={() => taskSelect(task.id)}>
               <TaskListItem taskId={task.id} />
             </div>

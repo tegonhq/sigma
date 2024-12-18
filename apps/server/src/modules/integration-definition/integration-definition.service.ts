@@ -6,9 +6,14 @@ import {
 import { PrismaService } from 'nestjs-prisma';
 
 import { fetcher } from 'common/remote-loader/load-remote-module';
+import { LoggerService } from 'modules/logger/logger.service';
 
 @Injectable()
 export class IntegrationDefinitionService {
+  private readonly logger = new LoggerService(
+    IntegrationDefinitionService.name,
+  );
+
   constructor(private prisma: PrismaService) {}
 
   async getIntegrationDefinitions(
@@ -38,21 +43,18 @@ export class IntegrationDefinitionService {
 
   async getIntegrationDefinitionWithSpec(
     integrationDefinitionId: string,
-  ): Promise<IntegrationDefinition> {
-    const integrationDefinition = await this.getIntegrationDefinitionWithId({
-      integrationDefinitionId,
-    });
+  ): Promise<IntegrationDefinition | undefined> {
+    try {
+      const integrationDefinition = await this.getIntegrationDefinitionWithId({
+        integrationDefinitionId,
+      });
 
-    // const spec = await loadRemoteModule(
-    //   `${integrationDefinition.url}/spec.json`,
-    // );
+      const spec = await fetcher(`${integrationDefinition.url}/spec.json`);
 
-    const spec = JSON.parse(
-      await fetcher(
-        `file:///Users/manoj/work/sigma-integrations/${integrationDefinition.slug}/spec.json`,
-      ),
-    );
-
-    return { ...integrationDefinition, spec };
+      return { ...integrationDefinition, spec };
+    } catch (e) {
+      this.logger.error({ message: `Integration spec fetching failed: ${e}` });
+      return undefined;
+    }
   }
 }
