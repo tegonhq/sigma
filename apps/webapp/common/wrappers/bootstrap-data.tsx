@@ -24,7 +24,7 @@ export function BootstrapWrapper({ children }: Props) {
   const [loading, setLoading] = React.useState(true);
   const hashKey = `${workspace.id}__${user.id}`;
   const lastSequenceId =
-    localStorage && localStorage.getItem(`lastSequenceId_${hashKey}`);
+    localStorage && localStorage.getItem(`lastSequenceId_${hash(hashKey)}`);
   const {
     workspaceStore,
     integrationAccountsStore,

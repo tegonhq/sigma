@@ -34,3 +34,9 @@ export const hash = (str: string, seed = 0) => {
 
   return 4294967296 * (2097151 & h2) + (h1 >>> 0);
 };
+
+export function extractTextFromHTML(html: string) {
+  const div = document.createElement('div');
+  div.innerHTML = html;
+  return div.textContent || div.innerText || '';
+}

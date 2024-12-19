@@ -1,6 +1,6 @@
-import { useMutation } from "react-query";
+import { useMutation } from 'react-query';
 
-import type { User } from "common/types";
+import type { User } from 'common/types';
 
 export interface UpdateUserParams {
   fullname: string;
@@ -10,9 +10,9 @@ export interface UpdateUserParams {
 
 async function updateUser({ userId, fullname, username }: UpdateUserParams) {
   const response = await fetch(`/api/v1/users/${userId}`, {
-    method: "POST",
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify({ fullname, username }),
   });
@@ -37,7 +37,7 @@ export function useUpdateUserMutation({
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onMutationError = (errorResponse: any) => {
-    const errorText = errorResponse?.errors?.message || "Error occured";
+    const errorText = errorResponse?.errors?.message || 'Error occured';
 
     onError && onError(errorText);
   };

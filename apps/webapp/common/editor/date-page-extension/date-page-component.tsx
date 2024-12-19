@@ -1,8 +1,4 @@
-import { format, subDays, addDays, addWeeks, parse } from 'date-fns';
-
-import { observer } from 'mobx-react-lite';
-import { useContextStore } from 'store/global-context-provider';
-import { NodeViewWrapper } from '@tiptap/react';
+import { PageTypeEnum } from '@sigma/types';
 import {
   Command,
   CommandInput,
@@ -10,11 +6,19 @@ import {
   CommandList,
   TodoLine,
 } from '@tegonhq/ui';
+import { NodeViewWrapper } from '@tiptap/react';
+import { format, subDays, addDays, addWeeks, parse } from 'date-fns';
+import { observer } from 'mobx-react-lite';
 import React from 'react';
-import { PageItem } from './page-item';
-import { useCreatePageMutation } from 'services/pages';
-import { PageTypeEnum } from '@sigma/types';
+
 import type { PageType } from 'common/types';
+
+import { useCreatePageMutation } from 'services/pages';
+
+import { useContextStore } from 'store/global-context-provider';
+
+import { PageItem } from './page-item';
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const DatePageComponent = observer((props: any) => {
   const { pagesStore } = useContextStore();

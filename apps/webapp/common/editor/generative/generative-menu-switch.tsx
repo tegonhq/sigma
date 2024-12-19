@@ -1,9 +1,9 @@
-import { EditorBubble, useEditor } from "novel";
-import { removeAIHighlight } from "novel/extensions";
-import {} from "novel/plugins";
-import { Fragment, type ReactNode, useEffect } from "react";
+import { EditorBubble, useEditor } from 'novel';
+import { removeAIHighlight } from 'novel/extensions';
+import {} from 'novel/plugins';
+import { Fragment, type ReactNode, useEffect } from 'react';
 
-import { AISelector } from "./ai-selector";
+import { AISelector } from './ai-selector';
 
 interface GenerativeMenuSwitchProps {
   children: ReactNode;
@@ -26,7 +26,7 @@ const GenerativeMenuSwitch = ({
   return (
     <EditorBubble
       tippyOptions={{
-        placement: "top",
+        placement: 'top',
         onHidden: () => {
           onOpenChange(false);
         },

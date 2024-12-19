@@ -19,9 +19,9 @@ import { TabViewType } from 'store/application';
 import { useContextStore } from 'store/global-context-provider';
 
 import { SingleTaskEditor } from './single-task-editor';
+import { SingleTaskIntegration } from './single-task-integration';
 import { SingleTaskMetadata } from './single-task-metadata';
 import { PageTitle } from './single-task-title';
-import { SingleTaskIntegration } from './single-task-integration';
 
 interface SingleTaskProps {
   index: number;

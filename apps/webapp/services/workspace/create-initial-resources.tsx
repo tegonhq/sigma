@@ -1,9 +1,9 @@
-import axios from "axios";
-import { useMutation, useQueryClient } from "react-query";
+import axios from 'axios';
+import { useMutation, useQueryClient } from 'react-query';
 
-import type { WorkspaceType } from "common/types";
+import type { WorkspaceType } from 'common/types';
 
-import { GetUserQuery } from "services/users";
+import { GetUserQuery } from 'services/users';
 
 export interface CreateInitialResourcesDto {
   workspaceName: string;
@@ -11,7 +11,7 @@ export interface CreateInitialResourcesDto {
 }
 
 export function createInitialResources(
-  createInitialResourcesDto: CreateInitialResourcesDto
+  createInitialResourcesDto: CreateInitialResourcesDto,
 ): Promise<WorkspaceType> {
   return axios.post(`/api/v1/workspaces/onboarding`, createInitialResourcesDto);
 }
@@ -35,7 +35,7 @@ export function useCreateInitialResourcesMutation({
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onMutationError = (errorResponse: any) => {
-    const errorText = errorResponse?.errors?.message || "Error occured";
+    const errorText = errorResponse?.errors?.message || 'Error occured';
 
     onError && onError(errorText);
   };

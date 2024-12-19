@@ -127,6 +127,7 @@ EditorCommand.displayName = 'EditorCommand';
 
 export const renderItems = () => {
   let component: ReactRenderer | null = null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let popup: any | null = null;
 
   return {

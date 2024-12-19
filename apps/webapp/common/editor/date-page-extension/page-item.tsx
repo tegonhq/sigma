@@ -1,11 +1,10 @@
+import { DocumentLine } from '@tegonhq/ui';
+import { parse } from 'date-fns';
 import { observer } from 'mobx-react-lite';
 
 import type { PageType } from 'common/types';
 
 import { useApplication } from 'hooks/application';
-
-import { DocumentLine } from '@tegonhq/ui';
-import { parse } from 'date-fns';
 
 interface PageItemProps {
   page: PageType;

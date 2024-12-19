@@ -1,12 +1,12 @@
-import { mergeAttributes, Node } from "@tiptap/core";
-import { ReactNodeViewRenderer } from "@tiptap/react";
+import { mergeAttributes, Node } from '@tiptap/core';
+import { ReactNodeViewRenderer } from '@tiptap/react';
 
-import { TaskComponent } from "./task-component";
+import { TaskComponent } from './task-component';
 
 export const taskExtension = Node.create({
   priority: 51,
-  name: "taskExtension",
-  group: "inline",
+  name: 'taskExtension',
+  group: 'inline',
   inline: true,
 
   addAttributes() {
@@ -20,13 +20,13 @@ export const taskExtension = Node.create({
   parseHTML() {
     return [
       {
-        tag: "task-extension",
+        tag: 'task-extension',
       },
     ];
   },
 
   renderHTML({ HTMLAttributes }) {
-    return ["task-extension", mergeAttributes(HTMLAttributes)];
+    return ['task-extension', mergeAttributes(HTMLAttributes)];
   },
 
   addNodeView() {

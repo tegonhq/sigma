@@ -1,14 +1,17 @@
+import { PageTypeEnum } from '@sigma/types';
+import { generateHTML } from '@tiptap/core';
+import { format } from 'date-fns';
+import { generateKeyBetween } from 'fractional-indexing'; // Import the fractional-index package
+import Fuse from 'fuse.js';
 import { type IAnyStateTreeNode, types, flow } from 'mobx-state-tree';
 
+import { extractTextFromHTML } from 'common/common-utils';
+import { defaultExtensions } from 'common/editor/editor-extensions';
 import type { PageType } from 'common/types';
 
 import { sigmaDatabase } from 'store/database';
 
 import { Page } from './models';
-
-import { generateKeyBetween } from 'fractional-indexing'; // Import the fractional-index package
-import { format } from 'date-fns';
-import { PageTypeEnum } from '@sigma/types';
 
 export const PagesStore: IAnyStateTreeNode = types
   .model({
@@ -41,8 +44,28 @@ export const PagesStore: IAnyStateTreeNode = types
     };
 
     const load = flow(function* () {
-      const pages = yield sigmaDatabase.pages.toArray();
+      const pages = (yield sigmaDatabase.pages.toArray()).map(
+        (page: PageType) => {
+          try {
+            if (!page.description) {
+              return page;
+            }
+
+            return {
+              ...page,
+              description: extractTextFromHTML(
+                generateHTML(JSON.parse(page.description), defaultExtensions),
+              ),
+            };
+          } catch (e) {
+            console.log(e);
+            return page;
+          }
+        },
+      );
+
       // Sort pages lexically by title before building the tree
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const sortedPages: any = [...pages].sort((a, b) =>
         a.sortOrder.localeCompare(b.sortOrder),
       );
@@ -109,9 +132,36 @@ export const PagesStore: IAnyStateTreeNode = types
       // Calculate the new sort order using fractional-index
       return generateKeyBetween(lastPage?.sortOrder, null);
     },
+    searchPages(query: string) {
+      const fuse = new Fuse(self.pages.toJSON(), {
+        keys: [
+          {
+            name: 'title',
+            weight: 1,
+          },
+          {
+            name: 'description',
+            weight: 10,
+          },
+        ], // Fields to search
+
+        includeScore: true, // Optional: include match scores
+        threshold: 0.6, // Lower threshold for stricter matches
+        distance: 100, // Reduce distance to prioritize closer matches
+        findAllMatches: true, // Include all potential matches
+        useExtendedSearch: true, // Enable advanced search features
+      });
+
+      if (!query.trim()) {
+        return [];
+      }
+      const searchResults = fuse.search(query, { limit: 10 });
+
+      return searchResults.map((result) => result.item);
+    },
   }));
 
-export type PagesStoreType = {
+export interface PagesStoreType {
   pages: PageType[];
   workspaceId: string;
   getSortOrderForNewPage: string;
@@ -128,7 +178,9 @@ export type PagesStoreType = {
     key: string;
     id: string;
     title: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     children?: any[];
     sortOrder?: string;
   }>;
-};
+  searchPages: (query: string) => PageType[];
+}

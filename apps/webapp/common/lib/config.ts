@@ -1,13 +1,15 @@
+import getConfig from 'next/config';
+import Router from 'next/router';
 import Passwordless from 'supertokens-auth-react/recipe/passwordless';
 import SessionReact from 'supertokens-auth-react/recipe/session';
 
-import type { NextRouter } from 'next/router';
+const { publicRuntimeConfig } = getConfig();
 
-export const frontendConfig = (router: NextRouter) => {
+export const frontendConfig = () => {
   const appInfo = {
     appName: 'Sigma',
-    apiDomain: process.env.NEXT_PUBLIC_BASE_HOST,
-    websiteDomain: process.env.NEXT_PUBLIC_BASE_HOST,
+    apiDomain: publicRuntimeConfig.NEXT_PUBLIC_BASE_HOST,
+    websiteDomain: publicRuntimeConfig.NEXT_PUBLIC_BASE_HOST,
     apiBasePath: '/api/auth',
     websiteBasePath: '/auth',
   };
@@ -27,7 +29,7 @@ export const frontendConfig = (router: NextRouter) => {
         location: {
           ...oI.location,
           setHref: (href: string) => {
-            router.push(href);
+            Router.push(href);
           },
         },
       };

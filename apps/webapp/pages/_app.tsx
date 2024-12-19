@@ -10,7 +10,6 @@ import { GeistMono } from 'geist/font/mono';
 import { GeistSans } from 'geist/font/sans';
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
-import { useRouter } from 'next/router';
 import React from 'react';
 import { Hydrate } from 'react-query';
 
@@ -20,13 +19,13 @@ import { initSuperTokens } from 'common/init-config';
 
 TimeAgo.addDefaultLocale(en);
 
+initSuperTokens();
+
 export const MyApp = ({
   Component,
   pageProps: { dehydratedState, ...pageProps },
 }: AppLayoutProps) => {
   const getLayout = Component.getLayout || ((page: React.ReactNode) => page);
-  const router = useRouter();
-  initSuperTokens(router);
 
   return (
     <Provider>

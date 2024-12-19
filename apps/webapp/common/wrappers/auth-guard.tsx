@@ -1,7 +1,7 @@
-import { Loader } from "@tegonhq/ui";
-import { useRouter } from "next/router";
-import React, { cloneElement } from "react";
-import Session from "supertokens-web-js/recipe/session";
+import { Loader } from '@tegonhq/ui';
+import { useRouter } from 'next/router';
+import React, { cloneElement } from 'react';
+import Session from 'supertokens-web-js/recipe/session';
 
 interface Props {
   children: React.ReactElement;
@@ -19,7 +19,7 @@ export function AuthGuard(props: Props): React.ReactElement {
 
   async function checkForSession() {
     if (await Session.doesSessionExist()) {
-      router.replace("/home");
+      router.replace('/home');
     } else {
       setLoading(false);
     }

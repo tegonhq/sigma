@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
-import { zodResolver } from "@hookform/resolvers/zod";
-import { RiMailFill } from "@remixicon/react";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { RiMailFill } from '@remixicon/react';
 import {
   Button,
   Form,
@@ -10,24 +10,26 @@ import {
   FormMessage,
   Input,
   ArrowRight,
-} from "@tegonhq/ui";
-import { useRouter } from "next/router";
-import React from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+} from '@tegonhq/ui';
+import getConfig from 'next/config';
+import { useRouter } from 'next/router';
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
-import { AuthGuard } from "common/wrappers";
+import { AuthGuard } from 'common/wrappers';
 
-import { useIPC } from "hooks/ipc";
-import { useIsElectron } from "hooks/use-is-electron";
+import { useIPC } from 'hooks/ipc';
+import { useIsElectron } from 'hooks/use-is-electron';
 
 import {
   useCreateAuthCodeMutation,
   type AuthCodeResponse,
-} from "services/users";
+} from 'services/users';
 
-import { AuthLayout } from "./layout";
-import { getCookies, useSupertokenFunctions } from "./utils";
+import { AuthLayout } from './layout';
+import { getCookies, useSupertokenFunctions } from './utils';
+const { publicRuntimeConfig } = getConfig();
 
 export const AuthSchema = z.object({
   email: z.string().email(),
@@ -39,8 +41,8 @@ export function Auth() {
   const form = useForm<z.infer<typeof AuthSchema>>({
     resolver: zodResolver(AuthSchema),
     defaultValues: {
-      email: "",
-      otp: "",
+      email: '',
+      otp: '',
     },
   });
   const [loading, setLoading] = React.useState(false);
@@ -49,12 +51,12 @@ export function Auth() {
     onSuccess: async (data: AuthCodeResponse) => {
       setLoading(true);
       ipc.openUrl(
-        `${process.env.NEXT_PUBLIC_BASE_HOST}/authorize?code=${data.code}`
+        `${publicRuntimeConfig.NEXT_PUBLIC_BASE_HOST}/authorize?code=${data.code}`,
       );
 
       try {
         await getCookies(data.code);
-        router.replace("/home");
+        router.replace('/home');
       } catch (e) {}
 
       setLoading(false);

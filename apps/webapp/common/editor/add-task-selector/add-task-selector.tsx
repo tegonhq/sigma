@@ -1,7 +1,8 @@
+import { useEditor } from 'common/editor';
 import type { TaskType } from 'common/types';
 
 import { useCreateTaskMutation } from 'services/tasks';
-import { useEditor } from 'common/editor';
+
 import { TaskSelector, type TaskContent } from './task-selector';
 
 export const AddTaskSelector = () => {

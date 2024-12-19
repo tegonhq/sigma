@@ -1,5 +1,5 @@
-import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { usePathname } from 'next/navigation';
+import { useState, useEffect } from 'react';
 
 export const useLocalState = <T,>(key: string, initialValue?: T) => {
   const path = usePathname();
@@ -19,7 +19,7 @@ export const useLocalState = <T,>(key: string, initialValue?: T) => {
       JSON.stringify({
         ...parsedObject,
         [key]: state,
-      })
+      }),
     );
   }, [state, path, key]);
 
@@ -27,7 +27,7 @@ export const useLocalState = <T,>(key: string, initialValue?: T) => {
 };
 
 export const useLocalCommonState = <T,>(key: string, initialValue?: T) => {
-  const path = "userSettings";
+  const path = 'userSettings';
   const [state, setState] = useState<T>(() => {
     // Try to load from localStorage on initial render
     const savedObject = localStorage.getItem(path);
@@ -44,7 +44,7 @@ export const useLocalCommonState = <T,>(key: string, initialValue?: T) => {
       JSON.stringify({
         ...parsedObject,
         [key]: state,
-      })
+      }),
     );
   }, [state, path, key]);
 

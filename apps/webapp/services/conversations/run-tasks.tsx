@@ -1,5 +1,5 @@
-import axios from "axios";
-import { useMutation } from "react-query";
+import axios from 'axios';
+import { useMutation } from 'react-query';
 
 interface MutationParams {
   onMutate?: () => void;
@@ -25,11 +25,11 @@ const runTasks = async ({
   return axios({
     url: `${baseHost}/chat`,
     withCredentials: true,
-    method: "Post",
+    method: 'Post',
     data: {
       conversation_id: conversationId,
       conversation_history_id: conversationHistoryId,
-      integration_names: ["tegon"],
+      integration_names: ['tegon'],
       workspace_id: workspaceId,
       task_ids: taskIds,
     },
@@ -47,7 +47,7 @@ export function useRunTasksMutation({
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onMutationError = (errorResponse: any) => {
-    const errorText = errorResponse?.errors?.message || "Error occured";
+    const errorText = errorResponse?.errors?.message || 'Error occured';
 
     onError && onError(errorText);
   };

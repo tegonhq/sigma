@@ -1,7 +1,7 @@
-import { createConversation } from "@sigma/services";
-import { useMutation } from "react-query";
+import { createConversation } from '@sigma/services';
+import { useMutation } from 'react-query';
 
-import type { ConversationType } from "common/types";
+import type { ConversationType } from 'common/types';
 
 interface MutationParams {
   onMutate?: () => void;
@@ -21,7 +21,7 @@ export function useCreateConversationMutation({
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onMutationError = (errorResponse: any) => {
-    const errorText = errorResponse?.errors?.message || "Error occured";
+    const errorText = errorResponse?.errors?.message || 'Error occured';
 
     onError && onError(errorText);
   };

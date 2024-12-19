@@ -1,11 +1,11 @@
-import { observer } from "mobx-react-lite";
+import { observer } from 'mobx-react-lite';
 
-import type { TaskType } from "common/types";
+import type { TaskType } from 'common/types';
 
-import { useUpdateTaskMutation } from "services/tasks";
+import { useUpdateTaskMutation } from 'services/tasks';
 
-import { StatusDropdown } from "../status-dropdown";
-import { DueDate } from "./due-date";
+import { StatusDropdown } from '../status-dropdown';
+import { DueDate } from './due-date';
 
 interface SingleTaskMetadataProps {
   task: TaskType;
@@ -42,5 +42,5 @@ export const SingleTaskMetadata = observer(
         </div>
       </div>
     );
-  }
+  },
 );

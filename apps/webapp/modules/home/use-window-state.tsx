@@ -1,17 +1,17 @@
-import { useLocalCommonState } from "common/use-local-state";
+import { useLocalCommonState } from 'common/use-local-state';
 
-import { useIPC } from "hooks/ipc";
+import { useIPC } from 'hooks/ipc';
 
 export const useWindowState = () => {
   const ipcRenderer = useIPC();
-  const [minimised, setMinimised] = useLocalCommonState("minimized", true);
+  const [minimised, setMinimised] = useLocalCommonState('minimized', true);
 
   ipcRenderer.onWindowStateChange((state: string) => {
-    if (state === "maximized") {
+    if (state === 'maximized') {
       setMinimised(false);
     }
 
-    if (state === "restored") {
+    if (state === 'restored') {
       setMinimised(true);
     }
   });

@@ -48,12 +48,12 @@ export const Navigation = observer(() => {
       const isMetaKey = event.metaKey;
 
       switch (event.key) {
-        case '[':
+        case ']':
           if (isMetaKey) {
             onNextDate();
           }
           break;
-        case ']':
+        case '[':
           if (isMetaKey) {
             onBackDate();
           }

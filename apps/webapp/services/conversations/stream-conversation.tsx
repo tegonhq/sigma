@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { useMutation } from "react-query";
+import { useState } from 'react';
+import { useMutation } from 'react-query';
 
-import { useContextStore } from "store/global-context-provider";
+import { useContextStore } from 'store/global-context-provider';
 
 export function useStreamConversationMutation({
   baseHost,
@@ -26,22 +26,22 @@ export function useStreamConversationMutation({
       setResponses([]);
 
       const response = await fetch(`${baseHost}/chat`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
-        credentials: "include",
+        credentials: 'include',
         body: JSON.stringify({
           conversation_id: conversationId,
           conversation_history_id: conversationHistoryId,
-          integration_names: ["tegon"],
+          integration_names: ['tegon'],
           workspace_id: workspaceId,
           stream: true,
         }),
       });
 
       if (!response.body) {
-        throw new Error("ReadableStream not supported in this browser.");
+        throw new Error('ReadableStream not supported in this browser.');
       }
 
       const reader = response.body.getReader();
@@ -66,13 +66,13 @@ export function useStreamConversationMutation({
           return;
         }
 
-        const chunk = new TextDecoder("utf-8").decode(value, { stream: true });
+        const chunk = new TextDecoder('utf-8').decode(value, { stream: true });
         const thoughts: Array<{ type: string }> = [];
         const responses: Array<{ type: string }> = [];
-        chunk.split("\n\n").forEach((ch) => {
+        chunk.split('\n\n').forEach((ch) => {
           if (ch) {
-            const message = JSON.parse(ch.replace("data: ", ""));
-            if (message.status === "summary") {
+            const message = JSON.parse(ch.replace('data: ', ''));
+            if (message.status === 'summary') {
               responses.push(message);
             }
 

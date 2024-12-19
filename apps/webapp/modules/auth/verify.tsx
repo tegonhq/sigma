@@ -1,18 +1,18 @@
-import { Loader, useToast } from "@tegonhq/ui";
-import { useSearchParams } from "next/navigation";
-import { useRouter } from "next/router";
-import React from "react";
+import { Loader, useToast } from '@tegonhq/ui';
+import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/router';
+import React from 'react';
 import {
   consumeCode,
   clearLoginAttemptInfo,
-} from "supertokens-web-js/recipe/passwordless";
+} from 'supertokens-web-js/recipe/passwordless';
 
-import { AuthGuard } from "common/wrappers";
+import { AuthGuard } from 'common/wrappers';
 
 export function Verify() {
   const router = useRouter();
   const search = useSearchParams();
-  const redirectToPath = search.get("redirectToPath");
+  const redirectToPath = search.get('redirectToPath');
 
   const { toast } = useToast();
 
@@ -20,7 +20,7 @@ export function Verify() {
     try {
       const response = await consumeCode();
 
-      if (response.status === "OK") {
+      if (response.status === 'OK') {
         // we clear the login attempt info that was added when the createCode function
         // was called since the login was successful.
         await clearLoginAttemptInfo();
@@ -29,16 +29,16 @@ export function Verify() {
           response.user.loginMethods.length === 1
         ) {
           toast({
-            title: "Success!",
-            description: "Sign up successfully!",
+            title: 'Success!',
+            description: 'Sign up successfully!',
           });
         } else {
           toast({
-            title: "Success!",
-            description: "Sign in successfully!",
+            title: 'Success!',
+            description: 'Sign in successfully!',
           });
         }
-        router.replace(redirectToPath ? (redirectToPath as string) : "/");
+        router.replace(redirectToPath ? (redirectToPath as string) : '/');
       } else {
         // this can happen if the magic link has expired or is invalid
         // or if it was denied due to security reasons in case of automatic account linking
@@ -48,23 +48,23 @@ export function Verify() {
         // enter email / phone UI again.
         await clearLoginAttemptInfo();
         toast({
-          title: "Error!",
-          description: "Login failed. Please try again",
+          title: 'Error!',
+          description: 'Login failed. Please try again',
         });
-        router.replace("/auth");
+        router.replace('/auth');
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       if (err.isSuperTokensGeneralError === true) {
         toast({
-          title: "Error!",
+          title: 'Error!',
           description: err.message,
         });
         // this may be a custom error message sent from the API by you.
       } else {
         toast({
-          title: "Error!",
-          description: "Oops! Something went wrong.",
+          title: 'Error!',
+          description: 'Oops! Something went wrong.',
         });
       }
     }

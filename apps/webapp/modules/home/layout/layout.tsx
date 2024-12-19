@@ -1,6 +1,6 @@
-import { ResizablePanel, ResizablePanelGroup } from "@tegonhq/ui";
-import { observer } from "mobx-react-lite";
-import * as React from "react";
+import { ResizablePanel, ResizablePanelGroup } from '@tegonhq/ui';
+import { observer } from 'mobx-react-lite';
+import * as React from 'react';
 
 interface LayoutProps {
   defaultCollapsed?: boolean;

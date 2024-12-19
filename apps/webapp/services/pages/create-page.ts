@@ -1,7 +1,7 @@
 import { createPage } from '@sigma/services';
-import type { PageType } from 'common/types';
-
 import { useMutation } from 'react-query';
+
+import type { PageType } from 'common/types';
 
 interface MutationParams {
   onMutate?: () => void;

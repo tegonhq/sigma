@@ -1,16 +1,16 @@
 /* eslint-disable react/no-unescaped-entities */
 
-import { useRouter } from "next/router";
-import React from "react";
-import { SessionAuth } from "supertokens-auth-react/recipe/session";
+import { useRouter } from 'next/router';
+import React from 'react';
+import { SessionAuth } from 'supertokens-auth-react/recipe/session';
 
-import { AuthLayout } from "modules/auth";
+import { AuthLayout } from 'modules/auth';
 
-import { UserDataWrapper } from "common/wrappers/user-data-wrapper";
+import { UserDataWrapper } from 'common/wrappers/user-data-wrapper';
 
-import { UserContext } from "store/user-context";
+import { UserContext } from 'store/user-context';
 
-import { OnboardingForm } from "./onboarding-form";
+import { OnboardingForm } from './onboarding-form';
 
 export function OnboardingComponent() {
   const user = React.useContext(UserContext);

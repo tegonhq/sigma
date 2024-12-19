@@ -1,7 +1,7 @@
-import * as React from "react";
-import { useDebouncedCallback } from "use-debounce";
+import * as React from 'react';
+import { useDebouncedCallback } from 'use-debounce';
 
-import { AdjustableTextArea } from "common/adjustable-textarea";
+import { AdjustableTextArea } from 'common/adjustable-textarea';
 interface PageTitleProps {
   value: string;
   onChange?: (value: string) => void;

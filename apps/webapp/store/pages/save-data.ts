@@ -1,5 +1,9 @@
 import type { PagesStoreType } from './store';
 
+import { generateHTML } from '@tiptap/core';
+
+import { extractTextFromHTML } from 'common/common-utils';
+import { defaultExtensions } from 'common/editor/editor-extensions';
 import type { SyncActionRecord } from 'common/types';
 
 import { sigmaDatabase } from 'store/database';
@@ -28,12 +32,39 @@ export async function savePageData(
       switch (record.action) {
         case 'I': {
           await sigmaDatabase.pages.put(page);
-          return pagesStore && (await pagesStore.update(page, record.data.id));
+          let convertedPage = page;
+          if (page.description) {
+            convertedPage = {
+              ...page,
+              description: extractTextFromHTML(
+                generateHTML(JSON.parse(page.description), defaultExtensions),
+              ),
+            };
+          }
+
+          return (
+            pagesStore &&
+            (await pagesStore.update(convertedPage, record.data.id))
+          );
         }
 
         case 'U': {
+          let convertedPage = page;
+          if (page.description) {
+            convertedPage = {
+              ...page,
+              description: generateHTML(
+                JSON.parse(page.description),
+                defaultExtensions,
+              ),
+            };
+          }
+
           await sigmaDatabase.pages.put(page);
-          return pagesStore && (await pagesStore.update(page, record.data.id));
+          return (
+            pagesStore &&
+            (await pagesStore.update(convertedPage, record.data.id))
+          );
         }
 
         case 'D': {

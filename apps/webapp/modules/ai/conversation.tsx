@@ -1,12 +1,14 @@
 import { UserTypeEnum } from '@sigma/types';
 import { cn, ScrollArea } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
-
+import getConfig from 'next/config';
 import React from 'react';
 
 import type { ConversationHistoryType } from 'common/types';
 
 import { useConversationHistory } from 'hooks/conversations';
+
+const { publicRuntimeConfig } = getConfig();
 
 import {
   useCreateConversationHistoryMutation,
@@ -33,7 +35,7 @@ export const Conversation = observer(() => {
     isLoading,
     thoughts,
   } = useStreamConversationMutation({
-    baseHost: process.env.NEXT_PUBLIC_AI_HOST,
+    baseHost: publicRuntimeConfig.NEXT_PUBLIC_AI_HOST,
   });
   const { mutate: createConversationHistory } =
     useCreateConversationHistoryMutation({});

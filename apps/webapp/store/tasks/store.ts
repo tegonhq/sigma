@@ -49,7 +49,7 @@ export const TasksStore: IAnyStateTreeNode = types
     return { update, deleteById, load };
   })
   .views((self) => ({
-    getTasks() {
+    get getTasks() {
       return self.tasks;
     },
     getTasksWithNoIntegration() {
@@ -63,6 +63,9 @@ export const TasksStore: IAnyStateTreeNode = types
     getTaskWithId(taskId: string) {
       return self.tasks.find((task: TaskType) => task.id === taskId);
     },
+    getTaskForPage(pageId: string) {
+      return self.tasks.find((task: TaskType) => task.pageId === pageId);
+    },
   }));
 
 export interface TasksStoreType {
@@ -73,8 +76,9 @@ export interface TasksStoreType {
   deleteById: (id: string) => Promise<void>;
   load: () => Promise<void>;
 
-  getTasks: () => TaskType[];
+  getTasks: TaskType[];
   getTaskWithId: (taskId: string) => TaskType;
   getTasksWithNoIntegration: () => TaskType[];
   getTasksWithIntegration: (integrationAccountId: string) => TaskType[];
+  getTaskForPage: (pageId: string) => TaskType;
 }

@@ -1,6 +1,6 @@
-import { useRouter } from "next/router";
-import * as React from "react";
-import { QueryCache, QueryClient } from "react-query";
+import { useRouter } from 'next/router';
+import * as React from 'react';
+import { QueryCache, QueryClient } from 'react-query';
 
 export const useGetQueryClient = () => {
   const router = useRouter();
@@ -12,10 +12,10 @@ export const useGetQueryClient = () => {
         onError: (error: any) => {
           if (error?.resStatus === 403) {
             // global intercept 403 and redirect to home page
-            router.push("/");
+            router.push('/');
           }
         },
       }),
-    })
+    }),
   );
 };

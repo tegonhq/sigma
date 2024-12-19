@@ -1,11 +1,11 @@
-import { useHotkeys } from "react-hotkeys-hook";
-import { Key } from "ts-key-enum";
+import { useHotkeys } from 'react-hotkeys-hook';
+import { Key } from 'ts-key-enum';
 
-import { SCOPES } from "common/shortcut-scopes";
+import { SCOPES } from 'common/shortcut-scopes';
 
-import { useApplication } from "hooks/application";
+import { useApplication } from 'hooks/application';
 
-import { TabViewType } from "store/application";
+import { TabViewType } from 'store/application';
 
 export const useShortcuts = () => {
   const { updateRightScreen } = useApplication();
@@ -16,12 +16,12 @@ export const useShortcuts = () => {
     (event) => {
       const isMetaKey = event.metaKey;
       switch (event.key) {
-        case "l":
+        case 'l':
           if (isMetaKey) {
             updateRightScreen(TabViewType.AI);
           }
           break;
-        case ";":
+        case ';':
           if (isMetaKey) {
             updateRightScreen(TabViewType.MY_TASKS);
           }
@@ -34,6 +34,6 @@ export const useShortcuts = () => {
       scopes: [SCOPES.Global],
       enableOnFormTags: true,
       enableOnContentEditable: true,
-    }
+    },
   );
 };

@@ -1,32 +1,32 @@
-import { types } from "mobx-state-tree";
-import React from "react";
+import { types } from 'mobx-state-tree';
+import React from 'react';
 
-import { ActivityStore, type ActivityStoreType } from "./activity";
+import { ActivityStore, type ActivityStoreType } from './activity';
 import {
   ApplicationStore,
   defaultApplicationStoreValue,
   type ApplicationStoreType,
-} from "./application";
-import {
-  IntegrationAccountsStore,
-  type IntegrationAccountsStoreType,
-} from "./integration-accounts";
-import { PagesStore, type PagesStoreType } from "./pages";
-import { TasksStore, type TasksStoreType } from "./tasks";
-import { WorkspaceStore, type WorkspaceStoreType } from "./workspace";
+} from './application';
 import {
   CommonStore,
   defaultCommonStoreValue,
   type CommonStoreType,
-} from "./common";
-import {
-  ConversationsStore,
-  type ConversationStoreType,
-} from "./conversations";
+} from './common';
 import {
   ConversationHistoryStore,
   type ConversationHistoryStoreType,
-} from "./conversation-history";
+} from './conversation-history';
+import {
+  ConversationsStore,
+  type ConversationStoreType,
+} from './conversations';
+import {
+  IntegrationAccountsStore,
+  type IntegrationAccountsStoreType,
+} from './integration-accounts';
+import { PagesStore, type PagesStoreType } from './pages';
+import { TasksStore, type TasksStoreType } from './tasks';
+import { WorkspaceStore, type WorkspaceStoreType } from './workspace';
 
 const StoreContextModel = types.model({
   commonStore: CommonStore,
@@ -91,7 +91,7 @@ export const StoreContext =
 export function useContextStore(): StoreContextInstanceType {
   const store = React.useContext(StoreContext);
   if (store === null) {
-    throw new Error("Store cannot be null, please add a context provider");
+    throw new Error('Store cannot be null, please add a context provider');
   }
 
   return store;

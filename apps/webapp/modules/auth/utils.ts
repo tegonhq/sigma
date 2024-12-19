@@ -1,13 +1,13 @@
-import { useToast } from "@tegonhq/ui";
-import axios from "axios";
-import { useRouter } from "next/router";
-import pRetry from "p-retry";
-import React from "react";
+import { useToast } from '@tegonhq/ui';
+import axios from 'axios';
+import { useRouter } from 'next/router';
+import pRetry from 'p-retry';
+import React from 'react';
 import {
   consumeCode,
   clearLoginAttemptInfo,
-} from "supertokens-web-js/recipe/passwordless";
-import { createCode } from "supertokens-web-js/recipe/passwordless";
+} from 'supertokens-web-js/recipe/passwordless';
+import { createCode } from 'supertokens-web-js/recipe/passwordless';
 
 export function useSupertokenFunctions() {
   const [emailSent, setEmailSent] = React.useState(false);
@@ -20,13 +20,13 @@ export function useSupertokenFunctions() {
         email,
       });
 
-      if (response.status === "SIGN_IN_UP_NOT_ALLOWED") {
+      if (response.status === 'SIGN_IN_UP_NOT_ALLOWED') {
         // the reason string is a user friendly message
         // about what went wrong. It can also contain a support code which users
         // can tell you so you know why their sign in / up was not allowed.
         toast({
-          variant: "destructive",
-          title: "Error!",
+          variant: 'destructive',
+          title: 'Error!',
           description: response.reason,
         });
       } else {
@@ -38,15 +38,15 @@ export function useSupertokenFunctions() {
       if (err.isSuperTokensGeneralError === true) {
         // this may be a custom error message sent from the API by you,
         toast({
-          variant: "destructive",
-          title: "Error!",
+          variant: 'destructive',
+          title: 'Error!',
           description: err.message,
         });
       } else {
         toast({
-          variant: "destructive",
-          title: "Error!",
-          description: "Oops! Something went wrong.",
+          variant: 'destructive',
+          title: 'Error!',
+          description: 'Oops! Something went wrong.',
         });
       }
     }
@@ -58,7 +58,7 @@ export function useSupertokenFunctions() {
         userInputCode: otp,
       });
 
-      if (response.status === "OK") {
+      if (response.status === 'OK') {
         // we clear the login attempt info that was added when the createCode function
         // was called since the login was successful.
         await clearLoginAttemptInfo();
@@ -70,26 +70,26 @@ export function useSupertokenFunctions() {
         } else {
           // user sign in success
         }
-        router.replace("/");
-      } else if (response.status === "INCORRECT_USER_INPUT_CODE_ERROR") {
+        router.replace('/');
+      } else if (response.status === 'INCORRECT_USER_INPUT_CODE_ERROR') {
         // the user entered an invalid OTP
         toast({
-          variant: "destructive",
-          title: "Error!",
+          variant: 'destructive',
+          title: 'Error!',
           description: `Wrong OTP! Please try again. Number of attempts left: ${
             response.maximumCodeInputAttempts -
             response.failedCodeInputAttemptCount
           }`,
         });
-      } else if (response.status === "EXPIRED_USER_INPUT_CODE_ERROR") {
+      } else if (response.status === 'EXPIRED_USER_INPUT_CODE_ERROR') {
         // it can come here if the entered OTP was correct, but has expired because
         // it was generated too long ago.
 
         toast({
-          variant: "destructive",
-          title: "Error!",
+          variant: 'destructive',
+          title: 'Error!',
           description:
-            "Old OTP entered. Please regenerate a new one and try again",
+            'Old OTP entered. Please regenerate a new one and try again',
         });
       } else {
         // this can happen if the user tried an incorrect OTP too many times.
@@ -100,27 +100,27 @@ export function useSupertokenFunctions() {
         // enter email / phone UI again.
         await clearLoginAttemptInfo();
         toast({
-          variant: "destructive",
-          title: "Error!",
-          description: "Oops! Something went wrong.",
+          variant: 'destructive',
+          title: 'Error!',
+          description: 'Oops! Something went wrong.',
         });
 
-        router.replace("/auth");
+        router.replace('/auth');
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       if (err.isSuperTokensGeneralError === true) {
         // this may be a custom error message sent from the API by you.
         toast({
-          variant: "destructive",
-          title: "Error!",
+          variant: 'destructive',
+          title: 'Error!',
           description: err.message,
         });
       } else {
         toast({
-          variant: "destructive",
-          title: "Error!",
-          description: "Oops! Something went wrong.",
+          variant: 'destructive',
+          title: 'Error!',
+          description: 'Oops! Something went wrong.',
         });
       }
     }
@@ -130,7 +130,7 @@ export function useSupertokenFunctions() {
 }
 
 async function getPersonalAccessToken(code: string) {
-  const response = await axios.post("/api/v1/users/pat-for-code", {
+  const response = await axios.post('/api/v1/users/pat-for-code', {
     code,
   });
 
@@ -143,7 +143,7 @@ async function getPersonalAccessToken(code: string) {
 
 async function getCookiesSet(token: string) {
   try {
-    await axios.get("/api/v1/users/pat-authentication", {
+    await axios.get('/api/v1/users/pat-authentication', {
       headers: {
         Authorization: `Bearer ${token}`,
       },

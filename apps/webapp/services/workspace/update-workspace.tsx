@@ -1,7 +1,7 @@
-import axios from "axios";
-import { useMutation } from "react-query";
+import axios from 'axios';
+import { useMutation } from 'react-query';
 
-import type { WorkspaceType } from "common/types";
+import type { WorkspaceType } from 'common/types';
 
 export interface UpdateWorkspaceParams {
   name: string;
@@ -32,7 +32,7 @@ export function useUpdateWorkspaceMutation({
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onMutationError = (errorResponse: any) => {
-    const errorText = errorResponse?.errors?.message || "Error occured";
+    const errorText = errorResponse?.errors?.message || 'Error occured';
 
     onError && onError(errorText);
   };

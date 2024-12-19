@@ -1,11 +1,11 @@
-import { UserContext } from 'store/user-context';
 import { Loader } from '@tegonhq/ui';
 import { useRouter } from 'next/router';
 import * as React from 'react';
-
 import { SessionAuth } from 'supertokens-auth-react/recipe/session';
 
 import { UserDataWrapper } from 'common/wrappers/user-data-wrapper';
+
+import { UserContext } from 'store/user-context';
 
 export function RedirectHome() {
   const user = React.useContext(UserContext);

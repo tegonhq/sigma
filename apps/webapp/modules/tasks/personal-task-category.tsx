@@ -32,6 +32,7 @@ export const PersonalTaskCategory = observer(
     const [isOpen, setIsOpen] = React.useState(true);
     const { tasksStore } = useContextStore();
     const tasks = tasksStore.getTasksWithNoIntegration();
+
     const { updateTabType } = useApplication();
 
     const sortedTasks = sort(tasks).by([

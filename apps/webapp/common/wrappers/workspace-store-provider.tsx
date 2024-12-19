@@ -3,6 +3,7 @@ import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 
 import { useWorkspace } from 'hooks/workspace';
+
 import { useContextStore } from 'store/global-context-provider';
 
 export const WorkspaceStoreInit = observer(
@@ -11,7 +12,7 @@ export const WorkspaceStoreInit = observer(
     const {
       workspaceStore,
       integrationAccountsStore,
-
+      tasksStore,
       pagesStore,
       applicationStore,
     } = useContextStore();
@@ -37,6 +38,7 @@ export const WorkspaceStoreInit = observer(
       await integrationAccountsStore.load();
 
       await pagesStore.load();
+      await tasksStore.load();
 
       setLoading(false);
       // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -6,15 +6,15 @@ import {
   DropdownMenuTrigger,
   Button,
   AvatarText,
-} from "@tegonhq/ui";
-import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
-import React from "react";
-import { signOut } from "supertokens-auth-react/recipe/session";
+} from '@tegonhq/ui';
+import { observer } from 'mobx-react-lite';
+import { useRouter } from 'next/router';
+import React from 'react';
+import { signOut } from 'supertokens-auth-react/recipe/session';
 
-import { Settings } from "modules/settings";
+import { Settings } from 'modules/settings';
 
-import { useContextStore } from "store/global-context-provider";
+import { useContextStore } from 'store/global-context-provider';
 
 export const WorkspaceDropdown = observer(() => {
   const { workspaceStore } = useContextStore();
@@ -47,7 +47,7 @@ export const WorkspaceDropdown = observer(() => {
             onClick={async () => {
               await signOut();
 
-              replace("/auth");
+              replace('/auth');
             }}
           >
             Log out

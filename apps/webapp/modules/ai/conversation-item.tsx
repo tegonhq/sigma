@@ -2,7 +2,7 @@ import { UserTypeEnum } from '@sigma/types';
 import { AI, Button } from '@tegonhq/ui';
 import { Editor } from '@tiptap/core';
 import { observer } from 'mobx-react-lite';
-
+import getConfig from 'next/config';
 import React, { useEffect, useRef } from 'react';
 
 import { defaultExtensions } from 'common/editor/editor-extensions';
@@ -16,6 +16,8 @@ import { UserContext } from 'store/user-context';
 interface AIConversationItemProps {
   conversationHistory: ConversationHistoryType;
 }
+
+const { publicRuntimeConfig } = getConfig();
 
 export const ConversationItem = observer(
   ({ conversationHistory }: AIConversationItemProps) => {
@@ -70,7 +72,7 @@ export const ConversationItem = observer(
                 variant="secondary"
                 onClick={() => {
                   runTasks({
-                    baseHost: process.env.NEXT_PUBLIC_AI_HOST,
+                    baseHost: publicRuntimeConfig.NEXT_PUBLIC_AI_HOST,
                     conversationId: conversationHistory.conversationId,
                     conversationHistoryId: conversationHistory.id,
                     workspaceId: user.workspace.id,

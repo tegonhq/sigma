@@ -1,11 +1,11 @@
-import { mergeAttributes, Node } from "@tiptap/core";
-import { ReactNodeViewRenderer } from "@tiptap/react";
+import { mergeAttributes, Node } from '@tiptap/core';
+import { ReactNodeViewRenderer } from '@tiptap/react';
 
-import { FileComponent } from "./file-component";
+import { FileComponent } from './file-component';
 
 export const fileExtension = Node.create({
-  name: "fileExtension",
-  group: "block",
+  name: 'fileExtension',
+  group: 'block',
   atom: true,
 
   addAttributes() {
@@ -31,13 +31,13 @@ export const fileExtension = Node.create({
   parseHTML() {
     return [
       {
-        tag: "file-extension",
+        tag: 'file-extension',
       },
     ];
   },
 
   renderHTML({ HTMLAttributes }) {
-    return ["file-extension", mergeAttributes(HTMLAttributes)];
+    return ['file-extension', mergeAttributes(HTMLAttributes)];
   },
 
   addNodeView() {

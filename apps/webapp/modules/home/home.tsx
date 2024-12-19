@@ -2,29 +2,29 @@ import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
-} from "@tegonhq/ui";
-import { observer } from "mobx-react-lite";
+} from '@tegonhq/ui';
+import { observer } from 'mobx-react-lite';
 
-import { AI } from "modules/ai";
-import { Instructions } from "modules/instructions";
-import { MyDay } from "modules/my-day";
-import { SearchDialog } from "modules/search";
-import { Tasks } from "modules/tasks";
+import { AI } from 'modules/ai';
+import { Instructions } from 'modules/instructions';
+import { MyDay } from 'modules/my-day';
+import { SearchDialog } from 'modules/search';
+import { Tasks } from 'modules/tasks';
 
-import { ContentBox } from "common/content-box";
-import { useLocalCommonState } from "common/use-local-state";
+import { ContentBox } from 'common/content-box';
+import { SCOPES } from 'common/shortcut-scopes';
+import { useLocalCommonState } from 'common/use-local-state';
+import { AllProviders } from 'common/wrappers/all-providers';
 
-import { useApplication } from "hooks/application";
+import { useApplication } from 'hooks/application';
+import { useScope } from 'hooks/use-scope';
 
-import { TabViewType } from "store/application";
-import { TabContext } from "store/tab-context";
+import { TabViewType } from 'store/application';
+import { TabContext } from 'store/tab-context';
 
-import { Tabs } from "./tabs";
-import { useShortcuts } from "./use-shortcuts";
-import { useScope } from "hooks/use-scope";
-import { SCOPES } from "common/shortcut-scopes";
-import { AllProviders } from "common/wrappers/all-providers";
-import { AppLayoutChild } from "./layout";
+import { AppLayoutChild } from './layout';
+import { Tabs } from './tabs';
+import { useShortcuts } from './use-shortcuts';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getComponent(componentType: string, props: any) {
@@ -50,7 +50,7 @@ function getComponent(componentType: string, props: any) {
 export const Home = observer(() => {
   useScope(SCOPES.Global);
   const { tabs, setActiveTab, rightScreenCollapsed } = useApplication();
-  const [size, setSize] = useLocalCommonState("panelSize", 15);
+  const [size, setSize] = useLocalCommonState('panelSize', 15);
   useShortcuts();
   const secondTab = tabs[1];
   const firstTab = tabs[0];

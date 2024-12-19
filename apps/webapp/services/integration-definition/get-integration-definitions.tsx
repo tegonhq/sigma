@@ -1,14 +1,14 @@
-import type { IntegrationDefinition } from "@sigma/types";
+import type { IntegrationDefinition } from '@sigma/types';
 
-import { getIntegrationDefinitions } from "@sigma/services";
-import { type UseQueryResult, useQuery } from "react-query";
+import { getIntegrationDefinitions } from '@sigma/services';
+import { type UseQueryResult, useQuery } from 'react-query';
 
-import { type XHRErrorResponse } from "services/utils";
+import { type XHRErrorResponse } from 'services/utils';
 
 /**
  * Query Key for Get user.
  */
-const GetIntegrationDefinitions = "getIntegrationDefinitions";
+const GetIntegrationDefinitions = 'getIntegrationDefinitions';
 
 export function useGetIntegrationDefinitions(): UseQueryResult<
   IntegrationDefinition[],
@@ -21,6 +21,6 @@ export function useGetIntegrationDefinitions(): UseQueryResult<
       retry: 1,
       staleTime: 100000,
       refetchOnWindowFocus: false, // Frequency of Change would be Low
-    }
+    },
   );
 }

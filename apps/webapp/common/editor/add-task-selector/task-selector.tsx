@@ -5,9 +5,9 @@ import {
   Button,
   IssuesLine,
 } from '@tegonhq/ui';
-import { useEditor } from 'common/editor';
-
 import React from 'react';
+
+import { useEditor } from 'common/editor';
 
 export function isValidUrl(url: string) {
   try {

@@ -7,9 +7,9 @@ import {
   CalendarLine,
   Fire,
   cn,
-} from "@tegonhq/ui";
-import { differenceInDays, format } from "date-fns";
-import React from "react";
+} from '@tegonhq/ui';
+import { differenceInDays, format } from 'date-fns';
+import React from 'react';
 
 interface DueDateProps {
   dueDate?: Date | string;
@@ -21,7 +21,7 @@ export function DueDate({
   dueDate: initialDueDate,
 }: DueDateProps) {
   const [dueDate, setDueDate] = React.useState<Date>(
-    initialDueDate ? new Date(initialDueDate) : undefined
+    initialDueDate ? new Date(initialDueDate) : undefined,
   );
 
   const onDateChange = (date: Date) => {
@@ -53,7 +53,7 @@ export function DueDate({
       return (
         <div className="flex items-center">
           <CalendarLine size={20} className="mr-2" />
-          {format(dueDate, "MMM dd")}
+          {format(dueDate, 'MMM dd')}
         </div>
       );
     }
@@ -78,7 +78,7 @@ export function DueDate({
             variant="ghost"
             role="combobox"
             className={cn(
-              "flex items-center shadow-none justify-between focus-visible:ring-1 focus-visible:border-primary"
+              'flex items-center shadow-none justify-between focus-visible:ring-1 focus-visible:border-primary',
             )}
           >
             {getTrigger()}

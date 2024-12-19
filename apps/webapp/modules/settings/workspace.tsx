@@ -10,12 +10,13 @@ import {
   Input,
 } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import { SettingSection } from './setting-section';
-import React from 'react';
 import { UserContext } from 'store/user-context';
+
+import { SettingSection } from './setting-section';
 
 export const OverviewSchema = z.object({
   name: z

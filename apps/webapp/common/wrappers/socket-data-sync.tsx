@@ -1,5 +1,6 @@
 import { Loader } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
+import getConfig from 'next/config';
 import * as React from 'react';
 import { Socket, io } from 'socket.io-client';
 
@@ -12,6 +13,8 @@ import { saveSocketData } from './socket-data-util';
 interface Props {
   children: React.ReactElement;
 }
+
+const { publicRuntimeConfig } = getConfig();
 
 // This wrapper ensures the data received from the socket is passed to indexed DB
 export const SocketDataSyncWrapper: React.FC<Props> = observer(
@@ -44,7 +47,7 @@ export const SocketDataSyncWrapper: React.FC<Props> = observer(
     }, []);
 
     async function initSocket() {
-      const socket = io(process.env.NEXT_PUBLIC_BACKEND_HOST, {
+      const socket = io(publicRuntimeConfig.NEXT_PUBLIC_BACKEND_HOST, {
         query: {
           workspaceId: workspaceStore.workspace.id,
           userId: user.id,

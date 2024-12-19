@@ -1,9 +1,9 @@
+import axios from 'axios';
 import { type UseQueryResult, useQuery } from 'react-query';
 
 import type { BootstrapResponse } from 'common/types';
 
 import { type XHRErrorResponse } from 'services/utils';
-import axios from 'axios';
 
 /**
  * Query Key for Get Delta records.

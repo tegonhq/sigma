@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { getSnapshot, applySnapshot, types } from 'mobx-state-tree';
+
 import { sigmaDatabase } from 'store/database';
 
 // Define the HistoryManager model

@@ -13,10 +13,10 @@ import {
   MarkdownExtension,
 } from 'novel/extensions';
 
+import { datePageExtension } from './date-page-extension';
 import { fileExtension } from './file-extension';
 import { imageExtension } from './image-extension';
 import { taskExtension } from './task-extension/task-extension';
-import { datePageExtension } from './date-page-extension';
 
 const tiptapLink = TiptapLink.configure({
   HTMLAttributes: {

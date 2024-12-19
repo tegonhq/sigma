@@ -1,7 +1,7 @@
-import { observer } from "mobx-react-lite";
-import React from "react";
+import { observer } from 'mobx-react-lite';
+import React from 'react';
 
-import { Day } from "./day";
+import { Day } from './day';
 
 export const MyDay = observer(() => {
   return (
