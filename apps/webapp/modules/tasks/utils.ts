@@ -1,3 +1,5 @@
+import type { IntegrationDefinition } from '@sigma/types';
+
 import type { IPCRenderer } from 'hooks/ipc';
 
 // Add this helper function above the TaskCategory component
@@ -16,12 +18,15 @@ export const getStatusPriority = (status: string) => {
 
 export const getIntegrationURL = async (
   ipc: IPCRenderer,
-  integrationName: string,
-  integrationVersion: string,
+  integration: IntegrationDefinition,
 ) => {
+  if (!ipc) {
+    return `${integration.url}/frontend/index.js`;
+  }
+
   const integrationsURL = await ipc.getIntegrationsFolder();
 
-  const url = `http://localhost:8000/local/${integrationsURL}/${integrationName}/${integrationVersion}/frontend/index.js`;
+  const url = `http://localhost:8000/local/${integrationsURL}/${integration.name}/${integration.version}/frontend/index.js`;
 
   return url;
 };

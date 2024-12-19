@@ -25,7 +25,7 @@ export const IntegrationAuth = observer(
       useCreateRedirectURLMutation({
         onSuccess: (data) => {
           const redirectURL = data.redirectURL;
-          ipc.openUrl(redirectURL);
+          ipc ? ipc.openUrl(redirectURL) : window.open(redirectURL, '__blank');
         },
       });
 

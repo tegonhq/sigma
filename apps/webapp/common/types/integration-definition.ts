@@ -34,4 +34,7 @@ export interface IntegrationDefinitionType {
   icon: string;
   spec: string;
   workspaceId: string;
+
+  url: string;
+  version: string;
 }

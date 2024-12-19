@@ -1,13 +1,13 @@
-import { observer } from "mobx-react-lite";
-import React from "react";
+import { observer } from 'mobx-react-lite';
+import React from 'react';
 
-import { useRemoteComponent } from "common/RemoteComponent";
-import type { PageType, TaskType } from "common/types";
+import { useRemoteComponent } from 'common/RemoteComponent';
+import type { PageType, TaskType } from 'common/types';
 
-import { useIntegrationFromAccount } from "hooks/integration";
-import { useIPC } from "hooks/ipc";
+import { useIntegrationFromAccount } from 'hooks/integration';
+import { useIPC } from 'hooks/ipc';
 
-import { getIntegrationURL } from "./utils";
+import { getIntegrationURL } from './utils';
 
 interface IntegrationTaskItemProps {
   task: TaskType;
@@ -20,9 +20,9 @@ export const IntegrationTaskItem = observer(
     const ipc = useIPC();
     const [url, setUrl] = React.useState(undefined);
     const { isLoading, integration } = useIntegrationFromAccount(
-      task.integrationAccountId
+      task.integrationAccountId,
     );
-    const [loading, err, Component] = useRemoteComponent(url, "TaskItem");
+    const [loading, err, Component] = useRemoteComponent(url, 'TaskItem');
 
     React.useEffect(() => {
       if (integration) {
@@ -32,11 +32,7 @@ export const IntegrationTaskItem = observer(
     }, [integration]);
 
     const getUrl = async () => {
-      const url = await getIntegrationURL(
-        ipc,
-        integration.name,
-        integration.version
-      );
+      const url = await getIntegrationURL(ipc, integration);
 
       setUrl(url);
     };
@@ -50,5 +46,5 @@ export const IntegrationTaskItem = observer(
     }
 
     return <Component task={task} page={page} />;
-  }
+  },
 );

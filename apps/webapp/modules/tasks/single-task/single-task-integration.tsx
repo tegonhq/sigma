@@ -34,11 +34,7 @@ export const SingleTaskIntegration = observer(
     }, [integration]);
 
     const getUrl = async () => {
-      const url = await getIntegrationURL(
-        ipc,
-        integration.name,
-        integration.version,
-      );
+      const url = await getIntegrationURL(ipc, integration);
 
       setUrl(url);
     };
