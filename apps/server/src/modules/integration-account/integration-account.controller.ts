@@ -15,12 +15,12 @@ import {
   IntegrationAccountWithToken,
   UpdateIntegrationAccountDto,
 } from '@sigma/types';
+import { SessionContainer } from 'supertokens-node/recipe/session';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
 import { Session, Workspace } from 'modules/auth/session.decorator';
 
 import { IntegrationAccountService } from './integration-account.service';
-import { SessionContainer } from 'supertokens-node/recipe/session';
 
 @Controller({
   version: '1',

@@ -9,14 +9,15 @@ import {
 import { PrismaService } from 'nestjs-prisma';
 
 import {
-  IntegrationAccountSelect,
-  IntegrationAccountSelectByNames,
-} from './integration-account.interface';
-import {
   createAxiosInstance,
   getRequires,
   loadRemoteModule,
 } from 'common/remote-loader';
+
+import {
+  IntegrationAccountSelect,
+  IntegrationAccountSelectByNames,
+} from './integration-account.interface';
 
 @Injectable()
 export class IntegrationAccountService {
@@ -129,7 +130,7 @@ export class IntegrationAccountService {
 
     const accessToken = await integration.run({
       event: IntegrationPayloadEventType.GET_TOKEN,
-      workspaceId: workspaceId,
+      workspaceId,
       eventBody: {
         integrationAccount,
       },

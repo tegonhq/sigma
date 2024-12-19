@@ -29,7 +29,6 @@ export async function restoreOrCreateWindow() {
     appWindows.main = await createMainWindow();
     registerMainWindowStates(appWindows.main);
     registerDeepLink(appWindows.main);
-    registerShortcut();
   }
 
   if (appWindows.main.isMinimized()) {

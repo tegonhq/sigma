@@ -6,6 +6,7 @@ import {
 import { PrismaService } from 'nestjs-prisma';
 
 import { fetcher } from 'common/remote-loader/load-remote-module';
+
 import { LoggerService } from 'modules/logger/logger.service';
 
 @Injectable()
