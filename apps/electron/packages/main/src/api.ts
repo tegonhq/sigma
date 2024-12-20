@@ -14,7 +14,7 @@ const startFastifyServer = async () => {
 };
 // Register the proxy for API requests to localhost:3001
 fastify.register(fastifyHttpProxy, {
-  upstream: process.env.BACKEND_HOST,
+  upstream: 'http://localhost:3001',
   prefix: '/api', // only proxy requests starting with /api
   rewritePrefix: '/', // keep the /api prefix in the proxied request
   http2: false, // set to true if using HTTP/2

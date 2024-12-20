@@ -1,6 +1,7 @@
-import { Logo } from '@tegonhq/ui';
 import { useSearchParams } from 'next/navigation';
 import { SessionAuth } from 'supertokens-auth-react/recipe/session';
+
+import { Logo } from 'common/logo';
 
 export function Integrations() {
   const searchParams = useSearchParams();

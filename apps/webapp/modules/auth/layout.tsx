@@ -1,6 +1,6 @@
 import type { ReactElement } from 'react';
 
-import { Logo } from '@tegonhq/ui';
+import { Logo } from 'common/logo';
 
 interface Props {
   children: React.ReactNode;

@@ -4,7 +4,7 @@ extraMetadata:
   name: mysigma
 copyright: Copyright © 2025 tegon
 appId: com.mysigma.mysigma-desktop
-afterSign: './notarize/notarize.js'
+afterSign: './notarize/notarize.cjs'
 publish:
   - provider: github
     private: true
@@ -15,17 +15,14 @@ nsis:
   deleteAppDataOnUninstall: true
 directories:
   output: dist
-  buildResources: './build'
+  buildResources: './buildResources'
   app: '.'
 mac:
   hardenedRuntime: true
   entitlements: './notarize/entitlements.mac.plist'
+  icon: './buildResources/icon.png'
   extraResources:
-    - from: './Assets/mac-${arch}'
-      to: Assets
-      filter:
-        - '**/*'
-    - from: './build'
+    - from: './buildResources'
       to: Assets
       filter:
         - '**/*'
@@ -41,10 +38,6 @@ linux:
         - '**/*'
 files:
   - package.json
-  - from: '../webapp/dist'
-    to: './out/sigma'
-    filter:
-      - '**/*'
   - '**/*.js'
   - '**/node_modules/**'
   - '!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}'

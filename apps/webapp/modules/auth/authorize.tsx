@@ -1,9 +1,10 @@
-import { Loader, Logo, useToast } from '@tegonhq/ui';
+import { Loader, useToast } from '@tegonhq/ui';
 import { useSearchParams } from 'next/navigation';
 import React from 'react';
 import { SessionAuth } from 'supertokens-auth-react/recipe/session';
 
 import { useAuthorizeMutation } from 'services/users';
+import { Logo } from 'common/logo';
 
 export function Authorize() {
   const search = useSearchParams();

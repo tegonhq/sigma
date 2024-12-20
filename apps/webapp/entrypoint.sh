@@ -1,27 +1,34 @@
 #!/usr/bin/env bash
 
-# The first part wrapped in a function
+# Function to create sed replacement commands
 makeSedCommands() {
   printenv | \
-      grep  '^NEXT_PUBLIC' | \
-      sed -r "s/=/ /g" | \
-      xargs -n 2 bash -c 'echo "sed -i \"s#PROD_$0#$1#g\""'
+      grep '^NEXT_PUBLIC' | \
+      sed -r 's/([^=]*)=(.*)/s#PROD_\1#\2#g/'
 }
+
+# Export environment variables for Alpine compatibility
+export NEXT_PUBLIC
 
 # Set the delimiter to newlines (needed for looping over the function output)
 IFS=$'\n'
-# For each sed command
-for c in $(makeSedCommands); do
-  # For each file in the .next directory
-  for f in $(find apps/webapp/.next -type f); do
-    # Execute the command against the file
-    COMMAND="$c $f"
-    eval $COMMAND
+
+# Collect sed commands
+sed_commands=$(makeSedCommands)
+
+# Ensure the target directory exists
+TARGET_DIR="apps/webapp/.next"
+if [ ! -d "$TARGET_DIR" ]; then
+  echo "Error: Target directory '$TARGET_DIR' does not exist."
+  exit 1
+fi
+
+# For each file in the target directory
+for f in $(find "$TARGET_DIR" -type f); do
+  # Apply each sed command to the file
+  for cmd in $sed_commands; do
+    sed -i "$cmd" "$f"
   done
 done
-
-echo "Starting Nextjs"
-# Run any arguments passed to this script
-exec "$@"
 
 exec dumb-init node --max-old-space-size=8192 apps/webapp/server.js
