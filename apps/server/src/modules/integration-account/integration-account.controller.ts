@@ -18,7 +18,7 @@ import {
 import { SessionContainer } from 'supertokens-node/recipe/session';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
-import { Session, Workspace } from 'modules/auth/session.decorator';
+import { Session, UserId, Workspace } from 'modules/auth/session.decorator';
 
 import { IntegrationAccountService } from './integration-account.service';
 
@@ -57,10 +57,12 @@ export class IntegrationAccountController {
   async getIntegrationAccountsByName(
     @Query('integrations') integrations: string,
     @Workspace() workspaceId: string,
+    @UserId() userId: string,
   ) {
     return await this.integrationAccountService.getIntegrationAccountsByName(
       integrations,
       workspaceId,
+      userId,
     );
   }
 

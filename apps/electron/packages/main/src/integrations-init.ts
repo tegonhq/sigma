@@ -29,7 +29,7 @@ export const integrationsInit = async () => {
       Authorization: `Bearer ${accessToken}`,
     },
   });
-
+  console.log(data);
   downloadContentToSystem(data);
 };
 

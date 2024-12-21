@@ -11,6 +11,10 @@ export class UpdatePageDto {
 
   @IsOptional()
   @IsString()
+  htmlDescription?: string;
+
+  @IsOptional()
+  @IsString()
   parentId?: string;
 
   @IsString()

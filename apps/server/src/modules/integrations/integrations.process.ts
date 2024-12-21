@@ -45,30 +45,30 @@ export class IntegrationsProcessor extends WorkerHost {
     this.logger.log(`Processing integration account ${integrationAccountId}`);
 
     try {
-      //   const integrationAccount =
-      //     await this.prisma.integrationAccount.findUnique({
-      //       where: { id: integrationAccountId },
-      //       include: { integrationDefinition: true },
-      //     });
+      const integrationAccount =
+        await this.prisma.integrationAccount.findUnique({
+          where: { id: integrationAccountId },
+          include: { integrationDefinition: true },
+        });
 
-      //   const pat = await this.usersService.getOrCreatePat(
-      //     integrationAccount.integratedById,
-      //     integrationAccount.workspaceId,
-      //   );
+      const pat = await this.usersService.getOrCreatePat(
+        integrationAccount.integratedById,
+        integrationAccount.workspaceId,
+      );
 
-      //   const integrationFunction = await loadRemoteModule(
-      //     getRequires(createAxiosInstance(pat)),
-      //   );
-      //   const integration = await integrationFunction(
-      //     `file:///Users/manoj/work/sigma-integrations/${integrationAccount.integrationDefinition.slug}/dist/backend/index.js`,
-      //   );
+      const integrationFunction = await loadRemoteModule(
+        getRequires(createAxiosInstance(pat)),
+      );
+      const integration = await integrationFunction(
+        `${integrationAccount.integrationDefinition.url}/backend/index.js`,
+      );
 
-      //   await integration.run({
-      //     event: IntegrationPayloadEventType.SCHEDULED_TASK,
-      //     eventBody: {
-      //       integrationAccount,
-      //     },
-      //   });
+      await integration.run({
+        event: IntegrationPayloadEventType.SCHEDULED_TASK,
+        eventBody: {
+          integrationAccount,
+        },
+      });
 
       this.logger.log(`Successfully completed task ${integrationAccountId}`);
     } catch (error) {

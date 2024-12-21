@@ -14,6 +14,8 @@ import {
   loadRemoteModule,
 } from 'common/remote-loader';
 
+import { UsersService } from 'modules/users/users.service';
+
 import {
   IntegrationAccountSelect,
   IntegrationAccountSelectByNames,
@@ -21,7 +23,10 @@ import {
 
 @Injectable()
 export class IntegrationAccountService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private usersService: UsersService,
+  ) {}
 
   async createIntegrationAccount(
     createIntegrationAccountDto: CreateIntegrationAccountDto,
@@ -184,6 +189,7 @@ export class IntegrationAccountService {
   async getIntegrationAccountsByName(
     integrations: string,
     workspaceId: string,
+    userId: string,
   ) {
     const accounts = await this.prisma.integrationAccount.findMany({
       where: {
@@ -198,7 +204,22 @@ export class IntegrationAccountService {
       select: IntegrationAccountSelectByNames,
     });
 
-    return accounts.reduce(
+    const pat = await this.usersService.getOrCreatePat(userId, workspaceId);
+    const accountsWithTokens = await Promise.all(
+      accounts.map(async (account) => {
+        const accountWithToken = await this.getIntegrationAccountWithToken(
+          account.id,
+          account.workspaceId,
+          pat,
+        );
+        return {
+          ...account,
+          integrationConfiguration: { access_token: accountWithToken.token },
+        };
+      }),
+    );
+
+    return accountsWithTokens.reduce(
       (acc, account) => {
         acc[account.integrationDefinition.slug] = account;
         return acc;

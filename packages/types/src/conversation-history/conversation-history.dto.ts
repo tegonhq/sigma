@@ -12,9 +12,11 @@ export class pageContext {
   id: string;
   location: string[];
 }
-export class ConversationContextIds {
+export class ConversationContextData {
   pages?: pageContext[];
   activityIds?: string[];
+  agents?: string[];
+  repository?: string;
 }
 
 export class PreviousHistory {

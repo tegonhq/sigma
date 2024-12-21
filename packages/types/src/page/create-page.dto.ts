@@ -13,6 +13,10 @@ export class CreatePageDto {
 
   @IsOptional()
   @IsString()
+  htmlDescription?: string;
+
+  @IsOptional()
+  @IsString()
   parentId?: string;
 
   @IsString()

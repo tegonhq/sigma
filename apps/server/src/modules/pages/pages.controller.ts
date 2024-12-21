@@ -39,7 +39,7 @@ export class PagesController {
     @Workspace() workspaceId: string,
     @Query() getPageByTitleDto: GetPageByTitleDto,
   ): Promise<Page> {
-    return await this.pagesService.getPageByTitle(
+    return await this.pagesService.getOrCreatePageByTitle(
       workspaceId,
       getPageByTitleDto,
     );

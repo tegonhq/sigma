@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import {
   Activity,
   ConversationContext,
-  ConversationContextIds,
+  ConversationContextData,
   ConversationHistory,
   CreateConversationHistoryDto,
   Page,
@@ -90,10 +90,11 @@ export class ConversationHistoryService {
       return null;
     }
     const context =
-      (conversationHistory.context as ConversationContextIds) || {};
+      (conversationHistory.context as ConversationContextData) || {};
+    const { pages, activityIds, ...otherContextData } = context;
     // Get pages data if pageIds exist
     let page: Page[] = [];
-    if (context?.pages?.length) {
+    if (pages?.length) {
       page = await Promise.all(
         context.pages.map(async (pageContext) => {
           const page = await this.prisma.page.findUnique({
@@ -120,7 +121,7 @@ export class ConversationHistoryService {
     // Get activities data if activityIds exist
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let activity: Activity[] = [];
-    if (context?.activityIds?.length) {
+    if (activityIds?.length) {
       activity = await this.prisma.activity.findMany({
         where: {
           id: {
@@ -133,7 +134,7 @@ export class ConversationHistoryService {
     // Get previous conversation history message and response
     let previousHistory = null;
     if (conversationHistory.conversationId) {
-      const previousMessages = await this.prisma.conversationHistory.findMany({
+      previousHistory = await this.prisma.conversationHistory.findMany({
         where: {
           conversationId: conversationHistory.conversationId,
           id: {
@@ -142,20 +143,16 @@ export class ConversationHistoryService {
           deleted: null,
         },
         orderBy: {
-          createdAt: 'desc',
+          createdAt: 'asc',
         },
-        take: 1,
       });
-
-      if (previousMessages.length > 0) {
-        previousHistory = previousMessages.slice(0, 2);
-      }
     }
 
     return {
       page,
       activity,
       previousHistory,
+      ...otherContextData,
     };
   }
 }
