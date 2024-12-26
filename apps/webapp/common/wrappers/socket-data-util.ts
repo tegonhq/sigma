@@ -54,6 +54,13 @@ export async function saveSocketData(
           );
         }
 
+        case MODELS.ConversationHistory: {
+          return await saveConversationHistorytData(
+            [record],
+            MODEL_STORE_MAP[MODELS.ConversationHistory],
+          );
+        }
+
         case MODELS.Activity: {
           return await saveConversationHistorytData(
             [record],

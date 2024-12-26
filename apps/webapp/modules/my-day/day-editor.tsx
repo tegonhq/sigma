@@ -4,17 +4,21 @@ import Collaboration from '@tiptap/extension-collaboration';
 import { format } from 'date-fns';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
+import { IndexeddbPersistence } from 'y-indexeddb';
 import * as Y from 'yjs';
-import getConfig from 'next/config';
 
-import { Editor, EditorExtensions, suggestionItems } from 'common/editor';
+import {
+  Editor,
+  EditorExtensions,
+  getSocketURL,
+  suggestionItems,
+} from 'common/editor';
 import { AddTaskSelector } from 'common/editor/add-task-selector';
 import type { PageType } from 'common/types';
 
 import { useCreatePageMutation } from 'services/pages';
 
 import { useContextStore } from 'store/global-context-provider';
-const { publicRuntimeConfig } = getConfig();
 
 interface DayEditorProps {
   date: Date;
@@ -31,6 +35,7 @@ export const EditorWithPage = observer(({ page }: EditorWithPageProps) => {
 
   React.useEffect(() => {
     initPageSocket();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page.id]);
 
@@ -41,9 +46,11 @@ export const EditorWithPage = observer(({ page }: EditorWithPageProps) => {
     await new Promise((resolve) => setTimeout(resolve, 100));
     const ydoc = new Y.Doc();
 
+    new IndexeddbPersistence(page.id, ydoc);
+
     const provider = new HocuspocusProvider({
-      url: `ws://${publicRuntimeConfig.NEXT_PUBLIC_CONTENT_HOST}`,
-      name: page?.id,
+      url: getSocketURL(),
+      name: page.id,
       document: ydoc,
       token: '1234',
     });

@@ -173,12 +173,14 @@ export const Editor = ({
             'editor-container w-full min-w-full text-base sm:rounded-lg',
             className,
           )}
-          onCreate={({ editor }) => {
+          onCreate={async ({ editor }) => {
             setEditor(editor);
 
             if (onCreate) {
               onCreate(editor);
             }
+
+            await new Promise((resolve) => setTimeout(resolve, 100));
 
             autoFocus && editor.commands.focus('end');
           }}

@@ -1,12 +1,14 @@
 import { observer } from 'mobx-react-lite';
-import React from 'react';
+
+import { AILayout } from 'layouts/ai-layout';
 
 import { Day } from './day';
+import { Header } from './header';
 
 export const MyDay = observer(() => {
   return (
-    <div className="flex flex-col h-full relative">
+    <AILayout header={<Header />}>
       <Day />
-    </div>
+    </AILayout>
   );
 });

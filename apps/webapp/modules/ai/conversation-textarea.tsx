@@ -12,10 +12,10 @@ export function ConversationTextarea({ onSend }: ConversationTextareaProps) {
 
   return (
     <div className="p-4">
-      <div className="flex flex-col border border-border rounded pt-2">
+      <div className="flex flex-col rounded pt-2 bg-grayAlpha-100">
         <AdjustableTextArea
-          className="bg-transparent max-h-[500px] overflow-auto px-2"
-          placeholderClassName="px-2"
+          className="bg-transparent max-h-[500px] overflow-auto px-3"
+          placeholderClassName="px-3"
           value={text}
           autoFocus
           onChange={(e) => setText(e)}

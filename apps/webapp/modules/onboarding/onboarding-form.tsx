@@ -20,7 +20,6 @@ import {
 
 export const OnboardingSchema = z.object({
   fullname: z.string().min(5),
-  workspaceName: z.string().min(3),
 });
 
 export function OnboardingForm() {
@@ -42,12 +41,14 @@ export function OnboardingForm() {
     resolver: zodResolver(OnboardingSchema),
     defaultValues: {
       fullname: '',
-      workspaceName: '',
     },
   });
 
   const onSubmit = (values: CreateInitialResourcesDto) => {
-    createInitialResources(values);
+    createInitialResources({
+      fullname: values.fullname,
+      workspaceName: values.fullname,
+    });
   };
 
   return (
@@ -64,20 +65,6 @@ export function OnboardingForm() {
               <FormLabel>Full name</FormLabel>
               <FormControl>
                 <Input placeholder="Full name" className="h-9" {...field} />
-              </FormControl>
-
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="workspaceName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Workspace name</FormLabel>
-              <FormControl>
-                <Input placeholder="Tegon" className="h-9" {...field} />
               </FormControl>
 
               <FormMessage />

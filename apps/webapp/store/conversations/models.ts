@@ -19,4 +19,5 @@ export interface ConversationStoreType {
     id: string,
   ) => Promise<ConversationType>;
   deleteById: (id: string) => Promise<void>;
+  load: () => Promise<void>;
 }

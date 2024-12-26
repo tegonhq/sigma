@@ -54,10 +54,10 @@ export const DatePageComponent = observer((props: any) => {
     let date;
     try {
       // Try full year format first
-      date = parse(dateString, 'dd-MM-yyyy', new Date());
+      date = parse(dateString, 'dd-MM-yy', new Date());
       if (isNaN(date.getTime())) {
         // If invalid, try short year format
-        date = parse(dateString, 'dd-MM-yy', new Date());
+        date = parse(dateString, 'dd-MM-yyyy', new Date());
       }
     } catch (error) {
       console.error('Invalid date format');

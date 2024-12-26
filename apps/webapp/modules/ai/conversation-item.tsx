@@ -35,12 +35,9 @@ export const ConversationItem = observer(
           element,
           extensions: defaultExtensions,
           editable: false,
+          content: conversationHistory.message.replaceAll('\\n', '<br/ >'),
         });
         editorRef.current = editor;
-
-        editor.commands.setContent(conversationHistory.message, false, {
-          preserveWhitespace: true,
-        });
       }
       // Clean up on unmount
       return () => {

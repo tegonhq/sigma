@@ -10,10 +10,7 @@ export const ContentBox = observer(
   ({ children, className }: ContentBoxProps) => {
     return (
       <main
-        className={cn(
-          'p-3 pt-0 flex flex-col h-[calc(100vh_-_40px)] w-full',
-          className,
-        )}
+        className={cn('p-3 pt-0 flex flex-col h-[100vh] w-full', className)}
       >
         <div className="bg-background-2 h-full rounded-lg overflow-hidden shadow flex flex-col">
           {children}

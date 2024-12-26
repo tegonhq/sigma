@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  .tiptap {
+    :first-child {
+      margin-top: 0;
+    }
+
+    pre {
+      @apply bg-grayAlpha-100 text-foreground p-2 rounded-md;
+      margin: 1.5rem 0;
+
+      code {
+        background: none;
+        color: inherit;
+        font-size: 0.8rem;
+        padding: 0;
+      }
+
+      /* Code styling */
+      .hljs-comment,
+      .hljs-quote {
+        @apply text-muted-foreground;
+      }
+
+      .hljs-variable,
+      .hljs-template-variable,
+      .hljs-attribute,
+      .hljs-tag,
+      .hljs-regexp,
+      .hljs-link,
+      .hljs-name,
+      .hljs-selector-id,
+      .hljs-selector-class {
+        color: #bf4594;
+      }
+
+      .hljs-number,
+      .hljs-meta,
+      .hljs-built_in,
+      .hljs-builtin-name,
+      .hljs-literal,
+      .hljs-type,
+      .hljs-params {
+        color: #bf4594;
+      }
+
+      .hljs-string,
+      .hljs-symbol,
+      .hljs-bullet {
+        color: #bf4594;
+      }
+
+      .hljs-title,
+      .hljs-section {
+        color: #bf4594;
+      }
+
+      .hljs-keyword,
+      .hljs-selector-tag {
+        color: #bf4594;
+      }
+
+      .hljs-emphasis {
+        font-style: italic;
+      }
+
+      .hljs-strong {
+        font-weight: 700;
+      }
+    }
+  }
+}

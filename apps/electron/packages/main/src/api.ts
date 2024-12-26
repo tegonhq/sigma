@@ -21,7 +21,7 @@ fastify.register(fastifyHttpProxy, {
   websocket: true,
   preHandler: (request, _reply, done) => {
     // Modify headers before the proxy forwards the request
-    request.headers['origin'] = 'https://app.mysigma.com';
+    request.headers['origin'] = 'https://app.mysigma.ai';
     done();
   },
 });

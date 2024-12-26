@@ -5,9 +5,6 @@ import '@tegonhq/ui/global.css';
 
 import type { AppLayoutProps } from 'next/app';
 
-import { cn } from '@tegonhq/ui';
-import { GeistMono } from 'geist/font/mono';
-import { GeistSans } from 'geist/font/sans';
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
 import React from 'react';
@@ -30,15 +27,7 @@ export const MyApp = ({
   return (
     <Provider>
       <Hydrate state={dehydratedState}>
-        <div
-          className={cn(
-            'min-h-screen font-sans antialiased flex flex-col justify-center',
-            GeistSans.variable,
-            GeistMono.variable,
-          )}
-        >
-          {getLayout(<Component {...pageProps} />)}
-        </div>
+        {getLayout(<Component {...pageProps} />)}
       </Hydrate>
     </Provider>
   );

@@ -23,5 +23,7 @@ export interface ConversationHistoryStoreType {
     conversation: Partial<ConversationHistoryType>,
     id: string,
   ) => Promise<ConversationHistoryType>;
+  load: () => Promise<void>;
+
   deleteById: (id: string) => Promise<void>;
 }

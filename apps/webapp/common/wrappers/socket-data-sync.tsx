@@ -68,8 +68,8 @@ export const SocketDataSyncWrapper: React.FC<Props> = observer(
         [MODELS.ConversationHistory]: conversationHistoryStore,
       };
 
-      socket.on('message', (newMessage: string) => {
-        saveSocketData([JSON.parse(newMessage)], MODEL_STORE_MAP);
+      socket.on('message', async (newMessage: string) => {
+        await saveSocketData([JSON.parse(newMessage)], MODEL_STORE_MAP);
       });
     }
 

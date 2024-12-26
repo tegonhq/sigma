@@ -82,7 +82,7 @@ export const Navigation = observer(() => {
 
         {!isSameDay(date, new Date()) && (
           <Button variant="secondary" onClick={goToToday}>
-            Today
+            Go to today
           </Button>
         )}
       </div>
@@ -90,7 +90,7 @@ export const Navigation = observer(() => {
       <div>
         <Popover>
           <PopoverTrigger asChild>
-            <Button variant="secondary">
+            <Button variant="ghost">
               <CalendarLine size={18} />
             </Button>
           </PopoverTrigger>

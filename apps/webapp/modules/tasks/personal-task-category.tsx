@@ -33,7 +33,7 @@ export const PersonalTaskCategory = observer(
     const { tasksStore } = useContextStore();
     const tasks = tasksStore.getTasksWithNoIntegration();
 
-    const { updateTabType } = useApplication();
+    const { updateTabType, selectedTasks, setHoverTask } = useApplication();
 
     const sortedTasks = sort(tasks).by([
       { desc: (task) => getStatusPriority(task.status) },
@@ -41,7 +41,7 @@ export const PersonalTaskCategory = observer(
     ]);
 
     const taskSelect = (taskId: string) => {
-      updateTabType(1, TabViewType.MY_TASKS, taskId);
+      updateTabType(0, TabViewType.MY_TASKS, taskId);
     };
 
     return (
@@ -77,7 +77,15 @@ export const PersonalTaskCategory = observer(
         {newTask && <AddTask onCancel={() => setNewTask(false)} />}
         <CollapsibleContent>
           {sortedTasks.map((task: TaskType) => (
-            <div key={task.id} onClick={() => taskSelect(task.id)}>
+            <div
+              key={task.id}
+              onClick={() => taskSelect(task.id)}
+              onMouseOver={() => {
+                if (selectedTasks.length === 0) {
+                  setHoverTask(task.id);
+                }
+              }}
+            >
               <TaskListItem taskId={task.id} />
             </div>
           ))}

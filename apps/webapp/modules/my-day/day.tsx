@@ -14,7 +14,7 @@ export const Day = observer(() => {
   const { date = new Date() } = tab.data;
 
   return (
-    <ScrollArea className="grow flex h-full justify-center w-full p-4">
+    <ScrollArea className="flex h-full justify-center w-full p-4">
       <div className="flex h-full justify-center w-full">
         <div className="grow flex flex-col gap-1 h-full max-w-[97ch]">
           <Navigation />

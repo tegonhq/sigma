@@ -1,6 +1,7 @@
 import { Extension, mergeAttributes } from '@tiptap/core';
 import Heading from '@tiptap/extension-heading';
 import { cx } from 'class-variance-authority';
+import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import {
   TiptapLink,
   TaskList,
@@ -17,6 +18,11 @@ import { datePageExtension } from './date-page-extension';
 import { fileExtension } from './file-extension';
 import { imageExtension } from './image-extension';
 import { taskExtension } from './task-extension/task-extension';
+
+import { all, createLowlight } from 'lowlight';
+
+// create a lowlight instance with all languages loaded
+const lowlight = createLowlight(all);
 
 const tiptapLink = TiptapLink.configure({
   HTMLAttributes: {
@@ -54,7 +60,7 @@ const heading = Heading.extend({
     return [
       `h${level}`,
       mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
-        class: `h${node.attrs.level}-style ${levelMap[level]}`,
+        class: `h${node.attrs.level}-style ${levelMap[level]} pt-2`,
       }),
       0,
     ];
@@ -84,13 +90,7 @@ const starterKit = StarterKit.configure({
       class: cx('border-l-4 border-gray-400 dark:border-gray-500'),
     },
   },
-  codeBlock: {
-    HTMLAttributes: {
-      class: cx(
-        'rounded-sm bg-grayAlpha-100 text-[#BF4594] px-1.5 py-1 font-mono font-medium border-none',
-      ),
-    },
-  },
+  codeBlock: false,
   code: {
     HTMLAttributes: {
       class: cx(
@@ -160,4 +160,7 @@ export const defaultExtensions = [
   HighlightExtension,
   taskExtension,
   datePageExtension,
+  CodeBlockLowlight.configure({
+    lowlight,
+  }),
 ];

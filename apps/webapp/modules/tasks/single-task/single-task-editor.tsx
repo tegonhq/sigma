@@ -1,12 +1,15 @@
 import { HocuspocusProvider } from '@hocuspocus/provider';
 import Collaboration from '@tiptap/extension-collaboration';
-import getConfig from 'next/config';
 import React from 'react';
 import * as Y from 'yjs';
 
-import { Editor, EditorExtensions, suggestionItems } from 'common/editor';
+import {
+  Editor,
+  EditorExtensions,
+  getSocketURL,
+  suggestionItems,
+} from 'common/editor';
 import type { PageType } from 'common/types';
-const { publicRuntimeConfig } = getConfig();
 
 interface SingleTaskEditorProps {
   page: PageType;
@@ -34,7 +37,7 @@ export function SingleTaskEditor({
     await new Promise((resolve) => setTimeout(resolve, 100));
     const ydoc = new Y.Doc();
     const provider = new HocuspocusProvider({
-      url: `ws://${publicRuntimeConfig.NEXT_PUBLIC_CONTENT_HOST}`,
+      url: getSocketURL(),
       name: page.id,
       document: ydoc,
       token: '1234',

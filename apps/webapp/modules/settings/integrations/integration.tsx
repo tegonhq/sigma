@@ -1,4 +1,10 @@
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from '@tegonhq/ui';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbSeparator,
+} from '@tegonhq/ui';
 
 import { SettingSection } from 'modules/settings/setting-section';
 
@@ -24,21 +30,26 @@ export function Integration({
         <SettingSection
           title={
             <Breadcrumb className="text-base">
-              <BreadcrumbItem>
-                <BreadcrumbLink
-                  onClick={onBack}
-                  className="flex items-center gap-2"
-                >
-                  <span className="inline-block">Integrations</span>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbItem>
-                <BreadcrumbLink>
-                  <div className="inline-flex items-center gap-1 min-w-[0px]">
-                    <div className="truncate">{integrationDefinition.name}</div>
-                  </div>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink
+                    onClick={onBack}
+                    className="flex items-center gap-2"
+                  >
+                    <span className="inline-block">Integrations</span>
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbLink>
+                    <div className="inline-flex items-center gap-1 min-w-[0px]">
+                      <div className="truncate">
+                        {integrationDefinition.name}
+                      </div>
+                    </div>
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+              </BreadcrumbList>
             </Breadcrumb>
           }
           description={integrationDefinition.description}

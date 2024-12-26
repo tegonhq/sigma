@@ -41,4 +41,11 @@ export interface ApplicationStoreType {
   getTabs: () => TabType[];
   load: () => Promise<void>;
   updateRightScreen: (collapsed: boolean) => void;
+
+  selectedTasks: string[];
+  hoverTask: (taskId: string) => void;
+  clearSelectedTask: (taskId: string) => void;
+  addToSelectedTask: (taskId: string, reset: boolean) => void;
+  removeSelectedTask: (taskId: string) => void;
+  setHoverTask: (taskId: string) => void;
 }

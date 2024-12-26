@@ -1,3 +1,5 @@
+import { Key } from 'ts-key-enum';
+
 export function toProperCase(text: string) {
   return text.replace(/\w\S*/g, (txt) => {
     return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
@@ -40,3 +42,6 @@ export function extractTextFromHTML(html: string) {
   div.innerHTML = html;
   return div.textContent || div.innerText || '';
 }
+
+export const getPlatformModifierKey = () =>
+  navigator.platform.includes('Mac') ? Key.Meta : Key.Control;

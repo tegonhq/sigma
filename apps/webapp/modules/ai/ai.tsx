@@ -10,7 +10,7 @@ export const AI = observer(() => {
   const { commonStore } = useContextStore();
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-[calc(100vh_-_1.5rem)]">
       <div className="flex justify-between items-center gap-2 p-4 font-mono">
         <div className="flex gap-2">
           <AIIcon />

@@ -89,6 +89,7 @@ const TabGroup = types
 export const defaultApplicationStoreValue: {
   rightScreenCollapsed: boolean;
   tabGroups: Array<Instance<typeof TabGroup>>;
+  selectedTasks: string[];
 } = {
   rightScreenCollapsed: true,
   tabGroups: [
@@ -113,6 +114,7 @@ export const defaultApplicationStoreValue: {
       activeTab: initialId,
     }),
   ],
+  selectedTasks: [],
 };
 
 const ApplicationStore = types
@@ -121,6 +123,8 @@ const ApplicationStore = types
     tabGroups: types.array(TabGroup),
     activeTabGroupId: types.maybe(types.reference(TabGroup)),
     id: initialId,
+    selectedTasks: types.array(types.string),
+    hoverTask: types.union(types.string, types.undefined),
   })
   .actions((self) => {
     const updateRightScreen = (collapsed: boolean) => {
@@ -133,8 +137,38 @@ const ApplicationStore = types
         applySnapshot(self, data[0]);
       }
     });
+    const addToSelectedTask = (taskId: string, reset: boolean) => {
+      if (reset) {
+        self.selectedTasks.replace([taskId]);
+      } else {
+        self.selectedTasks.push(taskId);
+      }
 
-    return { load, updateRightScreen };
+      self.hoverTask = undefined;
+    };
+    const removeSelectedTask = (taskId: string) => {
+      if (self.selectedTasks.length === 1) {
+        self.selectedTasks.replace([]);
+      } else {
+        const index = self.selectedTasks.indexOf(taskId);
+        self.selectedTasks.splice(index, 1);
+      }
+    };
+    const clearSelectedTasks = () => {
+      self.hoverTask = undefined;
+    };
+    const setHoverTask = (taskId: string) => {
+      self.hoverTask = taskId;
+    };
+
+    return {
+      load,
+      updateRightScreen,
+      addToSelectedTask,
+      removeSelectedTask,
+      clearSelectedTasks,
+      setHoverTask,
+    };
   })
   .views((self) => ({
     getTabs() {

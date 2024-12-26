@@ -38,7 +38,7 @@ export const TaskCategory = observer(
       true,
     );
     const { tasksStore } = useContextStore();
-    const { updateTabType } = useApplication();
+    const { updateTabType, selectedTasks, setHoverTask } = useApplication();
 
     const tasks = tasksStore.getTasksWithIntegration(integrationAccount.id);
     const sortedTasks = sort(tasks).by([
@@ -60,7 +60,7 @@ export const TaskCategory = observer(
     const Icon = getIcon(integration.icon as IconType);
 
     const taskSelect = (taskId: string) => {
-      updateTabType(1, TabViewType.MY_TASKS, taskId);
+      updateTabType(0, TabViewType.MY_TASKS, taskId);
     };
 
     return (
@@ -95,7 +95,15 @@ export const TaskCategory = observer(
 
         <CollapsibleContent>
           {sortedTasks.map((task: TaskType) => (
-            <div key={task.id} onClick={() => taskSelect(task.id)}>
+            <div
+              key={task.id}
+              onClick={() => taskSelect(task.id)}
+              onMouseOver={() => {
+                if (selectedTasks.length === 0) {
+                  setHoverTask(task.id);
+                }
+              }}
+            >
               <TaskListItem taskId={task.id} />
             </div>
           ))}

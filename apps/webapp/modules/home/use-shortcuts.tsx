@@ -8,22 +8,20 @@ import { useApplication } from 'hooks/application';
 import { TabViewType } from 'store/application';
 
 export const useShortcuts = () => {
-  const { updateRightScreen } = useApplication();
+  const { updateRightScreen, tabs } = useApplication();
 
   useHotkeys(
-    [`${Key.Meta}+l`, `${Key.Meta}+;`],
+    [`${Key.Meta}+l`],
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (event) => {
       const isMetaKey = event.metaKey;
       switch (event.key) {
         case 'l':
           if (isMetaKey) {
-            updateRightScreen(TabViewType.AI);
-          }
-          break;
-        case ';':
-          if (isMetaKey) {
-            updateRightScreen(TabViewType.MY_TASKS);
+            const tab = tabs[0];
+            if (tab.type !== TabViewType.AI) {
+              updateRightScreen(TabViewType.AI);
+            }
           }
           break;
         default:

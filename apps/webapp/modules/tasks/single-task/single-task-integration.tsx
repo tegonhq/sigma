@@ -1,4 +1,9 @@
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from '@tegonhq/ui';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  ScrollArea,
+} from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 
@@ -10,6 +15,8 @@ import { useIPC } from 'hooks/ipc';
 
 import { SingleTaskEditor } from './single-task-editor';
 import { getIntegrationURL } from '../utils';
+import { AILayout } from 'layouts/ai-layout';
+import { Header } from '../header';
 
 interface SingleTaskIntegrationProps {
   task: TaskType;
@@ -48,33 +55,19 @@ export const SingleTaskIntegration = observer(
     }
 
     return (
-      <div className="flex flex-col overflow-hidden h-full">
-        <div className="flex gap-2 items-center p-4 pb-3">
-          <Breadcrumb>
-            <BreadcrumbItem>
-              <BreadcrumbLink
-                onClick={onBack}
-                className="flex items-center gap-2"
-              >
-                <span className="inline-block">Tasks</span>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbItem>
-              <BreadcrumbLink>
-                <div className="inline-flex items-center gap-1 min-w-[0px]">
-                  <div className="truncate"> {page.title}</div>
-                </div>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-          </Breadcrumb>
-        </div>
-
-        <Component
-          task={task}
-          page={page}
-          pageNode={<SingleTaskEditor page={page} autoFocus />}
-        />
-      </div>
+      <AILayout header={<Header />}>
+        <ScrollArea className="w-full h-full flex justify-center p-4">
+          <div className="flex h-full justify-center w-full">
+            <div className="grow flex flex-col gap-2 h-full max-w-[97ch]">
+              <Component
+                task={task}
+                page={page}
+                pageNode={<SingleTaskEditor page={page} autoFocus />}
+              />
+            </div>
+          </div>
+        </ScrollArea>
+      </AILayout>
     );
   },
 );

@@ -1,6 +1,9 @@
 module.exports = {
   reactStrictMode: false,
   transpilePackages: ['geist', '@tegonhq/ui', 'novel', 'react-tweet'],
+  images: {
+    unoptimized: true,
+  },
   async headers() {
     return [
       {
@@ -38,7 +41,7 @@ module.exports = {
     NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
     NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
   },
-  output: 'standalone',
+  output: 'export',
 };
 
 // Injected content via Sentry wizard below

@@ -43,10 +43,10 @@ export const TaskListItem = observer(({ taskId }: TaskListItemProps) => {
       <div className="w-full flex items-center">
         <div
           className={cn(
-            'flex grow items-start gap-2 pl-2 ml-1 pr-2 group-hover:bg-grayAlpha-100 rounded-xl shrink min-w-[0px]',
+            'flex w-full items-start gap-2 pl-2 ml-1 pr-2 group-hover:bg-grayAlpha-100 rounded-xl shrink min-w-[0px]',
           )}
         >
-          <div className="pt-2.5 shrink-0">
+          <div className="pt-2 shrink-0">
             <StatusDropdown
               value={task.status}
               onChange={statusChange}
@@ -56,7 +56,7 @@ export const TaskListItem = observer(({ taskId }: TaskListItemProps) => {
 
           <div
             className={cn(
-              'flex flex-col w-full py-2.5 border-b border-border shrink min-w-[0px]',
+              'flex flex-col w-full py-2 border-b border-border shrink min-w-[0px]',
             )}
           >
             <div className="flex w-full justify-between gap-4">
