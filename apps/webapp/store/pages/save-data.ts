@@ -3,7 +3,7 @@ import type { PagesStoreType } from './store';
 import { generateHTML } from '@tiptap/core';
 
 import { extractTextFromHTML } from 'common/common-utils';
-import { defaultExtensions } from 'common/editor/editor-extensions';
+import { defaultExtensions } from 'common/editor';
 import type { SyncActionRecord } from 'common/types';
 
 import { sigmaDatabase } from 'store/database';

@@ -1,4 +1,10 @@
 import { HocuspocusProvider } from '@hocuspocus/provider';
+import {
+  Editor,
+  EditorExtensions,
+  getSocketURL,
+  suggestionItems,
+} from 'common/editor';
 import { PageTypeEnum } from '@sigma/types';
 import Collaboration from '@tiptap/extension-collaboration';
 import { format } from 'date-fns';
@@ -7,12 +13,6 @@ import React from 'react';
 import { IndexeddbPersistence } from 'y-indexeddb';
 import * as Y from 'yjs';
 
-import {
-  Editor,
-  EditorExtensions,
-  getSocketURL,
-  suggestionItems,
-} from 'common/editor';
 import { AddTaskSelector } from 'common/editor/add-task-selector';
 import type { PageType } from 'common/types';
 

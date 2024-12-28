@@ -5,7 +5,7 @@ import { observer } from 'mobx-react-lite';
 import getConfig from 'next/config';
 import React, { useEffect, useRef } from 'react';
 
-import { defaultExtensions } from 'common/editor/editor-extensions';
+import { defaultExtensions } from 'common/editor';
 import type { ConversationHistoryType } from 'common/types';
 import { UserAvatar } from 'common/user-avatar';
 

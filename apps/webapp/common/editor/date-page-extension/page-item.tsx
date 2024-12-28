@@ -6,14 +6,17 @@ import type { PageType } from 'common/types';
 
 import { useApplication } from 'hooks/application';
 
+import { TabViewType } from 'store/application';
+
 interface PageItemProps {
   page: PageType;
 }
 
 export const PageItem = observer(({ page }: PageItemProps) => {
-  const { updateTabData } = useApplication();
+  const { updateTabData, updateTabType } = useApplication();
 
   const openPage = () => {
+    updateTabType(0, TabViewType.MY_DAY);
     updateTabData(0, {
       date: parse(page.title, 'dd-MM-yyyy', new Date()),
     });

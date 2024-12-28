@@ -154,7 +154,7 @@ const ApplicationStore = types
         self.selectedTasks.splice(index, 1);
       }
     };
-    const clearSelectedTasks = () => {
+    const clearSelectedTask = () => {
       self.hoverTask = undefined;
     };
     const setHoverTask = (taskId: string) => {
@@ -166,7 +166,7 @@ const ApplicationStore = types
       updateRightScreen,
       addToSelectedTask,
       removeSelectedTask,
-      clearSelectedTasks,
+      clearSelectedTask,
       setHoverTask,
     };
   })

@@ -6,7 +6,7 @@ import Fuse from 'fuse.js';
 import { type IAnyStateTreeNode, types, flow } from 'mobx-state-tree';
 
 import { extractTextFromHTML } from 'common/common-utils';
-import { defaultExtensions } from 'common/editor/editor-extensions';
+import { defaultExtensions } from 'common/editor';
 import type { PageType } from 'common/types';
 
 import { sigmaDatabase } from 'store/database';

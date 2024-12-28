@@ -2,6 +2,7 @@ import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
+  useSidebar,
 } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
@@ -25,6 +26,7 @@ interface AILayoutProps {
 export const AILayout = observer(({ children, header }: AILayoutProps) => {
   const [size, setSize] = useLocalCommonState('panelSize', 15);
   const [aiCollapsed, setAICollapsed] = React.useState(true);
+  const { open } = useSidebar();
 
   const { tabs, setActiveTab } = useApplication();
   const firstTab = tabs[0];
@@ -57,9 +59,9 @@ export const AILayout = observer(({ children, header }: AILayoutProps) => {
       <div
         className="flex flex-col"
         style={{
-          height: 'calc(100vh - 3.5rem)',
-          width: 'calc(100vw - 11rem)',
           overflow: 'hidden',
+          height: 'calc(100vh - 3.5rem)',
+          width: open ? 'calc(100vw - 11rem)' : 'calc(100vw - 1rem)',
         }}
       >
         <ResizablePanelGroup direction="horizontal">

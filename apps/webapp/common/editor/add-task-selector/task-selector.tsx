@@ -1,3 +1,4 @@
+import { useEditor } from 'common/editor';
 import {
   Tooltip,
   TooltipContent,
@@ -6,8 +7,6 @@ import {
   IssuesLine,
 } from '@tegonhq/ui';
 import React from 'react';
-
-import { useEditor } from 'common/editor';
 
 export function isValidUrl(url: string) {
   try {

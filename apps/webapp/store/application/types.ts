@@ -44,7 +44,7 @@ export interface ApplicationStoreType {
 
   selectedTasks: string[];
   hoverTask: (taskId: string) => void;
-  clearSelectedTask: (taskId: string) => void;
+  clearSelectedTask: () => void;
   addToSelectedTask: (taskId: string, reset: boolean) => void;
   removeSelectedTask: (taskId: string) => void;
   setHoverTask: (taskId: string) => void;

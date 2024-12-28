@@ -1,7 +1,8 @@
 import { Extension, mergeAttributes } from '@tiptap/core';
+import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import Heading from '@tiptap/extension-heading';
 import { cx } from 'class-variance-authority';
-import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
+import { all, createLowlight } from 'lowlight';
 import {
   TiptapLink,
   TaskList,
@@ -11,15 +12,12 @@ import {
   Placeholder,
   HighlightExtension,
   AIHighlight,
-  MarkdownExtension,
 } from 'novel/extensions';
 
 import { datePageExtension } from './date-page-extension';
 import { fileExtension } from './file-extension';
 import { imageExtension } from './image-extension';
-import { taskExtension } from './task-extension/task-extension';
-
-import { all, createLowlight } from 'lowlight';
+import { taskExtension } from './task-extension';
 
 // create a lowlight instance with all languages loaded
 const lowlight = createLowlight(all);
@@ -107,11 +105,6 @@ const starterKit = StarterKit.configure({
   gapcursor: false,
 });
 
-const markdown = MarkdownExtension.configure({
-  html: true, // Allow HTML input/output
-  breaks: true,
-});
-
 const defaultPlaceholder = Placeholder.configure({
   placeholder: ({ node }) => {
     if (node.type.name === 'heading') {
@@ -156,7 +149,6 @@ export const defaultExtensions = [
   AIHighlight,
   fileExtension,
   imageExtension,
-  markdown,
   HighlightExtension,
   taskExtension,
   datePageExtension,

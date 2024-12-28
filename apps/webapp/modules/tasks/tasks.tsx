@@ -16,6 +16,7 @@ import { Header } from './header';
 import { PersonalTaskCategory } from './personal-task-category';
 import { SingleTask } from './single-task';
 import { TaskCategory } from './task-category';
+import { useApplication } from 'hooks/application';
 
 interface TabsProps {
   entity_id: string;
@@ -25,6 +26,7 @@ export const Tasks = observer(({ entity_id }: TabsProps) => {
   useScope(SCOPES.Task);
   const { integrationAccountsStore } = useContextStore();
   const [newTask, setNewTask] = React.useState(false);
+  const { clearSelectedTask } = useApplication();
 
   useHotkeys(
     [`${Key.Meta}+n`, `${Key.Control}+n`],
@@ -35,6 +37,12 @@ export const Tasks = observer(({ entity_id }: TabsProps) => {
       scopes: [SCOPES.Task],
     },
   );
+
+  React.useEffect(() => {
+    return () => {
+      clearSelectedTask();
+    };
+  });
 
   if (entity_id && entity_id !== 'my_tasks') {
     return <SingleTask index={0} taskId={entity_id} />;
@@ -52,7 +60,7 @@ export const Tasks = observer(({ entity_id }: TabsProps) => {
         />
       }
     >
-      <ScrollArea className="w-full h-full py-4 px-6 pr-2" id="tasks-list">
+      <ScrollArea className="w-full h-full py-4 px-2" id="tasks-list">
         <div className="flex flex-col gap-4">
           <PersonalTaskCategory newTask={newTask} setNewTask={setNewTask} />
 

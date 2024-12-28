@@ -47,7 +47,7 @@ export const SingleTaskIntegration = observer(
     };
 
     if (loading || isLoading) {
-      return <div>Loading...</div>;
+      return null;
     }
 
     if (err) {
