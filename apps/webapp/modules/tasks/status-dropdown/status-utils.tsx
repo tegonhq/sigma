@@ -20,11 +20,11 @@ export function getStatusIcon(status: string) {
 
 export function getStatusColor(status: string) {
   if (status === 'Todo') {
-    const cssVar = `var(--status-pill-2)`;
+    const cssVar = `var(--status-pill-3)`;
 
     return {
       background: cssVar,
-      color: `var(--status-icon-2)`,
+      color: `var(--status-icon-3)`,
     };
   }
 

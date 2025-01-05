@@ -1,16 +1,11 @@
-import {
-  ScrollArea,
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  Separator,
-} from '@tegonhq/ui';
+import { ScrollArea, Separator } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
 
 import { SCOPES } from 'common/shortcut-scopes';
+import { AILayout } from 'layouts/ai-layout';
 
 import { useApplication } from 'hooks/application';
 
@@ -23,7 +18,6 @@ import { SingleTaskEditor } from './single-task-editor';
 import { SingleTaskIntegration } from './single-task-integration';
 import { SingleTaskMetadata } from './single-task-metadata';
 import { PageTitle } from './single-task-title';
-import { AILayout } from 'layouts/ai-layout';
 import { Header } from '../header';
 
 interface SingleTaskProps {

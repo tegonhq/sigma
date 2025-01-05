@@ -41,14 +41,14 @@ export const PersonalTaskCategory = observer(
     ]);
 
     const taskSelect = (taskId: string) => {
-      updateTabType(0, TabViewType.MY_TASKS, taskId);
+      updateTabType(0, TabViewType.MY_TASKS, { entityId: taskId });
     };
 
     return (
       <Collapsible
         open={isOpen}
         onOpenChange={setIsOpen}
-        className="flex flex-col gap-2"
+        className="flex flex-col gap-1"
       >
         <div className="flex gap-1 items-center">
           <CollapsibleTrigger asChild>

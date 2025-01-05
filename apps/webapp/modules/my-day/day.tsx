@@ -19,7 +19,7 @@ export const Day = observer(() => {
         <div className="grow flex flex-col gap-1 h-full max-w-[97ch]">
           <Navigation />
 
-          <div className="flex flex-col ml-2">
+          <div className="flex flex-col ml-2 grow">
             <h3 className="text-xl mb-2">
               {format(date, 'EEEE, MMMM do, yyyy')}
             </h3>

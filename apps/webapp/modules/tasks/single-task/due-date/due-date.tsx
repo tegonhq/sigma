@@ -44,7 +44,7 @@ export function DueDate({
         const diffDays = differenceInDays(today, dueDateObj);
 
         return (
-          <div className="inline-flex items-center text-red-600 gap-1">
+          <div className="inline-flex items-center text-destructive gap-1">
             <Fire /> <div>{diffDays}d</div>
           </div>
         );

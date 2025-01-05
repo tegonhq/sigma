@@ -117,14 +117,14 @@ export const NodeSelector = ({ open, onOpenChange }: NodeSelectorProps) => {
             }}
             className="flex cursor-pointer items-center text-base justify-between rounded px-2 py-0.5 hover:bg-accent hover:text-accent-foreground "
           >
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 w-full">
+              <div className="rounded p-1">
+                <item.icon className="h-4 w-4" />
+              </div>
+              <div className="grow">{item.name}</div>
               <div className="w-4">
                 {activeItem.name === item.name && <Check className="h-4 w-4" />}
               </div>
-              <div className="rounded p-1">
-                <item.icon className="h-5 w-5" />
-              </div>
-              <span>{item.name}</span>
             </div>
           </EditorBubbleItem>
         ))}

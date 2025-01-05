@@ -40,12 +40,11 @@ export async function restoreOrCreateWindow() {
   }
 
   appWindows.main.focus();
-  setTray();
 }
 
 export function registerShortcut() {
   // Register a global shortcut
-  const isRegistered = globalShortcut.register('CommandOrControl+K', () => {
+  const isRegistered = globalShortcut.register('CommandOrControl+Shift+K', () => {
     restoreOrCreateQuickWindow();
   });
 
@@ -59,8 +58,9 @@ export function registerShortcut() {
 /**
  * Restore an existing BrowserWindow or Create a new BrowserWindow.
  */
-export async function restoreOrCreateQuickWindow(show = true) {
+export async function restoreOrCreateQuickWindow() {
   if (!appWindows.quick || appWindows.quick.isDestroyed()) {
+    console.log('destroyed\n');
     appWindows.quick = await createQuickWindow();
     registerQuickStates(appWindows.quick);
   }
@@ -83,11 +83,9 @@ export async function restoreOrCreateQuickWindow(show = true) {
     appWindows.quick.setPosition(newPosition.x, newPosition.y);
   }
 
-  if (show) {
-    console.log(appWindows.quick.isAlwaysOnTop());
+  if (!appWindows.quick.isVisible()) {
     appWindows.quick.show();
     appWindows.quick.focus();
-    appWindows.quick.setVisibleOnAllWorkspaces(true, {visibleOnFullScreen: true});
   }
 }
 

@@ -13,12 +13,13 @@ interface PageItemProps {
 }
 
 export const PageItem = observer(({ page }: PageItemProps) => {
-  const { updateTabData, updateTabType } = useApplication();
+  const { updateTabType } = useApplication();
 
   const openPage = () => {
-    updateTabType(0, TabViewType.MY_DAY);
-    updateTabData(0, {
-      date: parse(page.title, 'dd-MM-yyyy', new Date()),
+    updateTabType(0, TabViewType.MY_DAY, {
+      data: {
+        date: parse(page.title, 'dd-MM-yyyy', new Date()),
+      },
     });
   };
 

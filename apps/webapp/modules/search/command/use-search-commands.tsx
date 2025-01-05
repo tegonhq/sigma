@@ -55,7 +55,7 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
         Icon: AI,
         text: 'Ask sigma agent about...',
         command: () => {
-          updateTabType(1, TabViewType.AI);
+          updateTabType(1, TabViewType.AI, {});
           onClose();
         },
       },
@@ -63,9 +63,12 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
         Icon: CalendarLine,
         text: 'Go to today',
         command: () => {
-          updateTabData(0, {
-            date: new Date(),
+          updateTabType(0, TabViewType.MY_DAY, {
+            data: {
+              date: new Date(),
+            },
           });
+
           onClose();
         },
       },
@@ -116,7 +119,9 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
             Icon: IssuesLine,
             text: page.title,
             command: () => {
-              updateTabType(1, TabViewType.MY_TASKS, task.id);
+              updateTabType(0, TabViewType.MY_TASKS, {
+                entityId: task.id,
+              });
 
               onClose();
             },

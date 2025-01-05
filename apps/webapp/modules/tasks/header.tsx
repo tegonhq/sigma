@@ -1,9 +1,14 @@
 import {
+  ArrowLeft,
+  ArrowRight,
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
+  Button,
+  SidebarLine,
+  useSidebar,
 } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 
@@ -11,6 +16,7 @@ import { useApplication } from 'hooks/application';
 
 import { TabViewType } from 'store/application';
 import { useContextStore } from 'store/global-context-provider';
+import { Navigation } from 'layouts/app-layout';
 
 interface HeaderProps {
   actions?: React.ReactNode;
@@ -27,10 +33,11 @@ export const Header = observer(({ actions }: HeaderProps) => {
   return (
     <header className="flex h-10 shrink-0 items-center justify-between gap-2 border-border border-b">
       <div className="flex items-center gap-2 px-6">
+        <Navigation />
         <Breadcrumb>
           <BreadcrumbList className="gap-1">
             <BreadcrumbItem
-              onClick={() => updateTabType(0, TabViewType.MY_TASKS)}
+              onClick={() => updateTabType(0, TabViewType.MY_TASKS, {})}
             >
               <BreadcrumbPage>Tasks</BreadcrumbPage>
             </BreadcrumbItem>

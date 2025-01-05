@@ -43,7 +43,7 @@ export interface ApplicationStoreType {
   updateRightScreen: (collapsed: boolean) => void;
 
   selectedTasks: string[];
-  hoverTask: (taskId: string) => void;
+  hoverTask: string;
   clearSelectedTask: () => void;
   addToSelectedTask: (taskId: string, reset: boolean) => void;
   removeSelectedTask: (taskId: string) => void;

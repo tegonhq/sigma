@@ -49,9 +49,7 @@ const HistoryManagerModel = types
 
     // Save the current state to IndexedDB
     async save(store: any) {
-      const snapshot = getSnapshot(store) as any;
-
-      await sigmaDatabase.application.put(snapshot, snapshot.id); // Save the snapshot to the application table
+      (self as any).pushSnapshot(store);
     },
   }))
   .views((self) => ({

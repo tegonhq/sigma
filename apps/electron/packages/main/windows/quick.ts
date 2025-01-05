@@ -10,8 +10,8 @@ const __dirname = dirname(__filename);
 export async function createQuickWindow(show = true) {
   const smallerWindow = new BrowserWindow({
     show: false, // Use the 'ready-to-show' event to show the instantiated BrowserWindow.
-    minWidth: 600, // Set minimum width
-    minHeight: 300, // Set minimum height
+    width: 600, // Set minimum width
+    height: 400, // Set minimum height
     icon: path.join(__dirname, '/../../../buildResources/icon.png'),
     resizable: false,
     movable: true,
@@ -23,7 +23,8 @@ export async function createQuickWindow(show = true) {
     transparent: true,
     useContentSize: true,
     skipTaskbar: true,
-    hasShadow: false,
+    hasShadow: true,
+    type: process.platform === 'darwin' ? 'panel' : 'toolbar',
     alwaysOnTop: true,
     center: true,
     webPreferences: {
@@ -32,7 +33,7 @@ export async function createQuickWindow(show = true) {
     },
   });
 
-  smallerWindow.setAlwaysOnTop(true, 'screen-saver');
+  smallerWindow.setAlwaysOnTop(true, 'screen-saver', 1);
   smallerWindow.setVisibleOnAllWorkspaces(true, {
     visibleOnFullScreen: true,
   });
@@ -65,12 +66,12 @@ export async function createQuickWindow(show = true) {
 
 export function registerQuickStates(window: BrowserWindow) {
   window.on('blur', () => {
-    window.destroy();
+    window.hide();
   });
 
   // Listen for events from the renderer process
   ipcMain.on('frontend', () => {
-    window.destroy();
+    window.hide();
   });
 }
 

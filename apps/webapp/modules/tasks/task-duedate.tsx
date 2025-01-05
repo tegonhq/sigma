@@ -23,7 +23,7 @@ export function TaskDueDate({ dueDate }: IssueDueDateProps) {
     const diffDays = differenceInDays(today, dueDateObj);
 
     return (
-      <div className="inline-flex min-w-[50px] text-xs items-center text-red-600">
+      <div className="inline-flex min-w-[50px] text-xs items-center text-destructive">
         <Tooltip>
           <TooltipTrigger asChild>
             <div className="flex">

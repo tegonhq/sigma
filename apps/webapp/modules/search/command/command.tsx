@@ -9,10 +9,7 @@ import {
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 
-import { SCOPES } from 'common/shortcut-scopes';
-
 import { useApplication } from 'hooks/application';
-import { useScope } from 'hooks/use-scope';
 
 import { useContextStore } from 'store/global-context-provider';
 
@@ -24,7 +21,6 @@ interface CommandComponentProps {
 
 export const CommandComponent = observer(
   ({ onClose }: CommandComponentProps) => {
-    useScope(SCOPES.Search);
     const { tasksStore, pagesStore } = useContextStore();
     const { selectedTasks } = useApplication();
     const [value, setValue] = React.useState('');

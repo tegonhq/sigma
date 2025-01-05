@@ -38,7 +38,7 @@ export const IntegrationTaskItem = observer(
     };
 
     if (loading || isLoading) {
-      return <div>Loading...</div>;
+      return null;
     }
 
     if (err) {

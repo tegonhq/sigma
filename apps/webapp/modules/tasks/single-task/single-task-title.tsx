@@ -17,7 +17,7 @@ export function PageTitle({ value, onChange, autoFocus }: PageTitleProps) {
       setInputValue(value);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [value]);
 
   const debouncedUpdates = useDebouncedCallback(async (title: string) => {
     onChange && onChange(title);

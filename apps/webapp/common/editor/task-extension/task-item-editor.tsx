@@ -24,7 +24,7 @@ export const TaskItem = observer(({ task }: TaskItemProps) => {
   const page = pagesStore.getPageWithId(task?.pageId);
   const { integration } = useIntegrationFromAccount(task?.integrationAccountId);
   const openTask = () => {
-    updateTabType(1, TabViewType.MY_TASKS, task.id);
+    updateTabType(0, TabViewType.MY_TASKS, { entityId: task.id });
   };
 
   const CategoryIcon = getStatusIcon(task.status);

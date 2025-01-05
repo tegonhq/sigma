@@ -1,6 +1,7 @@
 import { TabViewType } from 'store/application';
 import { useContextStore } from 'store/global-context-provider';
 import { historyManager } from 'store/history';
+
 export const useApplication = () => {
   const { applicationStore } = useContextStore();
   const { rightScreenCollapsed } = applicationStore;
@@ -16,6 +17,14 @@ export const useApplication = () => {
 
   const removeTab = (tabId: string) => {
     tabGroup.removeTab(tabId);
+  };
+
+  const back = async () => {
+    historyManager.goBack(applicationStore);
+  };
+
+  const forward = async () => {
+    historyManager.goForward(applicationStore);
   };
 
   // Tab related function
@@ -35,11 +44,14 @@ export const useApplication = () => {
   const updateTabType = (
     index: number,
     type: TabViewType,
-    entityId?: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    { entityId, data }: { entityId?: string; data?: any },
   ) => {
     const tab = tabGroup.tabs[index];
 
     tab.changeType(type, entityId);
+    tab.updateData(data);
+
     historyManager.save(applicationStore);
   };
 
@@ -59,6 +71,8 @@ export const useApplication = () => {
     activeTab: tabGroup.activeTab,
     addTab,
     removeTab,
+    back,
+    forward,
     tabs: tabGroup.tabs,
     setActiveTab,
     updateTabData,

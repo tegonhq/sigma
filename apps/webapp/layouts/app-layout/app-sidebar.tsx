@@ -25,8 +25,7 @@ import { WorkspaceDropdown } from './workspace-dropdown';
 
 export const AppSidebar = observer(
   ({ ...props }: React.ComponentProps<typeof Sidebar>) => {
-    const { updateTabType, updateTabData, closeRightScreen, tabs } =
-      useApplication();
+    const { updateTabType, closeRightScreen, tabs } = useApplication();
     const firstTab = tabs[0];
 
     useHotkeys(
@@ -58,17 +57,19 @@ export const AppSidebar = observer(
     const navigate = (page: TabViewType) => {
       switch (page) {
         case TabViewType.MY_DAY:
-          updateTabType(0, TabViewType.MY_DAY);
-          updateTabData(0, {
-            date: new Date(),
+          updateTabType(0, TabViewType.MY_DAY, {
+            data: {
+              date: new Date(),
+            },
           });
+
           return;
         case TabViewType.MY_TASKS:
-          updateTabType(0, TabViewType.MY_TASKS);
+          updateTabType(0, TabViewType.MY_TASKS, {});
           return;
         case TabViewType.AI:
           closeRightScreen();
-          updateTabType(0, TabViewType.AI);
+          updateTabType(0, TabViewType.AI, {});
       }
     };
 

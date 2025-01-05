@@ -8,6 +8,7 @@ import { SCOPES } from 'common/shortcut-scopes';
 import type { IntegrationAccountType } from 'common/types';
 import { AILayout } from 'layouts/ai-layout';
 
+import { useApplication } from 'hooks/application';
 import { useScope } from 'hooks/use-scope';
 
 import { useContextStore } from 'store/global-context-provider';
@@ -16,7 +17,6 @@ import { Header } from './header';
 import { PersonalTaskCategory } from './personal-task-category';
 import { SingleTask } from './single-task';
 import { TaskCategory } from './task-category';
-import { useApplication } from 'hooks/application';
 
 interface TabsProps {
   entity_id: string;
@@ -60,7 +60,7 @@ export const Tasks = observer(({ entity_id }: TabsProps) => {
         />
       }
     >
-      <ScrollArea className="w-full h-full py-4 px-2" id="tasks-list">
+      <ScrollArea className="w-full h-full py-4 px-3.5" id="tasks-list">
         <div className="flex flex-col gap-4">
           <PersonalTaskCategory newTask={newTask} setNewTask={setNewTask} />
 
