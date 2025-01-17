@@ -1,15 +1,18 @@
 import { Loader, useToast } from '@tegonhq/ui';
-import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/router';
 import React from 'react';
 import { SessionAuth } from 'supertokens-auth-react/recipe/session';
 
-import { useAuthorizeMutation } from 'services/users';
 import { Logo } from 'common/logo';
 
+import { useAuthorizeMutation } from 'services/users';
+
 export function Authorize() {
-  const search = useSearchParams();
+  const {
+    query: { code },
+  } = useRouter();
   const [loading, setLoading] = React.useState(true);
-  const code = search.get('code');
+
   const { toast } = useToast();
 
   const { mutate: authorize } = useAuthorizeMutation({

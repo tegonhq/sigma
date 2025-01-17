@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { cn, Tooltip, TooltipContent, TooltipTrigger } from '@tegonhq/ui';
 
 interface TooltipWrapperProps {
-  tooltip: string;
+  tooltip: ReactNode;
   children: ReactNode;
   className?: string;
   tooltipClassName?: string;

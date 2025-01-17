@@ -29,14 +29,14 @@ export class SigmaDatabase extends Dexie {
   constructor(databaseName: string) {
     super(databaseName);
 
-    this.version(17).stores({
+    this.version(19).stores({
       [MODELS.Workspace]: 'id,createdAt,updatedAt,name,slug,userId',
       [MODELS.IntegrationAccount]:
         'id,createdAt,updatedAt,accountId,settings,integratedById,integrationDefinitionId,workspaceId',
       [MODELS.Page]:
         'id,createdAt,updatedAt,archived,title,description,parentId,sortOrder,workspaceId,tags,type',
       [MODELS.Task]:
-        'id,createdAt,updatedAt,sourceId,url,status,metadata,workspaceId,pageId,integrationAccountId,dueDate',
+        'id,createdAt,updatedAt,sourceId,url,status,metadata,workspaceId,pageId,integrationAccountId,dueDate,number,completedAt',
       [MODELS.Activity]:
         'id,createdAt,updatedAt,type,eventData,name,workspaceId,integrationAccountId',
       [MODELS.Conversation]: 'id,createdAt,updatedAt,title,userId,workspaceId',

@@ -15,8 +15,6 @@ import { useScope } from 'hooks/use-scope';
 
 import { TabViewType } from 'store/application';
 
-import { useShortcuts } from './use-shortcuts';
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getComponent(componentType: string, props: any) {
   if (componentType === TabViewType.MY_DAY) {
@@ -41,7 +39,6 @@ function getComponent(componentType: string, props: any) {
 export const Home = observer(() => {
   useScope(SCOPES.Global);
   const { tabs } = useApplication();
-  useShortcuts();
 
   const firstTab = tabs[0];
 

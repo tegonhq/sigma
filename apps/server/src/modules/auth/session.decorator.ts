@@ -1,4 +1,8 @@
-import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+import {
+  createParamDecorator,
+  ExecutionContext,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { SessionContainer } from 'supertokens-node/recipe/session';
 
 export const Session = createParamDecorator(
@@ -14,9 +18,13 @@ export const UserId = createParamDecorator(
     const request = ctx.switchToHttp().getRequest();
 
     const session = request.session as SessionContainer;
-    const userId = session.getUserId();
+    try {
+      const userId = session.getUserId();
 
-    return userId;
+      return userId;
+    } catch (e) {
+      throw new UnauthorizedException('Not authorised');
+    }
   },
 );
 
@@ -25,9 +33,13 @@ export const Workspace = createParamDecorator(
     const request = ctx.switchToHttp().getRequest();
 
     const session = request.session as SessionContainer;
-    const workspaceId = session.getAccessTokenPayload().workspaceId;
+    try {
+      const workspaceId = session.getAccessTokenPayload().workspaceId;
 
-    return workspaceId;
+      return workspaceId;
+    } catch (e) {
+      throw new UnauthorizedException('Not authorised');
+    }
   },
 );
 
@@ -36,8 +48,12 @@ export const Role = createParamDecorator(
     const request = ctx.switchToHttp().getRequest();
 
     const session = request.session as SessionContainer;
-    const role = session.getAccessTokenPayload().role;
+    try {
+      const role = session.getAccessTokenPayload().role;
 
-    return role;
+      return role;
+    } catch (e) {
+      throw new UnauthorizedException('Not authorised');
+    }
   },
 );

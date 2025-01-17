@@ -124,7 +124,6 @@ export class UsersController {
   }
 
   @Post(':userId')
-  @UseGuards(AuthGuard)
   async updateUser(
     @Param() userIdBody: UserIdParams,
     @Body()

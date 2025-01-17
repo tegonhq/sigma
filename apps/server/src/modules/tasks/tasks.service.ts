@@ -122,6 +122,9 @@ export class TasksService {
     };
 
     if (taskStatus) {
+      if (taskStatus === 'Done' || taskStatus === 'Canceled') {
+        updateData.completedAt = new Date();
+      }
       updateData.status = taskStatus;
     }
 

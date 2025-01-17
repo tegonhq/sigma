@@ -136,9 +136,6 @@ export class ConversationHistoryService {
             },
           });
 
-          console.log(
-            generateHTML(JSON.parse(task.page.description), defaultExtensions),
-          );
           return {
             title: task.page.title,
             id: task.id,

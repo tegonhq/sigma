@@ -27,7 +27,7 @@ export function Provider({ children }: ProviderProps) {
       <PostHogProvider client={posthog}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
+          defaultTheme="light"
           enableSystem
           disableTransitionOnChange
         >

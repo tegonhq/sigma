@@ -71,7 +71,7 @@ export const EditorWithPage = observer(({ page }: EditorWithPageProps) => {
           }),
         ]}
         autoFocus
-        className="min-h-[50px] my-2 text-md"
+        className="min-h-[calc(100vh_-_60vh)] my-1 text-md"
       >
         <EditorExtensions suggestionItems={suggestionItems}>
           <AddTaskSelector />
@@ -103,6 +103,9 @@ export const DayEditor = observer(({ date }: DayEditorProps) => {
   if (!page) {
     return null;
   }
-
-  return <EditorWithPage page={page} />;
+  return (
+    <div className="flex flex-col min-h-[calc(100vh_-_60vh)]">
+      <EditorWithPage page={page} />
+    </div>
+  );
 });

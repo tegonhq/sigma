@@ -43,5 +43,33 @@ export function extractTextFromHTML(html: string) {
   return div.textContent || div.innerText || '';
 }
 
-export const getPlatformModifierKey = () =>
-  navigator.platform.includes('Mac') ? Key.Meta : Key.Control;
+export const getPlatformModifierKey = () => {
+  const isMac =
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (navigator as any).userAgentData?.platform === 'macOS' ||
+    navigator.userAgent.toLowerCase().includes('mac');
+  return isMac ? Key.Meta : Key.Control;
+};
+
+export const getPlatform = () => {
+  // Check userAgentData first (modern browsers)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const platform = (navigator as any).userAgentData?.platform;
+  if (platform) {
+    return platform;
+  }
+
+  // Fallback to userAgent string
+  const userAgent = navigator.userAgent.toLowerCase();
+  if (userAgent.includes('mac')) {
+    return 'macOS';
+  }
+  if (userAgent.includes('windows')) {
+    return 'Windows';
+  }
+  if (userAgent.includes('linux')) {
+    return 'Linux';
+  }
+
+  return 'macOS';
+};

@@ -243,12 +243,15 @@ model Task {
   updatedAt DateTime  @updatedAt
   deleted   DateTime?
 
+  number      Int?
+  completedAt DateTime?
+
   sourceId String?
   url      String?
   status   String?
   metadata Json    @default("{}")
 
-  dueDate  DateTime?
+  dueDate DateTime?
 
   page   Page   @relation(fields: [pageId], references: [id])
   pageId String

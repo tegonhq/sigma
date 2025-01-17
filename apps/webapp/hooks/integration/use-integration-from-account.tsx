@@ -15,7 +15,7 @@ export const useIntegrationFromAccount = (integrationAccountId: string) => {
       integrationAccountId && integrations
         ? integrations.find(
             (integration) =>
-              integration.id === integrationAccount.integrationDefinitionId,
+              integration.id === integrationAccount?.integrationDefinitionId,
           )
         : undefined,
   };

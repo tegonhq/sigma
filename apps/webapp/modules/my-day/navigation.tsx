@@ -7,6 +7,7 @@ import {
   PopoverTrigger,
   Calendar,
   Button,
+  Shortcut,
 } from '@tegonhq/ui';
 import { addDays, isSameDay, subDays } from 'date-fns';
 import { observer } from 'mobx-react-lite';
@@ -17,6 +18,8 @@ import { SCOPES } from 'common/shortcut-scopes';
 
 import { useTab } from 'hooks/application/use-tab';
 import { useScope } from 'hooks/use-scope';
+import { TooltipWrapper } from 'common/tooltip/tooltip-wrapper';
+import { getPlatform } from 'common/common-utils';
 
 export const Navigation = observer(() => {
   useScope(SCOPES.Day);
@@ -74,12 +77,30 @@ export const Navigation = observer(() => {
   return (
     <div className="flex justify-between">
       <div className="flex gap-0.5">
-        <Button variant="ghost" onClick={onBackDate}>
-          <ArrowLeft size={18} />
-        </Button>
-        <Button variant="ghost" onClick={onNextDate}>
-          <ArrowRight size={18} />
-        </Button>
+        <TooltipWrapper
+          tooltip={
+            <div className="flex items-center gap-1">
+              Previous day
+              <Shortcut isMeta shortcut="[" />
+            </div>
+          }
+        >
+          <Button variant="ghost" onClick={onBackDate}>
+            <ArrowLeft size={18} />
+          </Button>
+        </TooltipWrapper>
+
+        <TooltipWrapper
+          tooltip={
+            <div className="flex items-center gap-1">
+              Next day <Shortcut isMeta shortcut="]" />
+            </div>
+          }
+        >
+          <Button variant="ghost" onClick={onNextDate}>
+            <ArrowRight size={18} />
+          </Button>
+        </TooltipWrapper>
 
         {!isSameDay(date, new Date()) && (
           <Button variant="secondary" onClick={goToToday}>

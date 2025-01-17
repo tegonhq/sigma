@@ -15,6 +15,10 @@ import { useCreateTaskMutation } from 'services/tasks';
 import { useContextStore } from 'store/global-context-provider';
 
 import { TaskItem } from './task-item-editor';
+import {
+  getStatusColor,
+  getStatusIcon,
+} from 'modules/tasks/status-dropdown/status-utils';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const TaskComponent = observer((props: any) => {
@@ -82,19 +86,29 @@ export const TaskComponent = observer((props: any) => {
           </div>
 
           <CommandList className="flex-1">
-            {filteredTasks.map((task) => (
-              <CommandItem
-                key={task.id}
-                className="max-w-[300px]"
-                onSelect={() => {
-                  props.updateAttributes({
-                    id: task.id,
-                  });
-                }}
-              >
-                {task.title}
-              </CommandItem>
-            ))}
+            {filteredTasks.map((task) => {
+              const CategoryIcon = getStatusIcon(task.status);
+
+              return (
+                <CommandItem
+                  key={task.id}
+                  className="max-w-[300px]"
+                  onSelect={() => {
+                    props.updateAttributes({
+                      id: task.id,
+                    });
+                  }}
+                >
+                  <div className="flex gap-1 items-center">
+                    <CategoryIcon
+                      size={16}
+                      color={getStatusColor(task.status).color}
+                    />
+                    {task?.title}
+                  </div>
+                </CommandItem>
+              );
+            })}
             {filteredTasks.length === 0 && (
               <CommandItem
                 key="new"

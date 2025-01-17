@@ -1,3 +1,5 @@
+import { isToday, isSameDay } from 'date-fns';
+import { sort } from 'fast-sort';
 import { type IAnyStateTreeNode, types, flow } from 'mobx-state-tree';
 
 import type { TaskType } from 'common/types';
@@ -52,6 +54,75 @@ export const TasksStore: IAnyStateTreeNode = types
     get getTasks() {
       return self.tasks;
     },
+    getTasksForToday() {
+      const tasks = self.tasks.filter((task) => {
+        if (task.status === 'In Progress') {
+          return true;
+        }
+
+        if (task.status === 'Done' || task.status === 'Canceled') {
+          return task.completedAt && isToday(new Date(task.completedAt));
+        }
+
+        return false;
+      });
+
+      return sort(tasks).by([
+        { desc: (task) => task.status === 'In Progress' },
+        { desc: (task) => task.status === 'Done' },
+        { desc: (task) => task.status === 'Canceled' },
+      ]);
+    },
+    getTasksNotToday() {
+      const tasks = self.tasks.filter((task) => {
+        if (task.status === 'In Progress') {
+          return false;
+        }
+
+        if (task.status === 'Done' || task.status === 'Canceled') {
+          return !task.completedAt || !isToday(new Date(task.completedAt));
+        }
+
+        return true;
+      });
+
+      return sort(tasks).by([
+        { desc: (task) => task.status === 'In Progress' },
+        { desc: (task) => task.status === 'Done' },
+        { desc: (task) => task.status === 'Canceled' },
+      ]);
+    },
+    getCompletedTasksForDate(date: Date) {
+      const tasks = self.tasks.filter((task) => {
+        if (task.status === 'Done' || task.status === 'Canceled') {
+          return task.completedAt && isSameDay(task.completedAt, date);
+        }
+
+        return false;
+      });
+
+      return sort(tasks).by([
+        { desc: (task) => task.status === 'In Progress' },
+        { desc: (task) => task.status === 'Done' },
+        { desc: (task) => task.status === 'Canceled' },
+      ]);
+    },
+    getTasksForDate(date: Date) {
+      return self.tasks.filter((task) => {
+        return task.dueDate && isSameDay(task.dueDate, date);
+      });
+    },
+    getTasksNotCompleted() {
+      const tasks = self.tasks.filter((task) => {
+        if (task.status !== 'Done' && task.status !== 'Canceled') {
+          return true;
+        }
+
+        return false;
+      });
+
+      return sort(tasks).by([{ desc: (task) => new Date(task.updatedAt) }]);
+    },
     getTasksWithNoIntegration() {
       return self.tasks.filter((task: TaskType) => !task.integrationAccountId);
     },
@@ -65,6 +136,13 @@ export const TasksStore: IAnyStateTreeNode = types
     },
     getTaskForPage(pageId: string) {
       return self.tasks.find((task: TaskType) => task.pageId === pageId);
+    },
+    getLastTaskNumber() {
+      const lastTask = sort(self.tasks)
+        .by([{ asc: (task) => task.number }])
+        .pop();
+
+      return lastTask.number;
     },
   }));
 
@@ -81,4 +159,10 @@ export interface TasksStoreType {
   getTasksWithNoIntegration: () => TaskType[];
   getTasksWithIntegration: (integrationAccountId: string) => TaskType[];
   getTaskForPage: (pageId: string) => TaskType;
+  getTasksForToday: () => TaskType[];
+  getTasksNotToday: () => TaskType[];
+  getLastTaskNumber: () => number;
+  getCompletedTasksForDate: (date: Date) => TaskType[];
+  getTasksForDate: (date: Date) => TaskType[];
+  getTasksNotCompleted: () => TaskType[];
 }

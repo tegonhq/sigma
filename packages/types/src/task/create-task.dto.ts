@@ -26,4 +26,8 @@ export class CreateTaskDto {
   @IsString()
   @IsOptional()
   integrationAccountId?: string;
+
+  @IsString()
+  @IsOptional()
+  dueDate?: string;
 }

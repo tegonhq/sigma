@@ -16,6 +16,8 @@ export async function saveTaskData(
         updatedAt: record.data.updatedAt,
 
         sourceId: record.data.sourceId,
+        completedAt: record.data.completedAt,
+        number: record.data.number,
         url: record.data.url,
         status: record.data.status,
         dueDate: record.data.dueDate,
