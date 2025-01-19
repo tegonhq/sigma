@@ -160,15 +160,27 @@ export const Editor = ({
     return finalExtensions;
   };
 
+  const focus = () => {
+    editor.commands.focus();
+
+    onFocus && onFocus();
+  };
+
   return (
     // TODO: Change this to the editor input
-    <div onFocus={onFocus} onBlur={onBlur} className="relative w-full">
+    <div
+      onClick={focus}
+      onFocus={focus}
+      onBlur={onBlur}
+      className="relative w-full"
+    >
       <EditorRoot>
         <EditorContent
           initialContent={getInitialValue()}
           extensions={getExtensions()}
           shouldRerenderOnTransaction={false}
           immediatelyRender={false}
+          onFocus={focus}
           className={cn(
             'editor-container w-full min-w-full text-base sm:rounded-lg',
             className,

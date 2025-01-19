@@ -51,17 +51,19 @@ export function SingleTaskEditor({
   }
 
   return (
-    <Editor
-      onChange={onDescriptionChange}
-      extensions={[
-        Collaboration.configure({
-          document: doc,
-        }),
-      ]}
-      autoFocus={autoFocus}
-      className="min-h-[50px] my-2 text-md"
-    >
-      <EditorExtensions suggestionItems={suggestionItems}></EditorExtensions>
-    </Editor>
+    <div className="flex flex-col min-h-[calc(100vh_-_30vh)]">
+      <Editor
+        onChange={onDescriptionChange}
+        extensions={[
+          Collaboration.configure({
+            document: doc,
+          }),
+        ]}
+        autoFocus={autoFocus}
+        className="min-h-[calc(100vh_-_30vh)]"
+      >
+        <EditorExtensions suggestionItems={suggestionItems}></EditorExtensions>
+      </Editor>
+    </div>
   );
 }

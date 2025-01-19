@@ -109,7 +109,7 @@ export const TasksStore: IAnyStateTreeNode = types
     },
     getTasksForDate(date: Date) {
       return self.tasks.filter((task) => {
-        return task.dueDate && isSameDay(task.dueDate, date);
+        return task.startTime && isSameDay(task.startTime, date);
       });
     },
     getTasksNotCompleted() {

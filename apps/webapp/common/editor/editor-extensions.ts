@@ -117,7 +117,7 @@ const defaultPlaceholder = Placeholder.configure({
       return 'Type in your code here...';
     }
 
-    return 'Start writing...';
+    return '';
   },
   includeChildren: true,
 });

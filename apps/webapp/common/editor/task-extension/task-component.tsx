@@ -10,15 +10,16 @@ import { NodeViewWrapper } from '@tiptap/react';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 
+import {
+  getStatusColor,
+  getStatusIcon,
+} from 'modules/tasks/status-dropdown/status-utils';
+
 import { useCreateTaskMutation } from 'services/tasks';
 
 import { useContextStore } from 'store/global-context-provider';
 
 import { TaskItem } from './task-item-editor';
-import {
-  getStatusColor,
-  getStatusIcon,
-} from 'modules/tasks/status-dropdown/status-utils';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const TaskComponent = observer((props: any) => {
@@ -37,11 +38,15 @@ export const TaskComponent = observer((props: any) => {
 
   const tasksWithTitle = tasksStore.tasks.map((task) => ({
     ...task,
-    title: pagesStore.getPageWithId(task.pageId).title,
+    title: pagesStore.getPageWithId(task.pageId)?.title,
   }));
 
   const filteredTasks = tasksWithTitle
-    .filter((task) => task.title.toLowerCase().includes(value.toLowerCase()))
+    .filter(
+      (task) =>
+        task.title.toLowerCase().includes(value.toLowerCase()) ||
+        task.number.toString().toLowerCase().includes(value.toLowerCase()),
+    )
     .slice(0, 10); // Limit to 10 results;
 
   const id = props.node.attrs.id;
@@ -104,7 +109,13 @@ export const TaskComponent = observer((props: any) => {
                       size={16}
                       color={getStatusColor(task.status).color}
                     />
-                    {task?.title}
+                    <div className="shrink-0 w-[35px] text-sm">
+                      T-{task.number}
+                    </div>
+
+                    <div className="w-[200px]">
+                      <div className="truncate"> {task?.title}</div>
+                    </div>
                   </div>
                 </CommandItem>
               );

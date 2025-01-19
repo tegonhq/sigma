@@ -1,4 +1,4 @@
-import { ScrollArea } from '@tegonhq/ui';
+import { AI, ScrollArea } from '@tegonhq/ui';
 import { format, isBefore, isToday } from 'date-fns';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
@@ -36,10 +36,12 @@ export const Day = observer(() => {
           <Navigation />
 
           <div className="flex flex-col ml-2 grow">
-            <h3 className="text-xl mb-2">
+            <h3 className="text-xl mb-2 flex gap-1">
               {format(date, 'EEEE, MMMM do, yyyy')}
+              <AI />
             </h3>
 
+            <h3 className="text-muted-foreground font-medium">Notes</h3>
             <DayEditor date={date} />
 
             <Tasks date={date} tasks={getTasks(tasksStore, date)} />

@@ -251,7 +251,11 @@ model Task {
   status   String?
   metadata Json    @default("{}")
 
-  dueDate DateTime?
+  // Added calendar event fields
+  startTime      DateTime?
+  endTime        DateTime?
+  recurrence     String[]
+  recurrenceText String?
 
   page   Page   @relation(fields: [pageId], references: [id])
   pageId String

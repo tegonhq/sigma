@@ -60,8 +60,13 @@ export const TaskListItem = observer(({ taskId }: TaskListItemProps) => {
             )}
           >
             <div className="flex w-full justify-between gap-4">
-              <div className="inline-flex items-center justify-start shrink min-w-[0px] min-h-[24px]">
-                <div className="text-left truncate">{page?.title}</div>
+              <div className="flex gap-1 w-full">
+                <div className="text-muted-foreground font-mono min-w-[40px] pl-1 text-sm self-center">
+                  T-{task.number}
+                </div>
+                <div className="inline-flex items-center justify-start shrink min-w-[0px] min-h-[24px]">
+                  <div className="text-left truncate">{page?.title}</div>
+                </div>
               </div>
 
               <div className="flex items-center gap-2 flex-wrap pr-1 shrink-0">

@@ -36,7 +36,7 @@ export class SigmaDatabase extends Dexie {
       [MODELS.Page]:
         'id,createdAt,updatedAt,archived,title,description,parentId,sortOrder,workspaceId,tags,type',
       [MODELS.Task]:
-        'id,createdAt,updatedAt,sourceId,url,status,metadata,workspaceId,pageId,integrationAccountId,dueDate,number,completedAt',
+        'id,createdAt,updatedAt,sourceId,url,status,metadata,workspaceId,pageId,integrationAccountId,startTime,endTime,recurrence,number,completedAt',
       [MODELS.Activity]:
         'id,createdAt,updatedAt,type,eventData,name,workspaceId,integrationAccountId',
       [MODELS.Conversation]: 'id,createdAt,updatedAt,title,userId,workspaceId',

@@ -1,30 +1,41 @@
 import {
-  Checkbox,
+  AddLine,
+  Button,
   Command,
   CommandInput,
   CommandItem,
   CommandList,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  ScrollArea,
+  Shortcut,
 } from '@tegonhq/ui';
 import { isAfter, isBefore, startOfDay, isToday } from 'date-fns';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
+import { useHotkeys } from 'react-hotkeys-hook';
+import { Key } from 'ts-key-enum';
 
 import {
   getStatusColor,
   getStatusIcon,
 } from 'modules/tasks/status-dropdown/status-utils';
 
+import { SCOPES } from 'common/shortcut-scopes';
+
 import { useCreateTaskMutation, useUpdateTaskMutation } from 'services/tasks';
 
 import { useContextStore } from 'store/global-context-provider';
+import { TooltipWrapper } from 'common/tooltip/tooltip-wrapper';
 
 interface AddTaskProps {
-  onClose: () => void;
   date: Date;
 }
 
-export const AddTask = observer(({ onClose, date }: AddTaskProps) => {
+export const AddTask = observer(({ date }: AddTaskProps) => {
   const [value, setValue] = React.useState('');
+  const [open, setOpen] = React.useState(false);
   const inputRef = React.useRef(null);
 
   const { tasksStore, pagesStore } = useContextStore();
@@ -46,16 +57,16 @@ export const AddTask = observer(({ onClose, date }: AddTaskProps) => {
   });
 
   const filteredTasks = tasksWithTitle
-    .filter((task) => task.title.toLowerCase().includes(value.toLowerCase()))
+    .filter(
+      (task) =>
+        task.title.toLowerCase().includes(value.toLowerCase()) ||
+        task.number.toString().toLowerCase().includes(value.toLowerCase()),
+    )
     .slice(0, 10); // Limit to 10 results;
-
-  const onBlur = () => {
-    onClose();
-  };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Escape') {
-      onClose();
+      setOpen(false);
     }
   };
 
@@ -79,77 +90,105 @@ export const AddTask = observer(({ onClose, date }: AddTaskProps) => {
       status,
       dueDate,
     });
-    onClose();
+    setValue('');
+    setOpen(false);
   };
 
   const updateTask = (taskId: string) => {
     const { status, dueDate } = getTaskStatus(date);
-
     updateTaskMutation({
       taskId,
       status,
       dueDate,
     });
-    onClose();
+    setValue('');
+    setOpen(false);
   };
 
+  useHotkeys(
+    [`${Key.Meta}+n`, `${Key.Control}+n`],
+    () => {
+      setOpen(true);
+      inputRef.current?.focus();
+    },
+    {
+      scopes: [SCOPES.Day],
+      enableOnFormTags: true,
+      enableOnContentEditable: true,
+    },
+  );
+
   return (
-    <Command className="w-full text-base bg-transparent" shouldFilter={false}>
-      <div className="flex gap-1 items-start">
-        <Checkbox className="mt-[2px]" checked={false} />
-        <div className="text-muted-foreground font-mono min-w-[40px] pl-1 text-sm mt-[1px]">
-          P-{tasksStore.getLastTaskNumber() + 1}
-        </div>
-
-        <CommandInput
-          placeholder="Search task..."
-          value={value}
-          onBlur={onBlur}
-          onKeyDown={handleKeyDown}
-          ref={inputRef}
-          autoFocus
-          id="searchTask"
-          containerClassName="border-none px-0 rounded-none bg-transparent w-full"
-          className="py-0 px-0 h-5 rounded-none w-full"
-          onValueChange={setValue}
-        />
-      </div>
-
-      <CommandList className="flex-1 bg-popover w-fit">
-        {filteredTasks.map((task) => {
-          const page = pagesStore.getPageWithId(task?.pageId);
-          const CategoryIcon = getStatusIcon(task.status);
-
-          return (
-            <CommandItem
-              key={task.id}
-              className="max-w-[300px]"
-              onSelect={() => {
-                updateTask(task.id);
-              }}
+    <>
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button variant="ghost" className="flex gap-1 w-fit px-0 -ml-2 px-2">
+            <TooltipWrapper
+              tooltip={<Shortcut shortcut="n" isMeta />}
+              className="flex items-center gap-1"
             >
-              <div className="flex gap-1 items-center">
-                <CategoryIcon
-                  size={16}
-                  color={getStatusColor(task.status).color}
-                  className="shrink-0"
-                />
-                {page?.title}
-              </div>
-            </CommandItem>
-          );
-        })}
-        {filteredTasks.length === 0 && (
-          <CommandItem
-            key="new"
-            className="max-w-[700px]"
-            onClick={addTask}
-            onSelect={addTask}
-          >
-            Create task: {value}
-          </CommandItem>
-        )}
-      </CommandList>
-    </Command>
+              <AddLine size={14} />
+              Add new task
+            </TooltipWrapper>
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-72 p-0" align="start">
+          <Command className="w-full text-base" shouldFilter={false}>
+            <CommandInput
+              placeholder="Add/create task"
+              value={value}
+              onKeyDown={handleKeyDown}
+              ref={inputRef}
+              autoFocus
+              id="searchTask"
+              onValueChange={setValue}
+            />
+
+            <ScrollArea className="h-48 overflow-auto">
+              <CommandList className="flex-1 w-full mt-1 px-1">
+                {filteredTasks.map((task) => {
+                  const page = pagesStore.getPageWithId(task?.pageId);
+                  const CategoryIcon = getStatusIcon(task.status);
+
+                  return (
+                    <CommandItem
+                      key={task.id}
+                      className="max-w-[300px]"
+                      onSelect={() => {
+                        updateTask(task.id);
+                      }}
+                    >
+                      <div className="flex gap-2 items-center">
+                        <CategoryIcon
+                          size={16}
+                          color={getStatusColor(task.status).color}
+                          className="shrink-0"
+                        />
+                        <div className="shrink-0 w-[35px] text-sm">
+                          T-{task.number}
+                        </div>
+                        <div className="w-[200px]">
+                          <div className="truncate"> {page?.title}</div>
+                        </div>
+                      </div>
+                    </CommandItem>
+                  );
+                })}
+                {filteredTasks.length === 0 && (
+                  <CommandItem
+                    key="new"
+                    className="max-w-[300px]"
+                    onClick={addTask}
+                    onSelect={addTask}
+                  >
+                    Create task: {value}
+                  </CommandItem>
+                )}
+              </CommandList>
+            </ScrollArea>
+          </Command>
+        </PopoverContent>
+      </Popover>
+    </>
   );
 });

@@ -4,7 +4,9 @@ export interface TaskType {
   createdAt: string;
   updatedAt: string;
   completedAt?: string;
-  dueDate: string;
+  startTime: string;
+  endTime: string;
+  recurrence: string[];
   sourceId: string | null;
   url: string | null;
   status: string;

@@ -1,10 +1,4 @@
 import { HocuspocusProvider } from '@hocuspocus/provider';
-import {
-  Editor,
-  EditorExtensions,
-  getSocketURL,
-  suggestionItems,
-} from 'common/editor';
 import { PageTypeEnum } from '@sigma/types';
 import Collaboration from '@tiptap/extension-collaboration';
 import { format } from 'date-fns';
@@ -13,6 +7,12 @@ import React from 'react';
 import { IndexeddbPersistence } from 'y-indexeddb';
 import * as Y from 'yjs';
 
+import {
+  Editor,
+  EditorExtensions,
+  getSocketURL,
+  suggestionItems,
+} from 'common/editor';
 import { AddTaskSelector } from 'common/editor/add-task-selector';
 import type { PageType } from 'common/types';
 
@@ -71,7 +71,7 @@ export const EditorWithPage = observer(({ page }: EditorWithPageProps) => {
           }),
         ]}
         autoFocus
-        className="min-h-[calc(100vh_-_60vh)] my-1 text-md"
+        className="min-h-[calc(100vh_-_65vh)] my-1"
       >
         <EditorExtensions suggestionItems={suggestionItems}>
           <AddTaskSelector />
@@ -103,8 +103,9 @@ export const DayEditor = observer(({ date }: DayEditorProps) => {
   if (!page) {
     return null;
   }
+
   return (
-    <div className="flex flex-col min-h-[calc(100vh_-_60vh)]">
+    <div className="flex flex-col min-h-[calc(100vh_-_65vh)]">
       <EditorWithPage page={page} />
     </div>
   );

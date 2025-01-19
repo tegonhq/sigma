@@ -1,13 +1,10 @@
-import { Checkbox, cn, Shortcut } from '@tegonhq/ui';
+import { Checkbox, cn } from '@tegonhq/ui';
 import { isAfter, isBefore, isToday } from 'date-fns';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
-import { useHotkeys } from 'react-hotkeys-hook';
-import { Key } from 'ts-key-enum';
 import { useDebouncedCallback } from 'use-debounce';
 
-import { getPlatform } from 'common/common-utils';
-import { SCOPES } from 'common/shortcut-scopes';
+import type { TaskType } from 'common/types';
 
 import { useApplication } from 'hooks/application';
 
@@ -16,10 +13,8 @@ import { useUpdateTaskMutation } from 'services/tasks';
 
 import { TabViewType } from 'store/application';
 import { useContextStore } from 'store/global-context-provider';
-import type { TasksStoreType } from 'store/tasks';
 
 import { AddTask } from './add-task';
-import type { TaskType } from 'common/types';
 
 interface TasksProps {
   date: Date;
@@ -49,7 +44,6 @@ export const Tasks = observer(({ date, tasks }: TasksProps) => {
   const { updateTabType } = useApplication();
 
   const refs = React.useRef([]);
-  const [addNewTask, setAddNewTask] = React.useState(false);
 
   const { mutate: updateTaskMutation } = useUpdateTaskMutation({
     onSuccess: () => {},
@@ -76,11 +70,6 @@ export const Tasks = observer(({ date, tasks }: TasksProps) => {
   const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-
-      if (index === refs.current.filter(Boolean).length - 1) {
-        setAddNewTask(true);
-        return;
-      }
 
       refs.current[index + 1]?.focus();
     }
@@ -121,25 +110,13 @@ export const Tasks = observer(({ date, tasks }: TasksProps) => {
     updateTabType(0, TabViewType.MY_TASKS, { entityId: taskId });
   };
 
-  useHotkeys(
-    [`${Key.Meta}+n`, `${Key.Control}+n`],
-    () => {
-      setAddNewTask(true);
-    },
-    {
-      scopes: [SCOPES.Day],
-      enabled: canAddTasks(date),
-    },
-  );
-
   return (
     <div className="flex flex-col gap-2">
       <div className="flex gap-2">
         <h3 className="text-muted-foreground font-medium">{getTitle(date)}</h3>
-        {canAddTasks(date) && <Shortcut shortcut="n" isMeta />}
       </div>
 
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 mb-10">
         {tasks.map((task, index: number) => {
           const page = pagesStore.getPageWithId(task?.pageId);
           const isCompleted =
@@ -160,7 +137,7 @@ export const Tasks = observer(({ date, tasks }: TasksProps) => {
                   openTask(task.id);
                 }}
               >
-                P-{task.number}
+                T-{task.number}
               </div>
               <div
                 ref={(el) => {
@@ -182,9 +159,7 @@ export const Tasks = observer(({ date, tasks }: TasksProps) => {
           );
         })}
 
-        {canAddTasks(date) && addNewTask && (
-          <AddTask date={date} onClose={() => setAddNewTask(false)} />
-        )}
+        {canAddTasks(date) && <AddTask date={date} />}
       </div>
     </div>
   );

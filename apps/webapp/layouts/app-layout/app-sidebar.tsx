@@ -1,5 +1,4 @@
 import {
-  AI,
   Button,
   CalendarLine,
   Sidebar,
@@ -29,11 +28,7 @@ export const AppSidebar = observer(
     const firstTab = tabs[0];
 
     useHotkeys(
-      [
-        `${getPlatformModifierKey()}+1`,
-        `${getPlatformModifierKey()}+2`,
-        `${getPlatformModifierKey()}+3`,
-      ],
+      [`${getPlatformModifierKey()}+1`, `${getPlatformModifierKey()}+2`],
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (event) => {
         switch (event.key) {
@@ -42,9 +37,6 @@ export const AppSidebar = observer(
             return;
           case '2':
             navigate(TabViewType.MY_TASKS);
-            return;
-          case '3':
-            navigate(TabViewType.AI);
         }
       },
       {
@@ -106,17 +98,6 @@ export const AppSidebar = observer(
                 >
                   <SubIssue className="h-4 w-4" />
                   Tasks
-                </Button>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <Button
-                  variant="secondary"
-                  className="flex gap-1 w-fit"
-                  isActive={firstTab.type === TabViewType.AI}
-                  onClick={() => navigate(TabViewType.AI)}
-                >
-                  <AI className="h-4 w-4" />
-                  Agent
                 </Button>
               </SidebarMenuItem>
             </SidebarMenu>
