@@ -315,14 +315,14 @@ model Task {
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
   workspaceId String
 
-  taskOccurrence TaskOccurrence[]
-  list           List?            @relation(fields: [listId], references: [id])
-  listId         String?
+  list   List?   @relation(fields: [listId], references: [id])
+  listId String?
 
   integrationAccount   IntegrationAccount? @relation(fields: [integrationAccountId], references: [id])
   integrationAccountId String?
 
-  activity Activity[]
+  taskOccurrence TaskOccurrence[]
+  activity       Activity[]
 }
 
 model TaskOccurrence {

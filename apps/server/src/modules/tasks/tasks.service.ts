@@ -102,7 +102,6 @@ export class TasksService {
         return task;
       }
     }
-
     // Create new task
     const task = await this.prisma.task.create({
       data: {

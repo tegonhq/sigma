@@ -20,3 +20,4 @@ export * from './webhook';
 export * from './workspace';
 export * from './task';
 export * from './list';
+export * from './workspace';

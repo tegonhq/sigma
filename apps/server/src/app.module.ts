@@ -95,7 +95,10 @@ import { AppService } from './app.service';
     TaskOccurenceModule,
     AIRequestsModule,
     PromptsModule,
+<<<<<<< HEAD
     TriggerdevModule,
+=======
+>>>>>>> 94a679f (Feat: task scheduling, AI requests and task occurence trigger)
   ],
   controllers: [AppController],
   providers: [
