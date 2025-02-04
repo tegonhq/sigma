@@ -1,42 +1,27 @@
-import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
 import { PrismaModule, PrismaService } from 'nestjs-prisma';
 
+import AIRequestsService from 'modules/ai-requests/ai-requests.services';
 import { ConversationModule } from 'modules/conversation/conversation.module';
+import { TaskOccurenceService } from 'modules/task-occurence/task-occurence.service';
 import { UsersService } from 'modules/users/users.service';
 
+import { TasksAIController } from './tasks-ai.controller';
+import TasksAIService from './tasks-ai.service';
 import { TasksController } from './tasks.controller';
-import { TasksProcessor } from './tasks.processor';
-import { TasksQueue } from './tasks.queue';
 import { TasksService } from './tasks.service';
 
 @Module({
-  imports: [
-    PrismaModule,
-    ConversationModule,
-    BullModule.registerQueue({
-      name: 'tasks',
-      connection: {
-        host: process.env.REDIS_URL,
-        port: Number(process.env.REDIS_PORT),
-      },
-      defaultJobOptions: {
-        attempts: 3,
-        backoff: {
-          type: 'exponential',
-          delay: 1000,
-        },
-      },
-    }),
-  ],
-  controllers: [TasksController],
+  imports: [PrismaModule, ConversationModule],
+  controllers: [TasksController, TasksAIController],
   providers: [
     PrismaService,
     TasksService,
     UsersService,
-    TasksProcessor,
-    TasksQueue,
+    TaskOccurenceService,
+    TasksAIService,
+    AIRequestsService,
   ],
-  exports: [TasksService, TasksProcessor],
+  exports: [TasksService],
 })
 export class TasksModule {}

@@ -1,6 +1,7 @@
-import { Body, Controller, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { CreateActivityDto } from '@sigma/types';
 
+import { AuthGuard } from 'modules/auth/auth.guard';
 import { Workspace } from 'modules/auth/session.decorator';
 
 import ActivityService from './activity.service';
@@ -13,6 +14,7 @@ export class ActivityController {
   constructor(private activityService: ActivityService) {}
 
   @Post()
+  @UseGuards(AuthGuard)
   async createActivity(
     @Workspace() workspaceId: string,
     @Body() activityDto: CreateActivityDto,
@@ -25,9 +27,10 @@ export class ActivityController {
   }
 
   @Post('bulk')
+  @UseGuards(AuthGuard)
   async createBulkActivities(
-    @Query('workspaceId') workspaceId: string,
     @Body() activitiesDto: CreateActivityDto[],
+    @Workspace() workspaceId: string,
   ) {
     const activities = [];
     for (const activityDto of activitiesDto) {
@@ -38,5 +41,17 @@ export class ActivityController {
       activities.push(activity);
     }
     return activities;
+  }
+
+  @Get(':activityId')
+  @UseGuards(AuthGuard)
+  async getActivity(@Param('activityId') activityId: string) {
+    return await this.activityService.getActivity(activityId);
+  }
+
+  @Get('source/:sourceId')
+  @UseGuards(AuthGuard)
+  async getActivityBySourceId(@Param('sourceId') sourceId: string) {
+    return await this.activityService.getActivityBySourceId(sourceId);
   }
 }

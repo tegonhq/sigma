@@ -1,5 +1,8 @@
 import { JsonValue } from '../common';
 import { IntegrationAccount } from '../integration-account';
+import { Page } from '../page';
+import { TaskOccurrence } from '../task-occurence/task-occurence.entity';
+import { Workspace } from '../workspace';
 
 export enum TaskType {
   NORMAL = 'NORMAL',
@@ -9,7 +12,6 @@ export enum TaskType {
 
 export interface TaskMetadata {
   type: TaskType;
-  schedule?: string;
 }
 
 export class Task {
@@ -22,7 +24,19 @@ export class Task {
   status?: string;
   metadata?: JsonValue;
 
-  pageId: string;
+  startTime?: Date;
+  endTime?: Date;
+  recurrence?: string[];
+  recurrenceText?: string;
+
+  pageId?: string;
+  page?: Page;
+
   integrationAccountId?: string;
   integrationAccount?: IntegrationAccount;
+
+  workspace?: Workspace;
+  workspaceId?: string;
+
+  taskOccurence?: TaskOccurrence[];
 }

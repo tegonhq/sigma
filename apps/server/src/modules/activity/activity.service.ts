@@ -10,6 +10,27 @@ export default class ActivityService {
 
   constructor(private prisma: PrismaService) {}
 
+  async getActivity(activityId: string) {
+    this.logger.log({
+      message: `Getting activity with id ${activityId}`,
+      where: 'ActivityService.getActivity',
+    });
+
+    return await this.prisma.activity.findUnique({
+      where: { id: activityId },
+    });
+  }
+  async getActivityBySourceId(sourceId: string) {
+    return await this.prisma.activity.findFirst({
+      where: {
+        eventData: {
+          path: ['id'],
+          equals: sourceId,
+        },
+      },
+    });
+  }
+
   async createActivity(workspaceId: string, activityDto: CreateActivityDto) {
     this.logger.log({
       message: `Creating activity for ${activityDto.type}`,

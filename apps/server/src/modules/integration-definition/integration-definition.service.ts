@@ -50,7 +50,9 @@ export class IntegrationDefinitionService {
         integrationDefinitionId,
       });
 
-      const spec = await fetcher(`${integrationDefinition.url}/spec.json`);
+      const spec = JSON.parse(
+        await fetcher(`${integrationDefinition.url}/spec.json`),
+      );
 
       return { ...integrationDefinition, spec };
     } catch (e) {

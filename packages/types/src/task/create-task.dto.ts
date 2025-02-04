@@ -1,6 +1,4 @@
-import { IsObject, IsOptional, IsString } from 'class-validator';
-
-import { type TaskMetadata } from './task.entity';
+import { IsArray, IsObject, IsOptional, IsString } from 'class-validator';
 
 export class CreateTaskDto {
   @IsString()
@@ -17,7 +15,7 @@ export class CreateTaskDto {
 
   @IsObject()
   @IsOptional()
-  metadata?: TaskMetadata;
+  metadata?: Record<string, any>;
 
   @IsString()
   @IsOptional()
@@ -29,5 +27,17 @@ export class CreateTaskDto {
 
   @IsString()
   @IsOptional()
-  dueDate?: string;
+  startTime?: string;
+
+  @IsString()
+  @IsOptional()
+  endTime?: string;
+
+  @IsArray()
+  @IsOptional()
+  recurrence?: string[];
+
+  @IsString()
+  @IsOptional()
+  recurrenceText?: string;
 }

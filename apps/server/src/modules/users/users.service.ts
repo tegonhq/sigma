@@ -161,7 +161,27 @@ export class UsersService {
     });
 
     if (existingPat) {
-      return existingPat.token;
+      const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+      const isExpired = existingPat.createdAt < thirtyDaysAgo;
+
+      if (!isExpired) {
+        return existingPat.token;
+      }
+
+      // If expired, refresh the PAT
+      const jwt = await generateKeyForUserId(userId);
+      const token = generatePersonalAccessToken();
+
+      const updatedPat = await this.prisma.personalAccessToken.update({
+        where: { id: existingPat.id },
+        data: {
+          jwt,
+          token,
+          createdAt: new Date(), // Reset the creation date
+        },
+      });
+
+      return updatedPat.token;
     }
 
     // If no active PAT exists, create a new one

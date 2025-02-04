@@ -22,6 +22,10 @@
     "BACKEND_URL",
     "PUBLIC_ATTACHMENT_URL",
     "OAUTH_CALLBACK_URL",
+    "OPENAI_API_KEY",
+    "ANTHROPIC_API_KEY",
+    "LOCAL_MODEL",
+    "OLLAMA_HOST",
     "SMTP_HOST",
     "SMTP_PORT",
     "SMTP_USER",
@@ -36,47 +40,28 @@
   "ui": "tui",
   "tasks": {
     "build": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": [
-        "dist/**",
-        ".next/**"
-      ]
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".next/**"]
     },
     "compile": {
-      "dependsOn": [
-        "^build",
-        "^compile"
-      ],
-      "outputs": [
-        "dist/**",
-        ".next/**"
-      ]
+      "dependsOn": ["^build", "^compile"],
+      "outputs": ["dist/**", ".next/**"]
     },
-    "lint": { },
+    "lint": {},
     "generate": {
-      "dependsOn": [
-        "^generate"
-      ],
+      "dependsOn": ["^generate"],
       "cache": false
     },
     "dev": {
-      "dependsOn": [
-        "generate"
-      ],
+      "dependsOn": ["generate"],
       "interactive": true,
       "cache": false
     },
     "prisma:studio": {
-      "env": [
-        "DATABASE_URL"
-      ]
+      "env": ["DATABASE_URL"]
     },
     "migrate": {
-      "env": [
-        "DATABASE_URL"
-      ],
+      "env": ["DATABASE_URL"],
       "interactive": true,
       "cache": false
     }

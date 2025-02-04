@@ -1,31 +1,14 @@
-import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
+import { PrismaService } from 'nestjs-prisma';
 
 import { UsersService } from 'modules/users/users.service';
 
-import { IntegrationsController } from './integrations.controller';
-import { IntegrationsProcessor } from './integrations.process';
-import { IntegrationsQueue } from './integrations.queue';
+import { IntegrationsService } from './integrations.service';
 
 @Module({
-  imports: [
-    BullModule.registerQueue({
-      name: 'integrations',
-      connection: {
-        host: process.env.REDIS_URL,
-        port: Number(process.env.REDIS_PORT),
-      },
-      defaultJobOptions: {
-        attempts: 3,
-        backoff: {
-          type: 'exponential',
-          delay: 1000,
-        },
-      },
-    }),
-  ],
-  controllers: [IntegrationsController],
-  providers: [UsersService, IntegrationsQueue, IntegrationsProcessor],
-  exports: [IntegrationsQueue],
+  imports: [],
+  controllers: [],
+  providers: [PrismaService, UsersService, IntegrationsService],
+  exports: [IntegrationsService],
 })
 export class IntegrationsModule {}

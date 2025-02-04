@@ -22,6 +22,7 @@ import { OAuthCallbackModule } from 'modules/oauth-callback/oauth-callback.modul
 import { PagesModule } from 'modules/pages/pages.module';
 import { ReplicationModule } from 'modules/replication/replication.module';
 import { SyncActionsModule } from 'modules/sync-actions/sync-actions.module';
+import { TaskOccurenceModule } from 'modules/task-occurence/task-occurence.model';
 import { TasksModule } from 'modules/tasks/tasks.module';
 import { UsersModule } from 'modules/users/users.module';
 import { WebhookModule } from 'modules/webhook/webhook.module';
@@ -29,6 +30,8 @@ import { WorkspacesModule } from 'modules/workspaces/workspaces.module';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AIRequestsModule } from 'modules/ai-requests/ai-requests.module';
+import { PromptsModule } from 'modules/prompts/prompts.module';
 
 @Module({
   imports: [
@@ -88,6 +91,9 @@ import { AppService } from './app.service';
     ActivityModule,
     TasksModule,
     IntegrationsModule,
+    TaskOccurenceModule,
+    AIRequestsModule,
+    PromptsModule,
   ],
   controllers: [AppController],
   providers: [

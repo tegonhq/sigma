@@ -28,6 +28,10 @@ export enum IntegrationPayloadEventType {
   SCHEDULED_TASK = 'scheduled_task',
 
   SYNC_INITIAL_TASK = 'sync_initial_task',
+
+  TASK = 'task',
+  ACTIVITY = 'activity',
+  PAGE = 'page',
 }
 
 export interface IntegrationEventPayload {

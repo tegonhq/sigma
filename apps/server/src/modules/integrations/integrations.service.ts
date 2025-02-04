@@ -1,42 +1,48 @@
-import { join } from 'path';
-
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'nestjs-prisma';
+
+import {
+  loadRemoteModule,
+  getRequires,
+  createAxiosInstance,
+} from 'common/remote-loader';
 
 import { LoggerService } from 'modules/logger/logger.service';
+import { UsersService } from 'modules/users/users.service';
 
 @Injectable()
 export class IntegrationsService {
   private readonly logger = new LoggerService(IntegrationsService.name);
 
-  constructor() {}
+  constructor(
+    private prisma: PrismaService,
+    private usersService: UsersService,
+  ) {}
 
   //
 
-  async loadIntegration(
-    slug: string,
-    payload: any, // eslint-disable-line @typescript-eslint/no-explicit-any
-  ) {
+  async loadIntegration(slug: string, userId?: string, workspaceId?: string) {
     this.logger.info({
       message: `Loading integration ${slug}`,
-      payload: { event: payload.event },
       where: 'IntegrationsService.loadIntegration',
     });
 
-    // try {
-    // Dynamically build the path based on the slug (e.g., 'slack', 'github')
-    const modulePath = join(__dirname, `../../integrations/${slug}`);
-
-    // Dynamically import the module
-    const integrationModule = await import(modulePath);
-
-    // Call the default function exported by the module
-    if (typeof integrationModule.default === 'function') {
-      return integrationModule.default(payload); // Call the default function
+    let pat = '';
+    if (userId) {
+      pat = await this.usersService.getOrCreatePat(userId, workspaceId);
     }
 
-    return undefined;
-    // } catch (error) {
-    //   this.logger.error(error);
-    // }
+    const integrationFunction = await loadRemoteModule(
+      getRequires(createAxiosInstance(pat)),
+    );
+
+    const integrationDefinition =
+      await this.prisma.integrationDefinitionV2.findFirst({
+        where: { slug, deleted: null },
+      });
+
+    return await integrationFunction(
+      `${integrationDefinition.url}/backend/index.js`,
+    );
   }
 }

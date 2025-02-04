@@ -18,11 +18,30 @@ model Activity {
   eventData Json
   name      String
 
+  task   Task?   @relation(fields: [taskId], references: [id])
+  taskId String?
+
   integrationAccount   IntegrationAccount? @relation(fields: [integrationAccountId], references: [id])
   integrationAccountId String?
 
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
   workspaceId String
+}
+
+model AIRequest {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  modelName   String
+  data        String
+  response    String?
+  llmModel    String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId String
+
+  successful Boolean @default(false)
 }
 
 model Attachment {
@@ -201,6 +220,21 @@ model PersonalAccessToken {
   @@unique([name, userId, token])
 }
 
+model Prompt {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  name        String
+  prompt      String
+  model       String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId String
+
+  @@unique([name, workspaceId])
+}
+
 model Status {
   id        String    @id @default(uuid())
   createdAt DateTime  @default(now())
@@ -251,7 +285,6 @@ model Task {
   status   String?
   metadata Json    @default("{}")
 
-  // Added calendar event fields
   startTime      DateTime?
   endTime        DateTime?
   recurrence     String[]
@@ -263,8 +296,30 @@ model Task {
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
   workspaceId String
 
-  integrationAccountId String?
+  taskOccurrence       TaskOccurrence[]
   integrationAccount   IntegrationAccount? @relation(fields: [integrationAccountId], references: [id])
+  integrationAccountId String?
+
+  activity Activity[]
+}
+
+model TaskOccurrence {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  startTime DateTime?
+  endTime   DateTime?
+  status    String?
+
+  task   Task   @relation(fields: [taskId], references: [id])
+  taskId String
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId String
+
+  @@unique([taskId, startTime, endTime])
 }
 
 model Template {
@@ -296,7 +351,8 @@ model User {
 
   workspace Workspace?
 
-  image String?
+  image       String?
+  preferences Json?
 
   template            Template[]
   integrationAccount  IntegrationAccount[]
@@ -333,6 +389,9 @@ model Workspace {
   Activity              Activity[]
   IndexJob              IndexJob[]
   tasks                 Task[]
+  taskOccurrence        TaskOccurrence[]
+  aIRequest             AIRequest[]
+  Prompt                Prompt[]
 }
 
 enum ModelName {

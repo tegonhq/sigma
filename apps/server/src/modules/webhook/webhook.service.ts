@@ -7,14 +7,8 @@ import {
 import { Response } from 'express';
 import { PrismaService } from 'nestjs-prisma';
 
-import {
-  createAxiosInstance,
-  getRequires,
-  loadRemoteModule,
-} from 'common/remote-loader';
-
+import { IntegrationsService } from 'modules/integrations/integrations.service';
 import { LoggerService } from 'modules/logger/logger.service';
-import { UsersService } from 'modules/users/users.service';
 
 @Injectable()
 export default class WebhookService {
@@ -22,13 +16,13 @@ export default class WebhookService {
 
   constructor(
     private prisma: PrismaService,
-    private usersService: UsersService,
+    private integrationService: IntegrationsService,
   ) {}
 
   async handleEvents(
     response: Response,
     sourceName: string,
-    accountId: string | undefined,
+    integrationAccountId: string | undefined,
     eventHeaders: EventHeaders,
     eventBody: EventBody,
   ) {
@@ -37,51 +31,44 @@ export default class WebhookService {
       where: `WebhookService.handleEvents`,
     });
 
-    response.status(200);
+    response.status(200).send({ status: 'acknowleged' });
 
-    if (!accountId) {
-      const integrationFunction = await loadRemoteModule(
-        getRequires(createAxiosInstance('')),
-      );
-
-      const integration = await integrationFunction(
-        `file:///Users/manoj/work/sigma-integrations/${sourceName}/dist/backend/index.js`,
-      );
+    let integrationAccount;
+    if (!integrationAccountId) {
+      const integration =
+        await this.integrationService.loadIntegration(sourceName);
 
       const accountIdResponse = await integration.run({
         event: IntegrationPayloadEventType.GET_CONNECTED_ACCOUNT_ID,
         eventBody,
       });
 
+      let accountId;
       if (accountIdResponse?.message?.startsWith('The event payload type is')) {
         accountId = undefined;
       } else {
         accountId = accountIdResponse;
       }
+      integrationAccount = await this.prisma.integrationAccount.findFirst({
+        where: { accountId },
+        include: { integrationDefinition: true },
+      });
+    } else {
+      integrationAccount = await this.prisma.integrationAccount.findUnique({
+        where: { id: integrationAccountId },
+        include: { integrationDefinition: true },
+      });
     }
 
-    if (accountId) {
-      const integrationAccount = await this.prisma.integrationAccount.findFirst(
-        { where: { accountId }, include: { integrationDefinition: true } },
-      );
-
-      const pat = await this.usersService.getOrCreatePat(
+    if (integrationAccount) {
+      const integration = await this.integrationService.loadIntegration(
+        sourceName,
         integrationAccount.integratedById,
         integrationAccount.workspaceId,
       );
 
-      const integrationFunction = await loadRemoteModule(
-        getRequires(createAxiosInstance(pat)),
-      );
-
-      const integrationDefinition = integrationAccount.integrationDefinition;
-
-      const integration = await integrationFunction(
-        `${integrationDefinition}/backend/index.js`,
-      );
-
       await integration.run({
-        event: IntegrationPayloadEventType.WEBHOOK_RESPONSE,
+        event: IntegrationPayloadEventType.SOURCE_WEBHOOK,
         eventBody: {
           integrationAccount,
           eventData: { eventBody, eventHeaders },
@@ -89,11 +76,9 @@ export default class WebhookService {
       });
     } else {
       this.logger.log({
-        message: `Could not find accountId for webhook ${sourceName}`,
+        message: `Could not find integration account for webhook ${sourceName}`,
         where: 'WebhookService.handleEvents',
       });
     }
-
-    return { status: 200 };
   }
 }

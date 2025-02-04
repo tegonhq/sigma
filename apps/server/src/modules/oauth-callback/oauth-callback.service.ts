@@ -10,7 +10,6 @@ import {
 } from 'common/remote-loader/load-remote-module';
 
 import { IntegrationDefinitionService } from 'modules/integration-definition/integration-definition.service';
-import { IntegrationsQueue } from 'modules/integrations/integrations.queue';
 import { LoggerService } from 'modules/logger/logger.service';
 import { UsersService } from 'modules/users/users.service';
 
@@ -36,7 +35,6 @@ export class OAuthCallbackService {
     private integrationDefinitionService: IntegrationDefinitionService,
     private configService: ConfigService,
     private usersService: UsersService,
-    private integrationsQueue: IntegrationsQueue,
   ) {
     this.CALLBACK_URL = this.configService.get<string>('OAUTH_CALLBACK_URL');
   }
@@ -223,7 +221,7 @@ export class OAuthCallbackService {
         `${integrationDefinition.url}/backend/index.js`,
       );
 
-      const integrationAccount = await integration.run({
+      await integration.run({
         event: IntegrationPayloadEventType.CREATE,
         userId: sessionRecord.userId,
         workspaceId: sessionRecord.workspaceId,
@@ -233,8 +231,6 @@ export class OAuthCallbackService {
           integrationDefinition,
         },
       });
-
-      this.integrationsQueue.syncInitialTasks(integrationAccount.id);
 
       res.redirect(
         `${sessionRecord.redirectURL}?success=true&integrationName=${integrationDefinition.name}${accountIdentifier}${integrationKeys}`,

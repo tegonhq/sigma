@@ -1,21 +1,33 @@
 import { Injectable } from '@nestjs/common';
-import {
-  CreateTaskDto,
-  JsonObject,
-  PageTypeEnum,
-  Task,
-  TaskType,
-} from '@sigma/types';
+import { CreateTaskDto, JsonObject, PageTypeEnum, Task } from '@sigma/types';
 import { PrismaService } from 'nestjs-prisma';
 
-import { TasksQueue } from './tasks.queue';
+import { TaskOccurenceService } from 'modules/task-occurence/task-occurence.service';
 
 @Injectable()
 export class TasksService {
   constructor(
     private prisma: PrismaService,
-    private tasksQueue: TasksQueue,
+    private taskOccurenceService: TaskOccurenceService,
   ) {}
+
+  async getTaskBySourceId(sourceId: string): Promise<Task | null> {
+    return await this.prisma.task.findFirst({
+      where: {
+        sourceId,
+        deleted: null,
+      },
+    });
+  }
+
+  async getTaskById(taskId: string): Promise<Task | null> {
+    return await this.prisma.task.findFirst({
+      where: {
+        id: taskId,
+        deleted: null,
+      },
+    });
+  }
 
   async createTask(
     createTaskDto: CreateTaskDto,
@@ -23,32 +35,22 @@ export class TasksService {
   ): Promise<Task> {
     const {
       title,
-      metadata: rawMetadata,
+      metadata,
       status: taskStatus,
-      url,
+      sourceId,
       integrationAccountId,
       ...otherTaskData
     } = createTaskDto;
 
     // Check if task with same URL exists in workspace
-    const existingTask = url
+    const existingTask = sourceId
       ? await this.prisma.task.findFirst({
           where: {
-            url,
+            sourceId,
             workspaceId,
-            deleted: null,
           },
         })
       : null;
-
-    const metadata = rawMetadata
-      ? {
-          type: rawMetadata.type || TaskType.NORMAL,
-          ...(rawMetadata.type === TaskType.SCHEDULED && {
-            schedule: rawMetadata?.schedule,
-          }),
-        }
-      : { type: TaskType.NORMAL };
 
     if (existingTask) {
       // Update existing task
@@ -67,20 +69,18 @@ export class TasksService {
         },
       });
 
-      // Update schedule if needed
-      if (rawMetadata?.type === TaskType.SCHEDULED) {
-        await this.tasksQueue.addCronJob(task);
+      if (existingTask.recurrence) {
+        await this.taskOccurenceService.updateTaskOccuranceByTask(task.id);
       }
 
       return task;
     }
-
     // Create new task
     const task = await this.prisma.task.create({
       data: {
         status: taskStatus ? taskStatus : 'Todo',
         ...otherTaskData,
-        url,
+        sourceId,
         metadata,
         workspace: { connect: { id: workspaceId } },
         ...(integrationAccountId
@@ -98,9 +98,9 @@ export class TasksService {
       },
     });
 
-    // If it's a scheduled task, add it to the queue
-    if (rawMetadata && rawMetadata.type === TaskType.SCHEDULED) {
-      await this.tasksQueue.addCronJob(task);
+    // If it's a scheduled task, add it to occurences
+    if (task.recurrence) {
+      await this.taskOccurenceService.createTaskOccurance(task.id);
     }
 
     return task;
@@ -110,31 +110,21 @@ export class TasksService {
     taskId: string,
     updateTaskDto: Partial<CreateTaskDto>,
   ): Promise<Task> {
-    const {
-      title,
-      metadata: rawMetadata,
-      status: taskStatus,
-      ...otherTaskData
-    } = updateTaskDto;
+    const { title, status: taskStatus, ...otherTaskData } = updateTaskDto;
 
     const updateData: JsonObject = {
       ...otherTaskData,
     };
+
+    if ('recurrence' in updateTaskDto) {
+      updateData.recurrence = updateTaskDto.recurrence || [];
+    }
 
     if (taskStatus) {
       if (taskStatus === 'Done' || taskStatus === 'Canceled') {
         updateData.completedAt = new Date();
       }
       updateData.status = taskStatus;
-    }
-
-    if (rawMetadata) {
-      updateData.metadata = {
-        type: rawMetadata.type || TaskType.NORMAL,
-        ...(rawMetadata.type === TaskType.SCHEDULED && {
-          schedule: rawMetadata?.schedule,
-        }),
-      };
     }
 
     if (title) {
@@ -145,6 +135,10 @@ export class TasksService {
       };
     }
 
+    const existingTask = await this.prisma.task.findUnique({
+      where: { id: taskId },
+    });
+
     const task = await this.prisma.task.update({
       where: { id: taskId },
       data: updateData,
@@ -153,9 +147,14 @@ export class TasksService {
       },
     });
 
-    // If schedule was updated, update the queue
-    if (rawMetadata?.type === TaskType.SCHEDULED && rawMetadata?.schedule) {
-      await this.tasksQueue.updateTaskSchedule(taskId, rawMetadata.schedule);
+    // If schedule was updated or changed, update occurences
+    if (
+      JSON.stringify(existingTask.recurrence) !==
+        JSON.stringify(task.recurrence) ||
+      existingTask.startTime !== task.startTime ||
+      existingTask.endTime !== task.endTime
+    ) {
+      await this.taskOccurenceService.updateTaskOccuranceByTask(task.id);
     }
 
     return task;
@@ -172,11 +171,8 @@ export class TasksService {
     }
 
     // If it's a scheduled task, remove from queue first
-    if (
-      task.metadata &&
-      (task.metadata as JsonObject).type === TaskType.SCHEDULED
-    ) {
-      await this.tasksQueue.removeTaskSchedule(taskId);
+    if (task.recurrence) {
+      await this.taskOccurenceService.deleteTaskOccuranceByTask(task.id);
     }
 
     // Soft delete the task
@@ -194,6 +190,32 @@ export class TasksService {
     });
 
     if (task) {
+      // If it's a scheduled task, remove from queue first
+      if (task.recurrence) {
+        await this.taskOccurenceService.deleteTaskOccuranceByTask(task.id);
+      }
+
+      return await this.prisma.task.update({
+        where: { id: task.id },
+        data: {
+          deleted: new Date().toISOString(),
+        },
+      });
+    }
+    return true;
+  }
+
+  async deleteTaskBySourceId(sourceId: string) {
+    const task = await this.prisma.task.findFirst({
+      where: { sourceId },
+    });
+
+    if (task) {
+      // If it's a scheduled task, remove occurrences first
+      if (task.recurrence) {
+        await this.taskOccurenceService.deleteTaskOccuranceByTask(task.id);
+      }
+
       return await this.prisma.task.update({
         where: { id: task.id },
         data: {
