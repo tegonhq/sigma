@@ -10,6 +10,7 @@ import config from 'common/configs/config';
 import { loggingMiddleware } from 'common/middleware/logging.middleware';
 
 import { ActivityModule } from 'modules/activity/activity.module';
+import { AIRequestsModule } from 'modules/ai-requests/ai-requests.module';
 import { ALSModule } from 'modules/als/als.module';
 import { AuthModule } from 'modules/auth/auth.module';
 import { ContentModule } from 'modules/content/content.module';
@@ -20,6 +21,7 @@ import { IntegrationDefinitionModule } from 'modules/integration-definition/inte
 import { IntegrationsModule } from 'modules/integrations/integrations.module';
 import { OAuthCallbackModule } from 'modules/oauth-callback/oauth-callback.module';
 import { PagesModule } from 'modules/pages/pages.module';
+import { PromptsModule } from 'modules/prompts/prompts.module';
 import { ReplicationModule } from 'modules/replication/replication.module';
 import { SyncActionsModule } from 'modules/sync-actions/sync-actions.module';
 import { TaskOccurenceModule } from 'modules/task-occurence/task-occurence.model';
@@ -30,8 +32,6 @@ import { WorkspacesModule } from 'modules/workspaces/workspaces.module';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AIRequestsModule } from 'modules/ai-requests/ai-requests.module';
-import { PromptsModule } from 'modules/prompts/prompts.module';
 
 @Module({
   imports: [
