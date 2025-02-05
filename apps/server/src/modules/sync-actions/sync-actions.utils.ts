@@ -71,6 +71,12 @@ export async function getWorkspaceId(
       });
       return conversationEntity.workspaceId;
 
+    case ModelName.List:
+      const list = await prisma.list.findUnique({
+        where: { id: modelId },
+      });
+      return list.workspaceId;
+
     case ModelName.ConversationHistory:
       const conversationHistoryEntity =
         await prisma.conversationHistory.findUnique({
@@ -99,6 +105,7 @@ export async function getModelData(
     Activity: prisma.activity,
     Conversation: prisma.conversation,
     ConversationHistory: prisma.conversationHistory,
+    List: prisma.list,
     IntegrationAccount: {
       findUnique: (args: { where: { id: string } }) =>
         prisma.integrationAccount.findUnique({

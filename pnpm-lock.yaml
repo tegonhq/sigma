@@ -44,6 +44,9 @@ importers:
       electron-window-state:
         specifier: ^5.0.3
         version: 5.0.3
+      node-audiorecorder:
+        specifier: ^3.0.0
+        version: 3.0.0
       ws:
         specifier: ^8.18.0
         version: 8.18.0
@@ -10087,6 +10090,9 @@ packages:
 
   node-api-version@0.2.0:
     resolution: {integrity: sha512-fthTTsi8CxaBXMaBAD7ST2uylwvsnYxh2PfaScwpMhos6KlSFajXQPcM4ogNE1q2s3Lbz9GCGqeIHC+C6OZnKg==}
+
+  node-audiorecorder@3.0.0:
+    resolution: {integrity: sha512-nQepUJdQT4wD985zn7113tLZqVv0dh9ly9bsB6bE3GllPordEGUL7gFVnG2GCVArz/J/K+N50wo0574bwdpOeA==}
 
   node-domexception@1.0.0:
     resolution: {integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==}
@@ -25422,6 +25428,8 @@ snapshots:
   node-api-version@0.2.0:
     dependencies:
       semver: 7.6.3
+
+  node-audiorecorder@3.0.0: {}
 
   node-domexception@1.0.0: {}
 

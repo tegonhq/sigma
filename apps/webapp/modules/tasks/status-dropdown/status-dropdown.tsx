@@ -69,10 +69,10 @@ export const StatusDropdown = observer(
 
       return (
         <Button
-          variant="ghost"
+          variant="secondary"
           role="combobox"
           aria-expanded={open}
-          className="flex items-center gap-2 justify-between shadow-none focus-visible:ring-1 focus-visible:border-primary "
+          className="flex items-center gap-2 justify-between shadow-none focus-visible:ring-1 focus-visible:border-primary border-border"
         >
           <CategoryIcon size={18} color={getStatusColor(value).color} />
           {value}

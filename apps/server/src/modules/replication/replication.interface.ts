@@ -23,4 +23,5 @@ export const tablesToSendMessagesFor = new Map([
   [ModelNameEnum.Task, true],
   [ModelNameEnum.Conversation, true],
   [ModelNameEnum.ConversationHistory, true],
+  [ModelNameEnum.List, true],
 ]);

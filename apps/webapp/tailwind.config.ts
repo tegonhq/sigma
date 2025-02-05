@@ -22,7 +22,7 @@ const config = {
       xs: '11px',
       sm: '12px',
       base: '13px',
-      md: '15px',
+      md: '14px',
       lg: '17px',
       xl: '22px',
       '2xl': '26px',

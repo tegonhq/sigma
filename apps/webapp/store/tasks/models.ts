@@ -18,4 +18,5 @@ export const Task = types.model({
   integrationAccountId: types.union(types.null, types.string),
   pageId: types.union(types.null, types.string),
   workspaceId: types.string,
+  listId: types.union(types.null, types.string, types.undefined),
 });

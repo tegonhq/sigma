@@ -18,8 +18,9 @@ model Activity {
   eventData Json
   name      String
 
-  task   Task?   @relation(fields: [taskId], references: [id])
-  taskId String?
+  task     Task?   @relation(fields: [taskId], references: [id])
+  taskId   String?
+  isUrgent Boolean @default(false)
 
   integrationAccount   IntegrationAccount? @relation(fields: [integrationAccountId], references: [id])
   integrationAccountId String?
@@ -173,6 +174,22 @@ model IntegrationDefinitionV2 {
   IntegrationAccount IntegrationAccount[]
 }
 
+model List {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  name String
+
+  workspace   Workspace? @relation(references: [id], fields: [workspaceId])
+  workspaceId String?
+
+  Task Task[]
+
+  @@unique([name, workspaceId])
+}
+
 model Page {
   id        String    @id @default(uuid())
   createdAt DateTime  @default(now())
@@ -298,7 +315,10 @@ model Task {
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
   workspaceId String
 
-  taskOccurrence       TaskOccurrence[]
+  taskOccurrence TaskOccurrence[]
+  list           List?            @relation(fields: [listId], references: [id])
+  listId         String?
+
   integrationAccount   IntegrationAccount? @relation(fields: [integrationAccountId], references: [id])
   integrationAccountId String?
 
@@ -394,6 +414,7 @@ model Workspace {
   taskOccurrence        TaskOccurrence[]
   aIRequest             AIRequest[]
   Prompt                Prompt[]
+  List                  List[]
 }
 
 enum ModelName {
@@ -409,6 +430,7 @@ enum ModelName {
   Activity
   Conversation
   ConversationHistory
+  List
 }
 
 enum ActionType {

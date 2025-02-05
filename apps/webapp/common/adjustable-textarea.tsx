@@ -24,6 +24,13 @@ export const AdjustableTextArea = ({
     onChange(e.currentTarget.textContent || '');
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      // Your custom code here
+    }
+  };
+
   // Update div content when state changes (sets the value)
   useEffect(() => {
     if (divRef.current && divRef.current.textContent !== value) {
@@ -54,6 +61,7 @@ export const AdjustableTextArea = ({
           'w-full z-10 relative resize-none overflow-hidden whitespace-pre-wrap break-words focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50',
         )}
         onInput={handleInput}
+        onKeyDown={handleKeyDown}
       />
     </div>
   );

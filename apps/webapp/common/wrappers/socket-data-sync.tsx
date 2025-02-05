@@ -9,6 +9,7 @@ import { MODELS } from 'store/models';
 import { UserContext } from 'store/user-context';
 
 import { saveSocketData } from './socket-data-util';
+import { hash } from 'common/common-utils';
 
 interface Props {
   children: React.ReactElement;
@@ -29,8 +30,10 @@ export const SocketDataSyncWrapper: React.FC<Props> = observer(
       activityStore,
       conversationsStore,
       conversationHistoryStore,
+      listsStore,
     } = useContextStore();
     const user = React.useContext(UserContext);
+    const hashKey = user.id;
 
     const [socket, setSocket] = React.useState<Socket | undefined>(undefined);
 
@@ -66,10 +69,17 @@ export const SocketDataSyncWrapper: React.FC<Props> = observer(
         [MODELS.Activity]: activityStore,
         [MODELS.Conversation]: conversationsStore,
         [MODELS.ConversationHistory]: conversationHistoryStore,
+        [MODELS.List]: listsStore,
       };
 
       socket.on('message', async (newMessage: string) => {
-        await saveSocketData([JSON.parse(newMessage)], MODEL_STORE_MAP);
+        const data = JSON.parse(newMessage);
+
+        await saveSocketData([data], MODEL_STORE_MAP);
+        localStorage.setItem(
+          `lastSequenceId_${hash(hashKey)}`,
+          `${data.sequenceId}`,
+        );
       });
     }
 

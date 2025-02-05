@@ -1,12 +1,5 @@
-import {
-  Command,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  TodoLine,
-  type TaskType,
-} from '@tegonhq/ui';
-import { NodeViewWrapper } from '@tiptap/react';
+import { Command, CommandInput, CommandItem, CommandList } from '@tegonhq/ui';
+import { NodeViewWrapper, useEditor } from '@tiptap/react';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 
@@ -14,6 +7,8 @@ import {
   getStatusColor,
   getStatusIcon,
 } from 'modules/tasks/status-dropdown/status-utils';
+
+import type { TaskType } from 'common/types';
 
 import { useCreateTaskMutation } from 'services/tasks';
 
@@ -44,7 +39,7 @@ export const TaskComponent = observer((props: any) => {
   const filteredTasks = tasksWithTitle
     .filter(
       (task) =>
-        task.title.toLowerCase().includes(value.toLowerCase()) ||
+        task.title?.toLowerCase().includes(value.toLowerCase()) ||
         task.number.toString().toLowerCase().includes(value.toLowerCase()),
     )
     .slice(0, 10); // Limit to 10 results;
@@ -69,6 +64,16 @@ export const TaskComponent = observer((props: any) => {
     }
   };
 
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      props.deleteNode();
+
+      setTimeout(() => {
+        props.editor?.chain().focus().run();
+      }, 0); // Ensure it runs after the node is deleted
+    }
+  };
+
   if (!task) {
     return (
       <NodeViewWrapper className="react-component-with-content" as="span">
@@ -76,19 +81,18 @@ export const TaskComponent = observer((props: any) => {
           className="w-fit relative rounded text-base"
           shouldFilter={false}
         >
-          <div className="flex items-center">
-            <TodoLine size={20} className="pl-1" />
-            <CommandInput
-              placeholder="Search task..."
-              value={value}
-              onBlur={onBlur}
-              ref={inputRef}
-              id="searchTask"
-              containerClassName="border-none px-1 w-full"
-              className="py-0.5 px-1 h-6 w-full"
-              onValueChange={setValue}
-            />
-          </div>
+          <CommandInput
+            placeholder="Search task..."
+            value={value}
+            onBlur={onBlur}
+            ref={inputRef}
+            id="searchTask"
+            icon
+            containerClassName="border-none px-1"
+            onKeyDown={onKeyDown}
+            className="py-0.5 px-1 h-7"
+            onValueChange={setValue}
+          />
 
           <CommandList className="flex-1">
             {filteredTasks.map((task) => {

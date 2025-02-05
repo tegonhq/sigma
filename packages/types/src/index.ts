@@ -18,3 +18,5 @@ export * from './template';
 export * from './user';
 export * from './webhook';
 export * from './workspace';
+export * from './task';
+export * from './list';

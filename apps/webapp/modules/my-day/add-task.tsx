@@ -23,11 +23,11 @@ import {
 } from 'modules/tasks/status-dropdown/status-utils';
 
 import { SCOPES } from 'common/shortcut-scopes';
+import { TooltipWrapper } from 'common/tooltip/tooltip-wrapper';
 
 import { useCreateTaskMutation, useUpdateTaskMutation } from 'services/tasks';
 
 import { useContextStore } from 'store/global-context-provider';
-import { TooltipWrapper } from 'common/tooltip/tooltip-wrapper';
 
 interface AddTaskProps {
   date: Date;
@@ -45,7 +45,7 @@ export const AddTask = observer(({ date }: AddTaskProps) => {
 
   const tasksWithTitle = tasks.map((task) => ({
     ...task,
-    title: pagesStore.getPageWithId(task.pageId).title,
+    title: pagesStore.getPageWithId(task.pageId)?.title,
   }));
 
   const { mutate: addTaskMutation } = useCreateTaskMutation({
@@ -59,7 +59,7 @@ export const AddTask = observer(({ date }: AddTaskProps) => {
   const filteredTasks = tasksWithTitle
     .filter(
       (task) =>
-        task.title.toLowerCase().includes(value.toLowerCase()) ||
+        task.title?.toLowerCase().includes(value.toLowerCase()) ||
         task.number.toString().toLowerCase().includes(value.toLowerCase()),
     )
     .slice(0, 10); // Limit to 10 results;
@@ -104,19 +104,6 @@ export const AddTask = observer(({ date }: AddTaskProps) => {
     setValue('');
     setOpen(false);
   };
-
-  useHotkeys(
-    [`${Key.Meta}+n`, `${Key.Control}+n`],
-    () => {
-      setOpen(true);
-      inputRef.current?.focus();
-    },
-    {
-      scopes: [SCOPES.Day],
-      enableOnFormTags: true,
-      enableOnContentEditable: true,
-    },
-  );
 
   return (
     <>

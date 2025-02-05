@@ -134,7 +134,9 @@ const ApplicationStore = types
     const load = flow(function* () {
       const data = yield sigmaDatabase.application.toArray();
       if (data[0] && data[0].id !== self.id) {
-        applySnapshot(self, data[0]);
+        try {
+          applySnapshot(self, data[0]);
+        } catch (e) {}
       }
     });
     const addToSelectedTask = (taskId: string, reset: boolean) => {

@@ -73,7 +73,7 @@ export const useApplication = () => {
     removeTab,
     back,
     forward,
-    tabs: tabGroup.tabs,
+    tabs: tabGroup?.tabs,
     setActiveTab,
     updateTabData,
     updateActiveTabData,

@@ -33,6 +33,7 @@ export function BootstrapWrapper({ children }: Props) {
     tasksStore,
     conversationsStore,
     conversationHistoryStore,
+    listsStore,
   } = useContextStore();
 
   const MODEL_STORE_MAP = {
@@ -43,6 +44,7 @@ export function BootstrapWrapper({ children }: Props) {
     [MODELS.Page]: pagesStore,
     [MODELS.Conversation]: conversationsStore,
     [MODELS.ConversationHistory]: conversationHistoryStore,
+    [MODELS.List]: listsStore,
   };
 
   React.useEffect(() => {
@@ -57,8 +59,8 @@ export function BootstrapWrapper({ children }: Props) {
     modelNames: Object.values(MODELS),
     workspaceId: workspace?.id,
     userId: user.id,
-    onSuccess: (data: BootstrapResponse) => {
-      saveSocketData(data.syncActions, MODEL_STORE_MAP);
+    onSuccess: async (data: BootstrapResponse) => {
+      await saveSocketData(data.syncActions, MODEL_STORE_MAP);
       localStorage.setItem(
         `lastSequenceId_${hash(hashKey)}`,
         `${data.lastSequenceId}`,

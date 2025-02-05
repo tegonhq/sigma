@@ -44,6 +44,8 @@ export const SearchDialog = observer(() => {
     },
     {
       scopes: [SCOPES.Global],
+      enableOnFormTags: true,
+      enableOnContentEditable: true,
     },
   );
 

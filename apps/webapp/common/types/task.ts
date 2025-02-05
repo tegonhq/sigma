@@ -14,4 +14,5 @@ export interface TaskType {
   workspaceId: string;
   pageId: string;
   integrationAccountId: string | null;
+  listId?: string;
 }

@@ -33,6 +33,7 @@ const electronHandler = {
     },
     openUrl: (url: string) => ipcRenderer.send('open-url', url),
     getIntegrationsFolder: () => ipcRenderer.invoke('get-integrations-folder'),
+    getSources: () => ipcRenderer.invoke('get-sources'),
   },
 };
 

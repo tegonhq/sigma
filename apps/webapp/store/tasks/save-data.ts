@@ -27,6 +27,7 @@ export async function saveTaskData(
         pageId: record.data.pageId,
         integrationAccountId: record.data.integrationAccountId,
         workspaceId: record.data.workspaceId,
+        listId: record.data.listId,
       };
 
       switch (record.action) {

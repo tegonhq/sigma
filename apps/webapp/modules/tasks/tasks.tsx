@@ -25,18 +25,8 @@ interface TabsProps {
 export const Tasks = observer(({ entity_id }: TabsProps) => {
   useScope(SCOPES.Task);
   const { integrationAccountsStore } = useContextStore();
-  const [newTask, setNewTask] = React.useState(false);
-  const { clearSelectedTask } = useApplication();
 
-  useHotkeys(
-    [`${Key.Meta}+n`, `${Key.Control}+n`],
-    () => {
-      setNewTask(true);
-    },
-    {
-      scopes: [SCOPES.Task],
-    },
-  );
+  const { clearSelectedTask } = useApplication();
 
   React.useEffect(() => {
     return () => {
@@ -49,20 +39,10 @@ export const Tasks = observer(({ entity_id }: TabsProps) => {
   }
 
   return (
-    <AILayout
-      header={
-        <Header
-          actions={
-            <Button variant="secondary" onClick={() => setNewTask(true)}>
-              Add task
-            </Button>
-          }
-        />
-      }
-    >
+    <AILayout header={<Header />}>
       <ScrollArea className="w-full h-full py-4 px-3.5" id="tasks-list">
         <div className="flex flex-col gap-4">
-          <PersonalTaskCategory newTask={newTask} setNewTask={setNewTask} />
+          <PersonalTaskCategory />
 
           {integrationAccountsStore.integrationAccounts.map(
             (integationAccount: IntegrationAccountType, index: number) => (

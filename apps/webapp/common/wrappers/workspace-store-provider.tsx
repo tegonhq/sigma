@@ -37,14 +37,18 @@ export const WorkspaceStoreInit = observer(
 
       await applicationStore.load();
       await workspaceStore.load(currentWorkspace.id);
-      await integrationAccountsStore.load();
-
       await pagesStore.load();
-      await tasksStore.load();
-      await conversationsStore.load();
-      await conversationHistoryStore.load();
 
       setLoading(false);
+
+      await Promise.all([
+        tasksStore.load(),
+        pagesStore.load(),
+        integrationAccountsStore.load(),
+        conversationsStore.load(),
+        conversationHistoryStore.load(),
+      ]);
+
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentWorkspace.id]);
 

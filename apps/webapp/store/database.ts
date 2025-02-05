@@ -7,6 +7,7 @@ import type {
   ConversationHistoryType,
   ConversationType,
   IntegrationAccountType,
+  ListType,
   PageType,
   StatusType,
   TaskType,
@@ -25,23 +26,26 @@ export class SigmaDatabase extends Dexie {
   application: Dexie.Table<Partial<ApplicationStoreType>, string>;
   conversations: Dexie.Table<ConversationType, string>;
   conversationHistory: Dexie.Table<ConversationHistoryType, string>;
+  lists: Dexie.Table<ListType, string>;
 
   constructor(databaseName: string) {
     super(databaseName);
 
-    this.version(19).stores({
+    this.version(21).stores({
       [MODELS.Workspace]: 'id,createdAt,updatedAt,name,slug,userId',
       [MODELS.IntegrationAccount]:
         'id,createdAt,updatedAt,accountId,settings,integratedById,integrationDefinitionId,workspaceId',
       [MODELS.Page]:
         'id,createdAt,updatedAt,archived,title,description,parentId,sortOrder,workspaceId,tags,type',
       [MODELS.Task]:
-        'id,createdAt,updatedAt,sourceId,url,status,metadata,workspaceId,pageId,integrationAccountId,startTime,endTime,recurrence,number,completedAt',
+        'id,createdAt,updatedAt,sourceId,url,status,metadata,workspaceId,pageId,integrationAccountId,startTime,endTime,recurrence,number,completedAt,listId',
       [MODELS.Activity]:
         'id,createdAt,updatedAt,type,eventData,name,workspaceId,integrationAccountId',
       [MODELS.Conversation]: 'id,createdAt,updatedAt,title,userId,workspaceId',
       [MODELS.ConversationHistory]:
         'id,createdAt,updatedAt,message,userType,context,thoughts,userId,conversationId',
+      [MODELS.List]: 'id,createdAt,updatedAt,name',
+
       Application: 'id,sidebarCollapsed,tabGroups,activeTabGroupId',
     });
 
@@ -52,6 +56,7 @@ export class SigmaDatabase extends Dexie {
     this.activity = this.table(MODELS.Activity);
     this.conversations = this.table(MODELS.Conversation);
     this.conversationHistory = this.table(MODELS.ConversationHistory);
+    this.lists = this.table(MODELS.List);
     this.application = this.table('Application');
   }
 }

@@ -1,9 +1,12 @@
+import { runInAction } from 'mobx';
+
 import type { SyncActionRecord } from 'common/types';
 
 import { saveActivityData } from 'store/activity';
 import { saveConversationHistorytData } from 'store/conversation-history';
 import { saveConversationData } from 'store/conversations';
 import { saveIntegrationAccountData } from 'store/integration-accounts';
+import { saveListData } from 'store/lists';
 import { MODELS } from 'store/models';
 import { savePageData } from 'store/pages';
 import { saveTaskData } from 'store/tasks';
@@ -15,59 +18,49 @@ export async function saveSocketData(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   MODEL_STORE_MAP: Record<string, any>,
 ) {
-  await Promise.all(
-    data.map(async (record: SyncActionRecord) => {
-      switch (record.modelName) {
-        case MODELS.Workspace: {
-          return await saveWorkspaceData(
-            [record],
-            MODEL_STORE_MAP[MODELS.Workspace],
-          );
-        }
+  return runInAction(async () => {
+    // Pre-initialize the accumulator object with known model names
+    const groupedRecords: Record<string, SyncActionRecord[]> = Object.values(
+      MODELS,
+    ).reduce(
+      (acc, model) => {
+        acc[model] = [];
+        return acc;
+      },
+      {} as Record<string, SyncActionRecord[]>,
+    );
 
-        case MODELS.IntegrationAccount: {
-          return await saveIntegrationAccountData(
-            [record],
-            MODEL_STORE_MAP[MODELS.IntegrationAccount],
-          );
-        }
-
-        case MODELS.Page: {
-          return await savePageData([record], MODEL_STORE_MAP[MODELS.Page]);
-        }
-
-        case MODELS.Task: {
-          return await saveTaskData([record], MODEL_STORE_MAP[MODELS.Task]);
-        }
-
-        case MODELS.Activity: {
-          return await saveActivityData(
-            [record],
-            MODEL_STORE_MAP[MODELS.Activity],
-          );
-        }
-
-        case MODELS.Conversation: {
-          return await saveConversationData(
-            [record],
-            MODEL_STORE_MAP[MODELS.Conversation],
-          );
-        }
-
-        case MODELS.ConversationHistory: {
-          return await saveConversationHistorytData(
-            [record],
-            MODEL_STORE_MAP[MODELS.ConversationHistory],
-          );
-        }
-
-        case MODELS.Activity: {
-          return await saveConversationHistorytData(
-            [record],
-            MODEL_STORE_MAP[MODELS.ConversationHistory],
-          );
-        }
+    // Use for...of instead of reduce for better performance with large arrays
+    for (const record of data) {
+      if (groupedRecords[record.modelName]) {
+        groupedRecords[record.modelName].push(record);
       }
-    }),
-  );
+    }
+
+    // Create a map of model names to their save functions to avoid switch statement
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    const saveHandlers: Record<string, Function> = {
+      [MODELS.Workspace]: saveWorkspaceData,
+      [MODELS.IntegrationAccount]: saveIntegrationAccountData,
+      [MODELS.Conversation]: saveConversationData,
+      [MODELS.ConversationHistory]: saveConversationHistorytData,
+      [MODELS.Page]: savePageData,
+      [MODELS.Task]: saveTaskData,
+      [MODELS.Activity]: saveActivityData,
+      [MODELS.List]: saveListData,
+    };
+
+    // Process records using the handler map
+    return Promise.all(
+      Object.entries(groupedRecords)
+        .map(([modelName, records]) => {
+          if (records.length === 0) {
+            return null;
+          }
+          const handler = saveHandlers[modelName];
+          return handler ? handler(records, MODEL_STORE_MAP[modelName]) : null;
+        })
+        .filter(Boolean),
+    );
+  });
 }

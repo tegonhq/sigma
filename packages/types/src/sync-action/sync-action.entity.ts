@@ -11,6 +11,7 @@ export enum ModelNameEnum {
   Status = 'Status',
   Conversation = 'Conversation',
   ConversationHistory = 'ConversationHistory',
+  List = 'List',
 }
 
 export const ModelName = {
@@ -25,6 +26,7 @@ export const ModelName = {
   Activity: 'Activity',
   Conversation: 'Conversation',
   ConversationHistory: 'ConversationHistory',
+  List: 'List',
 };
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
