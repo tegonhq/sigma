@@ -3,6 +3,7 @@ import { PrismaModule, PrismaService } from 'nestjs-prisma';
 
 import AIRequestsService from 'modules/ai-requests/ai-requests.services';
 import { ConversationModule } from 'modules/conversation/conversation.module';
+import { IntegrationsService } from 'modules/integrations/integrations.service';
 import { TaskOccurenceService } from 'modules/task-occurence/task-occurence.service';
 import { UsersService } from 'modules/users/users.service';
 
@@ -21,6 +22,7 @@ import { TasksService } from './tasks.service';
     TaskOccurenceService,
     TasksAIService,
     AIRequestsService,
+    IntegrationsService,
   ],
   exports: [TasksService],
 })

@@ -83,7 +83,7 @@ export class TaskOccurenceService {
 
   async createTaskOccurance(taskId: string) {
     const task = await this.prisma.task.findUnique({ where: { id: taskId } });
-    if (!task.recurrence || task.recurrence.length === 0) {
+    if (!task.recurrence || task.recurrence.length === 0 || !task.startTime) {
       return null;
     }
     const rrule = RRule.fromString(task.recurrence[0]);
@@ -97,14 +97,15 @@ export class TaskOccurenceService {
     // Get base occurrences for the date range
     const baseOccurrences = rrule.between(startDate, endDate);
 
+    const taskStartTime = new Date(task.startTime);
     // Map the base dates to include the correct time from task.startTime
     const occurrences = baseOccurrences.map((date) => {
       const occurrence = new Date(date);
       occurrence.setHours(
-        task.startTime.getHours(),
-        task.startTime.getMinutes(),
-        task.startTime.getSeconds(),
-        task.startTime.getMilliseconds(),
+        taskStartTime.getHours(),
+        taskStartTime.getMinutes(),
+        taskStartTime.getSeconds(),
+        taskStartTime.getMilliseconds(),
       );
       return occurrence;
     });
@@ -122,7 +123,7 @@ export class TaskOccurenceService {
               endTime: task.endTime
                 ? new Date(
                     date.getTime() +
-                      (task.endTime.getTime() - task.startTime!.getTime()),
+                      (task.endTime.getTime() - taskStartTime!.getTime()),
                   )
                 : date,
             },
@@ -134,7 +135,7 @@ export class TaskOccurenceService {
             endTime: task.endTime
               ? new Date(
                   date.getTime() +
-                    (task.endTime.getTime() - task.startTime!.getTime()),
+                    (task.endTime.getTime() - taskStartTime!.getTime()),
                 )
               : date,
             status: 'Todo',

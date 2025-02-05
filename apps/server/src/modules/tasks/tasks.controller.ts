@@ -5,13 +5,12 @@ import {
   Get,
   Param,
   Post,
-  Query,
   UseGuards,
 } from '@nestjs/common';
 import { CreateTaskDto, Task } from '@sigma/types';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
-import { Workspace } from 'modules/auth/session.decorator';
+import { UserId, Workspace } from 'modules/auth/session.decorator';
 
 import { TasksService } from './tasks.service';
 
@@ -38,20 +37,26 @@ export class TasksController {
   @UseGuards(AuthGuard)
   async createTask(
     @Workspace() workspaceId: string,
+    @UserId() userId: string,
     @Body() taskData: CreateTaskDto,
   ): Promise<Task> {
-    return await this.tasksService.createTask(taskData, workspaceId);
+    return await this.tasksService.createTask(taskData, workspaceId, userId);
   }
 
   @Post('bulk')
   @UseGuards(AuthGuard)
   async createBulkTasks(
     @Body() tasksData: CreateTaskDto[],
+    @UserId() userId: string,
     @Workspace() workspaceId: string,
   ): Promise<Task[]> {
     const tasks = [];
     for (const taskData of tasksData) {
-      const task = await this.tasksService.createTask(taskData, workspaceId);
+      const task = await this.tasksService.createTask(
+        taskData,
+        workspaceId,
+        userId,
+      );
       tasks.push(task);
     }
     return tasks;
@@ -61,29 +66,39 @@ export class TasksController {
   @UseGuards(AuthGuard)
   async updateTask(
     @Param('taskId') taskId: string,
+    @UserId() userId: string,
+    @Workspace() workspaceId: string,
     @Body() taskData: Partial<CreateTaskDto>,
   ): Promise<Task> {
-    return await this.tasksService.update(taskId, taskData);
-  }
-
-  @Delete('url')
-  @UseGuards(AuthGuard)
-  async deleteTaskByUrl(
-    @Query('workspaceId') workspaceId: string,
-    @Query('url') url: string,
-  ) {
-    return await this.tasksService.deleteTaskByUrl(url, workspaceId);
+    return await this.tasksService.update(
+      taskId,
+      taskData,
+      workspaceId,
+      userId,
+    );
   }
 
   @Delete(':taskId')
   @UseGuards(AuthGuard)
-  async deleteTask(@Param('taskId') taskId: string) {
-    return await this.tasksService.deleteTask(taskId);
+  async deleteTask(
+    @Param('taskId') taskId: string,
+    @Workspace() workspaceId: string,
+    @UserId() userId: string,
+  ) {
+    return await this.tasksService.deleteTask(taskId, workspaceId, userId);
   }
 
   @Delete('source/:sourceId')
   @UseGuards(AuthGuard)
-  async deleteTaskBySourceId(@Param('sourceId') sourceId: string) {
-    return await this.tasksService.deleteTaskBySourceId(sourceId);
+  async deleteTaskBySourceId(
+    @Param('sourceId') sourceId: string,
+    @Workspace() workspaceId: string,
+    @UserId() userId: string,
+  ) {
+    return await this.tasksService.deleteTaskBySourceId(
+      sourceId,
+      workspaceId,
+      userId,
+    );
   }
 }

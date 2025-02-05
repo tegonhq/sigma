@@ -2,13 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { CreateTaskDto, JsonObject, PageTypeEnum, Task } from '@sigma/types';
 import { PrismaService } from 'nestjs-prisma';
 
+import { IntegrationsService } from 'modules/integrations/integrations.service';
 import { TaskOccurenceService } from 'modules/task-occurence/task-occurence.service';
+
+import { handleCalendarTask } from './tasks.utils';
 
 @Injectable()
 export class TasksService {
   constructor(
     private prisma: PrismaService,
     private taskOccurenceService: TaskOccurenceService,
+    private integrationService: IntegrationsService,
   ) {}
 
   async getTaskBySourceId(sourceId: string): Promise<Task | null> {
@@ -21,17 +25,22 @@ export class TasksService {
   }
 
   async getTaskById(taskId: string): Promise<Task | null> {
-    return await this.prisma.task.findFirst({
+    const task = await this.prisma.task.findUnique({
       where: {
         id: taskId,
         deleted: null,
       },
+      include: {
+        page: true,
+      },
     });
+    return task;
   }
 
   async createTask(
     createTaskDto: CreateTaskDto,
     workspaceId: string,
+    userId: string,
   ): Promise<Task> {
     const {
       title,
@@ -42,50 +51,64 @@ export class TasksService {
       ...otherTaskData
     } = createTaskDto;
 
-    // Check if task with same URL exists in workspace
-    const existingTask = sourceId
-      ? await this.prisma.task.findFirst({
-          where: {
-            sourceId,
-            workspaceId,
-          },
-        })
-      : null;
-
-    if (existingTask) {
-      // Update existing task
-      const task = await this.prisma.task.update({
-        where: { id: existingTask.id },
-        data: {
-          status: taskStatus ? taskStatus : existingTask.status,
-          metadata,
-          ...otherTaskData,
-          page: {
-            update: {
-              title,
-            },
-          },
-          deleted: null,
+    // Check if task with same sourceId exists and update it
+    if (sourceId) {
+      const existingTask = await this.prisma.task.findFirst({
+        where: {
+          sourceId,
+          workspaceId,
         },
       });
 
-      if (existingTask.recurrence) {
-        await this.taskOccurenceService.updateTaskOccuranceByTask(task.id);
-      }
+      if (existingTask) {
+        const task = await this.prisma.task.update({
+          where: { id: existingTask.id },
+          data: {
+            status: taskStatus || existingTask.status,
+            metadata,
+            ...otherTaskData,
+            page: {
+              update: { title },
+            },
+            deleted: null,
+          },
+          include: {
+            page: true,
+          },
+        });
 
-      return task;
+        // Handle recurring task updates
+        if (existingTask.recurrence) {
+          await this.taskOccurenceService.updateTaskOccuranceByTask(task.id);
+        }
+
+        // Handle calendar integration if task has timing
+        if (task.startTime || task.endTime) {
+          await handleCalendarTask(
+            this.prisma,
+            this.integrationService,
+            workspaceId,
+            userId,
+            'update',
+            task,
+          );
+        }
+
+        return task;
+      }
     }
+
     // Create new task
     const task = await this.prisma.task.create({
       data: {
-        status: taskStatus ? taskStatus : 'Todo',
+        status: taskStatus || 'Todo',
         ...otherTaskData,
         sourceId,
         metadata,
         workspace: { connect: { id: workspaceId } },
-        ...(integrationAccountId
-          ? { integrationAccount: { connect: { id: integrationAccountId } } }
-          : {}),
+        ...(integrationAccountId && {
+          integrationAccount: { connect: { id: integrationAccountId } },
+        }),
         page: {
           create: {
             title,
@@ -96,11 +119,26 @@ export class TasksService {
           },
         },
       },
+      include: {
+        page: true,
+      },
     });
 
-    // If it's a scheduled task, add it to occurences
+    // Handle recurring task creation
     if (task.recurrence) {
       await this.taskOccurenceService.createTaskOccurance(task.id);
+    }
+
+    // Handle calendar integration if task has timing
+    if (task.startTime || task.endTime) {
+      await handleCalendarTask(
+        this.prisma,
+        this.integrationService,
+        workspaceId,
+        userId,
+        'create',
+        task,
+      );
     }
 
     return task;
@@ -109,120 +147,152 @@ export class TasksService {
   async update(
     taskId: string,
     updateTaskDto: Partial<CreateTaskDto>,
+    workspaceId: string,
+    userId: string,
   ): Promise<Task> {
     const { title, status: taskStatus, ...otherTaskData } = updateTaskDto;
 
+    // Build update data object
     const updateData: JsonObject = {
       ...otherTaskData,
+      ...(taskStatus && {
+        status: taskStatus,
+        ...(taskStatus === 'Done' || taskStatus === 'Canceled'
+          ? { completedAt: new Date() }
+          : {}),
+      }),
+      ...(title && {
+        page: {
+          update: { title },
+        },
+      }),
+      ...('recurrence' in updateTaskDto && {
+        recurrence: updateTaskDto.recurrence || [],
+      }),
     };
 
-    if ('recurrence' in updateTaskDto) {
-      updateData.recurrence = updateTaskDto.recurrence || [];
-    }
-
-    if (taskStatus) {
-      if (taskStatus === 'Done' || taskStatus === 'Canceled') {
-        updateData.completedAt = new Date();
-      }
-      updateData.status = taskStatus;
-    }
-
-    if (title) {
-      updateData.page = {
-        update: {
-          title,
+    // Get existing task and update in a single transaction
+    const [existingTask, updatedTask] = await this.prisma.$transaction([
+      this.prisma.task.findUnique({
+        where: { id: taskId },
+      }),
+      this.prisma.task.update({
+        where: { id: taskId },
+        data: updateData,
+        include: {
+          page: true,
         },
-      };
-    }
+      }),
+    ]);
 
-    const existingTask = await this.prisma.task.findUnique({
-      where: { id: taskId },
-    });
-
-    const task = await this.prisma.task.update({
-      where: { id: taskId },
-      data: updateData,
-      include: {
-        page: true,
-      },
-    });
-
-    // If schedule was updated or changed, update occurences
-    if (
+    // Check if schedule related fields were updated
+    const scheduleChanged =
       JSON.stringify(existingTask.recurrence) !==
-        JSON.stringify(task.recurrence) ||
-      existingTask.startTime !== task.startTime ||
-      existingTask.endTime !== task.endTime
-    ) {
-      await this.taskOccurenceService.updateTaskOccuranceByTask(task.id);
+        JSON.stringify(updatedTask.recurrence) ||
+      existingTask.startTime.toISOString() !==
+        updatedTask.startTime.toISOString() ||
+      existingTask.endTime.toISOString() !== updatedTask.endTime.toISOString();
+
+    if (scheduleChanged) {
+      await Promise.all([
+        this.taskOccurenceService.updateTaskOccuranceByTask(updatedTask.id),
+        handleCalendarTask(
+          this.prisma,
+          this.integrationService,
+          workspaceId,
+          userId,
+          'update',
+          updatedTask,
+        ),
+      ]);
     }
 
-    return task;
+    return updatedTask;
   }
 
-  async deleteTask(taskId: string) {
-    // Get task first to check if it's scheduled
-    const task = await this.prisma.task.findUnique({
-      where: { id: taskId },
-    });
+  async deleteTask(taskId: string, workspaceId: string, userId: string) {
+    // Get task and update in a single transaction
+    return await this.prisma.$transaction(async (tx) => {
+      const task = await tx.task.findUnique({
+        where: { id: taskId },
+        include: { page: true },
+      });
 
-    if (!task) {
-      throw new Error('Task not found');
-    }
-
-    // If it's a scheduled task, remove from queue first
-    if (task.recurrence) {
-      await this.taskOccurenceService.deleteTaskOccuranceByTask(task.id);
-    }
-
-    // Soft delete the task
-    return await this.prisma.task.update({
-      where: { id: taskId },
-      data: {
-        deleted: new Date().toISOString(),
-      },
-    });
-  }
-
-  async deleteTaskByUrl(url: string, workspaceId: string) {
-    const task = await this.prisma.task.findFirst({
-      where: { url, workspaceId },
-    });
-
-    if (task) {
-      // If it's a scheduled task, remove from queue first
-      if (task.recurrence) {
-        await this.taskOccurenceService.deleteTaskOccuranceByTask(task.id);
+      if (!task) {
+        throw new Error('Task not found');
       }
 
-      return await this.prisma.task.update({
+      if (task.deleted) {
+        return task;
+      }
+
+      // Run these operations in parallel since they're independent
+      await Promise.all([
+        // Delete task occurrences if it's recurring
+        task.recurrence &&
+          this.taskOccurenceService.deleteTaskOccuranceByTask(task.id),
+
+        // Update calendar if task has dates
+        (task.startTime || task.endTime) &&
+          handleCalendarTask(
+            this.prisma,
+            this.integrationService,
+            workspaceId,
+            userId,
+            'delete',
+            task,
+          ),
+      ]);
+
+      // Soft delete the task
+      return await tx.task.update({
+        where: { id: taskId },
+        data: {
+          deleted: new Date().toISOString(),
+        },
+      });
+    });
+  }
+
+  async deleteTaskBySourceId(
+    sourceId: string,
+    workspaceId: string,
+    userId: string,
+  ) {
+    return await this.prisma.$transaction(async (tx) => {
+      const task = await tx.task.findFirst({
+        where: { sourceId },
+        include: { page: true },
+      });
+
+      if (!task || task.deleted) {
+        return task;
+      }
+
+      // Run these operations in parallel since they're independent
+      await Promise.all([
+        // Delete task occurrences if it's recurring
+        task.recurrence &&
+          this.taskOccurenceService.deleteTaskOccuranceByTask(task.id),
+
+        // Update calendar if task has dates
+        (task.startTime || task.endTime) &&
+          handleCalendarTask(
+            this.prisma,
+            this.integrationService,
+            workspaceId,
+            userId,
+            'delete',
+            task,
+          ),
+      ]);
+
+      return await tx.task.update({
         where: { id: task.id },
         data: {
           deleted: new Date().toISOString(),
         },
       });
-    }
-    return true;
-  }
-
-  async deleteTaskBySourceId(sourceId: string) {
-    const task = await this.prisma.task.findFirst({
-      where: { sourceId },
     });
-
-    if (task) {
-      // If it's a scheduled task, remove occurrences first
-      if (task.recurrence) {
-        await this.taskOccurenceService.deleteTaskOccuranceByTask(task.id);
-      }
-
-      return await this.prisma.task.update({
-        where: { id: task.id },
-        data: {
-          deleted: new Date().toISOString(),
-        },
-      });
-    }
-    return true;
   }
 }
