@@ -1,4 +1,10 @@
-import { TabViewType } from 'store/application';
+import {
+  FiltersModel,
+  TabViewType,
+  type FiltersModelType,
+  type UpdateBody,
+  type UpdateDisplaySettingsBody,
+} from 'store/application';
 import { useContextStore } from 'store/global-context-provider';
 import { historyManager } from 'store/history';
 
@@ -67,6 +73,26 @@ export const useApplication = () => {
     }
   };
 
+  const updateDisplaySettings = (
+    displaySettings: UpdateDisplaySettingsBody,
+  ) => {
+    applicationStore.updateDisplaySettings(displaySettings);
+
+    historyManager.save(applicationStore);
+  };
+
+  const deleteFilter = (filter: keyof FiltersModelType) => {
+    applicationStore.deleteFilter(filter);
+
+    historyManager.save(applicationStore);
+  };
+
+  const updateFilters = (updateBody: UpdateBody) => {
+    applicationStore.updateFilters(updateBody);
+
+    historyManager.save(applicationStore);
+  };
+
   return {
     activeTab: tabGroup.activeTab,
     addTab,
@@ -74,6 +100,9 @@ export const useApplication = () => {
     back,
     forward,
     tabs: tabGroup?.tabs,
+    displaySettings: applicationStore.displaySettings,
+    filters: applicationStore.filters,
+
     setActiveTab,
     updateTabData,
     updateActiveTabData,
@@ -89,5 +118,10 @@ export const useApplication = () => {
     clearSelectedTask: applicationStore.clearSelectedTask,
     addToSelectedTask: applicationStore.addToSelectedTask,
     removeSelectedTask: applicationStore.removeSelectedTask,
+
+    // Filter and display in tasks
+    updateDisplaySettings,
+    deleteFilter,
+    updateFilters,
   };
 };

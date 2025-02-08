@@ -33,6 +33,7 @@ import { WorkspacesModule } from 'modules/workspaces/workspaces.module';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { ListsModule } from 'modules/lists/lists.module';
 
 @Module({
   imports: [
@@ -95,10 +96,8 @@ import { AppService } from './app.service';
     TaskOccurenceModule,
     AIRequestsModule,
     PromptsModule,
-<<<<<<< HEAD
     TriggerdevModule,
-=======
->>>>>>> 94a679f (Feat: task scheduling, AI requests and task occurence trigger)
+    ListsModule,
   ],
   controllers: [AppController],
   providers: [

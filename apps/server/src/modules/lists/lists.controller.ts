@@ -15,7 +15,7 @@ export class ListsController {
 
   @Post()
   @UseGuards(AuthGuard)
-  async createTask(
+  async createList(
     @Workspace() workspaceId: string,
     @Body() listData: CreateListDto,
   ): Promise<List> {

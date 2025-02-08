@@ -70,12 +70,12 @@ const starterKit = StarterKit.configure({
   history: false,
   bulletList: {
     HTMLAttributes: {
-      class: cx('list-disc list-outside leading-1 pl-4'),
+      class: cx('list-disc list-outside leading-1 pl-4 my-1'),
     },
   },
   orderedList: {
     HTMLAttributes: {
-      class: cx('list-decimal list-outside pl-6 leading-1'),
+      class: cx('list-decimal list-outside pl-6 leading-1 my-1'),
     },
   },
   listItem: {

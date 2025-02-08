@@ -1,22 +1,17 @@
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  ScrollArea,
-} from '@tegonhq/ui';
+import { ScrollArea } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 
 import { useRemoteComponent } from 'common/RemoteComponent';
 import type { PageType, TaskType } from 'common/types';
+import { AILayout } from 'layouts/ai-layout';
 
 import { useIntegrationFromAccount } from 'hooks/integration';
 import { useIPC } from 'hooks/ipc';
 
 import { SingleTaskEditor } from './single-task-editor';
-import { getIntegrationURL } from '../utils';
-import { AILayout } from 'layouts/ai-layout';
 import { Header } from '../header';
+import { getIntegrationURL } from '../utils';
 
 interface SingleTaskIntegrationProps {
   task: TaskType;

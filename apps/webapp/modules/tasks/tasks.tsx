@@ -1,8 +1,6 @@
-import { Button, ScrollArea } from '@tegonhq/ui';
+import { ScrollArea } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
-import { useHotkeys } from 'react-hotkeys-hook';
-import { Key } from 'ts-key-enum';
 
 import { SCOPES } from 'common/shortcut-scopes';
 import type { IntegrationAccountType } from 'common/types';
@@ -13,10 +11,12 @@ import { useScope } from 'hooks/use-scope';
 
 import { useContextStore } from 'store/global-context-provider';
 
+import { Filters } from './filters';
 import { Header } from './header';
 import { PersonalTaskCategory } from './personal-task-category';
 import { SingleTask } from './single-task';
 import { TaskCategory } from './task-category';
+import { StatusList } from './category/status';
 
 interface TabsProps {
   entity_id: string;
@@ -24,7 +24,6 @@ interface TabsProps {
 
 export const Tasks = observer(({ entity_id }: TabsProps) => {
   useScope(SCOPES.Task);
-  const { integrationAccountsStore } = useContextStore();
 
   const { clearSelectedTask } = useApplication();
 
@@ -40,20 +39,9 @@ export const Tasks = observer(({ entity_id }: TabsProps) => {
 
   return (
     <AILayout header={<Header />}>
-      <ScrollArea className="w-full h-full py-4 px-3.5" id="tasks-list">
-        <div className="flex flex-col gap-4">
-          <PersonalTaskCategory />
+      <Filters />
 
-          {integrationAccountsStore.integrationAccounts.map(
-            (integationAccount: IntegrationAccountType, index: number) => (
-              <TaskCategory
-                integrationAccount={integationAccount}
-                key={index}
-              />
-            ),
-          )}
-        </div>
-      </ScrollArea>
+      <StatusList />
     </AILayout>
   );
 });

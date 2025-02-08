@@ -16,25 +16,34 @@ import { Key } from 'ts-key-enum';
 import { z } from 'zod';
 
 import { AdjustableTextArea } from 'common/adjustable-textarea';
+import { Shortcut } from 'common/shortcut';
 import { SCOPES } from 'common/shortcut-scopes';
+import type { ListType } from 'common/types';
 
+import { useApplication } from 'hooks/application';
+
+import { useCreateListMutation } from 'services/lists/create-list';
 import { useCreateTaskMutation } from 'services/tasks';
+
+import { TabViewType } from 'store/application';
 
 import { StatusDropdown, StatusDropdownVariant } from '../status-dropdown';
 import { NewTaskSchema } from './add-task-type';
 import { ListDropdown, ListDropdownVariant } from '../list-dropdown';
-import { Shortcut } from 'common/shortcut';
+import { ScheduleDropdown } from '../schedule-dropdown';
 
 interface AddTaskProps {
   onCancel: () => void;
 }
 
 export const AddTask = observer(({ onCancel }: AddTaskProps) => {
+  const { tabs } = useApplication();
+
   // The form has a array of issues where first issue is the parent and the later sub issues
   const form = useForm<z.infer<typeof NewTaskSchema>>({
     resolver: zodResolver(NewTaskSchema),
     defaultValues: {
-      status: 'Todo',
+      status: tabs[0].type === TabViewType.MY_DAY ? 'In Progress' : 'Todo',
     },
   });
 
@@ -44,19 +53,46 @@ export const AddTask = observer(({ onCancel }: AddTaskProps) => {
     },
   });
 
-  const addTask = () => {};
+  const { mutate: createList } = useCreateListMutation({});
+
+  const addTask = (data: z.infer<typeof NewTaskSchema>) => {
+    if (data.listId && data.listId.includes('__new')) {
+      createList(
+        {
+          name: data.listId.replace('__new', ''),
+        },
+        {
+          onSuccess: (list: ListType) => {
+            addTaskMutation({
+              title: data.title,
+              status: data.status,
+              listId: list.id,
+            });
+          },
+        },
+      );
+
+      return;
+    }
+
+    addTaskMutation({
+      title: data.title,
+      status: data.status,
+      listId: data.listId,
+    });
+  };
 
   useHotkeys(
     [Key.Enter],
     (event) => {
       switch (event.key) {
         case Key.Enter:
-          addTask();
+          form.handleSubmit(addTask)();
           break;
       }
     },
     {
-      scopes: [SCOPES.Task],
+      scopes: [SCOPES.Global],
       enableOnFormTags: true,
       enableOnContentEditable: true,
     },
@@ -65,7 +101,7 @@ export const AddTask = observer(({ onCancel }: AddTaskProps) => {
   return (
     <div className="flex flex-col p-3">
       <Form {...form}>
-        <form>
+        <form onSubmit={form.handleSubmit(addTask)}>
           <div className="font-normal w-full flex items-center">
             <IssuesLine size={18} className="shrink-0" />
             <FormField
@@ -77,22 +113,20 @@ export const AddTask = observer(({ onCancel }: AddTaskProps) => {
                     <div className="flex items-center gap-1">
                       <AdjustableTextArea
                         {...field}
-                        placeholder="New task"
+                        placeholder="Check my emails everyday at 9 in the morning"
                         autoFocus
                         className="bg-transparent text-md px-2"
                         placeholderClassName="pl-2 text-md"
                       />
                     </div>
                   </FormControl>
-
-                  <FormMessage />
                 </FormItem>
               )}
             />
           </div>
 
-          <div className="flex justify-between mt-3 items-end">
-            <div className="flex gap-1 grow">
+          <div className="flex justify-between mt-3 items-end text-sm gap-4">
+            <div className="flex gap-1 grow flex-wrap">
               <FormField
                 control={form.control}
                 name="status"
@@ -105,8 +139,6 @@ export const AddTask = observer(({ onCancel }: AddTaskProps) => {
                         value={field.value}
                       />
                     </FormControl>
-
-                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -123,13 +155,11 @@ export const AddTask = observer(({ onCancel }: AddTaskProps) => {
                         value={field.value}
                       />
                     </FormControl>
-
-                    <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
-            <Button variant="secondary" className="items-center">
+            <Button variant="secondary" className="items-center" type="submit">
               Create task
               <Shortcut shortcut="Enter" className="ml-1" />
             </Button>

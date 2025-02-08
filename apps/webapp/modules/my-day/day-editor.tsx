@@ -70,7 +70,6 @@ export const EditorWithPage = observer(({ page }: EditorWithPageProps) => {
             document: doc,
           }),
         ]}
-        autoFocus
         className="min-h-[calc(100vh_-_65vh)] my-1"
       >
         <EditorExtensions suggestionItems={suggestionItems}>

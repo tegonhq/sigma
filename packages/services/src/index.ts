@@ -7,3 +7,4 @@ export * from './page';
 export * from './task-occurence';
 export * from './tasks';
 export * from './user';
+export * from './lists';

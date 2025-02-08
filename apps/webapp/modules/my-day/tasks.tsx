@@ -14,8 +14,6 @@ import { useUpdateTaskMutation } from 'services/tasks';
 import { TabViewType } from 'store/application';
 import { useContextStore } from 'store/global-context-provider';
 
-import { AddTask } from './add-task';
-
 interface TasksProps {
   date: Date;
   tasks: TaskType[];
@@ -31,12 +29,6 @@ function getTitle(date: Date) {
   }
 
   return 'Upcoming tasks';
-}
-
-function canAddTasks(date: Date) {
-  const today = new Date();
-
-  return isToday(date) || isAfter(date, today);
 }
 
 export const Tasks = observer(({ date, tasks }: TasksProps) => {
@@ -94,7 +86,7 @@ export const Tasks = observer(({ date, tasks }: TasksProps) => {
       updateTaskMutation({
         taskId: tasks[index].id,
         status: 'Todo',
-        dueDate: isAfter(date, new Date()) ? null : undefined,
+        startTime: isAfter(date, new Date()) ? null : undefined,
       });
     }
   };
@@ -158,8 +150,6 @@ export const Tasks = observer(({ date, tasks }: TasksProps) => {
             </div>
           );
         })}
-
-        {canAddTasks(date) && <AddTask date={date} />}
       </div>
     </div>
   );

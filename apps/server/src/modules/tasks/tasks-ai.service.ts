@@ -27,6 +27,7 @@ export default class TasksAIService {
       workspaceId,
     );
     const outputMatch = recurrenceOutput.match(/<output>(.*?)<\/output>/s);
+
     if (!outputMatch) {
       this.logger.error({
         message: 'No output found in recurrence response',

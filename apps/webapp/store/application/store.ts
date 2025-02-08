@@ -7,6 +7,14 @@ import {
   type ApplicationStoreType,
   type TabType,
   type TabGroupType,
+  FiltersModel,
+  DisplayViewModel,
+  type UpdateBody,
+  type FiltersModelType,
+  type UpdateDisplaySettingsBody,
+  type DisplaySettingsModelType,
+  TimeBasedFilterEnum,
+  GroupingEnum,
 } from './types';
 
 const initialId = uuidv4();
@@ -90,6 +98,8 @@ export const defaultApplicationStoreValue: {
   rightScreenCollapsed: boolean;
   tabGroups: Array<Instance<typeof TabGroup>>;
   selectedTasks: string[];
+  filters: FiltersModelType;
+  displaySettings: DisplaySettingsModelType;
 } = {
   rightScreenCollapsed: true,
   tabGroups: [
@@ -114,6 +124,12 @@ export const defaultApplicationStoreValue: {
       activeTab: initialId,
     }),
   ],
+  filters: {},
+  displaySettings: {
+    grouping: GroupingEnum.status,
+    completedFilter: TimeBasedFilterEnum.All,
+    showEmptyGroups: false,
+  },
   selectedTasks: [],
 };
 
@@ -125,6 +141,8 @@ const ApplicationStore = types
     id: initialId,
     selectedTasks: types.array(types.string),
     hoverTask: types.union(types.string, types.undefined),
+    filters: FiltersModel,
+    displaySettings: DisplayViewModel,
   })
   .actions((self) => {
     const updateRightScreen = (collapsed: boolean) => {
@@ -163,6 +181,27 @@ const ApplicationStore = types
       self.hoverTask = taskId;
     };
 
+    const updateFilters = (updateBody: UpdateBody) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const currentFilters = (self.filters as any).toJSON();
+
+      const toUpdateBody = { ...updateBody };
+      const mergedAttributes = {
+        ...currentFilters,
+        ...toUpdateBody,
+      };
+
+      self.filters = FiltersModel.create(mergedAttributes);
+    };
+
+    const deleteFilter = (filter: keyof FiltersModelType) => {
+      self.filters[filter] = undefined;
+    };
+
+    const updateDisplaySettings = (updateBody: UpdateDisplaySettingsBody) => {
+      self.displaySettings = { ...self.displaySettings, ...updateBody };
+    };
+
     return {
       load,
       updateRightScreen,
@@ -170,6 +209,9 @@ const ApplicationStore = types
       removeSelectedTask,
       clearSelectedTask,
       setHoverTask,
+      updateFilters,
+      deleteFilter,
+      updateDisplaySettings,
     };
   })
   .views((self) => ({

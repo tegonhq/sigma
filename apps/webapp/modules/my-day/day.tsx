@@ -5,11 +5,12 @@ import React from 'react';
 
 import { useTab } from 'hooks/application/use-tab';
 
+import { useContextStore } from 'store/global-context-provider';
+import type { TasksStoreType } from 'store/tasks';
+
 import { DayEditor } from './day-editor';
 import { Navigation } from './navigation';
 import { Tasks } from './tasks';
-import type { TasksStoreType } from 'store/tasks';
-import { useContextStore } from 'store/global-context-provider';
 
 function getTasks(tasksStore: TasksStoreType, date: Date) {
   const today = new Date();

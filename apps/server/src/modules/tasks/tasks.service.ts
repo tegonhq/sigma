@@ -53,6 +53,7 @@ export class TasksService {
       status: taskStatus,
       sourceId,
       integrationAccountId,
+      listId,
       ...otherTaskData
     } = createTaskDto;
 
@@ -112,6 +113,9 @@ export class TasksService {
         workspace: { connect: { id: workspaceId } },
         ...(integrationAccountId && {
           integrationAccount: { connect: { id: integrationAccountId } },
+        }),
+        ...(listId && {
+          list: { connect: { id: listId } },
         }),
         page: {
           create: {

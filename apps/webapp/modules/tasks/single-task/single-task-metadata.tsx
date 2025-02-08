@@ -25,7 +25,7 @@ export const SingleTaskMetadata = observer(
     const dueDateChange = (dueDate: Date) => {
       updateTask({
         taskId: task.id,
-        dueDate: dueDate ? dueDate.toISOString() : undefined,
+        startTime: dueDate ? dueDate.toISOString() : undefined,
       });
     };
 

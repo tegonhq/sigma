@@ -15,6 +15,10 @@ export class UpdateTaskDto {
 
   @IsString()
   @IsOptional()
+  listId?: string;
+
+  @IsString()
+  @IsOptional()
   startTime?: string;
 
   @IsString()

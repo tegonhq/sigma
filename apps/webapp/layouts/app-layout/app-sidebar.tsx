@@ -21,11 +21,15 @@ import { useApplication } from 'hooks/application';
 import { TabViewType } from 'store/application';
 
 import { WorkspaceDropdown } from './workspace-dropdown';
+import { useLists, type ListTypeWithCount } from 'hooks/list';
+import type { ListType } from 'common/types';
+import { Hash } from 'lucide-react';
 
 export const AppSidebar = observer(
   ({ ...props }: React.ComponentProps<typeof Sidebar>) => {
     const { updateTabType, closeRightScreen, tabs } = useApplication();
     const firstTab = tabs[0];
+    const lists = useLists();
 
     useHotkeys(
       [`${getPlatformModifierKey()}+1`, `${getPlatformModifierKey()}+2`],
@@ -100,6 +104,30 @@ export const AppSidebar = observer(
                   Tasks
                 </Button>
               </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroup>
+
+          <SidebarGroup>
+            <h3 className="text-sm text-muted-foreground mb-1">Lists</h3>
+            <SidebarMenu className="gap-0.5">
+              {lists.map((list: ListTypeWithCount) => (
+                <>
+                  {list.count > 0 ? (
+                    <SidebarMenuItem key={list.id}>
+                      <Button
+                        variant="secondary"
+                        className="flex gap-1 w-fit"
+                        onClick={() => {}}
+                      >
+                        <Hash size={14} /> {list.name}
+                        <span className="ml-0.5 text-muted-foreground">
+                          {list.count}
+                        </span>
+                      </Button>
+                    </SidebarMenuItem>
+                  ) : null}
+                </>
+              ))}
             </SidebarMenu>
           </SidebarGroup>
         </SidebarContent>

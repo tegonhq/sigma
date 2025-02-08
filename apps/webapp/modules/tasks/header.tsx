@@ -31,8 +31,8 @@ export const Header = observer(({ actions }: HeaderProps) => {
   const page = pagesStore.getPageWithId(task?.pageId);
 
   return (
-    <header className="flex h-10 shrink-0 items-center justify-between gap-2 border-border border-b">
-      <div className="flex items-center gap-2 px-6">
+    <header className="flex h-[38px] shrink-0 items-center justify-between gap-2 border-border border-b">
+      <div className="flex items-center gap-2 px-2">
         <Navigation />
         <Breadcrumb>
           <BreadcrumbList className="gap-1">

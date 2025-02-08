@@ -6,13 +6,15 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@tegonhq/ui';
+import { HashIcon } from 'lucide-react';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 
-import { ListDropdownContent } from './list-dropdown-content';
 import { useLists } from 'hooks/list';
-import { RiHashtag } from '@remixicon/react';
-import { HashIcon } from 'lucide-react';
+
+import { useContextStore } from 'store/global-context-provider';
+
+import { ListDropdownContent } from './list-dropdown-content';
 
 export enum ListDropdownVariant {
   NO_BACKGROUND = 'NO_BACKGROUND',
@@ -30,7 +32,21 @@ export const ListDropdown = observer(
   ({ value, onChange, variant = ListDropdownVariant.DEFAULT }: StatusProps) => {
     const [open, setOpen] = React.useState(false);
     const [searchValue, setSearchValue] = React.useState('');
+    const { listsStore } = useContextStore();
     const lists = useLists();
+
+    const getListName = (value?: string) => {
+      if (!value) {
+        return 'Add list...';
+      }
+
+      if (value.includes('__new')) {
+        return value.replace('__new', '');
+      }
+
+      const list = listsStore.getListWithId(value);
+      return list.name;
+    };
 
     function getTrigger() {
       if (variant === ListDropdownVariant.NO_BACKGROUND) {
@@ -55,7 +71,7 @@ export const ListDropdown = observer(
             aria-expanded={open}
             className="flex items-center px-0 shadow-none justify-between focus-visible:ring-1 focus-visible:border-primary"
           >
-            {value}
+            {getListName(value)}
           </Button>
         );
       }
@@ -68,7 +84,7 @@ export const ListDropdown = observer(
           className="flex items-center gap-1 justify-between shadow-none focus-visible:ring-1 focus-visible:border-primary border-border"
         >
           <HashIcon size={14} />
-          {value ? `${value}` : 'Add list...'}
+          {getListName(value)}
         </Button>
       );
     }

@@ -5,6 +5,7 @@ import {
   CommandInput,
   PopoverContent,
   PopoverTrigger,
+  PopoverPortal,
 } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
@@ -88,16 +89,18 @@ export const StatusDropdown = observer(
       >
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>{getTrigger()}</PopoverTrigger>
-          <PopoverContent className="w-72 p-0" align="start">
-            <Command>
-              <CommandInput placeholder="Set status..." autoFocus />
-              <StatusDropdownContent
-                onChange={onChange}
-                onClose={() => setOpen(false)}
-                value={value}
-              />
-            </Command>
-          </PopoverContent>
+          <PopoverPortal>
+            <PopoverContent className="w-72 p-0" align="start">
+              <Command>
+                <CommandInput placeholder="Set status..." autoFocus />
+                <StatusDropdownContent
+                  onChange={onChange}
+                  onClose={() => setOpen(false)}
+                  value={value}
+                />
+              </Command>
+            </PopoverContent>
+          </PopoverPortal>
         </Popover>
       </div>
     );

@@ -35,6 +35,10 @@ export class CreateTaskDto {
 
   @IsString()
   @IsOptional()
+  listId?: string;
+
+  @IsString()
+  @IsOptional()
   endTime?: string;
 
   @IsArray()

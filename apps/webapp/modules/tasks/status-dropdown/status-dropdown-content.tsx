@@ -10,7 +10,7 @@ interface IssueStatusDropdownContentProps {
   value: string | string[];
 }
 
-const statuses = ['Todo', 'In Progress', 'Done', 'Canceled'];
+export const statuses = ['Todo', 'In Progress', 'Done', 'Canceled'];
 
 export function StatusDropdownContent({
   onChange,
@@ -62,7 +62,7 @@ export function StatusDropdownContent({
                   }}
                 />
               )}
-              <label className="flex grow items-center" htmlFor={status}>
+              <label className="flex grow items-center">
                 <CategoryIcon
                   size={18}
                   className="mr-2"

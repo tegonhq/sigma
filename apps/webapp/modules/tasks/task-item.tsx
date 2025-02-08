@@ -1,14 +1,18 @@
-import { cn } from '@tegonhq/ui';
+import type React from 'react';
+
+import { Checkbox, cn } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
-import React from 'react';
+
+import { useApplication } from 'hooks/application';
 
 import { useUpdateTaskMutation } from 'services/tasks';
 
+import { TabViewType } from 'store/application';
 import { useContextStore } from 'store/global-context-provider';
 
-import { IntegrationTaskItem } from './integration-task-item';
 import { StatusDropdown, StatusDropdownVariant } from './status-dropdown';
-import { TaskDueDate } from './task-duedate';
+import { hasMoreInfo } from './utils';
+import { TaskInfo } from './task-info';
 
 interface TaskListItemProps {
   taskId: string;
@@ -16,6 +20,7 @@ interface TaskListItemProps {
 
 export const TaskListItem = observer(({ taskId }: TaskListItemProps) => {
   const { tasksStore, pagesStore } = useContextStore();
+  const { updateTabType } = useApplication();
 
   const task = tasksStore.getTaskWithId(taskId);
   const page = pagesStore.getPageWithId(task.pageId);
@@ -28,19 +33,27 @@ export const TaskListItem = observer(({ taskId }: TaskListItemProps) => {
     });
   };
 
-  if (task.integrationAccountId) {
-    return (
-      <IntegrationTaskItem
-        task={task}
-        page={page}
-        statusChange={statusChange}
-      />
-    );
-  }
+  const taskSelect = (taskId: string) => {
+    updateTabType(0, TabViewType.MY_TASKS, { entityId: taskId });
+  };
 
   return (
-    <div className="pl-1 flex group cursor-default gap-2">
+    <div
+      className="pl-1 pr-2 flex group cursor-default gap-2"
+      onClick={() => {
+        taskSelect(taskId);
+      }}
+    >
       <div className="w-full flex items-center">
+        <div className={cn('flex items-center py-2.5 pl-4')}>
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            <Checkbox className={cn('hidden')} checked={false} />
+          </div>
+        </div>
         <div
           className={cn(
             'flex w-full items-start gap-2 pl-2 ml-1 pr-2 group-hover:bg-grayAlpha-100 rounded-xl shrink min-w-[0px]',
@@ -69,12 +82,14 @@ export const TaskListItem = observer(({ taskId }: TaskListItemProps) => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 flex-wrap pr-1 shrink-0">
-                {task.status !== 'Done' && (
-                  <TaskDueDate dueDate={task.dueDate} />
-                )}
-              </div>
+              <div className="flex items-center gap-2 flex-wrap pr-1 shrink-0"></div>
             </div>
+
+            {hasMoreInfo(task) && (
+              <div>
+                <TaskInfo task={task} />
+              </div>
+            )}
           </div>
         </div>
       </div>
