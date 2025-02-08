@@ -12,6 +12,7 @@ export const resolveEnvVars: ResolveEnvironmentVariablesFunction = async ({
   return {
     variables: {
       DATABASE_URL: env.DATABASE_URL,
+      BACKEND_URL: env.BACKEND_HOST,
     },
   };
 };

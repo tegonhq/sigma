@@ -27,6 +27,10 @@ export class CreateTaskDto {
 
   @IsString()
   @IsOptional()
+  dueDate?: string;
+
+  @IsString()
+  @IsOptional()
   startTime?: string;
 
   @IsString()
@@ -40,4 +44,8 @@ export class CreateTaskDto {
   @IsString()
   @IsOptional()
   recurrenceText?: string;
+
+  @IsString()
+  @IsOptional()
+  remindAt?: string;
 }

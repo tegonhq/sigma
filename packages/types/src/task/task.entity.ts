@@ -28,6 +28,8 @@ export class Task {
   endTime?: Date;
   recurrence?: string[];
   recurrenceText?: string;
+  dueDate?: Date;
+  remindAt?: Date;
 
   pageId?: string;
   page?: Page;

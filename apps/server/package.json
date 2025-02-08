@@ -85,6 +85,7 @@
     "execa": "^9.3.0",
     "jsonwebtoken": "^9.0.2",
     "jwks-rsa": "^3.1.0",
+    "knex": "^3.1.0",
     "marked": "^14.1.2",
     "nest-winston": "^1.9.7",
     "nestjs-prisma": "0.22.0",

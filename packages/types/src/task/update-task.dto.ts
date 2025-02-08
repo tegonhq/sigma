@@ -1,4 +1,4 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsArray, IsOptional, IsString } from 'class-validator';
 
 export class UpdateTaskDto {
   @IsString()
@@ -12,4 +12,24 @@ export class UpdateTaskDto {
   @IsString()
   @IsOptional()
   dueDate?: string;
+
+  @IsString()
+  @IsOptional()
+  startTime?: string;
+
+  @IsString()
+  @IsOptional()
+  endTime?: string;
+
+  @IsArray()
+  @IsOptional()
+  recurrence?: string[];
+
+  @IsString()
+  @IsOptional()
+  recurrenceText?: string;
+
+  @IsString()
+  @IsOptional()
+  remindAt?: string;
 }

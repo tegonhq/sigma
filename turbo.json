@@ -35,7 +35,13 @@
     "GCP_SERVICE_ACCOUNT_FILE",
     "REDIS_URL",
     "REDIS_PORT",
-    "NEXT_PUBLIC_AI_HOST"
+    "NEXT_PUBLIC_AI_HOST",
+    "TRIGGER_DB",
+    "TRIGGER_DATABASE_URL",
+    "TRIGGER_COMMON_ID",
+    "TRIGGER_TOKEN",
+    "TRIGGER_ACCESS_TOKEN",
+    "TRIGGER_API_URL"
   ],
   "ui": "tui",
   "tasks": {

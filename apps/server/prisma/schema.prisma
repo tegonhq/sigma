@@ -289,6 +289,8 @@ model Task {
   endTime        DateTime?
   recurrence     String[]
   recurrenceText String?
+  dueDate        DateTime?
+  remindAt       DateTime?
 
   page   Page   @relation(fields: [pageId], references: [id])
   pageId String

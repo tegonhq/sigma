@@ -26,6 +26,7 @@ import { ReplicationModule } from 'modules/replication/replication.module';
 import { SyncActionsModule } from 'modules/sync-actions/sync-actions.module';
 import { TaskOccurenceModule } from 'modules/task-occurence/task-occurence.model';
 import { TasksModule } from 'modules/tasks/tasks.module';
+import { TriggerdevModule } from 'modules/triggerdev/triggerdev.module';
 import { UsersModule } from 'modules/users/users.module';
 import { WebhookModule } from 'modules/webhook/webhook.module';
 import { WorkspacesModule } from 'modules/workspaces/workspaces.module';
@@ -94,6 +95,7 @@ import { AppService } from './app.service';
     TaskOccurenceModule,
     AIRequestsModule,
     PromptsModule,
+    TriggerdevModule,
   ],
   controllers: [AppController],
   providers: [

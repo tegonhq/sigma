@@ -4,6 +4,9 @@ import { PrismaService } from 'nestjs-prisma';
 
 import { IntegrationsService } from 'modules/integrations/integrations.service';
 import { TaskOccurenceService } from 'modules/task-occurence/task-occurence.service';
+import { Env } from 'modules/triggerdev/triggerdev.interface';
+import { TriggerdevService } from 'modules/triggerdev/triggerdev.service';
+import { UsersService } from 'modules/users/users.service';
 
 import { handleCalendarTask } from './tasks.utils';
 
@@ -13,6 +16,8 @@ export class TasksService {
     private prisma: PrismaService,
     private taskOccurenceService: TaskOccurenceService,
     private integrationService: IntegrationsService,
+    private triggerDevService: TriggerdevService,
+    private usersService: UsersService,
   ) {}
 
   async getTaskBySourceId(sourceId: string): Promise<Task | null> {
@@ -140,6 +145,17 @@ export class TasksService {
         task,
       );
     }
+
+    const pat = this.usersService.getOrCreatePat(userId, workspaceId);
+    await this.triggerDevService.triggerTaskAsync(
+      'common',
+      'beautify-task',
+      {
+        taskId: task.id,
+        pat,
+      },
+      Env.PROD,
+    );
 
     return task;
   }
