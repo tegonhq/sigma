@@ -14,6 +14,7 @@ import {
   loadRemoteModule,
 } from 'common/remote-loader';
 
+import { IntegrationsService } from 'modules/integrations/integrations.service';
 import { UsersService } from 'modules/users/users.service';
 
 import {
@@ -26,6 +27,7 @@ export class IntegrationAccountService {
   constructor(
     private prisma: PrismaService,
     private usersService: UsersService,
+    private integrationService: IntegrationsService,
   ) {}
 
   async createIntegrationAccount(
@@ -66,6 +68,30 @@ export class IntegrationAccountService {
     });
 
     return integrationAccount;
+  }
+
+  async createIntegrationAccountByApiKey(
+    workspaceId: string,
+    userId: string,
+    createIntegrationAccountDto: Partial<CreateIntegrationAccountDto>,
+  ) {
+    const integrationDefinition =
+      await this.prisma.integrationDefinitionV2.findUnique({
+        where: { id: createIntegrationAccountDto.integrationDefinitionId },
+      });
+
+    const integration = await this.integrationService.loadIntegration(
+      integrationDefinition.slug,
+    );
+
+    return await integration.run({
+      event: IntegrationPayloadEventType.CREATE,
+      userId,
+      workspaceId,
+      eventBody: {
+        ...createIntegrationAccountDto,
+      },
+    });
   }
 
   async getIntegrationAccountWithId(integrationAccountId: string) {

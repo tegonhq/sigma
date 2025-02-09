@@ -126,6 +126,21 @@ export class IntegrationAccountController {
     );
   }
 
+  @Post('create/apikey')
+  @UseGuards(AuthGuard)
+  async createIntegrationAccountForApiKey(
+    @Workspace() workspaceId: string,
+    @UserId() userId: string,
+    @Body()
+    createIntegrationAccountDto: Partial<CreateIntegrationAccountDto>,
+  ): Promise<IntegrationAccount> {
+    return await this.integrationAccountService.createIntegrationAccountByApiKey(
+      workspaceId,
+      userId,
+      createIntegrationAccountDto,
+    );
+  }
+
   /**
    * Update a integration account in workspace
    */
