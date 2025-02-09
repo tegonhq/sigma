@@ -11,6 +11,7 @@ import { SettingSection } from 'modules/settings/setting-section';
 import { useGetIntegrationDefinition } from 'services/integration-definition';
 
 import { IntegrationAuth } from './integration-auth';
+import { IntegrationAuthAPI } from './integration-auth-api';
 
 interface IntegrationProps {
   integrationDefinitionId: string;
@@ -24,13 +25,15 @@ export function Integration({
   const { data: integrationDefinition, isLoading } =
     useGetIntegrationDefinition(integrationDefinitionId as string);
 
+  console.log(integrationDefinition);
+
   return (
     <>
       {!isLoading && (
         <SettingSection
           title={
             <Breadcrumb className="text-base">
-              <BreadcrumbList>
+              <BreadcrumbList className="gap-0">
                 <BreadcrumbItem>
                   <BreadcrumbLink
                     onClick={onBack}
@@ -55,8 +58,12 @@ export function Integration({
           description={integrationDefinition.description}
         >
           <>
-            {integrationDefinition.spec && (
+            {integrationDefinition.spec.auth['OAuth'] ? (
               <IntegrationAuth integrationDefinition={integrationDefinition} />
+            ) : (
+              <IntegrationAuthAPI
+                integrationDefinition={integrationDefinition}
+              />
             )}
           </>
         </SettingSection>

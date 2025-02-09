@@ -37,8 +37,6 @@ export const SingleTaskMetadata = observer(
       });
     };
 
-    console.log(task);
-
     return (
       <div className="p-2 flex gap-2 rounded bg-grayAlpha-50">
         <StatusDropdown value={task.status} onChange={statusChange} />

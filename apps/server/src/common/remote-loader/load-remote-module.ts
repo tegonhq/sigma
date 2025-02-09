@@ -14,6 +14,7 @@ export const fetcher = async (url: string) => {
   }
   // Handle remote URLs with axios
   const response = await axios.get(url);
+
   return response.data;
 };
 

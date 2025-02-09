@@ -1,8 +1,5 @@
 import { Controller, Get, Param, UseGuards } from '@nestjs/common';
-import {
-  IntegrationDefinition,
-  IntegrationDefinitionIdDto,
-} from '@sigma/types';
+import { IntegrationDefinitionIdDto } from '@sigma/types';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
 import { Workspace } from 'modules/auth/session.decorator';
@@ -30,20 +27,6 @@ export class IntegrationDefinitionController {
   }
 
   // /**
-  //  * Get integration definition
-  //  */
-  @Get(':integrationDefinitionId')
-  @UseGuards(AuthGuard)
-  async getIntegrationDefinition(
-    @Param()
-    integrationDefinitionRequestIdBody: IntegrationDefinitionIdDto,
-  ) {
-    return await this.integrationDefinitionService.getIntegrationDefinitionWithSpec(
-      integrationDefinitionRequestIdBody.integrationDefinitionId,
-    );
-  }
-
-  // /**
   //  * Get spec for integration definition
   //  */
   @Get(':integrationDefinitionId/spec')
@@ -60,16 +43,17 @@ export class IntegrationDefinitionController {
     return integrationDefinition.spec;
   }
 
-  /**
-   * Get a integration definition in a workspace
-   */
+  // /**
+  //  * Get integration definition
+  //  */
   @Get(':integrationDefinitionId')
-  async getIntegrationDefinitionWithId(
+  @UseGuards(AuthGuard)
+  async getIntegrationDefinition(
     @Param()
     integrationDefinitionRequestIdBody: IntegrationDefinitionIdDto,
-  ): Promise<IntegrationDefinition> {
-    return await this.integrationDefinitionService.getIntegrationDefinitionWithId(
-      integrationDefinitionRequestIdBody,
+  ) {
+    return await this.integrationDefinitionService.getIntegrationDefinitionWithSpec(
+      integrationDefinitionRequestIdBody.integrationDefinitionId,
     );
   }
 }

@@ -118,8 +118,10 @@ export class IntegrationAccountController {
   async createIntegrationAccount(
     @Body()
     createIntegrationAccountDto: CreateIntegrationAccountDto,
+    @Workspace() workspaceId: string,
   ): Promise<IntegrationAccount> {
     return await this.integrationAccountService.createIntegrationAccount(
+      workspaceId,
       createIntegrationAccountDto,
     );
   }

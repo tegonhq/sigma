@@ -1,9 +1,8 @@
 import { IsObject, IsOptional, IsString } from 'class-validator';
 
 import { type JsonObject } from '../common';
-import { WorkspaceRequestParamsDto } from '../workspace';
 
-export class CreateIntegrationAccountDto extends WorkspaceRequestParamsDto {
+export class CreateIntegrationAccountDto {
   @IsString()
   integrationDefinitionId: string;
 

@@ -64,7 +64,7 @@ export async function getTemplate(
   integrationDefinition: IntegrationDefinition,
 ): Promise<ProviderTemplate> {
   const spec = integrationDefinition.spec;
-  const template: ProviderTemplate = spec.OAuth2 as ProviderTemplate;
+  const template: ProviderTemplate = spec.auth.OAuth2 as ProviderTemplate;
 
   if (!template) {
     throw new BadRequestException({

@@ -15,8 +15,15 @@ export class OAuth2Params {
   scopes?: string[];
 }
 
+export type AuthType = 'OAuth2' | 'APIKey';
+
+export class APIKeyParams {
+  'header_name': string;
+  'format': string;
+}
+
 export class Spec {
-  OAuth2: OAuth2Params;
+  auth: Record<string, OAuth2Params | APIKeyParams>;
   other_data?: JsonObject;
 }
 

@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { IntegrationPayloadEventType } from '@sigma/types';
+import { IntegrationPayloadEventType, OAuth2Params } from '@sigma/types';
 import * as simpleOauth2 from 'simple-oauth2';
 
 import {
@@ -60,7 +60,7 @@ export class OAuthCallbackService {
       );
 
     const spec = integrationDefinition.spec;
-    const externalConfig = spec.OAuth2;
+    const externalConfig = spec.auth.OAuth2 as OAuth2Params;
     const template = await getTemplate(integrationDefinition);
 
     const scopesString = specificScopes || externalConfig.scopes.join(',');
@@ -180,7 +180,8 @@ export class OAuthCallbackService {
       : '';
 
     try {
-      const scopes = integrationDefinition.spec.OAuth2.scopes;
+      const scopes = (integrationDefinition.spec.auth.OAuth2 as OAuth2Params)
+        .scopes;
       const simpleOAuthClient = new simpleOauth2.AuthorizationCode(
         getSimpleOAuth2ClientConfig(
           {

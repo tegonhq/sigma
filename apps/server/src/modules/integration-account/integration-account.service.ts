@@ -29,6 +29,7 @@ export class IntegrationAccountService {
   ) {}
 
   async createIntegrationAccount(
+    workspaceId: string,
     createIntegrationAccountDto: CreateIntegrationAccountDto,
   ) {
     const {
@@ -37,7 +38,6 @@ export class IntegrationAccountService {
       settings,
       accountId,
       integrationDefinitionId,
-      workspaceId,
     } = createIntegrationAccountDto;
     // Update the integration account with the new configuration in the database
     const integrationAccount = await this.prisma.integrationAccount.upsert({
