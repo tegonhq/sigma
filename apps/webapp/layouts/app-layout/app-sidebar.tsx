@@ -1,6 +1,7 @@
 import {
   Button,
   CalendarLine,
+  Project,
   Sidebar,
   SidebarContent,
   SidebarGroup,
@@ -17,13 +18,11 @@ import { getPlatformModifierKey } from 'common/common-utils';
 import { SCOPES } from 'common/shortcut-scopes';
 
 import { useApplication } from 'hooks/application';
+import { useLists, type ListTypeWithCount } from 'hooks/list';
 
 import { TabViewType } from 'store/application';
 
 import { WorkspaceDropdown } from './workspace-dropdown';
-import { useLists, type ListTypeWithCount } from 'hooks/list';
-import type { ListType } from 'common/types';
-import { Hash } from 'lucide-react';
 
 export const AppSidebar = observer(
   ({ ...props }: React.ComponentProps<typeof Sidebar>) => {
@@ -50,7 +49,7 @@ export const AppSidebar = observer(
       },
     );
 
-    const navigate = (page: TabViewType) => {
+    const navigate = (page: TabViewType, id?: string) => {
       switch (page) {
         case TabViewType.MY_DAY:
           updateTabType(0, TabViewType.MY_DAY, {
@@ -66,6 +65,10 @@ export const AppSidebar = observer(
         case TabViewType.AI:
           closeRightScreen();
           updateTabType(0, TabViewType.AI, {});
+          return;
+        case TabViewType.LIST:
+          closeRightScreen();
+          updateTabType(0, TabViewType.LIST, { entityId: id });
       }
     };
 
@@ -117,9 +120,13 @@ export const AppSidebar = observer(
                       <Button
                         variant="secondary"
                         className="flex gap-1 w-fit"
-                        onClick={() => {}}
+                        isActive={
+                          firstTab.type === TabViewType.LIST &&
+                          firstTab.entity_id === list.id
+                        }
+                        onClick={() => navigate(TabViewType.LIST, list.id)}
                       >
-                        <Hash size={14} /> {list.name}
+                        <Project size={14} /> {list.name}
                         <span className="ml-0.5 text-muted-foreground">
                           {list.count}
                         </span>

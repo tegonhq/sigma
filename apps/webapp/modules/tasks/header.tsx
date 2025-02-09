@@ -8,7 +8,6 @@ import {
   BreadcrumbSeparator,
   Button,
   SidebarLine,
-  useSidebar,
 } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 

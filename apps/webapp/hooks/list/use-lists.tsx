@@ -11,7 +11,7 @@ export interface ListTypeWithCount extends ListType {
 
 export const useLists = (): ListTypeWithCount[] => {
   const { tasksStore, listsStore } = useContextStore();
-  const groupedByList = groupBy(tasksStore.getTasks, 'listId');
+  const groupedByList = groupBy(tasksStore.getTasks({}), 'listId');
 
   const lists = listsStore
     .getListWithIds(Array.from(groupedByList.keys()) as string[])

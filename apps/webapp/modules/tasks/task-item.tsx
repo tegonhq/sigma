@@ -72,24 +72,19 @@ export const TaskListItem = observer(({ taskId }: TaskListItemProps) => {
               'flex flex-col w-full py-2 border-b border-border shrink min-w-[0px]',
             )}
           >
-            <div className="flex w-full justify-between gap-4">
-              <div className="flex gap-1 w-full">
+            <div className="flex w-full justify-between gap-4 items-center">
+              <div className="flex gap-1 w-full items-center">
                 <div className="text-muted-foreground font-mono min-w-[40px] pl-1 text-sm self-center">
                   T-{task.number}
                 </div>
                 <div className="inline-flex items-center justify-start shrink min-w-[0px] min-h-[24px]">
                   <div className="text-left truncate">{page?.title}</div>
                 </div>
+                <TaskInfo task={task} />
               </div>
 
               <div className="flex items-center gap-2 flex-wrap pr-1 shrink-0"></div>
             </div>
-
-            {hasMoreInfo(task) && (
-              <div>
-                <TaskInfo task={task} />
-              </div>
-            )}
           </div>
         </div>
       </div>

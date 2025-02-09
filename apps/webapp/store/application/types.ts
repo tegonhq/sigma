@@ -1,5 +1,4 @@
-import { flow, types } from 'mobx-state-tree';
-import { sigmaDatabase } from 'store/database';
+import { types } from 'mobx-state-tree';
 
 export interface TabType {
   id: string;
@@ -18,6 +17,7 @@ export interface TabType {
 export enum TabViewType {
   MY_DAY = 'my_day',
   MY_TASKS = 'my_tasks',
+  LIST = 'lists',
   INSTRUCTIONS = 'instructions',
   AI = 'ai',
 }

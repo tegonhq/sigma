@@ -2,6 +2,7 @@ import { observer } from 'mobx-react-lite';
 
 import { AI } from 'modules/ai';
 import { Instructions } from 'modules/instructions';
+import { ListTasks } from 'modules/lists/list-tasks';
 import { MyDay } from 'modules/my-day';
 import { SearchDialog } from 'modules/search';
 import { Tasks } from 'modules/tasks';
@@ -23,6 +24,10 @@ function getComponent(componentType: string, props: any) {
 
   if (componentType === TabViewType.MY_TASKS) {
     return <Tasks {...props} />;
+  }
+
+  if (componentType === TabViewType.LIST) {
+    return <ListTasks {...props} />;
   }
 
   if (componentType === TabViewType.INSTRUCTIONS) {

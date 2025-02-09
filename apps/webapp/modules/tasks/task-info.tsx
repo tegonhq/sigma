@@ -1,4 +1,4 @@
-import { Button } from '@tegonhq/ui';
+import { Badge, Project } from '@tegonhq/ui';
 import { Hash } from 'lucide-react';
 import { observer } from 'mobx-react-lite';
 
@@ -15,21 +15,20 @@ export const TaskInfo = observer(({ task }: { task: TaskType }) => {
   }
 
   return (
-    <div className="flex flex-col w-fit">
+    <div className="flex flex-col w-fit items-center">
       <div
-        className="flex gap-2 pt-1"
+        className="flex gap-2"
         onClick={(e) => {
           e.stopPropagation();
         }}
       >
         {list && (
-          <Button
-            className="flex gap-1 text-xs items-center"
+          <Badge
             variant="secondary"
-            size="sm"
+            className="flex items-center gap-1 shrink min-w-[0px]"
           >
-            <Hash size={12} /> {list?.name}
-          </Button>
+            <Project size={12} /> {list?.name}
+          </Badge>
         )}
       </div>
     </div>

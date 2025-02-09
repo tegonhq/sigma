@@ -5,6 +5,7 @@ import {
   CommandInput,
   PopoverContent,
   PopoverTrigger,
+  Project,
 } from '@tegonhq/ui';
 import { HashIcon } from 'lucide-react';
 import { observer } from 'mobx-react-lite';
@@ -83,7 +84,7 @@ export const ListDropdown = observer(
           aria-expanded={open}
           className="flex items-center gap-1 justify-between shadow-none focus-visible:ring-1 focus-visible:border-primary border-border"
         >
-          <HashIcon size={14} />
+          <Project size={14} />
           {getListName(value)}
         </Button>
       );

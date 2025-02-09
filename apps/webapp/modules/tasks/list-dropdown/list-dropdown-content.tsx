@@ -1,4 +1,4 @@
-import { Checkbox, CommandGroup } from '@tegonhq/ui';
+import { Checkbox, CommandGroup, Project } from '@tegonhq/ui';
 
 import type { ListType } from 'common/types';
 
@@ -84,7 +84,7 @@ export function ListDropdownContent({
                 />
               )}
               <label className="flex grow items-center gap-1" htmlFor={list.id}>
-                <HashIcon size={14} /> {list.name}
+                <Project size={14} /> {list.name}
               </label>
             </div>
           </DropdownItem>

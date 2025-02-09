@@ -1,9 +1,13 @@
 import { CommandGroup, CommandItem, UnscopedLine } from '@tegonhq/ui';
+import { useApplication } from 'hooks/application';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 
 export const DefaultFilterDropdown = observer(
   ({ onSelect }: { onSelect: (value: string) => void }) => {
+    const { tabs } = useApplication();
+    const firstTab = tabs[0];
+
     return (
       <CommandGroup>
         <CommandItem

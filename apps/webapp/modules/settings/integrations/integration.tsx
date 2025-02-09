@@ -25,8 +25,6 @@ export function Integration({
   const { data: integrationDefinition, isLoading } =
     useGetIntegrationDefinition(integrationDefinitionId as string);
 
-  console.log(integrationDefinition);
-
   return (
     <>
       {!isLoading && (
@@ -58,7 +56,7 @@ export function Integration({
           description={integrationDefinition.description}
         >
           <>
-            {integrationDefinition.spec.auth['OAuth'] ? (
+            {integrationDefinition.spec.auth['OAuth2'] ? (
               <IntegrationAuth integrationDefinition={integrationDefinition} />
             ) : (
               <IntegrationAuthAPI
