@@ -1,12 +1,13 @@
 import {app} from 'electron';
 import './security-restrictions';
 
-import {registerShortcut, restoreOrCreateWindow, setTray} from '../windows';
+import {restoreOrCreateWindow} from '../windows';
 import {platform} from 'node:process';
 import updater from 'electron-updater';
 import {startAPI} from './api';
 import {listeners} from '../windows/listeners';
 import {registerStore} from './store';
+import {setupAutoUpdater} from './auto-update';
 
 /**
  * Prevent electron from running multiple instances.
@@ -44,9 +45,9 @@ app
   .whenReady()
   .then(() => {
     registerStore();
-    setTray();
     restoreOrCreateWindow();
-    registerShortcut();
+    // registerShortcut();
+    setupAutoUpdater();
     listeners();
   })
   .catch(e => console.error('Failed create window:', e));

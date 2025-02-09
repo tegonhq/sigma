@@ -1,11 +1,9 @@
 import { Checkbox, CommandGroup, Project } from '@tegonhq/ui';
+import React from 'react';
 
 import type { ListType } from 'common/types';
 
 import { DropdownItem } from '../status-dropdown/dropdown-item';
-import React from 'react';
-import { RiHashtag } from '@remixicon/react';
-import { HashIcon } from 'lucide-react';
 
 interface ListDropdownContentProps {
   onChange?: (id: string | string[]) => void;

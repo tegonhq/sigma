@@ -80,18 +80,17 @@ export class IntegrationAccountService {
         where: { id: createIntegrationAccountDto.integrationDefinitionId },
       });
 
-    const integration = await this.integrationService.loadIntegration(
-      integrationDefinition.slug,
-    );
-
-    return await integration.run({
-      event: IntegrationPayloadEventType.CREATE,
-      userId,
-      workspaceId,
-      eventBody: {
-        ...createIntegrationAccountDto,
+    return await this.integrationService.runIntegrationTrigger(
+      integrationDefinition,
+      {
+        event: IntegrationPayloadEventType.CREATE,
+        userId,
+        workspaceId,
+        eventBody: {
+          ...createIntegrationAccountDto,
+        },
       },
-    });
+    );
   }
 
   async getIntegrationAccountWithId(integrationAccountId: string) {

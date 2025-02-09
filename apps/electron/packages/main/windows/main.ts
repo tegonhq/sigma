@@ -6,6 +6,7 @@ import {fileURLToPath} from 'node:url';
 // Initialize Fastify
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+const isDev = process.env.NODE_ENV === 'development';
 
 export async function createMainWindow() {
   const browserWindow = new BrowserWindow({
@@ -38,13 +39,15 @@ export async function createMainWindow() {
   browserWindow.on('ready-to-show', () => {
     browserWindow?.show();
 
-    browserWindow?.webContents.openDevTools();
+    if (isDev) {
+      browserWindow?.webContents.openDevTools();
+    }
   });
 
   /**
    * Load the main page of the main window.
    */
-  browserWindow.loadURL('http://localhost:8000');
+  browserWindow.loadURL('http://localhost:53081');
 
   return browserWindow;
 }

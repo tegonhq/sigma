@@ -1,17 +1,16 @@
-import type React from 'react';
-
 import { Checkbox, cn } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
+import React from 'react';
+
+import { TaskViewContext } from 'layouts/side-task-view';
 
 import { useApplication } from 'hooks/application';
 
 import { useUpdateTaskMutation } from 'services/tasks';
 
-import { TabViewType } from 'store/application';
 import { useContextStore } from 'store/global-context-provider';
 
 import { StatusDropdown, StatusDropdownVariant } from './status-dropdown';
-import { hasMoreInfo } from './utils';
 import { TaskInfo } from './task-info';
 
 interface TaskListItemProps {
@@ -20,11 +19,18 @@ interface TaskListItemProps {
 
 export const TaskListItem = observer(({ taskId }: TaskListItemProps) => {
   const { tasksStore, pagesStore } = useContextStore();
-  const { updateTabType } = useApplication();
-
+  const { openTask } = React.useContext(TaskViewContext);
+  const {
+    selectedTasks,
+    setHoverTask,
+    hoverTask,
+    addToSelectedTask,
+    removeSelectedTask,
+  } = useApplication();
   const task = tasksStore.getTaskWithId(taskId);
   const page = pagesStore.getPageWithId(task.pageId);
   const { mutate: updateTask } = useUpdateTaskMutation({});
+  const taskSelected = selectedTasks.includes(task.id);
 
   const statusChange = (status: string) => {
     updateTask({
@@ -34,7 +40,7 @@ export const TaskListItem = observer(({ taskId }: TaskListItemProps) => {
   };
 
   const taskSelect = (taskId: string) => {
-    updateTabType(0, TabViewType.MY_TASKS, { entityId: taskId });
+    openTask(taskId);
   };
 
   return (
@@ -43,20 +49,44 @@ export const TaskListItem = observer(({ taskId }: TaskListItemProps) => {
       onClick={() => {
         taskSelect(taskId);
       }}
+      onMouseOver={() => {
+        if (selectedTasks.length === 0 && task.id !== hoverTask) {
+          setHoverTask(task.id);
+        }
+      }}
     >
       <div className="w-full flex items-center">
-        <div className={cn('flex items-center py-2.5 pl-4')}>
+        <div
+          className={cn(
+            'flex items-center py-2.5 pl-4 group-hover:pl-0',
+            taskSelected && 'pl-0',
+          )}
+        >
           <div
             onClick={(e) => {
               e.stopPropagation();
             }}
           >
-            <Checkbox className={cn('hidden')} checked={false} />
+            <Checkbox
+              className={cn(
+                'hidden group-hover:block',
+                taskSelected && 'block',
+              )}
+              onCheckedChange={(checked) => {
+                if (checked) {
+                  addToSelectedTask(task.id, false);
+                } else {
+                  removeSelectedTask(task.id);
+                }
+              }}
+              checked={taskSelected}
+            />
           </div>
         </div>
         <div
           className={cn(
             'flex w-full items-start gap-2 pl-2 ml-1 pr-2 group-hover:bg-grayAlpha-100 rounded-xl shrink min-w-[0px]',
+            taskSelected && 'bg-primary/10',
           )}
         >
           <div className="pt-2 shrink-0">

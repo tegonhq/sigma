@@ -5,6 +5,7 @@ import path from 'node:path';
 export function listeners() {
   // Listen for URL open requests
   ipcMain.on('open-url', (_event, url) => {
+    console.log(url);
     shell.openExternal(url);
   });
 

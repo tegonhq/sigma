@@ -27,7 +27,7 @@ export const GroupingOrderingOptions = observer(() => {
           });
         }}
       >
-        <SelectTrigger className="h-7 py-1 flex gap-1 items-center">
+        <SelectTrigger className="h-7 py-1 flex gap-1 items-center" showIcon>
           <StackLine size={16} />
           <SelectValue placeholder="Select a category" />
         </SelectTrigger>

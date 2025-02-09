@@ -22,7 +22,7 @@ const initialId = uuidv4();
 const Tab = types
   .model({
     id: types.identifier,
-    entity_id: types.string,
+    entity_id: types.union(types.string, types.undefined),
     type: types.enumeration([
       'my_day',
       'my_tasks',
@@ -44,7 +44,7 @@ const Tab = types
       if (entity_id) {
         self.entity_id = entity_id;
       } else {
-        self.entity_id = type;
+        self.entity_id = undefined;
       }
     },
   }));
@@ -65,7 +65,7 @@ const TabGroup = types
         const id = uuidv4();
         const newTab = Tab.create({
           id,
-          entity_id: 'my_day',
+          entity_id: undefined,
           type: 'my_day',
           order: 0,
           data: {},

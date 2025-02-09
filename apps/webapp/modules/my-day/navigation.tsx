@@ -15,11 +15,10 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
 
 import { SCOPES } from 'common/shortcut-scopes';
+import { TooltipWrapper } from 'common/tooltip/tooltip-wrapper';
 
 import { useTab } from 'hooks/application/use-tab';
 import { useScope } from 'hooks/use-scope';
-import { TooltipWrapper } from 'common/tooltip/tooltip-wrapper';
-import { getPlatform } from 'common/common-utils';
 
 export const Navigation = observer(() => {
   useScope(SCOPES.Day);

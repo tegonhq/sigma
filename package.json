@@ -1,6 +1,5 @@
 {
   "name": "sigma",
-  "private": true,
   "scripts": {
     "build": "dotenv -- turbo build",
     "dev": "dotenv -- turbo run dev --parallel",

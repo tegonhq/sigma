@@ -20,7 +20,7 @@ interface SingleTaskIntegrationProps {
 }
 
 export const SingleTaskIntegration = observer(
-  ({ task, page, onBack }: SingleTaskIntegrationProps) => {
+  ({ task, page }: SingleTaskIntegrationProps) => {
     const ipc = useIPC();
     const [url, setUrl] = React.useState(undefined);
     const { isLoading, integration } = useIntegrationFromAccount(

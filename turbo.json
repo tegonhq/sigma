@@ -41,7 +41,9 @@
     "TRIGGER_TOKEN",
     "TRIGGER_ACCESS_TOKEN",
     "TRIGGER_API_URL",
-    "TRIGGER_SECRET_KEY"
+    "TRIGGER_SECRET_KEY",
+    "GOOGLE_CLIENT_ID",
+    "GOOGLE_CLIENT_SECRET"
   ],
   "ui": "tui",
   "tasks": {

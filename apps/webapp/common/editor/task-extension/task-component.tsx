@@ -1,5 +1,5 @@
 import { Command, CommandInput, CommandItem, CommandList } from '@tegonhq/ui';
-import { NodeViewWrapper, useEditor } from '@tiptap/react';
+import { NodeViewWrapper } from '@tiptap/react';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 

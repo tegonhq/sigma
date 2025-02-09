@@ -133,7 +133,7 @@ export class IntegrationAccountController {
     @UserId() userId: string,
     @Body()
     createIntegrationAccountDto: Partial<CreateIntegrationAccountDto>,
-  ): Promise<IntegrationAccount> {
+  ) {
     return await this.integrationAccountService.createIntegrationAccountByApiKey(
       workspaceId,
       userId,

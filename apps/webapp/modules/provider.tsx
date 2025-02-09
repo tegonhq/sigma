@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TooltipProvider, Toaster } from '@tegonhq/ui';
 import posthog from 'posthog-js';
 import { PostHogProvider } from 'posthog-js/react';
@@ -10,8 +11,11 @@ import { initPosthog } from 'common/init-config';
 import { useGetQueryClient } from 'common/lib';
 import { SCOPES } from 'common/shortcut-scopes';
 import { ThemeProvider } from 'common/theme-provider';
+import { TaskViewProvider } from 'layouts/side-task-view';
 
 import { StoreContext, storeContextStore } from 'store/global-context-provider';
+
+import { DialogViewsProvider } from './dialog-views-provider';
 
 interface ProviderProps {
   children: React.ReactNode;
@@ -33,10 +37,12 @@ export function Provider({ children }: ProviderProps) {
         >
           <HotkeysProvider initiallyActiveScopes={[SCOPES.Global]}>
             <TooltipProvider delayDuration={500}>
-              <StoreContext.Provider value={storeContextStore}>
+              <StoreContext.Provider value={storeContextStore as any}>
                 <QueryClientProvider client={queryClientRef.current}>
-                  {children}
-                  <Toaster />
+                  <TaskViewProvider>
+                    <DialogViewsProvider>{children}</DialogViewsProvider>
+                    <Toaster />
+                  </TaskViewProvider>
                 </QueryClientProvider>
               </StoreContext.Provider>
             </TooltipProvider>

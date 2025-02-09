@@ -1,11 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'nestjs-prisma';
+import type { integrationRun } from 'triggers/integration-run';
 
-import {
-  loadRemoteModule,
-  getRequires,
-  createAxiosInstance,
-} from 'common/remote-loader';
+import { Injectable } from '@nestjs/common';
+import { IntegrationDefinition } from '@sigma/types';
+import { tasks } from '@trigger.dev/sdk/v3';
 
 import { LoggerService } from 'modules/logger/logger.service';
 import { UsersService } from 'modules/users/users.service';
@@ -14,17 +11,18 @@ import { UsersService } from 'modules/users/users.service';
 export class IntegrationsService {
   private readonly logger = new LoggerService(IntegrationsService.name);
 
-  constructor(
-    private prisma: PrismaService,
-    private usersService: UsersService,
-  ) {}
+  constructor(private usersService: UsersService) {}
 
-  //
-
-  async loadIntegration(slug: string, userId?: string, workspaceId?: string) {
+  async runIntegrationTrigger(
+    integrationDefinition: IntegrationDefinition,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    event: any,
+    userId?: string,
+    workspaceId?: string,
+  ) {
     this.logger.info({
-      message: `Loading integration ${slug}`,
-      where: 'IntegrationsService.loadIntegration',
+      message: `Loading integration ${integrationDefinition.slug}`,
+      where: 'IntegrationsService.runIntegrationTrigger',
     });
 
     let pat = '';
@@ -32,17 +30,10 @@ export class IntegrationsService {
       pat = await this.usersService.getOrCreatePat(userId, workspaceId);
     }
 
-    const integrationFunction = await loadRemoteModule(
-      getRequires(createAxiosInstance(pat)),
-    );
-
-    const integrationDefinition =
-      await this.prisma.integrationDefinitionV2.findFirst({
-        where: { slug, deleted: null },
-      });
-
-    return await integrationFunction(
-      `${integrationDefinition.url}/backend/index.js`,
-    );
+    return await tasks.trigger<typeof integrationRun>('integration-run', {
+      integrationDefinition,
+      pat,
+      event,
+    });
   }
 }

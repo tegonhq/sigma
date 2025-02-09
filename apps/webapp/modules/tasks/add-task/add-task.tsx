@@ -5,7 +5,6 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormMessage,
   IssuesLine,
 } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
@@ -30,7 +29,6 @@ import { TabViewType } from 'store/application';
 import { StatusDropdown, StatusDropdownVariant } from '../status-dropdown';
 import { NewTaskSchema } from './add-task-type';
 import { ListDropdown, ListDropdownVariant } from '../list-dropdown';
-import { ScheduleDropdown } from '../schedule-dropdown';
 
 interface AddTaskProps {
   onCancel: () => void;
@@ -83,13 +81,9 @@ export const AddTask = observer(({ onCancel }: AddTaskProps) => {
   };
 
   useHotkeys(
-    [Key.Enter],
-    (event) => {
-      switch (event.key) {
-        case Key.Enter:
-          form.handleSubmit(addTask)();
-          break;
-      }
+    [`${Key.Meta}+${Key.Enter}`],
+    () => {
+      form.handleSubmit(addTask)();
     },
     {
       scopes: [SCOPES.Global],
@@ -161,7 +155,7 @@ export const AddTask = observer(({ onCancel }: AddTaskProps) => {
             </div>
             <Button variant="secondary" className="items-center" type="submit">
               Create task
-              <Shortcut shortcut="Enter" className="ml-1" />
+              <Shortcut shortcut="Cmd + Enter" className="ml-1" />
             </Button>
           </div>
         </form>

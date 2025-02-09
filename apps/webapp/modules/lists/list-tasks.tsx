@@ -19,7 +19,8 @@ export const ListTasks = () => {
     return () => {
       clearSelectedTask();
     };
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <AILayout header={<Header />}>

@@ -26,18 +26,17 @@ export async function handleCalendarTask(
     return undefined;
   }
 
-  const integration = await integrationsService.loadIntegration(
-    'google-calendar',
+  return await integrationsService.runIntegrationTrigger(
+    integrationAccount.integrationDefinition,
+    {
+      event: IntegrationPayloadEventType.TASK,
+      eventBody: {
+        integrationAccount,
+        type,
+        task,
+      },
+    },
     userId,
     workspaceId,
   );
-
-  return await integration.run({
-    event: IntegrationPayloadEventType.TASK,
-    eventBody: {
-      integrationAccount,
-      type,
-      task,
-    },
-  });
 }

@@ -3,7 +3,7 @@ import type { IntegrationDefinition } from '@sigma/types';
 import { sort } from 'fast-sort';
 import React from 'react';
 
-import type { IntegrationDefinitionType, TaskType } from 'common/types';
+import type { TaskType } from 'common/types';
 
 import { useApplication } from 'hooks/application';
 import type { IPCRenderer } from 'hooks/ipc';
@@ -35,7 +35,7 @@ export const getStatusPriority = (status: string) => {
 
 export const getIntegrationURL = async (
   ipc: IPCRenderer,
-  integration: IntegrationDefinitionType,
+  integration: IntegrationDefinition,
 ) => {
   if (!ipc) {
     return `${integration.url}/frontend/index.js`;
@@ -43,7 +43,7 @@ export const getIntegrationURL = async (
 
   const integrationsURL = await ipc.getIntegrationsFolder();
 
-  const url = `http://localhost:8000/local/${integrationsURL}/${integration.name}/${integration.version}/frontend/index.js`;
+  const url = `http://localhost:53081/local/${integrationsURL}/${integration.name}/${integration.version}/frontend/index.js`;
 
   return url;
 };

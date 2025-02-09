@@ -24,10 +24,10 @@ import {
   IntegrationAccountsStore,
   type IntegrationAccountsStoreType,
 } from './integration-accounts';
+import { ListsStore, type ListsStoreType } from './lists';
 import { PagesStore, type PagesStoreType } from './pages';
 import { TasksStore, type TasksStoreType } from './tasks';
 import { WorkspaceStore, type WorkspaceStoreType } from './workspace';
-import { ListsStore, type ListsStoreType } from './lists';
 
 const StoreContextModel = types.model({
   commonStore: CommonStore,

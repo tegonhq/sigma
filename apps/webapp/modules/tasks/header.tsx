@@ -1,21 +1,18 @@
 import {
-  ArrowLeft,
-  ArrowRight,
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-  Button,
-  SidebarLine,
 } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
+
+import { Navigation } from 'layouts/app-layout';
 
 import { useApplication } from 'hooks/application';
 
 import { TabViewType } from 'store/application';
 import { useContextStore } from 'store/global-context-provider';
-import { Navigation } from 'layouts/app-layout';
 
 interface HeaderProps {
   actions?: React.ReactNode;

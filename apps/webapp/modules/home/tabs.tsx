@@ -8,11 +8,11 @@ export const TITLE = {
   my_events: 'My events',
 };
 
+import { WorkspaceDropdown } from 'layouts/app-layout/workspace-dropdown';
+
 import { useApplication } from 'hooks/application/use-application';
 
 import { TabViewType } from 'store/application';
-
-import { WorkspaceDropdown } from './layout/workspace-dropdown';
 
 export const Tabs = observer(() => {
   const { updateRightScreen } = useApplication();

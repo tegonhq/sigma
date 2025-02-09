@@ -25,7 +25,8 @@ export const Tasks = observer(({ entity_id }: TabsProps) => {
     return () => {
       clearSelectedTask();
     };
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (entity_id && entity_id !== 'my_tasks') {
     return <SingleTask index={0} taskId={entity_id} />;

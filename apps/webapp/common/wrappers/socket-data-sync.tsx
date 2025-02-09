@@ -4,12 +4,13 @@ import getConfig from 'next/config';
 import * as React from 'react';
 import { Socket, io } from 'socket.io-client';
 
+import { hash } from 'common/common-utils';
+
 import { useContextStore } from 'store/global-context-provider';
 import { MODELS } from 'store/models';
 import { UserContext } from 'store/user-context';
 
 import { saveSocketData } from './socket-data-util';
-import { hash } from 'common/common-utils';
 
 interface Props {
   children: React.ReactElement;

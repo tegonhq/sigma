@@ -1,39 +1,21 @@
 import fastifyHttpProxy from '@fastify/http-proxy';
-import {type App} from 'electron';
+import {app, type App} from 'electron';
 
 import Fastify from 'fastify';
 import path from 'node:path';
 import fs from 'node:fs';
 import {integrationsInit} from './integrations-init';
+import fastifyStatic from '@fastify/static';
+
+const isDev = process.env.NODE_ENV === 'development';
+const apiBaseUrl = isDev ? 'http://localhost:3001' : 'https://server.mysigma.ai';
 
 const fastify = Fastify({logger: true});
 
 // Start Fastify server
 const startFastifyServer = async () => {
-  fastify.listen({port: 8000});
+  fastify.listen({port: 53081});
 };
-// Register the proxy for API requests to localhost:3001
-fastify.register(fastifyHttpProxy, {
-  upstream: 'http://localhost:3001',
-  prefix: '/api', // only proxy requests starting with /api
-  rewritePrefix: '/', // keep the /api prefix in the proxied request
-  http2: false, // set to true if using HTTP/2
-  websocket: true,
-  preHandler: (request, _reply, done) => {
-    // Modify headers before the proxy forwards the request
-    request.headers['origin'] = 'https://app.mysigma.ai';
-    done();
-  },
-});
-
-// Register the proxy for other requests to localhost:3000
-fastify.register(fastifyHttpProxy, {
-  upstream: 'http://localhost:3000',
-  prefix: '/', // proxy all other requests
-  rewritePrefix: '/', // keep the original path
-  http2: false, // set to true if using HTTP/2
-  websocket: true,
-});
 
 // Add new route for local file access
 fastify.get('/local/*', async (request, reply) => {
@@ -53,6 +35,34 @@ fastify.get('/local/*', async (request, reply) => {
     return undefined;
   }
 });
+
+fastify.register(fastifyHttpProxy, {
+  upstream: apiBaseUrl,
+  prefix: '/api', // only proxy requests starting with /api
+  rewritePrefix: '/', // keep the /api prefix in the proxied request
+  http2: false, // set to true if using HTTP/2
+  websocket: true,
+  preHandler: (request, _reply, done) => {
+    // Modify headers before the proxy forwards the request
+    request.headers['origin'] = 'https://app.mysigma.ai';
+    done();
+  },
+});
+
+if (isDev) {
+  fastify.register(fastifyHttpProxy, {
+    upstream: 'http://localhost:3000',
+    prefix: '/', // proxy all other requests
+    rewritePrefix: '/', // keep the original path
+    http2: false, // set to true if using HTTP/2
+    websocket: true,
+  });
+} else {
+  fastify.register(fastifyStatic, {
+    root: path.join(app.getAppPath(), '/out/sigma/'),
+    prefix: '/',
+  });
+}
 
 export const startAPI = (app: App) => {
   // Start everything

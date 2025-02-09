@@ -35,20 +35,30 @@ export default class WebhookService {
 
     let integrationAccount;
     if (!integrationAccountId) {
-      const integration =
-        await this.integrationService.loadIntegration(sourceName);
+      const integrationDefinition =
+        await this.prisma.integrationDefinitionV2.findFirst({
+          where: { slug: sourceName, deleted: null },
+        });
 
-      const accountIdResponse = await integration.run({
-        event: IntegrationPayloadEventType.GET_CONNECTED_ACCOUNT_ID,
-        eventBody,
-      });
+      const accountIdResponse =
+        (await this.integrationService.runIntegrationTrigger(
+          integrationDefinition,
+          {
+            event: IntegrationPayloadEventType.GET_CONNECTED_ACCOUNT_ID,
+            eventBody,
+          },
+          // Fix this to right type
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        )) as any;
 
       let accountId;
+
       if (accountIdResponse?.message?.startsWith('The event payload type is')) {
         accountId = undefined;
       } else {
         accountId = accountIdResponse;
       }
+
       integrationAccount = await this.prisma.integrationAccount.findFirst({
         where: { accountId },
         include: { integrationDefinition: true },
@@ -61,19 +71,18 @@ export default class WebhookService {
     }
 
     if (integrationAccount) {
-      const integration = await this.integrationService.loadIntegration(
-        sourceName,
+      await this.integrationService.runIntegrationTrigger(
+        integrationAccount.integrationDefinition,
+        {
+          event: IntegrationPayloadEventType.SOURCE_WEBHOOK,
+          eventBody: {
+            integrationAccount,
+            eventData: { eventBody, eventHeaders },
+          },
+        },
         integrationAccount.integratedById,
         integrationAccount.workspaceId,
       );
-
-      await integration.run({
-        event: IntegrationPayloadEventType.SOURCE_WEBHOOK,
-        eventBody: {
-          integrationAccount,
-          eventData: { eventBody, eventHeaders },
-        },
-      });
     } else {
       this.logger.log({
         message: `Could not find integration account for webhook ${sourceName}`,

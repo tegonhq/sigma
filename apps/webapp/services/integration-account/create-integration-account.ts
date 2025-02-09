@@ -1,6 +1,6 @@
 import type { IntegrationAccount } from '@sigma/types';
 
-import { createIntegrationAccount } from '@sigma/services';
+import { createIntegrationAccountWithoutOAuth } from '@sigma/services';
 import { useMutation } from 'react-query';
 
 interface MutationParams {
@@ -29,7 +29,7 @@ export function useCreateIntegrationAccountMutation({
     onSuccess && onSuccess(data);
   };
 
-  return useMutation(createIntegrationAccount, {
+  return useMutation(createIntegrationAccountWithoutOAuth, {
     onError: onMutationError,
     onMutate: onMutationTriggered,
     onSuccess: onMutationSuccess,

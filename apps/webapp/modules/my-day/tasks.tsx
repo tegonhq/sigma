@@ -1,17 +1,17 @@
 import { Checkbox, cn } from '@tegonhq/ui';
-import { isAfter, isBefore, isToday } from 'date-fns';
+import { isAfter, isBefore } from 'date-fns';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
-import type { TaskType } from 'common/types';
+import { TaskInfo } from 'modules/tasks/task-info';
 
-import { useApplication } from 'hooks/application';
+import type { TaskType } from 'common/types';
+import { TaskViewContext } from 'layouts/side-task-view';
 
 import { useUpdatePageMutation } from 'services/pages';
 import { useUpdateTaskMutation } from 'services/tasks';
 
-import { TabViewType } from 'store/application';
 import { useContextStore } from 'store/global-context-provider';
 
 interface TasksProps {
@@ -19,21 +19,9 @@ interface TasksProps {
   tasks: TaskType[];
 }
 
-function getTitle(date: Date) {
-  const today = new Date();
-
-  if (isToday(date)) {
-    return 'Today tasks';
-  } else if (isBefore(date, today)) {
-    return 'Completed tasks';
-  }
-
-  return 'Upcoming tasks';
-}
-
 export const Tasks = observer(({ date, tasks }: TasksProps) => {
   const { pagesStore } = useContextStore();
-  const { updateTabType } = useApplication();
+  const { openTask } = React.useContext(TaskViewContext);
 
   const refs = React.useRef([]);
 
@@ -86,7 +74,7 @@ export const Tasks = observer(({ date, tasks }: TasksProps) => {
       updateTaskMutation({
         taskId: tasks[index].id,
         status: 'Todo',
-        startTime: isAfter(date, new Date()) ? null : undefined,
+        dueDate: isAfter(date, new Date()) ? null : undefined,
       });
     }
   };
@@ -98,59 +86,71 @@ export const Tasks = observer(({ date, tasks }: TasksProps) => {
     });
   };
 
-  const openTask = (taskId: string) => {
-    updateTabType(0, TabViewType.MY_TASKS, { entityId: taskId });
+  const getTasksPlaceholder = () => {
+    if (isAfter(date, new Date())) {
+      return 'No tasks due. Add new tasks (Cmd + n)';
+    }
+
+    if (isBefore(date, new Date())) {
+      return 'No tasks finished on this day';
+    }
+
+    return 'Move tasks into In Progress to see here';
   };
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex gap-2">
-        <h3 className="text-muted-foreground font-medium">{getTitle(date)}</h3>
-      </div>
+    <div className="flex flex-col gap-2 bg-grayAlpha-50 p-3 rounded mb-2">
+      {tasks.length > 0 ? (
+        <div className="flex flex-col gap-2">
+          {tasks.map((task, index: number) => {
+            const page = pagesStore.getPageWithId(task?.pageId);
+            const isCompleted =
+              task.status === 'Done' || task.status === 'Canceled';
 
-      <div className="flex flex-col gap-2 mb-10">
-        {tasks.map((task, index: number) => {
-          const page = pagesStore.getPageWithId(task?.pageId);
-          const isCompleted =
-            task.status === 'Done' || task.status === 'Canceled';
-
-          return (
-            <div className="flex gap-1 items-start" key={task.id}>
-              <Checkbox
-                className="mt-[2px]"
-                checked={isCompleted}
-                onCheckedChange={(checked: boolean) =>
-                  handleCheckBox(checked, task.id)
-                }
-              />
-              <div
-                className="text-muted-foreground font-mono min-w-[40px] pl-1 text-sm mt-[1px] cursor-pointer"
-                onClick={() => {
-                  openTask(task.id);
-                }}
-              >
-                T-{task.number}
-              </div>
-              <div
-                ref={(el) => {
-                  refs.current[index] = el;
-                  if (refs.current[index] && !refs.current[index].textContent) {
-                    refs.current[index].textContent = page?.title;
+            return (
+              <div className="flex gap-1 items-start" key={task.id}>
+                <Checkbox
+                  className="mt-[2px]"
+                  checked={isCompleted}
+                  onCheckedChange={(checked: boolean) =>
+                    handleCheckBox(checked, task.id)
                   }
-                }} // Assign ref for focusing
-                contentEditable
-                suppressContentEditableWarning
-                className={cn(
-                  'w-full z-10 relative resize-none overflow-hidden whitespace-pre-wrap break-words focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50',
-                  isCompleted && 'line-through',
-                )}
-                onInput={(e) => handleInput(e, page.id)}
-                onKeyDown={(e) => handleKeyDown(e, index)} // Handle Enter key
-              />
-            </div>
-          );
-        })}
-      </div>
+                />
+                <div
+                  className="text-muted-foreground font-mono min-w-[40px] pl-1 text-sm mt-[1px] cursor-pointer"
+                  onClick={() => {
+                    openTask(task.id);
+                  }}
+                >
+                  T-{task.number}
+                </div>
+                <div
+                  ref={(el) => {
+                    refs.current[index] = el;
+                    if (
+                      refs.current[index] &&
+                      !refs.current[index].textContent
+                    ) {
+                      refs.current[index].textContent = page?.title;
+                    }
+                  }} // Assign ref for focusing
+                  contentEditable
+                  suppressContentEditableWarning
+                  className={cn(
+                    'w-fit z-10 relative resize-none overflow-hidden whitespace-pre-wrap break-words focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50',
+                    isCompleted && 'line-through',
+                  )}
+                  onInput={(e) => handleInput(e, page.id)}
+                  onKeyDown={(e) => handleKeyDown(e, index)} // Handle Enter key
+                />
+                <TaskInfo task={task} />
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="text-muted-foreground">{getTasksPlaceholder()}</div>
+      )}
     </div>
   );
 });

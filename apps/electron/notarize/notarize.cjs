@@ -21,10 +21,7 @@ exports.default = async function notarizing(context) {
 
   return await notarize({
     tool: 'notarytool',
-    appBundleId:
-      context.packager.appInfo.productFilename === 'acreom-beta'
-        ? 'com.acreom.acreom-desktop-beta'
-        : 'com.acreom.acreom-desktop',
+    appBundleId: 'com.mysigma.mysigma-desktop',
     appPath: `${appOutDir}/${appName}.app`,
     appleId: process.env.APPLE_ID,
     appleIdPassword: process.env.APPLE_ID_PASSWORD,

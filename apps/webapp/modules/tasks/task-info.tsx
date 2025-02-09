@@ -5,7 +5,7 @@ import type { TaskType } from 'common/types';
 
 import { useContextStore } from 'store/global-context-provider';
 
-import { ScheduleDropdown, ScheduleDropdownVariant } from './schedule-dropdown';
+import { ScheduleDropdown, ScheduleDropdownVariant } from './schedule';
 
 export const TaskInfo = observer(({ task }: { task: TaskType }) => {
   const { listsStore } = useContextStore();

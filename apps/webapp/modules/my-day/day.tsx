@@ -42,10 +42,9 @@ export const Day = observer(() => {
               <AI />
             </h3>
 
-            <h3 className="text-muted-foreground font-medium">Notes</h3>
-            <DayEditor date={date} />
-
             <Tasks date={date} tasks={getTasks(tasksStore, date)} />
+
+            <DayEditor date={date} />
           </div>
         </div>
       </div>

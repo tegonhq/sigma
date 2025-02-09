@@ -2,6 +2,7 @@ import getConfig from 'next/config';
 import Router from 'next/router';
 import Passwordless from 'supertokens-auth-react/recipe/passwordless';
 import SessionReact from 'supertokens-auth-react/recipe/session';
+import ThirdParty, { Google } from 'supertokens-auth-react/recipe/thirdparty';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -21,6 +22,11 @@ export const frontendConfig = () => {
         contactMethod: 'EMAIL',
       }),
       SessionReact.init(),
+      ThirdParty.init({
+        signInAndUpFeature: {
+          providers: [Google.init()],
+        },
+      }),
     ],
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     windowHandler: (oI: any) => {

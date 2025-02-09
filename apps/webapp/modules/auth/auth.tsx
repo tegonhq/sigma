@@ -1,20 +1,10 @@
 /* eslint-disable react/no-unescaped-entities */
-import { zodResolver } from '@hookform/resolvers/zod';
-import { RiMailFill } from '@remixicon/react';
-import {
-  Button,
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-  Input,
-  ArrowRight,
-} from '@tegonhq/ui';
+import { RiGoogleLine } from '@remixicon/react';
+import { Button } from '@tegonhq/ui';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import React from 'react';
-import { useForm } from 'react-hook-form';
+import { getAuthorisationURLWithQueryParamsAndSetState } from 'supertokens-auth-react/recipe/thirdparty';
 import { z } from 'zod';
 
 import { AuthGuard } from 'common/wrappers';
@@ -28,7 +18,7 @@ import {
 } from 'services/users';
 
 import { AuthLayout } from './layout';
-import { getCookies, useSupertokenFunctions } from './utils';
+import { getCookies } from './utils';
 const { publicRuntimeConfig } = getConfig();
 
 export const AuthSchema = z.object({
@@ -38,18 +28,15 @@ export const AuthSchema = z.object({
 
 export function Auth() {
   const router = useRouter();
-  const form = useForm<z.infer<typeof AuthSchema>>({
-    resolver: zodResolver(AuthSchema),
-    defaultValues: {
-      email: '',
-      otp: '',
-    },
-  });
+
   const [loading, setLoading] = React.useState(false);
-  const { emailSent, sendOTP, handleOTPInput } = useSupertokenFunctions();
+
   const { mutate: createAuthCode, isLoading } = useCreateAuthCodeMutation({
     onSuccess: async (data: AuthCodeResponse) => {
       setLoading(true);
+      console.log(
+        `${publicRuntimeConfig.NEXT_PUBLIC_BASE_HOST}/authorize?code=${data.code}`,
+      );
       ipc.openUrl(
         `${publicRuntimeConfig.NEXT_PUBLIC_BASE_HOST}/authorize?code=${data.code}`,
       );
@@ -65,22 +52,37 @@ export function Auth() {
   const isElectron = useIsElectron();
   const ipc = useIPC();
 
-  const onSubmit = async ({ email, otp }: { email: string; otp: string }) => {
-    setLoading(true);
-
-    if (emailSent) {
-      await handleOTPInput(otp);
-      return;
-    }
-
-    await sendOTP(email);
-
-    setLoading(false);
-  };
-
   const onLogin = () => {
     createAuthCode();
   };
+
+  async function googleSignInClicked() {
+    try {
+      const authUrl = await getAuthorisationURLWithQueryParamsAndSetState({
+        thirdPartyId: 'google',
+
+        // This is where Google should redirect the user back after login or error.
+        // This URL goes on the Google's dashboard as well.
+        frontendRedirectURI:
+          'https://a9bc-223-185-130-157.ngrok-free.app/auth/google',
+      });
+
+      /*
+        Example value of authUrl: https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&access_type=offline&include_granted_scopes=true&response_type=code&client_id=1060725074195-kmeum4crr01uirfl2op9kd5acmi9jutn.apps.googleusercontent.com&state=5a489996a28cafc83ddff&redirect_uri=https%3A%2F%2Fsupertokens.io%2Fdev%2Foauth%2Fredirect-to-app&flowName=GeneralOAuthFlow
+        */
+
+      // we redirect the user to google for auth.
+      window.location.assign(authUrl);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      if (err.isSuperTokensGeneralError === true) {
+        // this may be a custom error message sent from the API by you.
+        window.alert(err.message);
+      } else {
+        window.alert('Oops! Something went wrong.');
+      }
+    }
+  }
 
   if (isElectron) {
     return (
@@ -114,78 +116,14 @@ export function Auth() {
             Your second brain, supercharging dev life with AI.
           </div>
 
-          <div className="flex flex-col gap-2">
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-2"
-              >
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input
-                          placeholder="Email address"
-                          className="h-9"
-                          {...field}
-                        />
-                      </FormControl>
-
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                {emailSent && (
-                  <FormField
-                    control={form.control}
-                    name="otp"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            placeholder="OTP"
-                            className="h-9"
-                            type="number"
-                            {...field}
-                          />
-                        </FormControl>
-
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                )}
-
-                <div className="flex justify-end">
-                  <Button
-                    className="flex gap-2"
-                    size="xl"
-                    full
-                    type="submit"
-                    isLoading={loading}
-                    variant="secondary"
-                  >
-                    {emailSent ? (
-                      <>
-                        Continue <ArrowRight size={18} />
-                      </>
-                    ) : (
-                      <>
-                        <RiMailFill size={18} /> Send OTP
-                      </>
-                    )}
-                  </Button>
-                </div>
-              </form>
-            </Form>
-          </div>
-
-          <div className="mt-4 text-xs text-muted-foreground">
-            By clicking continue, you agree to our Terms of Service and Privacy
-            Policy.
+          <div className="flex flex-col gap-2 items-center">
+            <Button
+              variant="secondary"
+              className="gap-2 w-fit"
+              onClick={googleSignInClicked}
+            >
+              <RiGoogleLine size={16} /> Login with google
+            </Button>
           </div>
         </div>
       </AuthLayout>

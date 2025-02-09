@@ -1,5 +1,4 @@
 import {
-  FiltersModel,
   TabViewType,
   type FiltersModelType,
   type UpdateBody,

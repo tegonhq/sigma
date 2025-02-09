@@ -24,7 +24,7 @@ async function getAccessToken(): Promise<string | null> {
 
 export const integrationsInit = async () => {
   const accessToken = await getAccessToken();
-  const {data} = await axios.get('http://localhost:8000/api/v1/integration_definition', {
+  const {data} = await axios.get('http://localhost:53081/api/v1/integration_definition', {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },

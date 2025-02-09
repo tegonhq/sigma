@@ -17,10 +17,10 @@ export function DatabaseWrapper(props: Props): React.ReactElement {
   const workspace = useWorkspace();
   const user = React.useContext(UserContext);
   const [loading, setLoading] = React.useState(true);
-  const hashKey = `${workspace.id}__${user.id}`;
 
   React.useEffect(() => {
     if (workspace) {
+      const hashKey = `${workspace.id}__${user.id}`;
       initDatabase(hash(hashKey));
       setLoading(false);
     }

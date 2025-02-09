@@ -20,7 +20,7 @@ directories:
 mac:
   hardenedRuntime: true
   entitlements: './notarize/entitlements.mac.plist'
-  icon: './buildResources/icon.png'
+  icon: './buildResources/icon.icns'
   extraResources:
     - from: './buildResources'
       to: Assets
@@ -39,12 +39,17 @@ linux:
 files:
   - package.json
   - '**/*.js'
+  - '**/*.mjs'
   - '**/node_modules/**'
   - '!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}'
   - '!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}'
   - '!**/node_modules/*.d.ts'
   - '!**/node_modules/.bin'
   - '!notarize'
+  - from: ../webapp/out
+    to: ./out/sigma
+    filter:
+      - '**/*'
 protocols:
   name: sigma
   schemes:

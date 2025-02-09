@@ -1,4 +1,4 @@
-import type { beautifyTask } from 'trigger/tasks/beautify-task';
+import type { beautifyTask } from 'triggers/beautify-task';
 
 import { Injectable } from '@nestjs/common';
 import {
@@ -209,9 +209,10 @@ export class TasksService {
     const scheduleChanged =
       JSON.stringify(existingTask.recurrence) !==
         JSON.stringify(updatedTask.recurrence) ||
-      existingTask.startTime.toISOString() !==
-        updatedTask.startTime.toISOString() ||
-      existingTask.endTime.toISOString() !== updatedTask.endTime.toISOString();
+      existingTask.startTime?.toISOString() !==
+        updatedTask.startTime?.toISOString() ||
+      existingTask.endTime?.toISOString() !==
+        updatedTask.endTime?.toISOString();
 
     if (scheduleChanged) {
       await Promise.all([

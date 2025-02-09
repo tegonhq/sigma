@@ -71,6 +71,7 @@ export const EditorWithPage = observer(({ page }: EditorWithPageProps) => {
           }),
         ]}
         className="min-h-[calc(100vh_-_65vh)] my-1"
+        placeholder="Write notes..."
       >
         <EditorExtensions suggestionItems={suggestionItems}>
           <AddTaskSelector />
