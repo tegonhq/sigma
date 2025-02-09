@@ -1,23 +1,12 @@
-import type {
-  ResolveEnvironmentVariablesFunction,
-  TriggerConfig,
-} from '@trigger.dev/sdk/v3';
-
 import { PrismaInstrumentation } from '@prisma/instrumentation';
+import {
+  additionalPackages,
+  syncEnvVars,
+} from '@trigger.dev/build/extensions/core';
+import { prismaExtension } from '@trigger.dev/build/extensions/prisma';
+import { defineConfig } from '@trigger.dev/sdk/v3';
 
-// This runs when you run the deploy command or the dev command
-export const resolveEnvVars: ResolveEnvironmentVariablesFunction = async ({
-  env,
-}) => {
-  return {
-    variables: {
-      DATABASE_URL: env.DATABASE_URL,
-      BACKEND_URL: env.BACKEND_HOST,
-    },
-  };
-};
-
-export const config: TriggerConfig = {
+export default defineConfig({
   project: 'proj_common',
   logLevel: 'log',
   retries: {
@@ -30,10 +19,24 @@ export const config: TriggerConfig = {
       randomize: true,
     },
   },
-  triggerDirectories: ['./src/trigger'],
-  dependenciesToBundle: ['@sigma/types'],
+  dirs: ['./src/triggers'],
   instrumentations: [new PrismaInstrumentation()],
-
-  additionalFiles: ['./prisma/schema.prisma'],
-  additionalPackages: ['prisma@5.17.0'],
-};
+  build: {
+    extensions: [
+      syncEnvVars(({ env }) => {
+        return {
+          DATABASE_URL: env.DATABASE_URL,
+          BACKEND_URL: env.BACKEND_HOST,
+        };
+      }),
+      additionalPackages({
+        packages: ['@sigma/types'],
+      }),
+      prismaExtension({
+        // update this to the path of your Prisma schema file
+        schema: 'prisma/schema.prisma',
+      }),
+    ],
+  },
+  maxDuration: 300,
+});

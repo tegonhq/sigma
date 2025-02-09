@@ -14,7 +14,7 @@ export const beautifyTask = task({
 
     const recurrenceData = (
       await axios.post(
-        `${process.env.BACKEND_URL}/v1/tasks/ai/recurrence`,
+        `http://localhost:3001/v1/tasks/ai/recurrence`,
         {
           text: sigmaTask.page.title,
           currentTime: new Date().toISOString(),

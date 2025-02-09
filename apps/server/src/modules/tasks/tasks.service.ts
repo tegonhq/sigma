@@ -1,11 +1,18 @@
+import type { beautifyTask } from 'trigger/tasks/beautify-task';
+
 import { Injectable } from '@nestjs/common';
-import { CreateTaskDto, JsonObject, PageTypeEnum, Task } from '@sigma/types';
+import {
+  CreateTaskDto,
+  JsonObject,
+  PageTypeEnum,
+  Task,
+  UpdateTaskDto,
+} from '@sigma/types';
+import { tasks } from '@trigger.dev/sdk/v3';
 import { PrismaService } from 'nestjs-prisma';
 
 import { IntegrationsService } from 'modules/integrations/integrations.service';
 import { TaskOccurenceService } from 'modules/task-occurence/task-occurence.service';
-import { Env } from 'modules/triggerdev/triggerdev.interface';
-import { TriggerdevService } from 'modules/triggerdev/triggerdev.service';
 import { UsersService } from 'modules/users/users.service';
 
 import { handleCalendarTask } from './tasks.utils';
@@ -16,7 +23,6 @@ export class TasksService {
     private prisma: PrismaService,
     private taskOccurenceService: TaskOccurenceService,
     private integrationService: IntegrationsService,
-    private triggerDevService: TriggerdevService,
     private usersService: UsersService,
   ) {}
 
@@ -149,23 +155,18 @@ export class TasksService {
       );
     }
 
-    const pat = this.usersService.getOrCreatePat(userId, workspaceId);
-    await this.triggerDevService.triggerTaskAsync(
-      'common',
-      'beautify-task',
-      {
-        taskId: task.id,
-        pat,
-      },
-      Env.PROD,
-    );
+    const pat = await this.usersService.getOrCreatePat(userId, workspaceId);
+    await tasks.trigger<typeof beautifyTask>('beautify-task', {
+      taskId: task.id,
+      pat,
+    });
 
     return task;
   }
 
   async update(
     taskId: string,
-    updateTaskDto: Partial<CreateTaskDto>,
+    updateTaskDto: UpdateTaskDto,
     workspaceId: string,
     userId: string,
   ): Promise<Task> {

@@ -83,10 +83,8 @@ export const SingleTask = observer(({ index, taskId }: SingleTaskProps) => {
             </div>
 
             <SingleTaskMetadata task={task} />
-            <Separator />
 
-            <div className="flex flex-col gap-0">
-              <h3 className="text-muted-foreground font-medium">Notes</h3>
+            <div className="flex flex-col gap-0 pt-3">
               <SingleTaskEditor page={page} autoFocus />
             </div>
           </div>

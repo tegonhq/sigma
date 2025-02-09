@@ -38,36 +38,45 @@
     "NEXT_PUBLIC_AI_HOST",
     "TRIGGER_DB",
     "TRIGGER_DATABASE_URL",
-    "TRIGGER_COMMON_ID",
     "TRIGGER_TOKEN",
     "TRIGGER_ACCESS_TOKEN",
-    "TRIGGER_API_URL"
+    "TRIGGER_API_URL",
+    "TRIGGER_SECRET_KEY"
   ],
   "ui": "tui",
   "tasks": {
     "build": {
-      "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**"]
+      "dependsOn": [ "^build" ],
+      "outputs": [ "dist/**", ".next/**" ]
     },
     "compile": {
-      "dependsOn": ["^build", "^compile"],
-      "outputs": ["dist/**", ".next/**"]
+      "dependsOn": [ "^build", "^compile" ],
+      "outputs": [ "dist/**", ".next/**" ]
     },
-    "lint": {},
+    "lint": { },
     "generate": {
-      "dependsOn": ["^generate"],
+      "dependsOn": [ "^generate" ],
       "cache": false
     },
     "dev": {
-      "dependsOn": ["generate"],
+      "dependsOn": [ "generate" ],
       "interactive": true,
       "cache": false
     },
     "prisma:studio": {
-      "env": ["DATABASE_URL"]
+      "env": [ "DATABASE_URL" ]
     },
     "migrate": {
-      "env": ["DATABASE_URL"],
+      "env": [ "DATABASE_URL" ],
+      "interactive": true,
+      "cache": false
+    },
+    "trigger-deploy": {
+      "env": [ "TRIGGER_ACCESS_TOKEN", "TRIGGER_API_URL", "TRIGGER_SECRET_KEY" ],
+      "cache": false
+    },
+    "trigger-dev": {
+      "env": [ "TRIGGER_ACCESS_TOKEN", "TRIGGER_API_URL", "TRIGGER_SECRET_KEY" ],
       "interactive": true,
       "cache": false
     }

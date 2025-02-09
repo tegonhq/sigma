@@ -8,6 +8,8 @@
     "generate": "dotenv -- turbo run generate",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "prisma:studio": "dotenv -- turbo run prisma:studio --filter=server",
+    "trigger-deploy": "dotenv -- turbo run trigger-deploy --filter=server --",
+    "trigger-dev": "dotenv -- turbo run trigger-dev --filter=server --",
     "migrate": "dotenv -- turbo run migrate --filter=server"
   },
   "devDependencies": {

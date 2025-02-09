@@ -10,6 +10,10 @@ export const TaskInfo = observer(({ task }: { task: TaskType }) => {
   const { listsStore } = useContextStore();
   const list = listsStore.getListWithId(task.listId);
 
+  if (!list) {
+    return null;
+  }
+
   return (
     <div className="flex flex-col w-fit">
       <div
@@ -18,13 +22,15 @@ export const TaskInfo = observer(({ task }: { task: TaskType }) => {
           e.stopPropagation();
         }}
       >
-        <Button
-          className="flex gap-1 text-xs items-center"
-          variant="secondary"
-          size="sm"
-        >
-          <Hash size={12} /> {list.name}
-        </Button>
+        {list && (
+          <Button
+            className="flex gap-1 text-xs items-center"
+            variant="secondary"
+            size="sm"
+          >
+            <Hash size={12} /> {list?.name}
+          </Button>
+        )}
       </div>
     </div>
   );

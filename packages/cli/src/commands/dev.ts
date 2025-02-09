@@ -100,7 +100,7 @@ async function devCommand() {
     s.start(`Dev mode ${config.path} (v${version})`);
 
     // Deploy the action using trigger.dev
-    const devProcess = execa('npx', ['trigger.dev@beta', 'dev'], {
+    const devProcess = execa('npx', ['trigger.dev@latest', 'dev'], {
       cwd: path.dirname(config.path),
       stdio: 'inherit',
     });

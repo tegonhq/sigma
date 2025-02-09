@@ -19,6 +19,7 @@ import { ConversationHistoryModule } from 'modules/conversation-history/conversa
 import { IntegrationAccountModule } from 'modules/integration-account/integration-account.module';
 import { IntegrationDefinitionModule } from 'modules/integration-definition/integration-definition.module';
 import { IntegrationsModule } from 'modules/integrations/integrations.module';
+import { ListsModule } from 'modules/lists/lists.module';
 import { OAuthCallbackModule } from 'modules/oauth-callback/oauth-callback.module';
 import { PagesModule } from 'modules/pages/pages.module';
 import { PromptsModule } from 'modules/prompts/prompts.module';
@@ -26,14 +27,12 @@ import { ReplicationModule } from 'modules/replication/replication.module';
 import { SyncActionsModule } from 'modules/sync-actions/sync-actions.module';
 import { TaskOccurenceModule } from 'modules/task-occurence/task-occurence.model';
 import { TasksModule } from 'modules/tasks/tasks.module';
-import { TriggerdevModule } from 'modules/triggerdev/triggerdev.module';
 import { UsersModule } from 'modules/users/users.module';
 import { WebhookModule } from 'modules/webhook/webhook.module';
 import { WorkspacesModule } from 'modules/workspaces/workspaces.module';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ListsModule } from 'modules/lists/lists.module';
 
 @Module({
   imports: [
@@ -96,7 +95,6 @@ import { ListsModule } from 'modules/lists/lists.module';
     TaskOccurenceModule,
     AIRequestsModule,
     PromptsModule,
-    TriggerdevModule,
     ListsModule,
   ],
   controllers: [AppController],

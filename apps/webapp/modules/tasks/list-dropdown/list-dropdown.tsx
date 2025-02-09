@@ -45,7 +45,7 @@ export const ListDropdown = observer(
       }
 
       const list = listsStore.getListWithId(value);
-      return list.name;
+      return list?.name;
     };
 
     function getTrigger() {

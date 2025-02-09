@@ -34,7 +34,9 @@
     "migrate:resolve": "prisma migrate resolve --preview-feature",
     "prisma:studio": "prisma studio",
     "generate": "prisma generate",
-    "db:init-resources": "pnpm run migrate && pnpm run generate"
+    "db:init-resources": "pnpm run migrate && pnpm run generate",
+    "trigger-deploy": "npx trigger.dev@latest deploy --self-hosted",
+    "trigger-dev": "npx trigger.dev@latest dev"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^1.1.6",
@@ -67,7 +69,7 @@
     "@sigma/editor-extensions": "workspace:*",
     "@sigma/types": "workspace:*",
     "@tiptap/html": "^2.10.3",
-    "@trigger.dev/sdk": "3.0.0-beta.56",
+    "@trigger.dev/sdk": "3.3.13",
     "@types/multer": "^1.4.11",
     "@types/turndown": "^5.0.5",
     "@xenova/transformers": "^2.16.1",
@@ -115,6 +117,7 @@
     "@sigma/typescript-config": "workspace:*",
     "@swc/cli": "^0.1.65",
     "@swc/core": "^1.3.105",
+    "@trigger.dev/build": "3.3.13",
     "@types/bcrypt": "5.0.2",
     "@types/chance": "1.1.6",
     "@types/cookie": "^0.6.0",

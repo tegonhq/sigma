@@ -6,6 +6,7 @@ import { useUpdateTaskMutation } from 'services/tasks';
 
 import { StatusDropdown } from '../status-dropdown';
 import { DueDate } from './due-date';
+import { ListDropdown } from '../list-dropdown';
 
 interface SingleTaskMetadataProps {
   task: TaskType;
@@ -22,6 +23,13 @@ export const SingleTaskMetadata = observer(
       });
     };
 
+    const listChange = (listId: string) => {
+      updateTask({
+        taskId: task.id,
+        listId,
+      });
+    };
+
     const dueDateChange = (dueDate: Date) => {
       updateTask({
         taskId: task.id,
@@ -29,17 +37,12 @@ export const SingleTaskMetadata = observer(
       });
     };
 
-    return (
-      <div className="py-3 flex flex-col gap-2 rounded">
-        <div className="flex gap-2 items-center justify-start">
-          <div className="label min-w-[100px]">Status</div>
-          <StatusDropdown value={task.status} onChange={statusChange} />
-        </div>
+    console.log(task);
 
-        <div className="flex gap-2 items-center">
-          <div className="label min-w-[100px]">Due date</div>
-          <DueDate dueDate={task.dueDate} dueDateChange={dueDateChange} />
-        </div>
+    return (
+      <div className="p-2 flex gap-2 rounded bg-grayAlpha-50">
+        <StatusDropdown value={task.status} onChange={statusChange} />
+        <ListDropdown value={task.listId} onChange={listChange} />
       </div>
     );
   },

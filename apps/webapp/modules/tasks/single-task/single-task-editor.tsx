@@ -59,6 +59,7 @@ export function SingleTaskEditor({
             document: doc,
           }),
         ]}
+        placeholder="Write notes..."
         autoFocus={autoFocus}
         className="min-h-[calc(100vh_-_30vh)]"
       >
