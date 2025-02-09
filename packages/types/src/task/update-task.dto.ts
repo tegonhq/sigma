@@ -35,7 +35,7 @@ export class UpdateTaskDto {
 
   @IsString()
   @IsOptional()
-  recurrenceText?: string;
+  scheduleText?: string;
 
   @IsString()
   @IsOptional()

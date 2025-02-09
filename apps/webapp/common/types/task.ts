@@ -5,8 +5,10 @@ export interface TaskType {
   updatedAt: string;
   completedAt?: string;
   startTime: string;
+  dueDate?: string;
   endTime: string;
   recurrence: string[];
+  scheduleText?: string;
   sourceId: string | null;
   url: string | null;
   status: string;

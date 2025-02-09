@@ -28,6 +28,9 @@ export async function saveTaskData(
         integrationAccountId: record.data.integrationAccountId,
         workspaceId: record.data.workspaceId,
         listId: record.data.listId,
+        dueDate: record.data.dueDate,
+        remindAt: record.data.remindAt,
+        scheduleText: record.data.scheduleText,
       };
 
       switch (record.action) {

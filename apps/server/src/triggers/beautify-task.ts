@@ -38,8 +38,8 @@ export const beautifyTask = task({
         ...(recurrenceData.recurrenceRule && {
           recurrence: [recurrenceData.recurrenceRule],
         }),
-        ...(recurrenceData.recurrenceText && {
-          recurrenceText: recurrenceData.recurrenceText,
+        ...(recurrenceData.scheduleText && {
+          scheduleText: recurrenceData.scheduleText,
         }),
 
         // Page related updates

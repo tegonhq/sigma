@@ -50,7 +50,7 @@ After your analysis, provide the final JSON output with the following structure:
 {
   "title": "Concise title of the task",
   "recurrenceRule": "RRULE string or empty string if not applicable",
-  "recurrenceText": "Human-readable description of the recurrence or schedule (only if there's a rule or reminder)",
+  "scheduleText": "Human-readable description of the recurrence or schedule (only if there's a rule or reminder)",
   "startTime": "Formatted start time or empty string if not found",
   "endTime": "Formatted end time or empty string if not found",
   "dueDate": "Formatted due date or empty string if not applicable",

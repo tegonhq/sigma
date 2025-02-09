@@ -14,6 +14,8 @@ export const Task = types.model({
   startTime: types.union(types.null, types.string, types.undefined),
   endTime: types.union(types.null, types.string, types.undefined),
   recurrence: types.array(types.string),
+  scheduleText: types.union(types.string, types.null, types.undefined),
+  dueDate: types.union(types.string, types.null, types.undefined),
 
   integrationAccountId: types.union(types.null, types.string),
   pageId: types.union(types.null, types.string),

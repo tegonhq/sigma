@@ -27,7 +27,7 @@ export class Task {
   startTime?: Date;
   endTime?: Date;
   recurrence?: string[];
-  recurrenceText?: string;
+  scheduleText?: string;
   dueDate?: Date;
   remindAt?: Date;
 

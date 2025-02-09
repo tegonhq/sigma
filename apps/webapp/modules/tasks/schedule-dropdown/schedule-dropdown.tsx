@@ -8,61 +8,62 @@ import {
   CommandGroup,
   CommandItem,
   PopoverPortal,
+  Badge,
+  Cycle,
 } from '@tegonhq/ui';
-import { useLocalCommonState } from 'common/use-local-state';
+import type { TaskType } from 'common/types';
 import { Clock } from 'lucide-react';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 
-export enum ScheduleDropdownDropdownVariant {
-  NO_BACKGROUND = 'NO_BACKGROUND',
+export enum ScheduleDropdownVariant {
   DEFAULT = 'DEFAULT',
-  LINK = 'LINK',
+  SHORT = 'SHORT',
 }
 
 interface ScheduleDropdownProps {
-  value?: string;
-  onChange?: (newStatus: string) => void;
-  variant?: ScheduleDropdownDropdownVariant;
+  task: TaskType;
+  variant?: ScheduleDropdownVariant;
 }
 
 export const ScheduleDropdown = observer(
   ({
-    value,
-    onChange,
-    variant = ScheduleDropdownDropdownVariant.DEFAULT,
+    task,
+    variant = ScheduleDropdownVariant.DEFAULT,
   }: ScheduleDropdownProps) => {
+    const getSchedule = () => {
+      if (task.startTime) {
+        if (variant === ScheduleDropdownVariant.SHORT) {
+          return (
+            <Badge
+              variant="secondary"
+              className="flex items-center gap-1 shrink min-w-[0px]"
+            >
+              <Cycle size={16} />
+            </Badge>
+          );
+        }
+
+        return (
+          <Badge
+            variant="secondary"
+            className="flex items-center gap-1 shrink min-w-[0px] h-7 px-2"
+          >
+            <Cycle size={16} /> {task.scheduleText}
+          </Badge>
+        );
+      }
+
+      return null;
+    };
+
     return (
       <div
         onClick={(e) => {
           e.stopPropagation();
         }}
       >
-        <Popover>
-          <PopoverTrigger>
-            <Button variant="secondary" className="gap-1">
-              <Clock size={14} className="text-foreground" />
-              Schedule
-            </Button>
-          </PopoverTrigger>
-
-          <PopoverPortal>
-            <PopoverContent className="w-72 p-0" align="start">
-              <Command className="border-none">
-                <CommandInput
-                  placeholder="Finish by 3pm / Meeting on Friday at 9 - 9:30"
-                  autoFocus
-                />
-
-                <CommandGroup>
-                  <CommandItem>Calendar</CommandItem>
-                  <CommandItem>Search Emoji</CommandItem>
-                  <CommandItem>Calculator</CommandItem>
-                </CommandGroup>
-              </Command>
-            </PopoverContent>
-          </PopoverPortal>
-        </Popover>
+        {getSchedule()}
       </div>
     );
   },

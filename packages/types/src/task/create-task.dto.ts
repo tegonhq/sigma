@@ -47,7 +47,7 @@ export class CreateTaskDto {
 
   @IsString()
   @IsOptional()
-  recurrenceText?: string;
+  scheduleText?: string;
 
   @IsString()
   @IsOptional()
