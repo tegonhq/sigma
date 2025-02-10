@@ -3,15 +3,9 @@ import { ConfigService } from '@nestjs/config';
 import { IntegrationPayloadEventType, OAuth2Params } from '@sigma/types';
 import * as simpleOauth2 from 'simple-oauth2';
 
-import {
-  createAxiosInstance,
-  getRequires,
-  loadRemoteModule,
-} from 'common/remote-loader/load-remote-module';
-
 import { IntegrationDefinitionService } from 'modules/integration-definition/integration-definition.service';
+import { IntegrationsService } from 'modules/integrations/integrations.service';
 import { LoggerService } from 'modules/logger/logger.service';
-import { UsersService } from 'modules/users/users.service';
 
 import {
   CallbackParams,
@@ -34,7 +28,7 @@ export class OAuthCallbackService {
   constructor(
     private integrationDefinitionService: IntegrationDefinitionService,
     private configService: ConfigService,
-    private usersService: UsersService,
+    private integrationService: IntegrationsService,
   ) {
     this.CALLBACK_URL = this.configService.get<string>('OAUTH_CALLBACK_URL');
   }
@@ -207,31 +201,37 @@ export class OAuthCallbackService {
         },
       );
 
-      // const integration = await loadRemoteModule(integrationDefinition.url);
+      const integrationAccount =
+        await this.integrationService.runIntegrationTrigger(
+          integrationDefinition,
+          {
+            event: IntegrationPayloadEventType.CREATE,
+            userId: sessionRecord.userId,
+            workspaceId: sessionRecord.workspaceId,
+            eventBody: {
+              oauthResponse: tokensResponse.token,
+              oauthParams: params,
+              integrationDefinition,
+            },
+          },
+          sessionRecord.userId,
+          sessionRecord.workspaceId,
+        );
 
-      const pat = await this.usersService.getOrCreatePat(
+      await this.integrationService.runIntegrationTriggerAsync(
+        integrationDefinition,
+        {
+          event: IntegrationPayloadEventType.SYNC_INITIAL_TASK,
+          userId: sessionRecord.userId,
+          workspaceId: sessionRecord.workspaceId,
+          eventBody: {
+            integrationAccount,
+            integrationDefinition,
+          },
+        },
         sessionRecord.userId,
         sessionRecord.workspaceId,
       );
-
-      const integrationFunction = await loadRemoteModule(
-        getRequires(createAxiosInstance(pat)),
-      );
-
-      const integration = await integrationFunction(
-        `${integrationDefinition.url}/backend/index.js`,
-      );
-
-      await integration.run({
-        event: IntegrationPayloadEventType.CREATE,
-        userId: sessionRecord.userId,
-        workspaceId: sessionRecord.workspaceId,
-        eventBody: {
-          oauthResponse: tokensResponse.token,
-          oauthParams: params,
-          integrationDefinition,
-        },
-      });
 
       res.redirect(
         `${sessionRecord.redirectURL}?success=true&integrationName=${integrationDefinition.name}${accountIdentifier}${integrationKeys}`,

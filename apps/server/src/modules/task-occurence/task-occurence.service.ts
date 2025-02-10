@@ -4,6 +4,7 @@ import {
   GetTaskOccurenceDTO,
   UpdateTaskOccurenceDTO,
 } from '@sigma/types';
+import { TransactionClient } from 'modules/tasks/tasks.utils';
 import { PrismaService } from 'nestjs-prisma';
 import { RRule } from 'rrule';
 
@@ -81,8 +82,9 @@ export class TaskOccurenceService {
     });
   }
 
-  async createTaskOccurance(taskId: string) {
-    const task = await this.prisma.task.findUnique({ where: { id: taskId } });
+  async createTaskOccurance(taskId: string, tx?: TransactionClient) {
+    const prismaClient = tx || this.prisma;
+    const task = await prismaClient.task.findUnique({ where: { id: taskId } });
     if (!task.recurrence || task.recurrence.length === 0 || !task.startTime) {
       return null;
     }
@@ -115,7 +117,7 @@ export class TaskOccurenceService {
 
     return await Promise.all(
       futureOccurrences.map((date) =>
-        this.prisma.taskOccurrence.upsert({
+        prismaClient.taskOccurrence.upsert({
           where: {
             taskId_startTime_endTime: {
               taskId: task.id,
@@ -158,10 +160,10 @@ export class TaskOccurenceService {
     });
   }
 
-  async updateTaskOccuranceByTask(taskId: string) {
-    await this.deleteTaskOccuranceByTask(taskId);
+  async updateTaskOccuranceByTask(taskId: string, tx?: TransactionClient) {
+    await this.deleteTaskOccuranceByTask(taskId, tx);
 
-    return await this.createTaskOccurance(taskId);
+    return await this.createTaskOccurance(taskId, tx);
   }
 
   async deleteTaskOccurence(taskOccurenceId: string) {
@@ -171,8 +173,10 @@ export class TaskOccurenceService {
     });
   }
 
-  async deleteTaskOccuranceByTask(taskId: string) {
-    return await this.prisma.taskOccurrence.updateMany({
+  async deleteTaskOccuranceByTask(taskId: string, tx?: TransactionClient) {
+    const prismaClient = tx || this.prisma;
+
+    return await prismaClient.taskOccurrence.updateMany({
       where: {
         taskId,
         startTime: {

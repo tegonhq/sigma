@@ -1,4 +1,6 @@
-import { IsArray, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsObject, IsOptional, IsString } from 'class-validator';
+
+import { CreateActivityDto } from '../activity';
 
 export class UpdateTaskDto {
   @IsString()
@@ -40,4 +42,8 @@ export class UpdateTaskDto {
   @IsString()
   @IsOptional()
   remindAt?: string;
+
+  @IsObject()
+  @IsOptional()
+  activity?: CreateActivityDto;
 }

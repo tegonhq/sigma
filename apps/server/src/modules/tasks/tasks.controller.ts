@@ -50,16 +50,11 @@ export class TasksController {
     @UserId() userId: string,
     @Workspace() workspaceId: string,
   ): Promise<Task[]> {
-    const tasks = [];
-    for (const taskData of tasksData) {
-      const task = await this.tasksService.createTask(
-        taskData,
-        workspaceId,
-        userId,
-      );
-      tasks.push(task);
-    }
-    return tasks;
+    return await this.tasksService.createBulkTasks(
+      tasksData,
+      workspaceId,
+      userId,
+    );
   }
 
   @Post(':taskId')

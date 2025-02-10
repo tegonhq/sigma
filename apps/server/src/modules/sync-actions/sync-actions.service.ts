@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ModelName } from '@prisma/client';
-import { ModelNameEnum, SyncAction } from '@sigma/types';
+import { ModelNameEnum, SyncAction, ModelName } from '@sigma/types';
 import { PrismaService } from 'nestjs-prisma';
 
 import {
@@ -67,12 +66,12 @@ export default class SyncActionsService {
 
     const deleteModelIds = new Set(
       syncActions
-        .filter((action) => action.action === 'D')
-        .map((action) => action.modelId),
+        .filter((action: SyncAction) => action.action === 'D')
+        .map((action: SyncAction) => action.modelId),
     );
 
     syncActions = syncActions.filter(
-      (action) => !deleteModelIds.has(action.modelId),
+      (action: SyncAction) => !deleteModelIds.has(action.modelId),
     );
 
     return {

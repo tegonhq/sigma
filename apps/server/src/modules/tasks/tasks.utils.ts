@@ -1,10 +1,18 @@
-import { IntegrationPayloadEventType, Task } from '@sigma/types';
-import { PrismaService } from 'nestjs-prisma';
+import { PrismaClient } from '@prisma/client';
+import {
+  CreateActivityDto,
+  IntegrationPayloadEventType,
+  Task,
+} from '@sigma/types';
 
 import { IntegrationsService } from 'modules/integrations/integrations.service';
 
+export type TransactionClient = Omit<
+  PrismaClient,
+  '$connect' | '$disconnect' | '$on' | '$transaction' | '$use' | '$extends'
+>;
 export async function handleCalendarTask(
-  prisma: PrismaService,
+  prisma: TransactionClient,
   integrationsService: IntegrationsService,
   workspaceId: string,
   userId: string,
@@ -39,4 +47,25 @@ export async function handleCalendarTask(
     userId,
     workspaceId,
   );
+}
+
+export function transformActivityDto(
+  dto: CreateActivityDto,
+  workspaceId: string,
+) {
+  return {
+    type: dto.type,
+    eventData: dto.eventData,
+    name: dto.name,
+    integrationAccount: {
+      connect: {
+        id: dto.integrationAccountId,
+      },
+    },
+    workspace: {
+      connect: {
+        id: workspaceId,
+      },
+    },
+  };
 }

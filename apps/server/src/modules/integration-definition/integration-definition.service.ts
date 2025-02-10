@@ -51,7 +51,6 @@ export class IntegrationDefinitionService {
       });
 
       const spec = await fetcher(`${integrationDefinition.url}/spec.json`);
-
       return { ...integrationDefinition, spec };
     } catch (e) {
       this.logger.error({ message: `Integration spec fetching failed: ${e}` });

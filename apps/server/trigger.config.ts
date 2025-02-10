@@ -7,8 +7,10 @@ import { prismaExtension } from '@trigger.dev/build/extensions/prisma';
 import { defineConfig } from '@trigger.dev/sdk/v3';
 
 export default defineConfig({
-  project: 'proj_common',
+  project: 'proj_gkqvmuiqybanhghopksd',
+  runtime: 'node',
   logLevel: 'log',
+  maxDuration: 3600,
   retries: {
     enabledInDev: true,
     default: {
@@ -23,20 +25,16 @@ export default defineConfig({
   instrumentations: [new PrismaInstrumentation()],
   build: {
     extensions: [
-      syncEnvVars(({ env }) => {
-        return {
-          DATABASE_URL: env.DATABASE_URL,
-          BACKEND_URL: env.BACKEND_HOST,
-        };
-      }),
+      syncEnvVars(({ env }) => ({
+        DATABASE_URL: env.DATABASE_URL,
+        BACKEND_URL: env.BACKEND_HOST,
+      })),
       additionalPackages({
         packages: ['@sigma/types'],
       }),
       prismaExtension({
-        // update this to the path of your Prisma schema file
         schema: 'prisma/schema.prisma',
       }),
     ],
   },
-  maxDuration: 300,
 });

@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 export class CreateActivityDto {
   @IsString()
@@ -11,4 +11,8 @@ export class CreateActivityDto {
 
   @IsString()
   integrationAccountId: string;
+
+  @IsString()
+  @IsOptional()
+  taskId: string;
 }

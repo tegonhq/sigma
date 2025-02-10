@@ -1,6 +1,6 @@
 import type { beautifyTask } from 'triggers/beautify-task';
 
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import {
   CreateTaskDto,
   JsonObject,
@@ -15,7 +15,11 @@ import { IntegrationsService } from 'modules/integrations/integrations.service';
 import { TaskOccurenceService } from 'modules/task-occurence/task-occurence.service';
 import { UsersService } from 'modules/users/users.service';
 
-import { handleCalendarTask } from './tasks.utils';
+import {
+  handleCalendarTask,
+  TransactionClient,
+  transformActivityDto,
+} from './tasks.utils';
 
 @Injectable()
 export class TasksService {
@@ -48,11 +52,63 @@ export class TasksService {
     return task;
   }
 
+  async createBulkTasks(
+    tasksData: CreateTaskDto[],
+    workspaceId: string,
+    userId: string,
+  ): Promise<Task[]> {
+    if (!tasksData.length) {
+      throw new BadRequestException('No tasks provided');
+    }
+
+    if (tasksData.length > 100) {
+      throw new BadRequestException('Too many tasks in bulk request');
+    }
+    return await this.prisma
+      .$transaction(
+        async (tx: TransactionClient) => {
+          const createdTasks: Task[] = [];
+
+          for (const taskData of tasksData) {
+            const task = await this.createTask(
+              taskData,
+              workspaceId,
+              userId,
+              tx, // Pass the transaction
+            );
+            createdTasks.push(task);
+          }
+
+          return createdTasks;
+        },
+        {
+          timeout: 10000,
+        },
+      )
+      .then(async (sigmaTasks: Task[]) => {
+        // Trigger beautify tasks after transaction commits
+        const pat = await this.usersService.getOrCreatePat(userId, workspaceId);
+
+        await Promise.all(
+          sigmaTasks.map((task) =>
+            tasks.trigger<typeof beautifyTask>('beautify-task', {
+              taskId: task.id,
+              pat,
+            }),
+          ),
+        );
+
+        return sigmaTasks;
+      });
+  }
+
   async createTask(
     createTaskDto: CreateTaskDto,
     workspaceId: string,
     userId: string,
+    tx?: TransactionClient,
   ): Promise<Task> {
+    const prismaClient = tx || this.prisma;
     const {
       title,
       metadata,
@@ -65,7 +121,7 @@ export class TasksService {
 
     // Check if task with same sourceId exists and update it
     if (sourceId) {
-      const existingTask = await this.prisma.task.findFirst({
+      const existingTask = await prismaClient.task.findFirst({
         where: {
           sourceId,
           workspaceId,
@@ -73,7 +129,7 @@ export class TasksService {
       });
 
       if (existingTask) {
-        const task = await this.prisma.task.update({
+        const task = await prismaClient.task.update({
           where: { id: existingTask.id },
           data: {
             status: taskStatus || existingTask.status,
@@ -83,6 +139,14 @@ export class TasksService {
               update: { title },
             },
             deleted: null,
+            ...(otherTaskData.activity && {
+              activity: {
+                create: transformActivityDto(
+                  otherTaskData.activity,
+                  workspaceId,
+                ),
+              },
+            }),
           },
           include: {
             page: true,
@@ -91,13 +155,16 @@ export class TasksService {
 
         // Handle recurring task updates
         if (existingTask.recurrence) {
-          await this.taskOccurenceService.updateTaskOccuranceByTask(task.id);
+          await this.taskOccurenceService.updateTaskOccuranceByTask(
+            task.id,
+            tx,
+          );
         }
 
         // Handle calendar integration if task has timing
         if (task.startTime || task.endTime) {
           await handleCalendarTask(
-            this.prisma,
+            prismaClient,
             this.integrationService,
             workspaceId,
             userId,
@@ -109,8 +176,9 @@ export class TasksService {
         return task;
       }
     }
+
     // Create new task
-    const task = await this.prisma.task.create({
+    const task = await prismaClient.task.create({
       data: {
         status: taskStatus || 'Todo',
         ...otherTaskData,
@@ -132,6 +200,11 @@ export class TasksService {
             workspaceId,
           },
         },
+        ...(otherTaskData.activity && {
+          activity: {
+            create: transformActivityDto(otherTaskData.activity, workspaceId),
+          },
+        }),
       },
       include: {
         page: true,
@@ -140,13 +213,13 @@ export class TasksService {
 
     // Handle recurring task creation
     if (task.recurrence) {
-      await this.taskOccurenceService.createTaskOccurance(task.id);
+      await this.taskOccurenceService.createTaskOccurance(task.id, tx);
     }
 
     // Handle calendar integration if task has timing
     if (task.startTime || task.endTime) {
       await handleCalendarTask(
-        this.prisma,
+        prismaClient,
         this.integrationService,
         workspaceId,
         userId,
@@ -155,11 +228,14 @@ export class TasksService {
       );
     }
 
-    const pat = await this.usersService.getOrCreatePat(userId, workspaceId);
-    await tasks.trigger<typeof beautifyTask>('beautify-task', {
-      taskId: task.id,
-      pat,
-    });
+    // Only trigger beautify task if not in a transaction
+    if (!tx) {
+      const pat = await this.usersService.getOrCreatePat(userId, workspaceId);
+      await tasks.trigger<typeof beautifyTask>('beautify-task', {
+        taskId: task.id,
+        pat,
+      });
+    }
 
     return task;
   }
@@ -188,6 +264,11 @@ export class TasksService {
       }),
       ...('recurrence' in updateTaskDto && {
         recurrence: updateTaskDto.recurrence || [],
+      }),
+      ...(otherTaskData.activity && {
+        activity: {
+          create: transformActivityDto(otherTaskData.activity, workspaceId),
+        },
       }),
     };
 
@@ -233,7 +314,7 @@ export class TasksService {
 
   async deleteTask(taskId: string, workspaceId: string, userId: string) {
     // Get task and update in a single transaction
-    return await this.prisma.$transaction(async (tx) => {
+    return await this.prisma.$transaction(async (tx: TransactionClient) => {
       const task = await tx.task.findUnique({
         where: { id: taskId },
         include: { page: true },
@@ -280,7 +361,7 @@ export class TasksService {
     workspaceId: string,
     userId: string,
   ) {
-    return await this.prisma.$transaction(async (tx) => {
+    return await this.prisma.$transaction(async (tx: TransactionClient) => {
       const task = await tx.task.findFirst({
         where: { sourceId },
         include: { page: true },

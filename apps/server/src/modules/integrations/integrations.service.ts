@@ -13,10 +13,8 @@ export class IntegrationsService {
 
   constructor(private usersService: UsersService) {}
 
-  async runIntegrationTrigger(
+  private async prepareIntegrationTrigger(
     integrationDefinition: IntegrationDefinition,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    event: any,
     userId?: string,
     workspaceId?: string,
   ) {
@@ -25,15 +23,60 @@ export class IntegrationsService {
       where: 'IntegrationsService.runIntegrationTrigger',
     });
 
-    let pat = '';
-    if (userId) {
-      pat = await this.usersService.getOrCreatePat(userId, workspaceId);
-    }
+    const pat = userId
+      ? await this.usersService.getOrCreatePat(userId, workspaceId)
+      : '';
 
-    return await tasks.trigger<typeof integrationRun>('integration-run', {
+    return {
       integrationDefinition,
       pat,
+    };
+  }
+
+  async runIntegrationTriggerAsync(
+    integrationDefinition: IntegrationDefinition,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    event: any,
+    userId?: string,
+    workspaceId?: string,
+  ) {
+    const params = await this.prepareIntegrationTrigger(
+      integrationDefinition,
+      userId,
+      workspaceId,
+    );
+    return await tasks.trigger<typeof integrationRun>('integration-run', {
+      ...params,
       event,
     });
+  }
+
+  async runIntegrationTrigger(
+    integrationDefinition: IntegrationDefinition,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    event: any,
+    userId?: string,
+    workspaceId?: string,
+  ) {
+    const params = await this.prepareIntegrationTrigger(
+      integrationDefinition,
+      userId,
+      workspaceId,
+    );
+    const response = await tasks.triggerAndPoll<typeof integrationRun>(
+      'integration-run',
+      {
+        ...params,
+        event,
+      },
+    );
+
+    if (response.status === 'COMPLETED') {
+      return response.output;
+    }
+
+    throw new Error(
+      `Integration trigger failed with status: ${response.status}`,
+    );
   }
 }

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import {
   CreateIntegrationAccountDto,
   InputJsonValue,
+  IntegrationAccount,
   IntegrationAccountIdDto,
   IntegrationPayloadEventType,
   UpdateIntegrationAccountDto,
@@ -80,17 +81,38 @@ export class IntegrationAccountService {
         where: { id: createIntegrationAccountDto.integrationDefinitionId },
       });
 
-    return await this.integrationService.runIntegrationTrigger(
+    const integrationAccount =
+      await this.integrationService.runIntegrationTrigger(
+        integrationDefinition,
+        {
+          event: IntegrationPayloadEventType.CREATE,
+          userId,
+          workspaceId,
+          eventBody: {
+            integrationDefinition,
+            ...createIntegrationAccountDto,
+          },
+        },
+        userId,
+        workspaceId,
+      );
+
+    await this.integrationService.runIntegrationTriggerAsync(
       integrationDefinition,
       {
-        event: IntegrationPayloadEventType.CREATE,
+        event: IntegrationPayloadEventType.SYNC_INITIAL_TASK,
         userId,
         workspaceId,
         eventBody: {
-          ...createIntegrationAccountDto,
+          integrationAccount,
+          integrationDefinition,
         },
       },
+      userId,
+      workspaceId,
     );
+
+    return integrationAccount;
   }
 
   async getIntegrationAccountWithId(integrationAccountId: string) {
@@ -231,7 +253,7 @@ export class IntegrationAccountService {
 
     const pat = await this.usersService.getOrCreatePat(userId, workspaceId);
     const accountsWithTokens = await Promise.all(
-      accounts.map(async (account) => {
+      accounts.map(async (account: IntegrationAccount) => {
         const accountWithToken = await this.getIntegrationAccountWithToken(
           account.id,
           account.workspaceId,
