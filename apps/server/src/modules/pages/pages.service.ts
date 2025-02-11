@@ -1,6 +1,11 @@
 import { TiptapTransformer } from '@hocuspocus/transformer';
 import { Injectable } from '@nestjs/common';
 import {
+  convertHtmlToTiptapJson,
+  convertTiptapJsonToHtml,
+  tiptapExtensions,
+} from '@sigma/editor-extensions';
+import {
   CreatePageDto,
   GetPageByTitleDto,
   Page,
@@ -8,12 +13,6 @@ import {
 } from '@sigma/types';
 import { PrismaService } from 'nestjs-prisma';
 import * as Y from 'yjs';
-
-import {
-  convertHtmlToTiptapJson,
-  convertTiptapJsonToHtml,
-  tiptapExtensions,
-} from 'common/utils/tiptap.utils';
 
 import { PageSelect } from './pages.interface';
 

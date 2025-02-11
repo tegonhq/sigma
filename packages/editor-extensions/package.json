@@ -36,11 +36,31 @@
   },
   "dependencies": {
     "@tiptap/core": "^2.3.0",
+    "@tiptap/extension-blockquote": "^2.11.5",
+    "@tiptap/extension-bullet-list": "^2.11.5",
+    "@tiptap/extension-code-block": "^2.11.5",
+    "@tiptap/extension-code-block-lowlight": "^2.11.5",
     "@tiptap/extension-collaboration": "^2.8.0",
     "@tiptap/extension-collaboration-cursor": "^2.8.0",
+    "@tiptap/extension-document": "^2.11.5",
+    "@tiptap/extension-hard-break": "^2.11.5",
+    "@tiptap/extension-heading": "^2.11.5",
+    "@tiptap/extension-horizontal-rule": "^2.11.5",
+    "@tiptap/extension-image": "^2.11.5",
+    "@tiptap/extension-link": "^2.11.5",
+    "@tiptap/extension-list-item": "^2.11.5",
     "@tiptap/extension-mention": "^2.10.3",
+    "@tiptap/extension-ordered-list": "^2.11.5",
+    "@tiptap/extension-paragraph": "^2.11.5",
+    "@tiptap/extension-task-item": "^2.11.5",
+    "@tiptap/extension-task-list": "^2.11.5",
+    "@tiptap/extension-text": "^2.11.5",
+    "@tiptap/extension-underline": "^2.11.5",
+    "@tiptap/html": "^2.10.3",
     "@tiptap/react": "^2.5.4",
-    "lowlight": "^3.3.0"
+    "add": "^2.0.6",
+    "lowlight": "^3.3.0",
+    "pnpm": "^10.3.0"
   },
   "exports": {
     ".": {
