@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { ModelNameEnum, SyncAction, ModelName } from '@sigma/types';
+import { ModelName } from '@prisma/client';
+import { ModelNameEnum, SyncAction } from '@sigma/types';
 import { PrismaService } from 'nestjs-prisma';
 
 import {
@@ -37,7 +38,7 @@ export default class SyncActionsService {
       },
       create: {
         action: actionType,
-        modelName: modelName as ModelName,
+        modelName,
         modelId,
         workspaceId,
         sequenceId,
