@@ -4,7 +4,6 @@ module.exports = {
   images: {
     unoptimized: true,
   },
-  publicPath: '/',
   async headers() {
     return [
       {
