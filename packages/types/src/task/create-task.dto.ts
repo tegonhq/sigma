@@ -58,4 +58,12 @@ export class CreateTaskDto {
   @IsObject()
   @IsOptional()
   activity?: CreateActivityDto;
+
+  @IsString()
+  @IsOptional()
+  pageDescription?: string;
+}
+
+export class CreateBulkTasksDto {
+  tasks: CreateTaskDto[];
 }

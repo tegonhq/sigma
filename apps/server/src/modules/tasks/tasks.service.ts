@@ -2,6 +2,7 @@ import type { beautifyTask } from 'triggers/beautify-task';
 
 import { BadRequestException, Injectable } from '@nestjs/common';
 import {
+  CreateBulkTasksDto,
   CreateTaskDto,
   JsonObject,
   PageTypeEnum,
@@ -12,6 +13,7 @@ import { tasks } from '@trigger.dev/sdk/v3';
 import { PrismaService } from 'nestjs-prisma';
 
 import { IntegrationsService } from 'modules/integrations/integrations.service';
+import { PagesService } from 'modules/pages/pages.service';
 import { TaskOccurenceService } from 'modules/task-occurence/task-occurence.service';
 import { UsersService } from 'modules/users/users.service';
 
@@ -28,6 +30,7 @@ export class TasksService {
     private taskOccurenceService: TaskOccurenceService,
     private integrationService: IntegrationsService,
     private usersService: UsersService,
+    private pageService: PagesService,
   ) {}
 
   async getTaskBySourceId(sourceId: string): Promise<Task | null> {
@@ -53,10 +56,11 @@ export class TasksService {
   }
 
   async createBulkTasks(
-    tasksData: CreateTaskDto[],
+    tasksDto: CreateBulkTasksDto,
     workspaceId: string,
     userId: string,
   ): Promise<Task[]> {
+    const tasksData = tasksDto.tasks;
     if (!tasksData.length) {
       throw new BadRequestException('No tasks provided');
     }
@@ -116,6 +120,7 @@ export class TasksService {
       sourceId,
       integrationAccountId,
       listId,
+      pageDescription,
       ...otherTaskData
     } = createTaskDto;
 
@@ -211,13 +216,21 @@ export class TasksService {
       },
     });
 
+    if (pageDescription) {
+      await this.pageService.updatePage(
+        { htmlDescription: pageDescription },
+        task.pageId,
+        tx,
+      );
+    }
+
     // Handle recurring task creation
     if (task.recurrence) {
       await this.taskOccurenceService.createTaskOccurance(task.id, tx);
     }
 
     // Handle calendar integration if task has timing
-    if (task.startTime || task.endTime) {
+    if (task.startTime && task.endTime) {
       await handleCalendarTask(
         prismaClient,
         this.integrationService,
