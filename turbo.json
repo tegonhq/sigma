@@ -43,7 +43,12 @@
     "TRIGGER_API_URL",
     "TRIGGER_SECRET_KEY",
     "GOOGLE_CLIENT_ID",
-    "GOOGLE_CLIENT_SECRET"
+    "GOOGLE_CLIENT_SECRET",
+    "APPLE_APP_SPECIFIC_PASSWORD",
+    "APPLE_ID",
+    "APPLE_TEAM_ID",
+    "CSC_LINK",
+    "CSC_KEY_PASSWORD"
   ],
   "ui": "tui",
   "tasks": {
@@ -52,7 +57,8 @@
       "outputs": [ "dist/**", ".next/**" ]
     },
     "compile": {
-      "dependsOn": [ "^build", "^compile" ],
+      "env": [ "APPLE_APP_SPECIFIC_PASSWORD", "APPLE_ID", "APPLE_TEAM_ID", "CSC_LINK", "CSC_KEY_PASSWORD" ],
+      "dependsOn": [ "^compile" ],
       "outputs": [ "dist/**", ".next/**" ]
     },
     "lint": { },

@@ -4,21 +4,27 @@ extraMetadata:
   name: mysigma
 copyright: Copyright © 2025 tegon
 appId: com.mysigma.mysigma-desktop
-afterSign: './notarize/notarize.cjs'
+asar: true
 publish:
   - provider: github
-    private: true
     owner: tegonhq
     repo: sigma
-    releaseType: draft
+    releaseType: release
 nsis:
   deleteAppDataOnUninstall: true
 directories:
-  output: dist
+  output: 'dist'
   buildResources: './buildResources'
   app: '.'
 mac:
   hardenedRuntime: true
+  type: distribution
+  notarize: false
+  target:
+    - target: default
+      arch:
+        - arm64
+        - x64
   entitlements: './notarize/entitlements.mac.plist'
   icon: './buildResources/icon.icns'
   extraResources:

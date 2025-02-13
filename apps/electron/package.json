@@ -1,5 +1,5 @@
 {
-  "name": "sigma",
+  "name": "electron",
   "description": "Personal task management",
   "version": "0.1.0",
   "type": "module",
@@ -14,7 +14,7 @@
     "build": "npm run build:main && npm run build:preload",
     "build:main": "cd ./packages/main && vite build",
     "build:preload": "cd ./packages/preload && vite build",
-    "compile": "cross-env MODE=production npm run build && electron-builder build --config electron-builder.yml --dir --config.asar=false",
+    "compile": "cross-env MODE=production npm run build && electron-builder build --config electron-builder.yml --publish never",
     "test": "npm run test:main && npm run test:preload && npm run test:e2e",
     "test:e2e": "npm run build && vitest run",
     "test:main": "vitest run -r packages/main --passWithNoTests",
@@ -31,26 +31,19 @@
     "@eslint/eslintrc": "3.1.0",
     "@fastify/websocket": "^11.0.1",
     "@types/node": "20.16.11",
-    "@types/ws": "^8.5.12",
-    "@vitejs/plugin-vue": "5.1.4",
-    "@vue/test-utils": "2.4.6",
     "cross-env": "7.0.3",
     "electron": "32.1.2",
-    "electron-builder": "25.1.7",
+    "electron-builder": "25.1.8",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "9.1.0",
     "fastify": "^5.0.0",
     "globals": "15.10.0",
-    "happy-dom": "15.7.4",
     "nano-staged": "0.8.0",
-    "playwright": "1.47.2",
-    "simple-git-hooks": "2.11.1",
+    "electron-rebuild": "^3.2.9",
     "typescript": "5.6.2",
     "typescript-eslint": "8.8.1",
     "vite": "5.4.8",
-    "vitest": "2.1.2",
-    "vue": "3.5.11",
-    "vue-tsc": "2.1.6"
+    "vitest": "2.1.2"
   },
   "dependencies": {
     "@electron/notarize": "^2.5.0",
@@ -59,9 +52,6 @@
     "electron-deeplink": "^1.0.10",
     "electron-store": "^10.0.0",
     "electron-updater": "6.3.9",
-    "electron-window-state": "^5.0.3",
-    "node-audiorecorder": "^3.0.0",
-    "update-electron-app": "^2.0.1",
-    "ws": "^8.18.0"
+    "electron-window-state": "^5.0.3"
   }
 }

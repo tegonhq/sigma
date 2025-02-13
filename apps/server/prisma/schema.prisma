@@ -149,7 +149,7 @@ model IntegrationAccount {
   workspaceId             String
   Activity                Activity[]
   IndexJob                IndexJob[]
-  task                    Task[]
+  TaskExternalLink        TaskExternalLink[]
 
   @@unique([accountId, integrationDefinitionId, workspaceId])
 }
@@ -297,8 +297,6 @@ model Task {
   number      Int?
   completedAt DateTime?
 
-  sourceId String?
-  url      String?
   status   String?
   metadata Json    @default("{}")
 
@@ -308,6 +306,7 @@ model Task {
   scheduleText String?
   dueDate      DateTime?
   remindAt     DateTime?
+  tags         String[]
 
   page   Page   @relation(fields: [pageId], references: [id])
   pageId String
@@ -318,11 +317,29 @@ model Task {
   list   List?   @relation(fields: [listId], references: [id])
   listId String?
 
-  integrationAccount   IntegrationAccount? @relation(fields: [integrationAccountId], references: [id])
-  integrationAccountId String?
+  parent   Task?   @relation("SubIssue", fields: [parentId], references: [id])
+  parentId String?
+  subIssue Task[]  @relation("SubIssue")
 
-  taskOccurrence TaskOccurrence[]
-  activity       Activity[]
+  taskOccurrence   TaskOccurrence[]
+  activity         Activity[]
+  TaskExternalLink TaskExternalLink[]
+}
+
+model TaskExternalLink {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  taskId   String
+  task     Task   @relation(fields: [taskId], references: [id])
+  metadata Json   @default("{}")
+
+  url String
+
+  integrationAccount   IntegrationAccount @relation(fields: [integrationAccountId], references: [id])
+  integrationAccountId String
 }
 
 model TaskOccurrence {
