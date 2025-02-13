@@ -314,6 +314,9 @@ model Task {
   remindAt     DateTime?
   tags         String[]
 
+  source  TaskExternalLink? @relation("TaskSource",fields:[sourceExternalLinkId], references: [id])
+  sourceExternalLinkId String?
+
   page   Page   @relation(fields: [pageId], references: [id])
   pageId String
 
@@ -329,7 +332,8 @@ model Task {
 
   taskOccurrence   TaskOccurrence[]
   activity         Activity[]
-  TaskExternalLink TaskExternalLink[]
+  taskExternalLink TaskExternalLink[]
+  conversation     Conversation[]
 }
 
 model TaskExternalLink {
@@ -342,10 +346,13 @@ model TaskExternalLink {
   task     Task   @relation(fields: [taskId], references: [id])
   metadata Json   @default("{}")
 
+  sourceId String?
   url String
 
   integrationAccount   IntegrationAccount @relation(fields: [integrationAccountId], references: [id])
   integrationAccountId String
+
+  sourceFor Task[] @relation("TaskSource")
 }
 
 model TaskOccurrence {

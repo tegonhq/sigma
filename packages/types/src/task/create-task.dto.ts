@@ -62,6 +62,10 @@ export class CreateTaskDto {
   @IsString()
   @IsOptional()
   pageDescription?: string;
+
+  @IsString()
+  @IsOptional()
+  parentId?: string;
 }
 
 export class CreateBulkTasksDto {

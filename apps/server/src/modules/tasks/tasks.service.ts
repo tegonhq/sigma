@@ -33,13 +33,27 @@ export class TasksService {
     private pageService: PagesService,
   ) {}
 
-  async getTaskBySourceId(sourceId: string): Promise<Task | null> {
-    return await this.prisma.task.findFirst({
+  async getTaskBySourceId(
+    sourceId: string,
+    workspaceId: string,
+  ): Promise<Task | null> {
+    const externalLink = await this.prisma.taskExternalLink.findFirst({
       where: {
         sourceId,
         deleted: null,
       },
+      include: {
+        sourceFor: {
+          where: {
+            deleted: null,
+            workspaceId,
+          },
+          take: 1,
+        },
+      },
     });
+
+    return externalLink?.sourceFor[0] || null;
   }
 
   async getTaskById(taskId: string): Promise<Task | null> {
@@ -74,12 +88,16 @@ export class TasksService {
           const createdTasks: Task[] = [];
 
           for (const taskData of tasksData) {
-            const task = await this.createTask(
-              taskData,
-              workspaceId,
-              userId,
-              tx, // Pass the transaction
-            );
+            const task =
+              taskData.sourceId && taskData.integrationAccountId
+                ? await this.upsertTaskBySource(
+                    taskData,
+                    workspaceId,
+                    userId,
+                    tx,
+                  )
+                : await this.createTask(taskData, workspaceId, userId, tx);
+
             createdTasks.push(task);
           }
 
@@ -106,6 +124,53 @@ export class TasksService {
       });
   }
 
+  async upsertTaskBySource(
+    createTaskDto: CreateTaskDto,
+    workspaceId: string,
+    userId: string,
+    tx?: TransactionClient,
+  ): Promise<Task> {
+    const prismaClient = tx || this.prisma;
+    const { sourceId, integrationAccountId } = createTaskDto;
+
+    if (!sourceId || !integrationAccountId) {
+      throw new BadRequestException(
+        'sourceId and integrationAccountId are required for upsert',
+      );
+    }
+
+    // Find existing external link and associated task
+    const existingExternalLink = await prismaClient.taskExternalLink.findFirst({
+      where: {
+        sourceId,
+        integrationAccountId,
+        deleted: null,
+      },
+      include: {
+        sourceFor: {
+          where: {
+            workspaceId,
+            deleted: null,
+          },
+        },
+      },
+    });
+
+    // If we found a task, update it
+    if (existingExternalLink?.sourceFor?.[0]) {
+      return await this.updateTask(
+        existingExternalLink.sourceFor[0].id,
+        createTaskDto,
+        workspaceId,
+        userId,
+        tx,
+      );
+    }
+
+    // If no existing task found, create a new one
+    return await this.createTask(createTaskDto, workspaceId, userId, tx);
+  }
+
   async createTask(
     createTaskDto: CreateTaskDto,
     workspaceId: string,
@@ -121,81 +186,21 @@ export class TasksService {
       integrationAccountId,
       listId,
       pageDescription,
+      parentId,
       ...otherTaskData
     } = createTaskDto;
 
-    // Check if task with same sourceId exists and update it
-    if (sourceId) {
-      const existingTask = await prismaClient.task.findFirst({
-        where: {
-          sourceId,
-          workspaceId,
-        },
-      });
-
-      if (existingTask) {
-        const task = await prismaClient.task.update({
-          where: { id: existingTask.id },
-          data: {
-            status: taskStatus || existingTask.status,
-            metadata,
-            ...otherTaskData,
-            page: {
-              update: { title },
-            },
-            deleted: null,
-            ...(otherTaskData.activity && {
-              activity: {
-                create: transformActivityDto(
-                  otherTaskData.activity,
-                  workspaceId,
-                ),
-              },
-            }),
-          },
-          include: {
-            page: true,
-          },
-        });
-
-        // Handle recurring task updates
-        if (existingTask.recurrence) {
-          await this.taskOccurenceService.updateTaskOccuranceByTask(
-            task.id,
-            tx,
-          );
-        }
-
-        // Handle calendar integration if task has timing
-        if (task.startTime || task.endTime) {
-          await handleCalendarTask(
-            prismaClient,
-            this.integrationService,
-            workspaceId,
-            userId,
-            'update',
-            task,
-          );
-        }
-
-        return task;
-      }
-    }
-
-    // Create new task
+    // Create the task first
     const task = await prismaClient.task.create({
       data: {
         status: taskStatus || 'Todo',
-        ...otherTaskData,
-        sourceId,
         metadata,
+        ...otherTaskData,
         workspace: { connect: { id: workspaceId } },
-        ...(integrationAccountId && {
-          integrationAccount: { connect: { id: integrationAccountId } },
-        }),
         ...(listId && {
           list: { connect: { id: listId } },
         }),
+        ...(parentId && { list: { connect: { id: parentId } } }),
         page: {
           create: {
             title,
@@ -215,6 +220,20 @@ export class TasksService {
         page: true,
       },
     });
+
+    // Then create external link and connect it to the task
+    if (sourceId && integrationAccountId) {
+      await prismaClient.taskExternalLink.create({
+        data: {
+          sourceId,
+          url: createTaskDto.url || '',
+          integrationAccount: { connect: { id: integrationAccountId } },
+          metadata: metadata || {},
+          task: { connect: { id: task.id } },
+          sourceFor: { connect: { id: task.id } },
+        },
+      });
+    }
 
     if (pageDescription) {
       await this.pageService.updatePage(
@@ -253,12 +272,14 @@ export class TasksService {
     return task;
   }
 
-  async update(
+  async updateTask(
     taskId: string,
     updateTaskDto: UpdateTaskDto,
     workspaceId: string,
     userId: string,
+    tx?: TransactionClient,
   ): Promise<Task> {
+    const prismaClient = tx || this.prisma;
     const { title, status: taskStatus, ...otherTaskData } = updateTaskDto;
 
     // Build update data object
@@ -286,18 +307,18 @@ export class TasksService {
     };
 
     // Get existing task and update in a single transaction
-    const [existingTask, updatedTask] = await this.prisma.$transaction([
-      this.prisma.task.findUnique({
+    const [existingTask, updatedTask] = [
+      await prismaClient.task.findUnique({
         where: { id: taskId },
       }),
-      this.prisma.task.update({
+      await prismaClient.task.update({
         where: { id: taskId },
         data: updateData,
         include: {
           page: true,
         },
       }),
-    ]);
+    ];
 
     // Check if schedule related fields were updated
     const scheduleChanged =
@@ -310,9 +331,9 @@ export class TasksService {
 
     if (scheduleChanged) {
       await Promise.all([
-        this.taskOccurenceService.updateTaskOccuranceByTask(updatedTask.id),
+        this.taskOccurenceService.updateTaskOccuranceByTask(updatedTask.id, tx),
         handleCalendarTask(
-          this.prisma,
+          prismaClient,
           this.integrationService,
           workspaceId,
           userId,
@@ -375,11 +396,7 @@ export class TasksService {
     userId: string,
   ) {
     return await this.prisma.$transaction(async (tx: TransactionClient) => {
-      const task = await tx.task.findFirst({
-        where: { sourceId },
-        include: { page: true },
-      });
-
+      const task = await this.getTaskBySourceId(sourceId, workspaceId);
       if (!task || task.deleted) {
         return task;
       }

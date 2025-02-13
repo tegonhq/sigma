@@ -29,8 +29,11 @@ export class TasksController {
 
   @Get('source/:sourceId')
   @UseGuards(AuthGuard)
-  async getTaskBySource(@Param('sourceId') sourceId: string): Promise<Task> {
-    return await this.tasksService.getTaskBySourceId(sourceId);
+  async getTaskBySource(
+    @Param('sourceId') sourceId: string,
+    @Workspace() workspaceId: string,
+  ): Promise<Task> {
+    return await this.tasksService.getTaskBySourceId(sourceId, workspaceId);
   }
 
   @Post()
@@ -41,6 +44,20 @@ export class TasksController {
     @Body() taskData: CreateTaskDto,
   ): Promise<Task> {
     return await this.tasksService.createTask(taskData, workspaceId, userId);
+  }
+
+  @Post('source')
+  @UseGuards(AuthGuard)
+  async upsertTaskBySource(
+    @Workspace() workspaceId: string,
+    @UserId() userId: string,
+    @Body() taskData: CreateTaskDto,
+  ): Promise<Task> {
+    return await this.tasksService.upsertTaskBySource(
+      taskData,
+      workspaceId,
+      userId,
+    );
   }
 
   @Post('bulk')
@@ -65,7 +82,7 @@ export class TasksController {
     @Workspace() workspaceId: string,
     @Body() taskData: Partial<CreateTaskDto>,
   ): Promise<Task> {
-    return await this.tasksService.update(
+    return await this.tasksService.updateTask(
       taskId,
       taskData,
       workspaceId,

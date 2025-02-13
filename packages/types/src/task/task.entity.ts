@@ -1,6 +1,9 @@
+import { Activity } from '../activity';
 import { JsonValue } from '../common';
-import { IntegrationAccount } from '../integration-account';
+import { Conversation } from '../conversation';
+import { List } from '../list';
 import { Page } from '../page';
+import { TaskExternalLink } from '../task-external-link';
 import { TaskOccurrence } from '../task-occurence/task-occurence.entity';
 import { Workspace } from '../workspace';
 
@@ -18,9 +21,11 @@ export class Task {
   id: string;
   createdAt: Date;
   updatedAt: Date;
+  deleted?: Date;
 
-  sourceId?: string;
-  url?: string;
+  number?: number;
+  completedAt?: Date;
+
   status?: string;
   metadata?: JsonValue;
 
@@ -30,15 +35,26 @@ export class Task {
   scheduleText?: string;
   dueDate?: Date;
   remindAt?: Date;
+  tags?: string[];
 
-  pageId?: string;
+  source?: TaskExternalLink;
+  sourceExternalLinkId?: string;
+
   page?: Page;
-
-  integrationAccountId?: string;
-  integrationAccount?: IntegrationAccount;
+  pageId: string;
 
   workspace?: Workspace;
-  workspaceId?: string;
+  workspaceId: string;
 
-  taskOccurence?: TaskOccurrence[];
+  list?: List;
+  listId?: string;
+
+  parent?: Task;
+  parentId?: string;
+  subIssue?: Task[];
+
+  taskOccurrence?: TaskOccurrence[];
+  activity?: Activity[];
+  taskExternalLink?: TaskExternalLink[];
+  conversation?: Conversation[];
 }

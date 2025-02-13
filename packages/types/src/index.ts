@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 
-export * from './activity';
 export * from './action-schedule';
+export * from './activity';
 export * from './ai-request';
 export * from './attachment';
 export * from './common';
@@ -9,15 +9,14 @@ export * from './conversation';
 export * from './conversation-history';
 export * from './integration-account';
 export * from './integration-definition';
+export * from './list';
 export * from './page';
 export * from './prompt';
 export * from './sync-action';
 export * from './task';
+export * from './task-external-link';
 export * from './task-occurence';
 export * from './template';
 export * from './user';
 export * from './webhook';
-export * from './workspace';
-export * from './task';
-export * from './list';
 export * from './workspace';

@@ -46,4 +46,8 @@ export class UpdateTaskDto {
   @IsObject()
   @IsOptional()
   activity?: CreateActivityDto;
+
+  @IsString()
+  @IsOptional()
+  parentId?: string;
 }
