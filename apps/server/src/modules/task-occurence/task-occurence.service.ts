@@ -4,9 +4,10 @@ import {
   GetTaskOccurenceDTO,
   UpdateTaskOccurenceDTO,
 } from '@sigma/types';
-import { TransactionClient } from 'modules/tasks/tasks.utils';
 import { PrismaService } from 'nestjs-prisma';
 import { RRule } from 'rrule';
+
+import { TransactionClient } from 'modules/tasks/tasks.utils';
 
 @Injectable()
 export class TaskOccurenceService {

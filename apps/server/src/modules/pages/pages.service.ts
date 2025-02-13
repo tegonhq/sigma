@@ -1,24 +1,41 @@
 import { TiptapTransformer } from '@hocuspocus/transformer';
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import {
   convertHtmlToTiptapJson,
   convertTiptapJsonToHtml,
   tiptapExtensions,
 } from '@sigma/editor-extensions';
 import {
+  Conversation,
   CreatePageDto,
   GetPageByTitleDto,
+  LLMModelEnum,
   Page,
   UpdatePageDto,
+  UserTypeEnum,
+  enchancePrompt,
 } from '@sigma/types';
+import axios from 'axios';
 import { PrismaService } from 'nestjs-prisma';
 import * as Y from 'yjs';
+
+import AIRequestsService from 'modules/ai-requests/ai-requests.services';
+import { ConversationService } from 'modules/conversation/conversation.service';
+import { TransactionClient } from 'modules/tasks/tasks.utils';
+import { UsersService } from 'modules/users/users.service';
 
 import { PageSelect } from './pages.interface';
 
 @Injectable()
 export class PagesService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private configService: ConfigService,
+    private usersService: UsersService,
+    private aiRequestService: AIRequestsService,
+    private conversationService: ConversationService,
+  ) {}
 
   async getPageByTitle(
     workspaceId: string,
@@ -119,7 +136,9 @@ export class PagesService {
   async updatePage(
     { parentId, description, htmlDescription, ...pageData }: UpdatePageDto,
     pageId: string,
+    tx?: TransactionClient,
   ): Promise<Page> {
+    const prismaClient = tx || this.prisma;
     let finalDescription = description;
     if (htmlDescription && !description) {
       finalDescription = JSON.stringify(
@@ -149,7 +168,7 @@ export class PagesService {
     // Get the binary state
     const binaryState = Y.encodeStateAsUpdate(ydoc);
 
-    return this.prisma.page.update({
+    return prismaClient.page.update({
       where: { id: pageId },
       data: {
         ...pageData,
@@ -169,5 +188,71 @@ export class PagesService {
       },
       select: PageSelect,
     });
+  }
+
+  async enhancePage(pageId: string, userId: string): Promise<Conversation> {
+    // Get the existing page
+    const page = await this.prisma.page.findUnique({
+      where: { id: pageId },
+      select: PageSelect,
+    });
+
+    if (!page) {
+      throw new Error('Page not found');
+    }
+
+    if (page?.description) {
+      const descriptionJson = JSON.parse(page.description);
+      page.description = convertTiptapJsonToHtml(descriptionJson);
+    }
+
+    const enhanceResponse = await this.aiRequestService.getLLMRequest(
+      {
+        messages: [
+          // { role: 'user', content: enhanceExample },
+          {
+            role: 'user',
+            content: enchancePrompt.replace('{{TASK_LIST}}', page.description),
+          },
+        ],
+        llmModel: LLMModelEnum.CLAUDESONNET,
+        model: 'enchance',
+      },
+      page.workspaceId,
+    );
+
+    const outputMatch = enhanceResponse.match(/<output>([\s\S]*?)<\/output>/);
+    const outputContent = outputMatch ? outputMatch[1].trim() : '';
+
+    // Create a conversation for this enhancement
+    const conversation = await this.conversationService.createConversation(
+      page.workspaceId,
+      userId,
+      {
+        message: `Please create tasks along with subtasks as description in Sigma.
+        ${outputContent}`,
+        userType: UserTypeEnum.User,
+        context: { agents: ['sigma'] },
+      },
+    );
+
+    const pat = await this.usersService.getOrCreatePat(
+      userId,
+      page.workspaceId,
+    );
+
+    // Trigger the streaming API call without waiting for completion
+    axios.post(
+      `${this.configService.get('AGENT_HOST')}/chat`,
+      {
+        conversation_id: conversation.id,
+        conversation_history_id: conversation.conversationHistory[0].id,
+        workspace_id: page.workspaceId,
+        stream: true,
+      },
+      { headers: { Authorization: `Bearer ${pat}` } },
+    );
+
+    return conversation;
   }
 }
