@@ -58,3 +58,53 @@ After your analysis, provide the final JSON output with the following structure:
 }
 </output>
 If the input text does not contain any schedulable information, return an empty JSON object {}.`;
+
+export const enhanceExample = `<examples>\n<example>\n<TASK_LIST>\n<ol><li><p>Schedule task UI</p></li><li><p>Change the list view use react virtualised list</p></li><li><p>Also group by options</p><ol><li><p>Status</p></li><li><p>Integration</p></li><li><p>Lists</p></li></ol></li><li><p>Add list functionality</p></li><li><p>Lists should also automatically show up on the left side</p></li><li><p>Show meetings as a separate section in my day</p></li><li><p>Cmd + k</p><ol><li><p>For changing status</p></li><li><p>Changing list</p></li><li><p>changing schedule</p></li></ol></li></ol><p></p><p></p><p></p><p>Personal</p><ol><li><p>Go to gym atlernatively at 5 PM and 6 PM starting from Monday</p></li><li><p>Send documents to insurance by evening</p></li></ol><p></p>\n</TASK_LIST>\n<ideal_output>\n<task_analysis>\nTotal Tasks: 11 main tasks (including subtasks)\n\nAreas identified:\n1. UI/Frontend Development\n2. List Management\n3. Command Palette Features\n4. Personal Tasks\n\nTime-sensitive tasks:\n- Gym schedule starting Monday\n- Insurance documents by evening\n\nNested tasks found:\n- Group by options (3 subtasks)\n- Cmd + k features (3 subtasks)\n\nPotential Groups and Tasks:\n\n1. UI Development (3 tasks)\n   1. Schedule task UI\n   2. Change list view to react virtualized list\n   3. Show meetings as separate section in my day\n\n2. List Management Features (4 tasks)\n   1. Add list functionality\n   2. Lists should automatically show up on left side\n   3. Group by options\n      - Status\n      - Integration\n      - Lists\n\n3. Command Palette Implementation (3 subtasks)\n   1. For changing status\n   2. Changing list\n   3. Changing schedule\n\n4. Personal Tasks (2 tasks, kept separate as different activities)\n   1. Gym schedule\n   2. Insurance documents\n\nJustification:\n- UI Development groups tasks related to visual interface changes\n- List Management combines related list functionality features\n- Command Palette groups all Cmd+k related features\n- Personal tasks kept separate as they are unrelated activities\n</task_analysis>\n\ngroup: UI Development\ntitle: Frontend Interface Updates\ndescription:\n- Schedule task UI\n- Change the list view use react virtualised list\n- Show meetings as a separate section in my day\n\ngroup: List Management\ntitle: List Feature Implementation\ndescription:\n- Add list functionality\n- Lists should also automatically show up on the left side\n- Group by options:\n  - Status\n  - Integration\n  - Lists\n\ngroup: Command Palette\ntitle: Cmd + k Implementation\ndescription:\n- For changing status\n- Changing list\n- Changing schedule\n\ntitle: Gym Schedule\ndescription:\n- Go to gym alternatively at 5 PM and 6 PM starting from Monday\n\ntitle: Insurance Task\ndescription:\n- Send documents to insurance by evening\n</ideal_output>\n</example>\n</examples>\n\n`;
+
+export const enchancePrompt = `You are an AI assistant specializing in task organization and project management. Your goal is to analyze a given list of tasks and create meaningful groupings.
+
+Here is the list of tasks you need to organize:
+
+<task_list>
+{{TASK_LIST}}
+</task_list>
+
+Please follow these steps to organize the tasks:
+
+1. Analyze the task list:
+   In <task_analysis> tags:
+   - Read through the entire task list carefully.
+   - Count and report the total number of tasks in the list.
+   - Identify and list unique projects or areas of work.
+   - Note any deadlines or time-sensitive tasks.
+   - Identify any recurring tasks or patterns.
+   - Recognize tasks that are part of the same project or area.
+   - Note any dependencies between tasks.
+   - Identify any subtasks or nested tasks.
+   - Don't add a task to any groups, if a task in the list doesn't need to be tracked separately
+   - Don't group personal tasks unless those tasks are doing the same activity. 
+   - List potential group titles and also individual tasks based on your analysis.
+   - For each potential group, list out the tasks that would fall under it, prepending each with a number to count them.
+   - Consider any tasks that don't fit well into the proposed groups.
+   - Justify your final grouping choices.
+
+
+2. Create logical, specific groups based on your analysis. Use your judgment to create meaningful groupings, avoiding broad, general categories or grouping unrelated items together.
+3. Don't give a group name in the final output
+4. Format your output as follows: wrap output in this tag<output> </output>
+<output>
+   For each group:
+   title: [Main Task Title]
+   description: [List of subtasks]
+</output>
+   Ensure that:
+   - All tasks from the original list are included in your groupings.
+   - The hierarchy of tasks and subtasks is maintained as presented in the original list.
+   - Each group contains genuinely related tasks.
+   - Group titles are clear and descriptive.
+
+Remember:
+- Create specific, focused groups rather than broad categories.
+- Do not add any explanations or messages to the output beyond the specified format.
+
+Please proceed with your analysis and organization of the provided task list.`;
