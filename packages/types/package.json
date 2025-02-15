@@ -38,5 +38,6 @@
   "dependencies": {
     "ai": "^3.2.37",
     "class-validator": "0.14.1"
-  }
+  },
+  "packageManager": "pnpm@10.3.0"
 }

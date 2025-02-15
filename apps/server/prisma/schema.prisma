@@ -314,7 +314,7 @@ model Task {
   remindAt     DateTime?
   tags         String[]
 
-  source  TaskExternalLink? @relation("TaskSource",fields:[sourceExternalLinkId], references: [id])
+  source               TaskExternalLink? @relation("TaskSource", fields: [sourceExternalLinkId], references: [id])
   sourceExternalLinkId String?
 
   page   Page   @relation(fields: [pageId], references: [id])
@@ -347,7 +347,7 @@ model TaskExternalLink {
   metadata Json   @default("{}")
 
   sourceId String?
-  url String
+  url      String
 
   integrationAccount   IntegrationAccount @relation(fields: [integrationAccountId], references: [id])
   integrationAccountId String

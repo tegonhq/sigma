@@ -35,8 +35,8 @@
     "prisma:studio": "prisma studio",
     "generate": "prisma generate",
     "db:init-resources": "pnpm run migrate && pnpm run generate",
-    "trigger-deploy": "npx trigger.dev@latest deploy --self-hosted",
-    "trigger-dev": "npx trigger.dev@latest dev"
+    "trigger-deploy": "npx trigger.dev@3.3.13 deploy --self-hosted",
+    "trigger-dev": "npx trigger.dev@3.3.13 dev"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^1.1.6",
@@ -159,5 +159,6 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
-  }
+  },
+  "packageManager": "pnpm@10.3.0"
 }

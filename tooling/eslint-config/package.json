@@ -19,5 +19,6 @@
     "@typescript-eslint/parser": "^7.1.0",
     "@typescript-eslint/eslint-plugin": "^7.1.0",
     "typescript": "^5.3.3"
-  }
+  },
+  "packageManager": "pnpm@10.3.0"
 }
