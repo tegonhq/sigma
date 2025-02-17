@@ -37,23 +37,24 @@ export class TasksService {
     sourceId: string,
     workspaceId: string,
   ): Promise<Task | null> {
-    const externalLink = await this.prisma.taskExternalLink.findFirst({
+    const task = await this.prisma.task.findFirst({
       where: {
-        sourceId,
-        deleted: null,
-      },
-      include: {
-        sourceFor: {
-          where: {
-            deleted: null,
-            workspaceId,
-          },
-          take: 1,
+        source: {
+          path: ['type'],
+          equals: 'external',
         },
+        AND: {
+          source: {
+            path: ['id'],
+            equals: sourceId,
+          },
+        },
+        deleted: null,
+        workspaceId,
       },
     });
 
-    return externalLink?.sourceFor[0] || null;
+    return task || null;
   }
 
   async getTaskById(taskId: string): Promise<Task | null> {
@@ -89,7 +90,7 @@ export class TasksService {
 
           for (const taskData of tasksData) {
             const task =
-              taskData.sourceId && taskData.integrationAccountId
+              taskData.source && taskData.integrationAccountId
                 ? await this.upsertTaskBySource(
                     taskData,
                     workspaceId,
@@ -131,35 +132,35 @@ export class TasksService {
     tx?: TransactionClient,
   ): Promise<Task> {
     const prismaClient = tx || this.prisma;
-    const { sourceId, integrationAccountId } = createTaskDto;
+    const { source, integrationAccountId } = createTaskDto;
 
-    if (!sourceId || !integrationAccountId) {
+    if (!source || !integrationAccountId) {
       throw new BadRequestException(
-        'sourceId and integrationAccountId are required for upsert',
+        'source and integrationAccountId are required for upsert',
       );
     }
 
-    // Find existing external link and associated task
-    const existingExternalLink = await prismaClient.taskExternalLink.findFirst({
+    const externalTask = await prismaClient.task.findFirst({
       where: {
-        sourceId,
-        integrationAccountId,
-        deleted: null,
-      },
-      include: {
-        sourceFor: {
-          where: {
-            workspaceId,
-            deleted: null,
+        source: {
+          path: ['type'],
+          equals: 'external',
+        },
+        AND: {
+          source: {
+            path: ['id'],
+            equals: source.id,
           },
         },
+        deleted: null,
+        workspaceId,
       },
     });
 
     // If we found a task, update it
-    if (existingExternalLink?.sourceFor?.[0]) {
+    if (externalTask) {
       return await this.updateTask(
-        existingExternalLink.sourceFor[0].id,
+        externalTask.id,
         createTaskDto,
         workspaceId,
         userId,
@@ -182,7 +183,7 @@ export class TasksService {
       title,
       metadata,
       status: taskStatus,
-      sourceId,
+      source,
       integrationAccountId,
       listId,
       pageDescription,
@@ -215,6 +216,7 @@ export class TasksService {
             create: transformActivityDto(otherTaskData.activity, workspaceId),
           },
         }),
+        ...source,
       },
       include: {
         page: true,
@@ -222,15 +224,14 @@ export class TasksService {
     });
 
     // Then create external link and connect it to the task
-    if (sourceId && integrationAccountId) {
+    if (source && integrationAccountId) {
       await prismaClient.taskExternalLink.create({
         data: {
-          sourceId,
+          sourceId: source.id,
           url: createTaskDto.url || '',
           integrationAccount: { connect: { id: integrationAccountId } },
           metadata: metadata || {},
           task: { connect: { id: task.id } },
-          sourceFor: { connect: { id: task.id } },
         },
       });
     }
@@ -280,11 +281,17 @@ export class TasksService {
     tx?: TransactionClient,
   ): Promise<Task> {
     const prismaClient = tx || this.prisma;
-    const { title, status: taskStatus, ...otherTaskData } = updateTaskDto;
+    const {
+      title,
+      status: taskStatus,
+      source,
+      ...otherTaskData
+    } = updateTaskDto;
 
     // Build update data object
     const updateData: JsonObject = {
       ...otherTaskData,
+      source: { id: source.id, type: source.type },
       ...(taskStatus && {
         status: taskStatus,
         ...(taskStatus === 'Done' || taskStatus === 'Canceled'

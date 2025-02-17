@@ -31,7 +31,9 @@ const electronHandler = {
     once(channel: Channels, func: (...args: unknown[]) => void) {
       ipcRenderer.once(channel, (_event, ...args) => func(...args));
     },
-    openUrl: (url: string) => ipcRenderer.send('open-url', url),
+    openUrl: (url: string) => {
+      ipcRenderer.send('open-url', url);
+    },
     getIntegrationsFolder: () => ipcRenderer.invoke('get-integrations-folder'),
     getSources: () => ipcRenderer.invoke('get-sources'),
   },

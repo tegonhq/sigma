@@ -5,10 +5,8 @@ export const Task = types.model({
   createdAt: types.string,
   updatedAt: types.string,
 
-  sourceId: types.union(types.null, types.string),
   completedAt: types.union(types.null, types.string),
   number: types.union(types.null, types.number),
-  url: types.union(types.null, types.string),
   status: types.string,
   metadata: types.union(types.null, types.string),
   startTime: types.union(types.null, types.string, types.undefined),
@@ -17,7 +15,6 @@ export const Task = types.model({
   scheduleText: types.union(types.string, types.null, types.undefined),
   dueDate: types.union(types.string, types.null, types.undefined),
 
-  integrationAccountId: types.union(types.null, types.string),
   pageId: types.union(types.null, types.string),
   workspaceId: types.string,
   listId: types.union(types.null, types.string, types.undefined),

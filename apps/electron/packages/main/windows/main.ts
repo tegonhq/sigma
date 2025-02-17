@@ -1,6 +1,6 @@
 import {app, BrowserWindow} from 'electron';
 import path, {dirname, join} from 'node:path';
-
+import log from 'electron-log/main';
 import {fileURLToPath} from 'node:url';
 
 // Initialize Fastify
@@ -9,6 +9,7 @@ const __dirname = dirname(__filename);
 const isDev = process.env.NODE_ENV === 'development';
 
 export async function createMainWindow() {
+  log.info(app.getAppPath());
   const browserWindow = new BrowserWindow({
     show: false, // Use the 'ready-to-show' event to show the instantiated BrowserWindow.
     // frame: false,

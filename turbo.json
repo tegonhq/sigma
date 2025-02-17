@@ -40,15 +40,11 @@
     "TRIGGER_DATABASE_URL",
     "TRIGGER_TOKEN",
     "TRIGGER_ACCESS_TOKEN",
-    "TRIGGER_API_URL",
     "TRIGGER_SECRET_KEY",
+    "TRIGGER_COMMON_ID",
+    "TRIGGER_API_URL",
     "GOOGLE_CLIENT_ID",
-    "GOOGLE_CLIENT_SECRET",
-    "APPLE_APP_SPECIFIC_PASSWORD",
-    "APPLE_ID",
-    "APPLE_TEAM_ID",
-    "CSC_LINK",
-    "CSC_KEY_PASSWORD"
+    "GOOGLE_CLIENT_SECRET"
   ],
   "ui": "tui",
   "tasks": {
@@ -80,11 +76,9 @@
       "cache": false
     },
     "trigger-deploy": {
-      "env": [ "TRIGGER_ACCESS_TOKEN", "TRIGGER_API_URL", "TRIGGER_SECRET_KEY" ],
       "cache": false
     },
     "trigger-dev": {
-      "env": [ "TRIGGER_ACCESS_TOKEN", "TRIGGER_API_URL", "TRIGGER_SECRET_KEY" ],
       "interactive": true,
       "cache": false
     }

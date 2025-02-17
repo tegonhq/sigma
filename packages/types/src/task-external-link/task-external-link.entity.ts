@@ -17,6 +17,4 @@ export class TaskExternalLink {
 
   integrationAccount: IntegrationAccount;
   integrationAccountId: string;
-
-  sourceFor: Task[];
 }

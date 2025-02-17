@@ -10,7 +10,7 @@ import fastifyStatic from '@fastify/static';
 const isDev = process.env.NODE_ENV === 'development';
 const apiBaseUrl = isDev ? 'http://localhost:3001' : 'https://server.mysigma.ai';
 
-const fastify = Fastify({logger: true});
+const fastify = Fastify();
 
 // Start Fastify server
 const startFastifyServer = async () => {

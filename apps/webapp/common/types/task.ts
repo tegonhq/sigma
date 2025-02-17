@@ -9,7 +9,6 @@ export interface TaskType {
   endTime: string;
   recurrence: string[];
   scheduleText?: string;
-  sourceId: string | null;
   url: string | null;
   status: string;
   metadata: string;

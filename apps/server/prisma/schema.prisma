@@ -8,27 +8,6 @@ generator client {
   // previewFeatures = []
 }
 
-model Activity {
-  id        String    @id @default(uuid())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deleted   DateTime?
-
-  type      String
-  eventData Json
-  name      String
-
-  task     Task?   @relation(fields: [taskId], references: [id])
-  taskId   String?
-  isUrgent Boolean @default(false)
-
-  integrationAccount   IntegrationAccount? @relation(fields: [integrationAccountId], references: [id])
-  integrationAccountId String?
-
-  workspace   Workspace @relation(fields: [workspaceId], references: [id])
-  workspaceId String
-}
-
 model AIRequest {
   id        String    @id @default(uuid())
   createdAt DateTime  @default(now())
@@ -152,7 +131,6 @@ model IntegrationAccount {
   integrationDefinitionId String
   workspace               Workspace               @relation(references: [id], fields: [workspaceId])
   workspaceId             String
-  Activity                Activity[]
   IndexJob                IndexJob[]
   TaskExternalLink        TaskExternalLink[]
 
@@ -299,6 +277,7 @@ model Task {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deleted   DateTime?
+  archived  DateTime?
 
   number      Int?
   completedAt DateTime?
@@ -314,8 +293,7 @@ model Task {
   remindAt     DateTime?
   tags         String[]
 
-  source               TaskExternalLink? @relation("TaskSource", fields: [sourceExternalLinkId], references: [id])
-  sourceExternalLinkId String?
+  source Json?
 
   page   Page   @relation(fields: [pageId], references: [id])
   pageId String
@@ -331,7 +309,6 @@ model Task {
   subIssue Task[]  @relation("SubIssue")
 
   taskOccurrence   TaskOccurrence[]
-  activity         Activity[]
   taskExternalLink TaskExternalLink[]
   conversation     Conversation[]
 }
@@ -351,8 +328,6 @@ model TaskExternalLink {
 
   integrationAccount   IntegrationAccount @relation(fields: [integrationAccountId], references: [id])
   integrationAccountId String
-
-  sourceFor Task[] @relation("TaskSource")
 }
 
 model TaskOccurrence {
@@ -438,7 +413,6 @@ model Workspace {
   pages                 Page[]
   statuses              Status[]
   Conversation          Conversation[]
-  Activity              Activity[]
   IndexJob              IndexJob[]
   tasks                 Task[]
   taskOccurrence        TaskOccurrence[]

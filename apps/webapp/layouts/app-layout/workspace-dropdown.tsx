@@ -32,7 +32,6 @@ export const WorkspaceDropdown = observer(() => {
           >
             <div className="flex justify-between gap-2 items-center">
               <AvatarText text={workspaceStore.workspace.name} noOfChar={1} />
-              <div className="truncate">{workspaceStore.workspace.name}</div>
             </div>
           </Button>
         </DropdownMenuTrigger>

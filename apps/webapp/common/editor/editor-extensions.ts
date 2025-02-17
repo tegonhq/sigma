@@ -6,7 +6,6 @@ import { all, createLowlight } from 'lowlight';
 import {
   TiptapLink,
   TaskList,
-  TaskItem,
   HorizontalRule,
   StarterKit,
   Placeholder,
@@ -18,6 +17,7 @@ import { datePageExtension } from './date-page-extension';
 import { fileExtension } from './file-extension';
 import { imageExtension } from './image-extension';
 import { taskExtension } from './task-extension';
+import { taskItemExtension } from './task-item';
 
 // create a lowlight instance with all languages loaded
 const lowlight = createLowlight(all);
@@ -32,13 +32,6 @@ const taskList = TaskList.configure({
   HTMLAttributes: {
     class: cx('not-prose'),
   },
-});
-
-const taskItem = TaskItem.configure({
-  HTMLAttributes: {
-    class: cx('flex items-start gap-1 my-1'),
-  },
-  nested: true,
 });
 
 const horizontalRule = HorizontalRule.configure({
@@ -143,7 +136,7 @@ export const defaultExtensions = [
   starterKit,
   tiptapLink,
   taskList,
-  taskItem,
+  taskItemExtension,
   horizontalRule,
   heading,
   AIHighlight,

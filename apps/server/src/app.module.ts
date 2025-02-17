@@ -33,6 +33,7 @@ import { WorkspacesModule } from 'modules/workspaces/workspaces.module';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { TriggerdevModule } from 'modules/triggerdev/triggerdev.module';
 
 @Module({
   imports: [
@@ -96,6 +97,7 @@ import { AppService } from './app.service';
     AIRequestsModule,
     PromptsModule,
     ListsModule,
+    TriggerdevModule,
   ],
   controllers: [AppController],
   providers: [

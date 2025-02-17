@@ -8,6 +8,10 @@ import {startAPI} from './api';
 import {listeners} from '../windows/listeners';
 import {registerStore} from './store';
 import {setupAutoUpdater} from './auto-update';
+import log from 'electron-log/main';
+
+// Optional, initialize the logger for any renderer process
+log.initialize();
 
 /**
  * Prevent electron from running multiple instances.
@@ -47,10 +51,10 @@ app
     registerStore();
     restoreOrCreateWindow();
     // registerShortcut();
-    setupAutoUpdater();
     listeners();
+    setupAutoUpdater();
   })
-  .catch(e => console.error('Failed create window:', e));
+  .catch(e => log.error('Failed create window:', e));
 
 /**
  * Check for app updates, install it in background and notify user that new version was installed.
@@ -65,7 +69,7 @@ if (import.meta.env.PROD) {
   app
     .whenReady()
     .then(() => updater.autoUpdater.checkForUpdatesAndNotify())
-    .catch(e => console.error('Failed check and install updates:', e));
+    .catch(e => log.error('Failed check and install updates:', e));
 }
 
 startAPI(app);

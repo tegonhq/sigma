@@ -34,9 +34,8 @@ export function Auth() {
   const { mutate: createAuthCode, isLoading } = useCreateAuthCodeMutation({
     onSuccess: async (data: AuthCodeResponse) => {
       setLoading(true);
-      console.log(
-        `${publicRuntimeConfig.NEXT_PUBLIC_BASE_HOST}/authorize?code=${data.code}`,
-      );
+
+      console.log(ipc);
       ipc.openUrl(
         `${publicRuntimeConfig.NEXT_PUBLIC_BASE_HOST}/authorize?code=${data.code}`,
       );

@@ -1,3 +1,5 @@
+import { IsEnum, IsOptional, IsString } from 'class-validator';
+
 import { Activity } from '../activity';
 import { JsonValue } from '../common';
 import { Conversation } from '../conversation';
@@ -6,6 +8,22 @@ import { Page } from '../page';
 import { TaskExternalLink } from '../task-external-link';
 import { TaskOccurrence } from '../task-occurence/task-occurence.entity';
 import { Workspace } from '../workspace';
+
+export enum SourceType {
+  EXTERNAL = 'external',
+  PAGE = 'page',
+  TASK = 'task',
+}
+
+export class Source {
+  @IsString()
+  @IsOptional()
+  id?: string;
+
+  @IsOptional()
+  @IsEnum(SourceType)
+  type?: SourceType;
+}
 
 export enum TaskType {
   NORMAL = 'NORMAL',
@@ -22,6 +40,7 @@ export class Task {
   createdAt: Date;
   updatedAt: Date;
   deleted?: Date;
+  atchived?: Date;
 
   number?: number;
   completedAt?: Date;
@@ -37,8 +56,7 @@ export class Task {
   remindAt?: Date;
   tags?: string[];
 
-  source?: TaskExternalLink;
-  sourceExternalLinkId?: string;
+  source?: any;
 
   page?: Page;
   pageId: string;

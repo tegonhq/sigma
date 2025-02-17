@@ -2,6 +2,7 @@ import {app, session} from 'electron';
 import axios from 'axios';
 import path from 'node:path';
 import fs from 'fs';
+import log from 'electron-log/main';
 
 async function getAccessToken(): Promise<string | null> {
   const keyName = 'sAccessToken';
@@ -17,7 +18,7 @@ async function getAccessToken(): Promise<string | null> {
     // Return the value of the cookie, or null if not found
     return accessTokenCookie ? accessTokenCookie.value : null;
   } catch (error) {
-    console.error(`Error retrieving cookie '${keyName}':`, error);
+    log.error(`Error retrieving cookie '${keyName}':`, error);
     return null;
   }
 }
@@ -47,11 +48,11 @@ export async function downloadContentToSystem(items: Item[]) {
 
     for (const item of items) {
       if (!item.url) {
-        console.warn(`No URL provided for item with ID ${item.id}`);
+        log.warn(`No URL provided for item with ID ${item.id}`);
         continue;
       }
 
-      console.log(`Processing item: ${item.name}`);
+      log.log(`Processing item: ${item.name}`);
 
       // Define the item's folder based on its `name`
       const itemFolder = path.join(persistentFolder, item.name || item.id, item.version);
@@ -82,7 +83,7 @@ export async function downloadContentToSystem(items: Item[]) {
         // Download the file
         const response = await fetch(url);
         if (!response.ok) {
-          console.error(`Failed to download from URL ${url}: ${response.statusText}`);
+          log.error(`Failed to download from URL ${url}: ${response.statusText}`);
           continue;
         }
 
@@ -91,6 +92,6 @@ export async function downloadContentToSystem(items: Item[]) {
       }
     }
   } catch (error) {
-    console.error('Error while downloading content:', error);
+    log.error('Error while downloading content:', error);
   }
 }

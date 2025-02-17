@@ -1,5 +1,6 @@
 import { IsArray, IsObject, IsOptional, IsString } from 'class-validator';
 
+import { Source } from './task.entity';
 import { CreateActivityDto } from '../activity/create-activity.dto';
 
 export class CreateTaskDto {
@@ -19,9 +20,9 @@ export class CreateTaskDto {
   @IsOptional()
   metadata?: Record<string, any>;
 
-  @IsString()
+  @IsObject()
   @IsOptional()
-  sourceId?: string;
+  source?: Source;
 
   @IsString()
   @IsOptional()

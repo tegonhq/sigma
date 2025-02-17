@@ -1,6 +1,7 @@
 import { IsArray, IsObject, IsOptional, IsString } from 'class-validator';
 
 import { CreateActivityDto } from '../activity';
+import { Source } from './task.entity';
 
 export class UpdateTaskDto {
   @IsString()
@@ -22,6 +23,10 @@ export class UpdateTaskDto {
   @IsString()
   @IsOptional()
   listId?: string;
+
+  @IsObject()
+  @IsOptional()
+  source?: Source;
 
   @IsString()
   @IsOptional()

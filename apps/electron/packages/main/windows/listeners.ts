@@ -1,11 +1,12 @@
 import {app, desktopCapturer, ipcMain, shell} from 'electron';
 import {integrationsInit} from '/@/integrations-init';
 import path from 'node:path';
+import log from 'electron-log/main';
 
 export function listeners() {
   // Listen for URL open requests
   ipcMain.on('open-url', (_event, url) => {
-    console.log(url);
+    log.info(url);
     shell.openExternal(url);
   });
 

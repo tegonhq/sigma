@@ -5,6 +5,7 @@ import {createQuickWindow, recalculatePositionToDisplay, registerQuickStates} fr
 import path, {dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {registerDeepLink} from '/@/deeplink';
+import log from 'electron-log/main';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -49,9 +50,9 @@ export function registerShortcut() {
   });
 
   if (isRegistered) {
-    console.log('Global shortcut registered successfully!');
+    log.info('Global shortcut registered successfully!');
   } else {
-    console.log('Failed to register the global shortcut.');
+    log.info('Failed to register the global shortcut.');
   }
 }
 
@@ -60,7 +61,7 @@ export function registerShortcut() {
  */
 export async function restoreOrCreateQuickWindow() {
   if (!appWindows.quick || appWindows.quick.isDestroyed()) {
-    console.log('destroyed\n');
+    log.info('destroyed\n');
     appWindows.quick = await createQuickWindow();
     registerQuickStates(appWindows.quick);
   }
