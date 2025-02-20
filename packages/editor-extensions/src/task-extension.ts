@@ -1,8 +1,9 @@
 import { mergeAttributes, Node } from '@tiptap/core';
 
+/// Copy of webapp/common/editor/task-extension
 export const taskExtension = Node.create({
   priority: 51,
-  name: 'taskExtension',
+  name: 'task',
   group: 'inline',
   inline: true,
 
@@ -11,18 +12,21 @@ export const taskExtension = Node.create({
       id: {
         default: undefined,
       },
+      number: {
+        default: undefined,
+      },
     };
   },
 
   parseHTML() {
     return [
       {
-        tag: 'task-extension',
+        tag: 'task',
       },
     ];
   },
 
   renderHTML({ HTMLAttributes }) {
-    return ['task-extension', mergeAttributes(HTMLAttributes)];
+    return ['task', mergeAttributes(HTMLAttributes)];
   },
 });

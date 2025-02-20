@@ -20,8 +20,6 @@ import type { PageType } from 'common/types';
 import { useCreatePageMutation } from 'services/pages';
 
 import { useContextStore } from 'store/global-context-provider';
-import { Editor as EditorT } from '@tiptap/core';
-import { addTasksSectionIfNotFound } from './utils';
 
 interface DayEditorProps {
   date: Date;
@@ -35,10 +33,8 @@ interface EditorWithPageProps {
 export const EditorWithPage = observer(
   ({ page, date }: EditorWithPageProps) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [provider, setProvider] =
-      React.useState<HocuspocusProvider>(undefined);
+    const [_, setProvider] = React.useState<HocuspocusProvider>(undefined);
     const [doc, setDoc] = React.useState(undefined);
-    const [editor, setEditor] = React.useState(undefined);
 
     React.useEffect(() => {
       initPageSocket();
@@ -67,9 +63,6 @@ export const EditorWithPage = observer(
     };
 
     const onDescriptionChange = () => {};
-    const onCreate = (editor: EditorT) => {
-      setEditor(editor);
-    };
 
     if (page && doc) {
       return (
@@ -83,7 +76,6 @@ export const EditorWithPage = observer(
                 document: doc,
               }),
             ]}
-            onCreate={onCreate}
             className="min-h-[calc(100vh_-_65vh)] my-1"
             placeholder="Write notes..."
           >

@@ -1,4 +1,3 @@
-export * from './activity';
 export * from './conversation';
 export * from './integration-account';
 export * from './integration-definition';

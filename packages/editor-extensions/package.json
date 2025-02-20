@@ -48,6 +48,8 @@
     "@tiptap/extension-horizontal-rule": "^2.11.5",
     "@tiptap/extension-image": "^2.11.5",
     "@tiptap/extension-link": "^2.11.5",
+    "@tiptap/extension-placeholder": "^2.11.5",
+    "@tiptap/extension-highlight": "^2.11.5",
     "@tiptap/extension-list-item": "^2.11.5",
     "@tiptap/extension-mention": "^2.10.3",
     "@tiptap/extension-ordered-list": "^2.11.5",
@@ -56,10 +58,12 @@
     "@tiptap/extension-task-list": "^2.11.5",
     "@tiptap/extension-text": "^2.11.5",
     "@tiptap/extension-underline": "^2.11.5",
+    "@tiptap/extension-list-keymap": "2.11.5",
     "@tiptap/html": "^2.10.3",
     "@tiptap/react": "^2.5.4",
     "add": "^2.0.6",
     "lowlight": "^3.3.0",
+    "novel": "^0.5.0",
     "pnpm": "^10.3.0"
   },
   "exports": {

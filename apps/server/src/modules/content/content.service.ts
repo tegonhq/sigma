@@ -7,7 +7,8 @@ import { PrismaService } from 'nestjs-prisma';
 import { LoggerService } from 'modules/logger/logger.service';
 import { isValidAuthentication } from 'modules/sync/sync.utils';
 import { TasksService } from 'modules/tasks/tasks.service';
-import { yXmlFragmentToProsemirrorJSON } from 'y-prosemirror';
+import { prosemirrorJSONToYXmlFragment } from 'y-prosemirror';
+import { getSchema } from '@sigma/editor-extensions';
 @Injectable()
 export class ContentService implements OnModuleInit {
   private readonly logger: LoggerService = new LoggerService('ContentGateway');
@@ -78,8 +79,43 @@ export class ContentService implements OnModuleInit {
 
     await docConnection.transact((doc) => {
       const editorState = doc.getXmlFragment('default');
+      // const tiptapJSON = yXmlFragmentToProsemirrorJSON(editorState);
 
-      console.log(editorState.toString());
+      const newJSON = {
+        type: 'doc',
+        content: [
+          {
+            type: 'paragraph',
+            content: [
+              {
+                type: 'text',
+                text: 'asd',
+              },
+            ],
+          },
+          {
+            type: 'paragraph',
+          },
+          {
+            type: 'heading',
+            attrs: {
+              level: 1,
+            },
+            content: [
+              {
+                type: 'text',
+                text: 'working',
+              },
+            ],
+          },
+          {
+            type: 'paragraph',
+            content: [],
+          },
+        ],
+      };
+
+      prosemirrorJSONToYXmlFragment(getSchema(), newJSON, editorState);
     });
   }
 }
