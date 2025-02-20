@@ -2,13 +2,13 @@ import { Database } from '@hocuspocus/extension-database';
 import { Hocuspocus, Server } from '@hocuspocus/server';
 import { TiptapTransformer } from '@hocuspocus/transformer';
 import { Injectable, OnModuleInit } from '@nestjs/common';
+import { getSchema } from '@sigma/editor-extensions';
 import { PrismaService } from 'nestjs-prisma';
+import { prosemirrorJSONToYXmlFragment } from 'y-prosemirror';
 
 import { LoggerService } from 'modules/logger/logger.service';
 import { isValidAuthentication } from 'modules/sync/sync.utils';
 import { TasksService } from 'modules/tasks/tasks.service';
-import { prosemirrorJSONToYXmlFragment } from 'y-prosemirror';
-import { getSchema } from '@sigma/editor-extensions';
 @Injectable()
 export class ContentService implements OnModuleInit {
   private readonly logger: LoggerService = new LoggerService('ContentGateway');
@@ -71,51 +71,19 @@ export class ContentService implements OnModuleInit {
     });
 
     this.server.listen();
+  }
 
+  // Update any page from the server
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async updateContentForDocument(documentName: string, json: any) {
     const docConnection = await this.server.openDirectConnection(
-      'fdd4a2ee-8f5d-4452-91de-505b55a17ff5',
+      documentName,
       {},
     );
 
     await docConnection.transact((doc) => {
       const editorState = doc.getXmlFragment('default');
-      // const tiptapJSON = yXmlFragmentToProsemirrorJSON(editorState);
-
-      const newJSON = {
-        type: 'doc',
-        content: [
-          {
-            type: 'paragraph',
-            content: [
-              {
-                type: 'text',
-                text: 'asd',
-              },
-            ],
-          },
-          {
-            type: 'paragraph',
-          },
-          {
-            type: 'heading',
-            attrs: {
-              level: 1,
-            },
-            content: [
-              {
-                type: 'text',
-                text: 'working',
-              },
-            ],
-          },
-          {
-            type: 'paragraph',
-            content: [],
-          },
-        ],
-      };
-
-      prosemirrorJSONToYXmlFragment(getSchema(), newJSON, editorState);
+      prosemirrorJSONToYXmlFragment(getSchema(), json, editorState);
     });
   }
 }

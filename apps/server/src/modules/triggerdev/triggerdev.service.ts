@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import Knex, { Knex as KnexT } from 'knex';
-import { v4 as uuidv4 } from 'uuid'; // Import uuid for generating unique identifiers
 
 import { LoggerService } from 'modules/logger/logger.service';
 
@@ -54,7 +53,7 @@ export class TriggerdevService {
       await createProject(
         'Sigma Common',
         'sigma_common',
-        uuidv4().replace(/-/g, ''),
+        process.env.TRIGGER_TOKEN,
         this.knex,
         this.logger,
       ); // Create the common project

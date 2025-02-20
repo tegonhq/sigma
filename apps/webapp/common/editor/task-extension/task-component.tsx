@@ -27,6 +27,7 @@ export const TaskComponent = observer((props: any) => {
     },
   });
 
+  console.log(props.node.attrs);
   const submitTask = () => {
     if (!value) {
       props.deleteNode();

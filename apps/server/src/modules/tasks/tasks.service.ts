@@ -187,10 +187,6 @@ export class TasksService {
           page: {
             title,
           },
-          source: {
-            path: ['id'],
-            equals: source.id,
-          },
         },
       }));
 
@@ -201,6 +197,7 @@ export class TasksService {
         },
         data: {
           deleted: null,
+          source: source ? { ...source } : undefined,
         },
       });
 
@@ -273,20 +270,20 @@ export class TasksService {
     }
 
     // Only trigger when task is created from the API not from third-party source
-    if (!tx) {
-      const pat = await this.usersService.getOrCreatePat(userId, workspaceId);
-      await tasks.trigger<typeof beautifyTask>('beautify-task', {
-        taskId: task.id,
-        pat,
-      });
+    // if (!tx) {
+    //   const pat = await this.usersService.getOrCreatePat(userId, workspaceId);
+    //   await tasks.trigger<typeof beautifyTask>('beautify-task', {
+    //     taskId: task.id,
+    //     pat,
+    //   });
 
-      await tasks.trigger<typeof generateSummaryTask>('generate-summary', {
-        taskId: task.id,
-        summaryData: getSummaryData(task, true),
-        pat,
-        userId,
-      });
-    }
+    //   await tasks.trigger<typeof generateSummaryTask>('generate-summary', {
+    //     taskId: task.id,
+    //     summaryData: getSummaryData(task, true),
+    //     pat,
+    //     userId,
+    //   });
+    // }
 
     return task;
   }
@@ -325,8 +322,6 @@ export class TasksService {
         recurrence: updateTaskDto.recurrence || [],
       }),
     };
-
-    console.log(updateData);
 
     // Get existing task and update in a single transaction
     const [existingTask, updatedTask] = [

@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import {
   convertHtmlToTiptapJson,
   convertTiptapJsonToHtml,
-  tiptapExtensions,
 } from '@sigma/editor-extensions';
 import {
   CreatePageDto,
@@ -148,13 +147,13 @@ export class PagesService {
           ? JSON.parse(finalDescription)
           : finalDescription;
 
-      // Convert Tiptap JSON to YDoc
-      const newYDoc = TiptapTransformer.toYdoc(
-        descriptionJson,
-        'default',
-        tiptapExtensions,
-      );
-      Y.applyUpdate(ydoc, Y.encodeStateAsUpdate(newYDoc));
+      // // Convert Tiptap JSON to YDoc
+      // const newYDoc = TiptapTransformer.toYdoc(
+      //   descriptionJson,
+      //   'default',
+      //   tiptapExtensions,
+      // );
+      // Y.applyUpdate(ydoc, Y.encodeStateAsUpdate(newYDoc));
     }
 
     // Get the binary state
