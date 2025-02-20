@@ -9,11 +9,9 @@ export interface TaskType {
   endTime: string;
   recurrence: string[];
   scheduleText?: string;
-  url: string | null;
   status: string;
   metadata: string;
   workspaceId: string;
   pageId: string;
-  integrationAccountId: string | null;
   listId?: string;
 }

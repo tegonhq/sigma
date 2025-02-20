@@ -5,30 +5,13 @@ import React from 'react';
 
 import { useTab } from 'hooks/application/use-tab';
 
-import { useContextStore } from 'store/global-context-provider';
-import type { TasksStoreType } from 'store/tasks';
-
 import { DayEditor } from './day-editor';
 import { Navigation } from './navigation';
-import { Tasks } from './tasks';
-
-function getTasks(tasksStore: TasksStoreType, date: Date) {
-  const today = new Date();
-
-  if (isToday(date)) {
-    return tasksStore.getTasksForToday();
-  } else if (isBefore(date, today)) {
-    return tasksStore.getCompletedTasksForDate(date);
-  }
-
-  return tasksStore.getTasksForDate(date);
-}
 
 // A component to render individual date items.
 export const Day = observer(() => {
   const { tab } = useTab();
   const { date = new Date() } = tab.data;
-  const { tasksStore } = useContextStore();
 
   return (
     <ScrollArea className="flex h-full justify-center w-full p-4">
@@ -41,8 +24,6 @@ export const Day = observer(() => {
               {format(date, 'EEEE, MMMM do, yyyy')}
               <AI />
             </h3>
-
-            <Tasks date={date} tasks={getTasks(tasksStore, date)} />
 
             <DayEditor date={date} />
           </div>

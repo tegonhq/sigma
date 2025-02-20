@@ -126,14 +126,6 @@ export const TasksStore: IAnyStateTreeNode = types
 
       return sort(tasks).by([{ desc: (task) => new Date(task.updatedAt) }]);
     },
-    getTasksWithNoIntegration() {
-      return self.tasks.filter((task: TaskType) => !task.integrationAccountId);
-    },
-    getTasksWithIntegration(integrationAccountId: string) {
-      return self.tasks.filter(
-        (task: TaskType) => task.integrationAccountId === integrationAccountId,
-      );
-    },
     getTaskWithId(taskId: string) {
       return self.tasks.find((task: TaskType) => task.id === taskId);
     },
@@ -159,8 +151,6 @@ export interface TasksStoreType {
 
   getTasks: (params: { listId?: string }) => TaskType[];
   getTaskWithId: (taskId: string) => TaskType;
-  getTasksWithNoIntegration: () => TaskType[];
-  getTasksWithIntegration: (integrationAccountId: string) => TaskType[];
   getTaskForPage: (pageId: string) => TaskType;
   getTasksForToday: () => TaskType[];
   getTasksNotToday: () => TaskType[];

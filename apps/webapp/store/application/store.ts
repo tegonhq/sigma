@@ -226,7 +226,7 @@ const ApplicationStore = types
     },
 
     getTabGroup() {
-      return self.tabGroups[0];
+      return self?.tabGroups[0];
     },
   }));
 

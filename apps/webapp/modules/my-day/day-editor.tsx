@@ -1,5 +1,5 @@
 import { HocuspocusProvider } from '@hocuspocus/provider';
-import { PageTypeEnum } from '@sigma/types';
+import { PageTypeEnum, SourceType } from '@sigma/types';
 import Collaboration from '@tiptap/extension-collaboration';
 import { format } from 'date-fns';
 import { observer } from 'mobx-react-lite';
@@ -9,6 +9,7 @@ import * as Y from 'yjs';
 
 import {
   Editor,
+  EditorContext,
   EditorExtensions,
   getSocketURL,
   suggestionItems,
@@ -19,6 +20,8 @@ import type { PageType } from 'common/types';
 import { useCreatePageMutation } from 'services/pages';
 
 import { useContextStore } from 'store/global-context-provider';
+import { Editor as EditorT } from '@tiptap/core';
+import { addTasksSectionIfNotFound } from './utils';
 
 interface DayEditorProps {
   date: Date;
@@ -26,62 +29,75 @@ interface DayEditorProps {
 
 interface EditorWithPageProps {
   page: PageType;
+  date: Date;
 }
 
-export const EditorWithPage = observer(({ page }: EditorWithPageProps) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_, setProvider] = React.useState(undefined);
-  const [doc, setDoc] = React.useState(undefined);
+export const EditorWithPage = observer(
+  ({ page, date }: EditorWithPageProps) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [provider, setProvider] =
+      React.useState<HocuspocusProvider>(undefined);
+    const [doc, setDoc] = React.useState(undefined);
+    const [editor, setEditor] = React.useState(undefined);
 
-  React.useEffect(() => {
-    initPageSocket();
+    React.useEffect(() => {
+      initPageSocket();
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page.id]);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [page.id]);
 
-  const initPageSocket = async () => {
-    setDoc(undefined);
-    setProvider(undefined);
-    // To refresh the editor with the new doc a hack
-    await new Promise((resolve) => setTimeout(resolve, 100));
-    const ydoc = new Y.Doc();
+    const initPageSocket = async () => {
+      setDoc(undefined);
+      setProvider(undefined);
+      // To refresh the editor with the new doc a hack
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      const ydoc = new Y.Doc();
 
-    new IndexeddbPersistence(page.id, ydoc);
+      new IndexeddbPersistence(page.id, ydoc);
 
-    const provider = new HocuspocusProvider({
-      url: getSocketURL(),
-      name: page.id,
-      document: ydoc,
-      token: '1234',
-    });
+      const provider = new HocuspocusProvider({
+        url: getSocketURL(),
+        name: page.id,
+        document: ydoc,
+        token: '1234',
+      });
 
-    setDoc(ydoc);
-    setProvider(provider);
-  };
+      setDoc(ydoc);
+      setProvider(provider);
+    };
 
-  const onDescriptionChange = () => {};
+    const onDescriptionChange = () => {};
+    const onCreate = (editor: EditorT) => {
+      setEditor(editor);
+    };
 
-  if (page && doc) {
-    return (
-      <Editor
-        onChange={onDescriptionChange}
-        extensions={[
-          Collaboration.configure({
-            document: doc,
-          }),
-        ]}
-        className="min-h-[calc(100vh_-_65vh)] my-1"
-        placeholder="Write notes..."
-      >
-        <EditorExtensions suggestionItems={suggestionItems}>
-          <AddTaskSelector />
-        </EditorExtensions>
-      </Editor>
-    );
-  }
+    if (page && doc) {
+      return (
+        <EditorContext.Provider
+          value={{ source: { type: SourceType.PAGE, id: page.id }, date }}
+        >
+          <Editor
+            onChange={onDescriptionChange}
+            extensions={[
+              Collaboration.configure({
+                document: doc,
+              }),
+            ]}
+            onCreate={onCreate}
+            className="min-h-[calc(100vh_-_65vh)] my-1"
+            placeholder="Write notes..."
+          >
+            <EditorExtensions suggestionItems={suggestionItems}>
+              <AddTaskSelector />
+            </EditorExtensions>
+          </Editor>
+        </EditorContext.Provider>
+      );
+    }
 
-  return null;
-});
+    return null;
+  },
+);
 
 export const DayEditor = observer(({ date }: DayEditorProps) => {
   const { mutate: createPage } = useCreatePageMutation({});
@@ -106,7 +122,7 @@ export const DayEditor = observer(({ date }: DayEditorProps) => {
 
   return (
     <div className="flex flex-col min-h-[calc(100vh_-_65vh)]">
-      <EditorWithPage page={page} />
+      <EditorWithPage page={page} date={date} />
     </div>
   );
 });

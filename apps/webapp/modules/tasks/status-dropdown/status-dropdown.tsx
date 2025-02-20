@@ -60,10 +60,9 @@ export const StatusDropdown = observer(
           >
             <CategoryIcon
               size={20}
-              className="text-muted-foreground mr-2"
+              className="text-muted-foreground"
               color={getStatusColor(value).color}
             />
-            {value}
           </Button>
         );
       }

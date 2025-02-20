@@ -300,6 +300,9 @@ importers:
       winston:
         specifier: ^3.14.2
         version: 3.17.0
+      y-prosemirror:
+        specifier: ^1.2.15
+        version: 1.2.15(prosemirror-model@1.24.1)(prosemirror-state@1.4.3)(prosemirror-view@1.37.2)(y-protocols@1.0.6(yjs@13.6.23))(yjs@13.6.23)
       y-protocols:
         specifier: ^1.0.6
         version: 1.0.6(yjs@13.6.23)

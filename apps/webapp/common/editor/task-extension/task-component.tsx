@@ -1,28 +1,24 @@
-import { Command, CommandInput, CommandItem, CommandList } from '@tegonhq/ui';
+import { cn, Input } from '@tegonhq/ui';
 import { NodeViewWrapper } from '@tiptap/react';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 
-import {
-  getStatusColor,
-  getStatusIcon,
-} from 'modules/tasks/status-dropdown/status-utils';
+import { getCreateTaskPropsOnSource } from 'modules/tasks/add-task/utils';
 
 import type { TaskType } from 'common/types';
 
 import { useCreateTaskMutation } from 'services/tasks';
 
-import { useContextStore } from 'store/global-context-provider';
-
-import { TaskItem } from './task-item-editor';
+import { TaskMetadata } from './task-metadata';
+import { EditorContext } from '../editor-context';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const TaskComponent = observer((props: any) => {
+  const { source, date } = React.useContext(EditorContext);
   const [value, setValue] = React.useState('');
-
+  const taskId = props.node.attrs.id;
+  const editor = props.editor;
   const inputRef = React.useRef(null);
-
-  const { tasksStore, pagesStore } = useContextStore();
   const { mutate: addTaskMutation } = useCreateTaskMutation({
     onSuccess: (data: TaskType) => {
       props.updateAttributes({
@@ -31,122 +27,80 @@ export const TaskComponent = observer((props: any) => {
     },
   });
 
-  const tasksWithTitle = tasksStore.tasks.map((task) => ({
-    ...task,
-    title: pagesStore.getPageWithId(task.pageId)?.title,
-  }));
+  const submitTask = () => {
+    if (!value) {
+      props.deleteNode();
+    }
 
-  const filteredTasks = tasksWithTitle
-    .filter(
-      (task) =>
-        task.title?.toLowerCase().includes(value.toLowerCase()) ||
-        task.number.toString().toLowerCase().includes(value.toLowerCase()),
-    )
-    .slice(0, 10); // Limit to 10 results;
-
-  const id = props.node.attrs.id;
-
-  const task = tasksStore.getTaskWithId(id);
+    addTaskMutation({
+      title: value,
+      ...getCreateTaskPropsOnSource(source, date),
+    });
+  };
 
   React.useEffect(() => {
-    if (!task && !id && inputRef.current) {
+    if (inputRef.current) {
       setTimeout(() => {
         inputRef.current.focus();
       }, 10);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [task]);
+  }, []);
 
-  const onBlur = () => {
-    // If there's no value and no task selected, delete the node
-    if (!value && !task) {
+  const onKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      submitTask();
+      editor.chain().focus().run();
+    }
+
+    if (event.key === 'Escape') {
       props.deleteNode();
+      editor.chain().focus().run();
+    }
+
+    if (event.key === 'ArrowUp') {
+      submitTask();
+
+      editor
+        .chain()
+        .focus()
+        .setTextSelection(editor.state.selection.$anchor.before())
+        .run();
+    }
+
+    if (event.key === 'ArrowDown') {
+      submitTask();
+
+      editor
+        .chain()
+        .focus()
+        .setTextSelection(editor.state.selection.$anchor.after())
+        .run();
     }
   };
-
-  const onKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      props.deleteNode();
-
-      setTimeout(() => {
-        props.editor?.chain().focus().run();
-      }, 0); // Ensure it runs after the node is deleted
-    }
-  };
-
-  if (!task) {
-    return (
-      <NodeViewWrapper className="react-component-with-content" as="span">
-        <Command
-          className="w-fit relative rounded text-base"
-          shouldFilter={false}
-        >
-          <CommandInput
-            placeholder="Search task..."
-            value={value}
-            onBlur={onBlur}
-            ref={inputRef}
-            id="searchTask"
-            icon
-            containerClassName="border-none px-1"
-            onKeyDown={onKeyDown}
-            className="py-0.5 px-1 h-7"
-            onValueChange={setValue}
-          />
-
-          <CommandList className="flex-1">
-            {filteredTasks.map((task) => {
-              const CategoryIcon = getStatusIcon(task.status);
-
-              return (
-                <CommandItem
-                  key={task.id}
-                  className="max-w-[300px]"
-                  onSelect={() => {
-                    props.updateAttributes({
-                      id: task.id,
-                    });
-                  }}
-                >
-                  <div className="flex gap-1 items-center">
-                    <CategoryIcon
-                      size={16}
-                      color={getStatusColor(task.status).color}
-                    />
-                    <div className="shrink-0 w-[35px] text-sm">
-                      T-{task.number}
-                    </div>
-
-                    <div className="w-[200px]">
-                      <div className="truncate"> {task?.title}</div>
-                    </div>
-                  </div>
-                </CommandItem>
-              );
-            })}
-            {filteredTasks.length === 0 && (
-              <CommandItem
-                key="new"
-                className="max-w-[700px]"
-                onSelect={() => {
-                  addTaskMutation({
-                    title: value,
-                    status: 'Todo',
-                  });
-                }}
-              >
-                Create task: {value}
-              </CommandItem>
-            )}
-          </CommandList>
-        </Command>
-      </NodeViewWrapper>
-    );
-  }
 
   return (
-    <NodeViewWrapper className="react-component-with-content" as="span">
-      <TaskItem task={task} />
+    <NodeViewWrapper className="task-item-component" as="span">
+      <div
+        className={cn(
+          'items-center inline-flex gap-1 mx-1 h-6 items-center max-w-[100%] px-2 bg-grayAlpha-100 rounded text-sm relative top-[2px]',
+          taskId && 'w-fit',
+          props.selected && 'bg-grayAlpha-300',
+        )}
+      >
+        <TaskMetadata taskId={props.node.attrs.id} />
+
+        {!taskId && (
+          <Input
+            className="content is-editable max-w-[600px] bg-transparent h-5 px-0 py-0"
+            onChange={(e) => setValue(e.currentTarget.value)}
+            value={value}
+            ref={inputRef}
+            onBlur={submitTask}
+            onKeyDown={onKeyDown}
+          />
+        )}
+      </div>
     </NodeViewWrapper>
   );
 });

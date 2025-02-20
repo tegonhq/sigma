@@ -98,6 +98,8 @@ import { AppService } from './app.service';
 
     IntegrationAccountModule,
     IntegrationDefinitionModule,
+    WebhookModule,
+    TasksModule,
     IntegrationsModule,
     OAuthCallbackModule,
     WebhookModule,

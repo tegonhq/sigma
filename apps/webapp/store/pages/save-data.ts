@@ -36,9 +36,6 @@ export async function savePageData(
           if (page.description) {
             convertedPage = {
               ...page,
-              description: extractTextFromHTML(
-                generateHTML(JSON.parse(page.description), defaultExtensions),
-              ),
             };
           }
 
@@ -53,10 +50,6 @@ export async function savePageData(
           if (page.description) {
             convertedPage = {
               ...page,
-              description: generateHTML(
-                JSON.parse(page.description),
-                defaultExtensions,
-              ),
             };
           }
 

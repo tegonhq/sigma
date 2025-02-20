@@ -8,3 +8,4 @@ export * from './socket-utils';
 export * from './editor-extensions';
 export * from './date-page-extension';
 export * from './add-task-selector';
+export * from './editor-context';

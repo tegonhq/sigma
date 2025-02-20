@@ -1,10 +1,12 @@
 import { HocuspocusProvider } from '@hocuspocus/provider';
+import { SourceType } from '@sigma/types';
 import Collaboration from '@tiptap/extension-collaboration';
 import React from 'react';
 import * as Y from 'yjs';
 
 import {
   Editor,
+  EditorContext,
   EditorExtensions,
   getSocketURL,
   suggestionItems,
@@ -52,19 +54,25 @@ export function SingleTaskEditor({
 
   return (
     <div className="flex flex-col min-h-[calc(100vh_-_30vh)]">
-      <Editor
-        onChange={onDescriptionChange}
-        extensions={[
-          Collaboration.configure({
-            document: doc,
-          }),
-        ]}
-        placeholder="Write notes..."
-        autoFocus={autoFocus}
-        className="min-h-[calc(100vh_-_30vh)]"
+      <EditorContext.Provider
+        value={{ source: { type: SourceType.PAGE, id: page.id } }}
       >
-        <EditorExtensions suggestionItems={suggestionItems}></EditorExtensions>
-      </Editor>
+        <Editor
+          onChange={onDescriptionChange}
+          extensions={[
+            Collaboration.configure({
+              document: doc,
+            }),
+          ]}
+          placeholder="Write notes..."
+          autoFocus={autoFocus}
+          className="min-h-[calc(100vh_-_30vh)]"
+        >
+          <EditorExtensions
+            suggestionItems={suggestionItems}
+          ></EditorExtensions>
+        </Editor>
+      </EditorContext.Provider>
     </div>
   );
 }

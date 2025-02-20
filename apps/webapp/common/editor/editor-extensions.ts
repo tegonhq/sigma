@@ -5,19 +5,22 @@ import { cx } from 'class-variance-authority';
 import { all, createLowlight } from 'lowlight';
 import {
   TiptapLink,
-  TaskList,
   HorizontalRule,
   StarterKit,
   Placeholder,
   HighlightExtension,
   AIHighlight,
+  CustomKeymap,
 } from 'novel/extensions';
 
 import { datePageExtension } from './date-page-extension';
 import { fileExtension } from './file-extension';
 import { imageExtension } from './image-extension';
+import { default as ListItem } from './list-item';
 import { taskExtension } from './task-extension';
-import { taskItemExtension } from './task-item';
+import { tasksExtension } from './tasks';
+import trailingNode from './trailing-node';
+import { LinkTaskExtension } from './link-task';
 
 // create a lowlight instance with all languages loaded
 const lowlight = createLowlight(all);
@@ -25,12 +28,6 @@ const lowlight = createLowlight(all);
 const tiptapLink = TiptapLink.configure({
   HTMLAttributes: {
     class: cx('text-primary cursor-pointer'),
-  },
-});
-
-const taskList = TaskList.configure({
-  HTMLAttributes: {
-    class: cx('not-prose'),
   },
 });
 
@@ -63,7 +60,7 @@ const starterKit = StarterKit.configure({
   history: false,
   bulletList: {
     HTMLAttributes: {
-      class: cx('list-disc list-outside leading-1 pl-4 my-1'),
+      class: cx('list-disc list-outside leading-1 my-1'),
     },
   },
   orderedList: {
@@ -71,14 +68,15 @@ const starterKit = StarterKit.configure({
       class: cx('list-decimal list-outside pl-6 leading-1 my-1'),
     },
   },
-  listItem: {
-    HTMLAttributes: {
-      class: cx('leading-normal my-1'),
-    },
-  },
+  listItem: false,
   blockquote: {
     HTMLAttributes: {
       class: cx('border-l-4 border-gray-400 dark:border-gray-500'),
+    },
+  },
+  paragraph: {
+    HTMLAttributes: {
+      class: cx('leading-[24px]'),
     },
   },
   codeBlock: false,
@@ -135,16 +133,19 @@ export const getPlaceholder = (placeholder: string | Extension) => {
 export const defaultExtensions = [
   starterKit,
   tiptapLink,
-  taskList,
-  taskItemExtension,
   horizontalRule,
   heading,
+  ListItem,
   AIHighlight,
   fileExtension,
   imageExtension,
   HighlightExtension,
   taskExtension,
   datePageExtension,
+  tasksExtension,
+  CustomKeymap,
+  LinkTaskExtension,
+  trailingNode,
   CodeBlockLowlight.configure({
     lowlight,
   }),

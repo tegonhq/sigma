@@ -77,3 +77,26 @@ export function getSummaryData(task: Task, isCreate: boolean) {
     },
   };
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const getCurrentTaskIds = (tiptapJson: any) => {
+  const taskIds: string[] = [];
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const traverseNodes = (node: any) => {
+    // Check if current node is a task with an id
+    if (node.type === 'task' && node.attrs?.id) {
+      taskIds.push(node.attrs.id);
+    }
+
+    // Recursively traverse child nodes if they exist
+    if (node.content) {
+      node.content.forEach(traverseNodes);
+    }
+  };
+
+  // Start traversal from the root
+  traverseNodes(tiptapJson);
+
+  return taskIds;
+};

@@ -10,18 +10,22 @@ import { historyManager } from 'store/history';
 export const useApplication = () => {
   const { applicationStore } = useContextStore();
   const { rightScreenCollapsed } = applicationStore;
-  const tabGroup = applicationStore.getTabGroup();
+
+  const getTabGroup = () => {
+    const tabGroup = applicationStore.getTabGroup();
+    return tabGroup;
+  };
 
   const addTab = () => {
-    tabGroup.addTab();
+    getTabGroup().addTab();
   };
 
   const setActiveTab = (tabId: string) => {
-    tabGroup.setActiveTab(tabId);
+    getTabGroup().setActiveTab(tabId);
   };
 
   const removeTab = (tabId: string) => {
-    tabGroup.removeTab(tabId);
+    getTabGroup().removeTab(tabId);
   };
 
   const back = async () => {
@@ -35,13 +39,13 @@ export const useApplication = () => {
   // Tab related function
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const updateActiveTabData = (data: any) => {
-    tabGroup.activeTab.updateData(data);
+    getTabGroup().activeTab.updateData(data);
   };
 
   // Tab related function
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const updateTabData = (index: number, data: any) => {
-    const tab = tabGroup.tabs[index];
+    const tab = getTabGroup().tabs[index];
     tab.updateData(data);
     historyManager.save(applicationStore);
   };
@@ -52,7 +56,7 @@ export const useApplication = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     { entityId, data }: { entityId?: string; data?: any },
   ) => {
-    const tab = tabGroup.tabs[index];
+    const tab = getTabGroup().tabs[index];
 
     tab.changeType(type, entityId);
     tab.updateData(data);
@@ -61,7 +65,7 @@ export const useApplication = () => {
   };
 
   const updateRightScreen = (tab: string) => {
-    const secondTab = tabGroup.tabs[1];
+    const secondTab = getTabGroup().tabs[1];
     if (secondTab.type !== tab) {
       secondTab.changeType(tab as TabViewType);
       applicationStore.updateRightScreen(false);
@@ -93,12 +97,12 @@ export const useApplication = () => {
   };
 
   return {
-    activeTab: tabGroup.activeTab,
+    activeTab: getTabGroup().activeTab,
     addTab,
     removeTab,
     back,
     forward,
-    tabs: tabGroup?.tabs,
+    tabs: getTabGroup()?.tabs,
     displaySettings: applicationStore.displaySettings,
     filters: applicationStore.filters,
 

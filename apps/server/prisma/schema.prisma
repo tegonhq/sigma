@@ -458,7 +458,6 @@ enum ModelName {
   Workspace
   Page
   Status
-  Activity
   Conversation
   ConversationHistory
   List

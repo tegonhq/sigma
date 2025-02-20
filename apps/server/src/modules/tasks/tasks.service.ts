@@ -20,6 +20,7 @@ import { UsersService } from 'modules/users/users.service';
 
 import {
   getSummaryData,
+  getCurrentTaskIds,
   handleCalendarTask,
   TransactionClient,
 } from './tasks.utils';
@@ -176,6 +177,36 @@ export class TasksService {
       ...otherTaskData
     } = createTaskDto;
 
+    // For a page if there exisiting an already deleted task with the same title
+    // use that instead of creating a new one
+    const exisitingTask =
+      source &&
+      (await prismaClient.task.findMany({
+        where: {
+          deleted: { not: null },
+          page: {
+            title,
+          },
+          source: {
+            path: ['id'],
+            equals: source.id,
+          },
+        },
+      }));
+
+    if (exisitingTask[0]) {
+      await prismaClient.task.update({
+        where: {
+          id: exisitingTask[0].id,
+        },
+        data: {
+          deleted: null,
+        },
+      });
+
+      return exisitingTask[0];
+    }
+
     // Create the task first
     const task = await prismaClient.task.create({
       data: {
@@ -196,7 +227,7 @@ export class TasksService {
             workspaceId,
           },
         },
-        ...source,
+        source: source ? { ...source } : undefined,
       },
       include: {
         page: true,
@@ -294,6 +325,8 @@ export class TasksService {
         recurrence: updateTaskDto.recurrence || [],
       }),
     };
+
+    console.log(updateData);
 
     // Get existing task and update in a single transaction
     const [existingTask, updatedTask] = [
@@ -427,5 +460,66 @@ export class TasksService {
         },
       });
     });
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async clearDeletedTasksFromPage(tiptapJson: any, pageId: string) {
+    const currentTaskIds = getCurrentTaskIds(tiptapJson);
+
+    const currentTasks = await this.prisma.task.findMany({
+      where: {
+        id: {
+          in: currentTaskIds,
+        },
+      },
+    });
+
+    for (const task of currentTasks) {
+      if (task.deleted) {
+        await this.prisma.task.update({
+          where: {
+            id: task.id,
+          },
+          data: {
+            deleted: null,
+          },
+        });
+      }
+    }
+
+    const allTaskIdsForPage = await this.prisma.task.findMany({
+      where: {
+        source: {
+          path: ['type'],
+          equals: 'page',
+        },
+        AND: {
+          source: {
+            path: ['id'],
+            equals: pageId,
+          },
+        },
+        deleted: null,
+      },
+    });
+
+    const updateTasksPromise = [];
+
+    for (const task of allTaskIdsForPage) {
+      if (!currentTaskIds.includes(task.id)) {
+        updateTasksPromise.push(
+          this.prisma.task.update({
+            where: {
+              id: task.id,
+            },
+            data: {
+              deleted: new Date(),
+            },
+          }),
+        );
+      }
+    }
+
+    return await Promise.all(updateTasksPromise);
   }
 }

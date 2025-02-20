@@ -156,15 +156,29 @@ export const suggestionItems = createSuggestionItems([
     searchTerms: ['task'],
     icon: <IssuesLine size={20} />,
     command: ({ editor, range }) => {
-      editor.commands.command(({ tr, state }) => {
-        const node = state.schema.nodes['taskExtension'].create({
-          type: 'inline',
-        });
+      // editor.chain().focus().deleteRange(range).setNode('tasksExtension').run();
 
-        tr.replaceWith(range.from, range.to, node);
-
-        return true;
-      });
+      editor
+        .chain()
+        .focus()
+        .deleteRange(range)
+        .insertContentAt(0, [
+          {
+            type: 'tasksExtension',
+            content: [
+              {
+                type: 'paragraph',
+                content: [
+                  {
+                    type: 'text',
+                    text: 'Add tasks here',
+                  },
+                ],
+              },
+            ],
+          },
+        ])
+        .run();
     },
   },
   {

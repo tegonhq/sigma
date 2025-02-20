@@ -1,21 +1,27 @@
 import { Database } from '@hocuspocus/extension-database';
-import { Server } from '@hocuspocus/server';
+import { Hocuspocus, Server } from '@hocuspocus/server';
 import { TiptapTransformer } from '@hocuspocus/transformer';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { PrismaService } from 'nestjs-prisma';
 
 import { LoggerService } from 'modules/logger/logger.service';
 import { isValidAuthentication } from 'modules/sync/sync.utils';
+import { TasksService } from 'modules/tasks/tasks.service';
+import { yXmlFragmentToProsemirrorJSON } from 'y-prosemirror';
 @Injectable()
 export class ContentService implements OnModuleInit {
   private readonly logger: LoggerService = new LoggerService('ContentGateway');
+  private server: Hocuspocus;
 
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private tasksService: TasksService,
+  ) {}
 
   async onModuleInit() {
     const loggerScope = this.logger;
 
-    const server = Server.configure({
+    this.server = Server.configure({
       name: 'sigma-collab',
       port: 1234,
       extensions: [
@@ -38,6 +44,15 @@ export class ContentService implements OnModuleInit {
                 ),
               },
             });
+
+            console.log(
+              JSON.stringify(TiptapTransformer.fromYdoc(document).default),
+            );
+
+            this.tasksService.clearDeletedTasksFromPage(
+              TiptapTransformer.fromYdoc(document).default,
+              documentName,
+            );
           },
         }),
       ],
@@ -54,6 +69,17 @@ export class ContentService implements OnModuleInit {
       },
     });
 
-    server.listen();
+    this.server.listen();
+
+    const docConnection = await this.server.openDirectConnection(
+      'fdd4a2ee-8f5d-4452-91de-505b55a17ff5',
+      {},
+    );
+
+    await docConnection.transact((doc) => {
+      const editorState = doc.getXmlFragment('default');
+
+      console.log(editorState.toString());
+    });
   }
 }
