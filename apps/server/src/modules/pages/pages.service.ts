@@ -1,29 +1,24 @@
 import { TiptapTransformer } from '@hocuspocus/transformer';
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import {
   convertHtmlToTiptapJson,
   convertTiptapJsonToHtml,
   tiptapExtensions,
 } from '@sigma/editor-extensions';
 import {
-  Conversation,
   CreatePageDto,
+  EnhancePageResponse,
   GetPageByTitleDto,
   LLMModelEnum,
   Page,
   UpdatePageDto,
-  UserTypeEnum,
   enchancePrompt,
 } from '@sigma/types';
-import axios from 'axios';
 import { PrismaService } from 'nestjs-prisma';
 import * as Y from 'yjs';
 
 import AIRequestsService from 'modules/ai-requests/ai-requests.services';
-import { ConversationService } from 'modules/conversation/conversation.service';
 import { TransactionClient } from 'modules/tasks/tasks.utils';
-import { UsersService } from 'modules/users/users.service';
 
 import { PageSelect } from './pages.interface';
 
@@ -31,10 +26,7 @@ import { PageSelect } from './pages.interface';
 export class PagesService {
   constructor(
     private prisma: PrismaService,
-    private configService: ConfigService,
-    private usersService: UsersService,
     private aiRequestService: AIRequestsService,
-    private conversationService: ConversationService,
   ) {}
 
   async getPageByTitle(
@@ -190,7 +182,7 @@ export class PagesService {
     });
   }
 
-  async enhancePage(pageId: string, userId: string): Promise<Conversation> {
+  async enhancePage(pageId: string): Promise<EnhancePageResponse[]> {
     // Get the existing page
     const page = await this.prisma.page.findUnique({
       where: { id: pageId },
@@ -223,36 +215,16 @@ export class PagesService {
 
     const outputMatch = enhanceResponse.match(/<output>([\s\S]*?)<\/output>/);
     const outputContent = outputMatch ? outputMatch[1].trim() : '';
+    let tasks = [];
+    try {
+      tasks = JSON.parse(outputContent);
+      if (!Array.isArray(tasks)) {
+        tasks = [];
+      }
+    } catch (e) {
+      tasks = [];
+    }
 
-    // Create a conversation for this enhancement
-    const conversation = await this.conversationService.createConversation(
-      page.workspaceId,
-      userId,
-      {
-        message: `Please create tasks along with subtasks as description in Sigma.
-        ${outputContent}`,
-        userType: UserTypeEnum.User,
-        context: { agents: ['sigma'] },
-      },
-    );
-
-    const pat = await this.usersService.getOrCreatePat(
-      userId,
-      page.workspaceId,
-    );
-
-    // Trigger the streaming API call without waiting for completion
-    axios.post(
-      `${this.configService.get('AGENT_HOST')}/chat`,
-      {
-        conversation_id: conversation.id,
-        conversation_history_id: conversation.conversationHistory[0].id,
-        workspace_id: page.workspaceId,
-        stream: true,
-      },
-      { headers: { Authorization: `Bearer ${pat}` } },
-    );
-
-    return conversation;
+    return tasks;
   }
 }

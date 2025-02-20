@@ -11,6 +11,7 @@ import {
 } from '@sigma/types';
 import { tasks } from '@trigger.dev/sdk/v3';
 import { PrismaService } from 'nestjs-prisma';
+import { generateSummaryTask } from 'triggers/generate-summary';
 
 import { IntegrationsService } from 'modules/integrations/integrations.service';
 import { PagesService } from 'modules/pages/pages.service';
@@ -18,9 +19,9 @@ import { TaskOccurenceService } from 'modules/task-occurence/task-occurence.serv
 import { UsersService } from 'modules/users/users.service';
 
 import {
+  getSummaryData,
   handleCalendarTask,
   TransactionClient,
-  transformActivityDto,
 } from './tasks.utils';
 
 @Injectable()
@@ -131,7 +132,6 @@ export class TasksService {
     userId: string,
     tx?: TransactionClient,
   ): Promise<Task> {
-    const prismaClient = tx || this.prisma;
     const { source, integrationAccountId } = createTaskDto;
 
     if (!source || !integrationAccountId) {
@@ -140,22 +140,7 @@ export class TasksService {
       );
     }
 
-    const externalTask = await prismaClient.task.findFirst({
-      where: {
-        source: {
-          path: ['type'],
-          equals: 'external',
-        },
-        AND: {
-          source: {
-            path: ['id'],
-            equals: source.id,
-          },
-        },
-        deleted: null,
-        workspaceId,
-      },
-    });
+    const externalTask = await this.getTaskBySourceId(source.id, workspaceId);
 
     // If we found a task, update it
     if (externalTask) {
@@ -211,11 +196,6 @@ export class TasksService {
             workspaceId,
           },
         },
-        ...(otherTaskData.activity && {
-          activity: {
-            create: transformActivityDto(otherTaskData.activity, workspaceId),
-          },
-        }),
         ...source,
       },
       include: {
@@ -261,12 +241,19 @@ export class TasksService {
       );
     }
 
-    // Only trigger beautify task if not in a transaction
+    // Only trigger when task is created from the API not from third-party source
     if (!tx) {
       const pat = await this.usersService.getOrCreatePat(userId, workspaceId);
       await tasks.trigger<typeof beautifyTask>('beautify-task', {
         taskId: task.id,
         pat,
+      });
+
+      await tasks.trigger<typeof generateSummaryTask>('generate-summary', {
+        taskId: task.id,
+        summaryData: getSummaryData(task, true),
+        pat,
+        userId,
       });
     }
 
@@ -291,7 +278,7 @@ export class TasksService {
     // Build update data object
     const updateData: JsonObject = {
       ...otherTaskData,
-      source: { id: source.id, type: source.type },
+      ...(source && { source: { id: source.id, type: source.type } }),
       ...(taskStatus && {
         status: taskStatus,
         ...(taskStatus === 'Done' || taskStatus === 'Canceled'
@@ -305,11 +292,6 @@ export class TasksService {
       }),
       ...('recurrence' in updateTaskDto && {
         recurrence: updateTaskDto.recurrence || [],
-      }),
-      ...(otherTaskData.activity && {
-        activity: {
-          create: transformActivityDto(otherTaskData.activity, workspaceId),
-        },
       }),
     };
 
@@ -348,6 +330,18 @@ export class TasksService {
           updatedTask,
         ),
       ]);
+    }
+
+    // Only trigger when task is created from the API not from third-party source
+    if (!tx) {
+      const pat = await this.usersService.getOrCreatePat(userId, workspaceId);
+
+      await tasks.trigger<typeof generateSummaryTask>('generate-summary', {
+        taskId: updatedTask.id,
+        summaryData: getSummaryData(updatedTask, false),
+        pat,
+        userId,
+      });
     }
 
     return updatedTask;

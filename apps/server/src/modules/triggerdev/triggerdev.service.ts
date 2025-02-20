@@ -39,7 +39,7 @@ export class TriggerdevService {
 
     const commonProjectExists = await checkIfProjectExist(
       {
-        slug: 'common', // Check if a project with the slug 'common' exists
+        slug: 'sigma_common', // Check if a project with the slug 'common' exists
       },
       this.knex,
     );
@@ -52,8 +52,8 @@ export class TriggerdevService {
         where: `TriggerdevService.initCommonProject`,
       }); // Log a message if the common project doesn't exist
       await createProject(
-        'Common',
-        'common',
+        'Sigma Common',
+        'sigma_common',
         uuidv4().replace(/-/g, ''),
         this.knex,
         this.logger,

@@ -1,6 +1,5 @@
 import { IsEnum, IsOptional, IsString } from 'class-validator';
 
-import { Activity } from '../activity';
 import { JsonValue } from '../common';
 import { Conversation } from '../conversation';
 import { List } from '../list';
@@ -72,7 +71,6 @@ export class Task {
   subIssue?: Task[];
 
   taskOccurrence?: TaskOccurrence[];
-  activity?: Activity[];
   taskExternalLink?: TaskExternalLink[];
   conversation?: Conversation[];
 }

@@ -1,7 +1,6 @@
 import { IsArray, IsObject, IsOptional, IsString } from 'class-validator';
 
 import { Source } from './task.entity';
-import { CreateActivityDto } from '../activity/create-activity.dto';
 
 export class CreateTaskDto {
   @IsString()
@@ -55,10 +54,6 @@ export class CreateTaskDto {
   @IsString()
   @IsOptional()
   remindAt?: string;
-
-  @IsObject()
-  @IsOptional()
-  activity?: CreateActivityDto;
 
   @IsString()
   @IsOptional()

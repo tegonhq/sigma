@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { defaultExtensions } from '@sigma/editor-extensions';
 import {
-  Activity,
   ConversationContext,
   ConversationContextData,
   ConversationHistory,
@@ -94,7 +93,7 @@ export class ConversationHistoryService {
     }
     const context =
       (conversationHistory.context as ConversationContextData) || {};
-    const { pages, activityIds, tasks, ...otherContextData } = context;
+    const { pages, tasks, ...otherContextData } = context;
 
     // Get pages data if pageIds exist
     let page: Array<Partial<Page>> = [];
@@ -145,19 +144,6 @@ export class ConversationHistoryService {
       );
     }
 
-    // Get activities data if activityIds exist
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let activity: Activity[] = [];
-    if (activityIds?.length) {
-      activity = await this.prisma.activity.findMany({
-        where: {
-          id: {
-            in: context.activityIds,
-          },
-        },
-      });
-    }
-
     // Get previous conversation history message and response
     let previousHistory = null;
     if (conversationHistory.conversationId) {
@@ -178,7 +164,6 @@ export class ConversationHistoryService {
     return {
       page,
       task,
-      activity,
       previousHistory,
       ...otherContextData,
     };

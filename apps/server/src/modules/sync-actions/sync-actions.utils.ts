@@ -41,12 +41,6 @@ export async function getWorkspaceId(
       });
       return task.workspaceId;
 
-    case ModelName.Activity:
-      const activity = await prisma.activity.findUnique({
-        where: { id: modelId },
-      });
-      return activity.workspaceId;
-
     case ModelName.Status:
       const status = await prisma.status.findUnique({
         where: { id: modelId },
@@ -102,7 +96,6 @@ export async function getModelData(
     Status: prisma.status,
     Page: prisma.page,
     Task: prisma.task,
-    Activity: prisma.activity,
     Conversation: prisma.conversation,
     ConversationHistory: prisma.conversationHistory,
     List: prisma.list,

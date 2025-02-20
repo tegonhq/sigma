@@ -9,8 +9,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import {
-  Conversation,
   CreatePageDto,
+  EnhancePageResponse,
   GetPageByTitleDto,
   Page,
   PageRequestParamsDto,
@@ -18,7 +18,7 @@ import {
 } from '@sigma/types';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
-import { UserId, Workspace } from 'modules/auth/session.decorator';
+import { Workspace } from 'modules/auth/session.decorator';
 
 import { PagesService } from './pages.service';
 
@@ -68,9 +68,8 @@ export class PagesController {
   @UseGuards(AuthGuard)
   async enhancePage(
     @Param() pageParams: PageRequestParamsDto,
-    @UserId() userId: string,
-  ): Promise<Conversation> {
-    return await this.pagesService.enhancePage(pageParams.pageId, userId);
+  ): Promise<EnhancePageResponse[]> {
+    return await this.pagesService.enhancePage(pageParams.pageId);
   }
 
   @Delete(':pageId')

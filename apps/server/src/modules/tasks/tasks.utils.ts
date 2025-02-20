@@ -1,9 +1,6 @@
 import { PrismaClient } from '@prisma/client';
-import {
-  CreateActivityDto,
-  IntegrationPayloadEventType,
-  Task,
-} from '@sigma/types';
+import { convertTiptapJsonToHtml } from '@sigma/editor-extensions';
+import { IntegrationPayloadEventType, Task } from '@sigma/types';
 
 import { IntegrationsService } from 'modules/integrations/integrations.service';
 
@@ -49,23 +46,34 @@ export async function handleCalendarTask(
   );
 }
 
-export function transformActivityDto(
-  dto: CreateActivityDto,
-  workspaceId: string,
-) {
+export function getTaskContent(task: Task) {
+  let body = '';
+  if (task.page?.description) {
+    const descriptionJson = JSON.parse(task.page.description);
+    body = convertTiptapJsonToHtml(descriptionJson);
+  }
   return {
-    type: dto.type,
-    eventData: dto.eventData,
-    name: dto.name,
-    integrationAccount: {
-      connect: {
-        id: dto.integrationAccountId,
-      },
-    },
-    workspace: {
-      connect: {
-        id: workspaceId,
-      },
+    title: task.page.title,
+    body,
+    state: task.status,
+    startTime: task.startTime,
+    endTime: task.endTime,
+    recurrence: task.recurrence,
+    scheduleText: task.scheduleText,
+    dueDate: task.dueDate,
+    remindAt: task.remindAt,
+    tags: task.tags,
+  };
+}
+
+export function getSummaryData(task: Task, isCreate: boolean) {
+  return {
+    type: 'task',
+    action: isCreate ? 'create' : 'update',
+    content: getTaskContent(task),
+    metadata: {
+      createdAt: task.createdAt,
+      updatedAt: task.updatedAt,
     },
   };
 }

@@ -9,7 +9,6 @@ import { PrismaModule } from 'nestjs-prisma';
 import config from 'common/configs/config';
 import { loggingMiddleware } from 'common/middleware/logging.middleware';
 
-import { ActivityModule } from 'modules/activity/activity.module';
 import { AIRequestsModule } from 'modules/ai-requests/ai-requests.module';
 import { ALSModule } from 'modules/als/als.module';
 import { AuthModule } from 'modules/auth/auth.module';
@@ -24,16 +23,18 @@ import { OAuthCallbackModule } from 'modules/oauth-callback/oauth-callback.modul
 import { PagesModule } from 'modules/pages/pages.module';
 import { PromptsModule } from 'modules/prompts/prompts.module';
 import { ReplicationModule } from 'modules/replication/replication.module';
+import { SuggestionModule } from 'modules/suggestion/suggestion.module';
+import { SummaryModule } from 'modules/summary/summary.module';
 import { SyncActionsModule } from 'modules/sync-actions/sync-actions.module';
 import { TaskOccurenceModule } from 'modules/task-occurence/task-occurence.model';
 import { TasksModule } from 'modules/tasks/tasks.module';
+import { TriggerdevModule } from 'modules/triggerdev/triggerdev.module';
 import { UsersModule } from 'modules/users/users.module';
 import { WebhookModule } from 'modules/webhook/webhook.module';
 import { WorkspacesModule } from 'modules/workspaces/workspaces.module';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { TriggerdevModule } from 'modules/triggerdev/triggerdev.module';
 
 @Module({
   imports: [
@@ -77,27 +78,36 @@ import { TriggerdevModule } from 'modules/triggerdev/triggerdev.module';
       },
     }),
     AuthModule.forRoot(),
+
     ALSModule,
+    ReplicationModule,
+    SyncActionsModule,
+
     UsersModule,
     WorkspacesModule,
-    SyncActionsModule,
-    ReplicationModule,
+
     PagesModule,
     ContentModule,
-    IntegrationAccountModule,
-    IntegrationDefinitionModule,
-    OAuthCallbackModule,
+    ListsModule,
+
+    TasksModule,
+    TaskOccurenceModule,
+
     ConversationModule,
     ConversationHistoryModule,
-    WebhookModule,
-    ActivityModule,
-    TasksModule,
+
+    IntegrationAccountModule,
+    IntegrationDefinitionModule,
     IntegrationsModule,
-    TaskOccurenceModule,
+    OAuthCallbackModule,
+    WebhookModule,
+
+    TriggerdevModule,
+
     AIRequestsModule,
     PromptsModule,
-    ListsModule,
-    TriggerdevModule,
+    SuggestionModule,
+    SummaryModule,
   ],
   controllers: [AppController],
   providers: [

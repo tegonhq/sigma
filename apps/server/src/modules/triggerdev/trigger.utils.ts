@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import nodeCrypto from 'node:crypto';
+
 import { Knex as KnexT } from 'knex';
 import { v4 as uuidv4 } from 'uuid'; // Import uuid for generating unique identifiers
 
 export const NULL_SENTINEL = '$@null((';
-import nodeCrypto from 'node:crypto';
 
 import { LoggerService } from 'modules/logger/logger.service';
 
@@ -42,8 +43,8 @@ export async function createOrg(knex: KnexT, logger: LoggerService) {
       // Create Organization
       await trx('Organization').insert({
         id: commonId,
-        slug: 'tegon',
-        title: 'Tegon',
+        slug: 'sigma',
+        title: 'Sigma',
         v3Enabled: true,
         updatedAt: new Date(),
       });

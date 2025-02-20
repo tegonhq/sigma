@@ -272,6 +272,31 @@ model SyncAction {
   @@unique([modelId, action])
 }
 
+model Suggestion {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  content String
+
+  taskId String
+  task   Task   @relation(fields: [taskId], references: [id])
+}
+
+model Summary {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+  archived  DateTime?
+
+  content String
+
+  taskId String
+  task   Task   @relation(fields: [taskId], references: [id])
+}
+
 model Task {
   id        String    @id @default(uuid())
   createdAt DateTime  @default(now())
@@ -311,6 +336,8 @@ model Task {
   taskOccurrence   TaskOccurrence[]
   taskExternalLink TaskExternalLink[]
   conversation     Conversation[]
+  suggestion       Suggestion[]
+  summary          Summary[]
 }
 
 model TaskExternalLink {

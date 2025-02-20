@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { PrismaModule, PrismaService } from 'nestjs-prisma';
 
-import ActivityService from 'modules/activity/activity.service';
 import { IntegrationsService } from 'modules/integrations/integrations.service';
 import { TasksModule } from 'modules/tasks/tasks.module';
 import { UsersService } from 'modules/users/users.service';
@@ -12,13 +11,7 @@ import WebhookService from './webhook.service';
 @Module({
   imports: [PrismaModule, TasksModule],
   controllers: [WebhookController],
-  providers: [
-    PrismaService,
-    WebhookService,
-    ActivityService,
-    UsersService,
-    IntegrationsService,
-  ],
+  providers: [PrismaService, WebhookService, UsersService, IntegrationsService],
   exports: [],
 })
 export class WebhookModule {}
