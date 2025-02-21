@@ -7,12 +7,10 @@ import {
   getTaskExtensionInPage,
   removeTaskInExtension,
   updateTaskExtensionInPage,
-  upsertTaskInExtension,
 } from 'modules/pages/pages.utils';
 
 export async function addTaskToDatePage(
   pagesService: PagesService,
-  contentService: ContentService,
   task: Task,
 ) {
   const formattedDate = format(task.dueDate, 'dd-MM-yyyy');
@@ -20,18 +18,10 @@ export async function addTaskToDatePage(
   const page = await pagesService.getOrCreatePageByTitle(task.workspaceId, {
     title: formattedDate,
     type: PageTypeEnum.Daily,
+    taskIds: [task.id],
   });
 
-  let taskExtensions = getTaskExtensionInPage(page);
-  console.log(taskExtensions);
-
-  taskExtensions = upsertTaskInExtension(taskExtensions, task.id);
-  const pageDescription = updateTaskExtensionInPage(page, taskExtensions);
-
-  return await contentService.updateContentForDocument(
-    page.id,
-    pageDescription,
-  );
+  return page;
 }
 
 export async function removeTaskFromDatePage(

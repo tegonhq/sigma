@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Task, TaskHookContext } from '@sigma/types';
 import { tasks } from '@trigger.dev/sdk/v3';
+import { format } from 'date-fns/format';
 import { PrismaService } from 'nestjs-prisma';
 import { beautifyTask } from 'triggers/beautify-task';
 import { generateSummaryTask } from 'triggers/generate-summary';
 
-import { ContentService } from 'modules/content/content.service';
 import { IntegrationsService } from 'modules/integrations/integrations.service';
 import { PagesService } from 'modules/pages/pages.service';
 import { TaskOccurenceService } from 'modules/task-occurence/task-occurence.service';
@@ -16,12 +16,11 @@ import {
   handleCalendarTask,
   TransactionClient,
 } from '../tasks/tasks.utils';
-import { addTaskToDatePage, removeTaskFromDatePage } from './hooks/due-date';
+import { addTaskToDatePage } from './hooks/due-date';
 
 @Injectable()
 export class TaskHooksService {
   constructor(
-    private contentService: ContentService,
     private usersService: UsersService,
     private pagesService: PagesService,
     private prisma: PrismaService,
@@ -58,7 +57,7 @@ export class TaskHooksService {
     switch (context.action) {
       case 'create':
         if (task.dueDate) {
-          await addTaskToDatePage(this.pagesService, this.contentService, task);
+          await addTaskToDatePage(this.pagesService, task);
         }
         return { message: 'Handled duedate create' };
       case 'update':
@@ -66,29 +65,27 @@ export class TaskHooksService {
         if (task.dueDate !== context.previousTask?.dueDate) {
           // Remove from old date page if there was a previous due date
           if (context.previousTask?.dueDate) {
-            await removeTaskFromDatePage(
-              this.pagesService,
-              this.contentService,
-              context.previousTask,
+            const formattedDate = format(task.dueDate, 'dd-MM-yyyy');
+            await this.pagesService.removeTaskFromPageByTitle(
+              formattedDate,
+              context.previousTask.id,
+              context.workspaceId,
             );
           }
           // Add to new date page if there is a new due date
           if (task.dueDate) {
-            await addTaskToDatePage(
-              this.pagesService,
-              this.contentService,
-              task,
-            );
+            await addTaskToDatePage(this.pagesService, task);
           }
         }
         return { message: 'Handled duedate update' };
 
       case 'delete':
         if (task.dueDate) {
-          await removeTaskFromDatePage(
-            this.pagesService,
-            this.contentService,
-            context.previousTask,
+          const formattedDate = format(task.dueDate, 'dd-MM-yyyy');
+          await this.pagesService.removeTaskFromPageByTitle(
+            formattedDate,
+            context.previousTask.id,
+            context.workspaceId,
           );
         }
         return { message: 'Handled duedate delete' };

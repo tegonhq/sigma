@@ -8,19 +8,18 @@ import { prosemirrorJSONToYXmlFragment } from 'y-prosemirror';
 
 import { LoggerService } from 'modules/logger/logger.service';
 import { isValidAuthentication } from 'modules/sync/sync.utils';
-import { TasksService } from 'modules/tasks/tasks.service';
 @Injectable()
 export class ContentService implements OnModuleInit {
   private readonly logger: LoggerService = new LoggerService('ContentGateway');
   private server: Hocuspocus;
 
-  constructor(
-    private prisma: PrismaService,
-    private tasksService: TasksService,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
   async onModuleInit() {
     const loggerScope = this.logger;
+    if (this.server) {
+      return;
+    }
 
     this.server = Server.configure({
       name: 'sigma-collab',
@@ -46,14 +45,10 @@ export class ContentService implements OnModuleInit {
               },
             });
 
-            console.log(
-              JSON.stringify(TiptapTransformer.fromYdoc(document).default),
-            );
-
-            this.tasksService.clearDeletedTasksFromPage(
-              TiptapTransformer.fromYdoc(document).default,
-              documentName,
-            );
+            // this.tasksService.clearDeletedTasksFromPage(
+            //   TiptapTransformer.fromYdoc(document).default,
+            //   documentName,
+            // );
           },
         }),
       ],

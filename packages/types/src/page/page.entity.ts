@@ -19,14 +19,26 @@ export class Page {
   updatedAt: Date;
   deleted: Date | null;
   archived: Date | null;
+
   title: string | null;
+
   description: string | null;
-  workspace?: Workspace;
-  workspaceId: string;
+  descriptionBinary: Buffer | null;
+
+  sortOrder: string;
+  parentId: string | null;
+  parent?: Page | null;
+  children?: Page[];
+
+  tags: string[];
+
+  type: PageType;
 
   statusId?: string;
   status?: Status;
 
-  tags: string[];
-  type: PageType;
+  workspaceId: string;
+  workspace?: Workspace;
+  task?: any[];
+  conversation?: any[];
 }

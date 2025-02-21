@@ -66,20 +66,31 @@ export function updateTaskExtensionInPage(
 export function upsertTaskInExtension(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   taskExtensions: Record<string, any>,
-  taskId: string,
+  taskIds: string[],
 ) {
-  // Check if task already exists in the extension
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const taskExists = taskExtensions.content?.some((node: any) => {
-    if (node.type === 'paragraph' && node.content?.[0]?.type === 'task') {
-      return node.content[0].attrs.id === taskId;
-    }
-    return false;
-  });
+  // Initialize content array if it doesn't exist
+  if (!taskExtensions.content) {
+    taskExtensions.content = [];
+  }
 
-  if (!taskExists) {
-    // Add new task node if it doesn't exist
-    const newTaskNode = {
+  // Create a Set of existing task IDs for O(1) lookup
+  const existingTaskIds = new Set(
+    taskExtensions.content
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .map((node: any) => {
+        if (node.type === 'paragraph' && node.content?.[0]?.type === 'task') {
+          return node.content[0].attrs.id;
+        }
+        return null;
+      })
+      .filter(Boolean),
+  );
+
+  // Add only new tasks
+  const newTasks = taskIds.filter((id) => !existingTaskIds.has(id));
+
+  if (newTasks.length > 0) {
+    const newTaskNodes = newTasks.map((taskId) => ({
       type: 'paragraph',
       content: [
         {
@@ -89,25 +100,20 @@ export function upsertTaskInExtension(
           },
         },
       ],
-    };
+    }));
 
-    // Add the new task node to content array
-    if (!taskExtensions.content) {
-      taskExtensions.content = [];
-    }
-    taskExtensions.content.push(newTaskNode);
+    taskExtensions.content.push(...newTaskNodes);
+  }
 
-    // Ensure there's always an empty paragraph at the end
-    if (
-      !taskExtensions.content.some(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (node: any) =>
-          node.type === 'paragraph' &&
-          (!node.content || node.content.length === 0),
-      )
-    ) {
-      taskExtensions.content.push({ type: 'paragraph' });
-    }
+  // Check for empty paragraph only if we modified content
+  const hasEmptyParagraph = taskExtensions.content.some(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (node: any) =>
+      node.type === 'paragraph' && (!node.content || node.content.length === 0),
+  );
+
+  if (!hasEmptyParagraph) {
+    taskExtensions.content.push({ type: 'paragraph' });
   }
 
   return taskExtensions;

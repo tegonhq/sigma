@@ -9,22 +9,30 @@ import {
   GetPageByTitleDto,
   LLMModelEnum,
   Page,
+  PageSelect,
+  PageTypeEnum,
   UpdatePageDto,
   enchancePrompt,
 } from '@sigma/types';
 import { PrismaService } from 'nestjs-prisma';
-import * as Y from 'yjs';
 
 import AIRequestsService from 'modules/ai-requests/ai-requests.services';
+import { ContentService } from 'modules/content/content.service';
 import { TransactionClient } from 'modules/tasks/tasks.utils';
 
-import { PageSelect } from './pages.interface';
+import {
+  getTaskExtensionInPage,
+  removeTaskInExtension,
+  updateTaskExtensionInPage,
+  upsertTaskInExtension,
+} from './pages.utils';
 
 @Injectable()
 export class PagesService {
   constructor(
     private prisma: PrismaService,
     private aiRequestService: AIRequestsService,
+    private contentService: ContentService,
   ) {}
 
   async getPageByTitle(
@@ -53,36 +61,65 @@ export class PagesService {
     workspaceId: string,
     getPageByTitleDto: GetPageByTitleDto,
   ): Promise<Page> {
-    // Try to find existing page
-    const existingPage = await this.prisma.page.findFirst({
-      where: {
-        title: getPageByTitleDto.title,
-        type: getPageByTitleDto.type,
-        workspaceId,
-        deleted: null,
-      },
-      select: PageSelect,
+    // Combine find and create into a single transaction if needed
+    const { title, type, taskIds } = getPageByTitleDto;
+
+    const page = await this.prisma.$transaction(async (tx) => {
+      // Try to find existing page
+      let page = await tx.page.findFirst({
+        where: {
+          title,
+          type,
+          workspaceId,
+          deleted: null,
+        },
+        select: PageSelect,
+      });
+
+      if (!page) {
+        // Create new page if not found
+        page = await tx.page.create({
+          data: {
+            title,
+            type,
+            workspace: { connect: { id: workspaceId } },
+            sortOrder: '',
+            tags: [],
+          },
+          select: PageSelect,
+        });
+      }
+
+      return page;
     });
 
-    if (existingPage) {
-      if (existingPage.description) {
-        const descriptionJson = JSON.parse(existingPage.description);
-        existingPage.description = convertTiptapJsonToHtml(descriptionJson);
-      }
-      return existingPage;
+    // Update task extensions if needed
+    if (taskIds?.length > 0) {
+      let tasksExtensionContent = getTaskExtensionInPage(page);
+      tasksExtensionContent = upsertTaskInExtension(
+        tasksExtensionContent,
+        taskIds,
+      );
+
+      const description = updateTaskExtensionInPage(
+        page,
+        tasksExtensionContent,
+      );
+
+      // Update the page with new description in the same transaction
+      await this.contentService.updateContentForDocument(
+        page.id,
+        JSON.parse(description),
+      );
     }
 
-    // Create new page if not found
-    return this.prisma.page.create({
-      data: {
-        title: getPageByTitleDto.title,
-        type: getPageByTitleDto.type,
-        workspace: { connect: { id: workspaceId } },
-        sortOrder: '',
-        tags: [],
-      },
-      select: PageSelect,
-    });
+    // Convert description to HTML if it exists
+    if (page.description) {
+      const descriptionJson = JSON.parse(page.description);
+      page.description = convertTiptapJsonToHtml(descriptionJson);
+    }
+
+    return page;
   }
 
   async getPage(pageId: string): Promise<Page> {
@@ -136,34 +173,17 @@ export class PagesService {
       );
     }
 
-    // Initialize YDoc with existing state
-    const ydoc = new Y.Doc();
-
-    // if (finalDescription) {
-    //   // Parse the JSON description if it's a string
-    //   const descriptionJson =
-    //     typeof finalDescription === 'string'
-    //       ? JSON.parse(finalDescription)
-    //       : finalDescription;
-
-    //   // Convert Tiptap JSON to YDoc
-    //   const newYDoc = TiptapTransformer.toYdoc(
-    //     descriptionJson,
-    //     'default',
-    //     tiptapExtensions,
-    //   );
-    //   Y.applyUpdate(ydoc, Y.encodeStateAsUpdate(newYDoc));
-    // }
-
-    // Get the binary state
-    const binaryState = Y.encodeStateAsUpdate(ydoc);
+    // Update the page with new description in the same transaction
+    await this.contentService.updateContentForDocument(
+      pageId,
+      JSON.parse(description),
+    );
 
     return prismaClient.page.update({
       where: { id: pageId },
       data: {
         ...pageData,
         description: finalDescription,
-        descriptionBinary: Buffer.from(binaryState),
         ...(parentId && { parent: { connect: { id: parentId } } }),
       },
       select: PageSelect,
@@ -224,5 +244,30 @@ export class PagesService {
     }
 
     return tasks;
+  }
+
+  async removeTaskFromPageByTitle(
+    title: string,
+    taskIds: string,
+    workspaceId: string,
+  ) {
+    const page = await this.getOrCreatePageByTitle(workspaceId, {
+      title,
+      type: PageTypeEnum.Daily,
+    });
+
+    let tasksExtensionContent = getTaskExtensionInPage(page);
+    tasksExtensionContent = removeTaskInExtension(
+      tasksExtensionContent,
+      taskIds,
+    );
+
+    const pageDescription = updateTaskExtensionInPage(
+      page,
+      tasksExtensionContent,
+    );
+    page.description = pageDescription;
+
+    return page;
   }
 }

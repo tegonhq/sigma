@@ -1,6 +1,7 @@
 import { CacheModule } from '@nestjs/cache-manager';
 import { Logger, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
@@ -28,6 +29,7 @@ import { SummaryModule } from 'modules/summary/summary.module';
 import { SyncActionsModule } from 'modules/sync-actions/sync-actions.module';
 import { TaskOccurenceModule } from 'modules/task-occurence/task-occurence.model';
 import { TasksModule } from 'modules/tasks/tasks.module';
+import { TasksHookModule } from 'modules/tasks-hook/tasks-hooks.module';
 import { TriggerdevModule } from 'modules/triggerdev/triggerdev.module';
 import { UsersModule } from 'modules/users/users.module';
 import { WebhookModule } from 'modules/webhook/webhook.module';
@@ -35,7 +37,6 @@ import { WorkspacesModule } from 'modules/workspaces/workspaces.module';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { TasksHookModule } from 'modules/tasks-hook/tasks-hooks.module';
 
 @Module({
   imports: [
@@ -79,6 +80,8 @@ import { TasksHookModule } from 'modules/tasks-hook/tasks-hooks.module';
       },
     }),
     AuthModule.forRoot(),
+
+    EventEmitterModule.forRoot(),
 
     ALSModule,
     ReplicationModule,

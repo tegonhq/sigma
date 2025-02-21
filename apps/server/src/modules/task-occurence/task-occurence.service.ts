@@ -2,16 +2,22 @@ import { Injectable } from '@nestjs/common';
 import {
   DateFilterEnum,
   GetTaskOccurenceDTO,
+  PageTypeEnum,
   UpdateTaskOccurenceDTO,
 } from '@sigma/types';
+import { format } from 'date-fns/format';
 import { PrismaService } from 'nestjs-prisma';
 import { RRule } from 'rrule';
 
+import { PagesService } from 'modules/pages/pages.service';
 import { TransactionClient } from 'modules/tasks/tasks.utils';
 
 @Injectable()
 export class TaskOccurenceService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private pagesService: PagesService,
+  ) {}
 
   async getTaskOccurences(workspaceId: string, filters: GetTaskOccurenceDTO) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -116,7 +122,7 @@ export class TaskOccurenceService {
     // Filter out any occurrences that have already passed
     const futureOccurrences = occurrences.filter((date) => date > now);
 
-    return await Promise.all(
+    const taskOccurences = await Promise.all(
       futureOccurrences.map((date) =>
         prismaClient.taskOccurrence.upsert({
           where: {
@@ -149,6 +155,21 @@ export class TaskOccurenceService {
         }),
       ),
     );
+
+    if (!tx) {
+      await Promise.all(
+        futureOccurrences.map(async (date) => {
+          const formattedDate = format(date, 'dd-MM-yyyy');
+          await this.pagesService.getOrCreatePageByTitle(task.workspaceId, {
+            title: formattedDate,
+            type: PageTypeEnum.Daily,
+            taskIds: [taskId],
+          });
+        }),
+      );
+    }
+
+    return taskOccurences;
   }
 
   async updateTaskOccurance(
@@ -177,7 +198,22 @@ export class TaskOccurenceService {
   async deleteTaskOccuranceByTask(taskId: string, tx?: TransactionClient) {
     const prismaClient = tx || this.prisma;
 
-    return await prismaClient.taskOccurrence.updateMany({
+    // First get all future occurrences to know which pages to update
+    const futureOccurrences = await prismaClient.taskOccurrence.findMany({
+      where: {
+        taskId,
+        startTime: {
+          gte: new Date(),
+        },
+      },
+      select: {
+        startTime: true,
+        workspaceId: true,
+      },
+    });
+
+    // Mark occurrences as deleted
+    await prismaClient.taskOccurrence.updateMany({
       where: {
         taskId,
         startTime: {
@@ -186,5 +222,19 @@ export class TaskOccurenceService {
       },
       data: { deleted: new Date().toISOString() },
     });
+
+    // Remove task from each daily page
+    if (!tx) {
+      await Promise.all(
+        futureOccurrences.map(async (occurrence) => {
+          const formattedDate = format(occurrence.startTime, 'dd-MM-yyyy');
+          await this.pagesService.removeTaskFromPageByTitle(
+            formattedDate,
+            taskId,
+            occurrence.workspaceId,
+          );
+        }),
+      );
+    }
   }
 }
