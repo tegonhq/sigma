@@ -1,4 +1,3 @@
-import { TiptapTransformer } from '@hocuspocus/transformer';
 import { Injectable } from '@nestjs/common';
 import {
   convertHtmlToTiptapJson,
@@ -140,21 +139,21 @@ export class PagesService {
     // Initialize YDoc with existing state
     const ydoc = new Y.Doc();
 
-    if (finalDescription) {
-      // Parse the JSON description if it's a string
-      const descriptionJson =
-        typeof finalDescription === 'string'
-          ? JSON.parse(finalDescription)
-          : finalDescription;
+    // if (finalDescription) {
+    //   // Parse the JSON description if it's a string
+    //   const descriptionJson =
+    //     typeof finalDescription === 'string'
+    //       ? JSON.parse(finalDescription)
+    //       : finalDescription;
 
-      // // Convert Tiptap JSON to YDoc
-      // const newYDoc = TiptapTransformer.toYdoc(
-      //   descriptionJson,
-      //   'default',
-      //   tiptapExtensions,
-      // );
-      // Y.applyUpdate(ydoc, Y.encodeStateAsUpdate(newYDoc));
-    }
+    //   // Convert Tiptap JSON to YDoc
+    //   const newYDoc = TiptapTransformer.toYdoc(
+    //     descriptionJson,
+    //     'default',
+    //     tiptapExtensions,
+    //   );
+    //   Y.applyUpdate(ydoc, Y.encodeStateAsUpdate(newYDoc));
+    // }
 
     // Get the binary state
     const binaryState = Y.encodeStateAsUpdate(ydoc);

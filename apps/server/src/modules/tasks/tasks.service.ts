@@ -11,7 +11,6 @@ import {
 } from '@sigma/types';
 import { tasks } from '@trigger.dev/sdk/v3';
 import { PrismaService } from 'nestjs-prisma';
-import { generateSummaryTask } from 'triggers/generate-summary';
 
 import { IntegrationsService } from 'modules/integrations/integrations.service';
 import { PagesService } from 'modules/pages/pages.service';
@@ -19,16 +18,17 @@ import { TaskOccurenceService } from 'modules/task-occurence/task-occurence.serv
 import { UsersService } from 'modules/users/users.service';
 
 import {
-  getSummaryData,
   getCurrentTaskIds,
   handleCalendarTask,
   TransactionClient,
 } from './tasks.utils';
+import { TaskHooksService } from '../tasks-hook/tasks-hook.service';
 
 @Injectable()
 export class TasksService {
   constructor(
     private prisma: PrismaService,
+    private taskHooksService: TaskHooksService,
     private taskOccurenceService: TaskOccurenceService,
     private integrationService: IntegrationsService,
     private usersService: UsersService,
@@ -270,20 +270,13 @@ export class TasksService {
     }
 
     // Only trigger when task is created from the API not from third-party source
-    // if (!tx) {
-    //   const pat = await this.usersService.getOrCreatePat(userId, workspaceId);
-    //   await tasks.trigger<typeof beautifyTask>('beautify-task', {
-    //     taskId: task.id,
-    //     pat,
-    //   });
-
-    //   await tasks.trigger<typeof generateSummaryTask>('generate-summary', {
-    //     taskId: task.id,
-    //     summaryData: getSummaryData(task, true),
-    //     pat,
-    //     userId,
-    //   });
-    // }
+    if (!tx) {
+      await this.taskHooksService.executeHooks(task, {
+        workspaceId,
+        userId,
+        action: 'create',
+      });
+    }
 
     return task;
   }
@@ -362,13 +355,11 @@ export class TasksService {
 
     // Only trigger when task is created from the API not from third-party source
     if (!tx) {
-      const pat = await this.usersService.getOrCreatePat(userId, workspaceId);
-
-      await tasks.trigger<typeof generateSummaryTask>('generate-summary', {
-        taskId: updatedTask.id,
-        summaryData: getSummaryData(updatedTask, false),
-        pat,
+      await this.taskHooksService.executeHooks(updatedTask, {
+        workspaceId,
         userId,
+        action: 'update',
+        previousTask: existingTask,
       });
     }
 

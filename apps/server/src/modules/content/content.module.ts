@@ -9,5 +9,6 @@ import { ContentService } from './content.service';
   imports: [TasksModule],
   controllers: [],
   providers: [ContentService, PrismaService],
+  exports: [ContentService],
 })
 export class ContentModule {}

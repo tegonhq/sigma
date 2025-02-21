@@ -34,6 +34,15 @@ export interface TaskMetadata {
   type: TaskType;
 }
 
+export type TaskHookAction = 'create' | 'update' | 'delete';
+
+export interface TaskHookContext {
+  workspaceId: string;
+  userId: string;
+  action: TaskHookAction;
+  previousTask?: Task;
+}
+
 export class Task {
   id: string;
   createdAt: Date;

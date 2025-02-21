@@ -35,6 +35,7 @@ import { WorkspacesModule } from 'modules/workspaces/workspaces.module';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { TasksHookModule } from 'modules/tasks-hook/tasks-hooks.module';
 
 @Module({
   imports: [
@@ -92,6 +93,7 @@ import { AppService } from './app.service';
 
     TasksModule,
     TaskOccurenceModule,
+    TasksHookModule,
 
     ConversationModule,
     ConversationHistoryModule,
@@ -99,7 +101,6 @@ import { AppService } from './app.service';
     IntegrationAccountModule,
     IntegrationDefinitionModule,
     WebhookModule,
-    TasksModule,
     IntegrationsModule,
     OAuthCallbackModule,
     WebhookModule,
