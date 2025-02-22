@@ -101,7 +101,7 @@ export class TaskOccurenceService {
     const now = new Date();
     const startDate = new Date(now);
     const endDate = new Date(now);
-    endDate.setDate(endDate.getDate() + 2);
+    endDate.setDate(endDate.getDate() + 10);
 
     // Get base occurrences for the date range
     const baseOccurrences = rrule.between(startDate, endDate);
@@ -231,7 +231,6 @@ export class TaskOccurenceService {
           await this.pagesService.removeTaskFromPageByTitle(
             formattedDate,
             taskId,
-            occurrence.workspaceId,
           );
         }),
       );

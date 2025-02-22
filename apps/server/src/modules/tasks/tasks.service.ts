@@ -1,6 +1,7 @@
 import type { beautifyTask } from 'triggers/beautify-task';
 
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { OnEvent } from '@nestjs/event-emitter';
 import {
   CreateBulkTasksDto,
   CreateTaskDto,
@@ -179,18 +180,16 @@ export class TasksService {
 
     // For a page if there exisiting an already deleted task with the same title
     // use that instead of creating a new one
-    const exisitingTask =
-      source &&
-      (await prismaClient.task.findMany({
-        where: {
-          deleted: { not: null },
-          page: {
-            title,
-          },
+    const exisitingTask = await prismaClient.task.findMany({
+      where: {
+        deleted: { not: null },
+        page: {
+          title,
         },
-      }));
+      },
+    });
 
-    if (exisitingTask[0]) {
+    if (exisitingTask.length > 0 && exisitingTask[0]) {
       await prismaClient.task.update({
         where: {
           id: exisitingTask[0].id,
@@ -507,5 +506,14 @@ export class TasksService {
     }
 
     return await Promise.all(updateTasksPromise);
+  }
+
+  @OnEvent('task.delete.tasksFromPage')
+  async handleClearDeletedTasksFromPage(payload: {
+    pageId: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    tiptapJson: any;
+  }) {
+    await this.clearDeletedTasksFromPage(payload.tiptapJson, payload.pageId);
   }
 }

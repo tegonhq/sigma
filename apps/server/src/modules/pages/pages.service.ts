@@ -10,7 +10,6 @@ import {
   LLMModelEnum,
   Page,
   PageSelect,
-  PageTypeEnum,
   UpdatePageDto,
   enchancePrompt,
 } from '@sigma/types';
@@ -246,14 +245,9 @@ export class PagesService {
     return tasks;
   }
 
-  async removeTaskFromPageByTitle(
-    title: string,
-    taskIds: string,
-    workspaceId: string,
-  ) {
-    const page = await this.getOrCreatePageByTitle(workspaceId, {
-      title,
-      type: PageTypeEnum.Daily,
+  async removeTaskFromPageByTitle(title: string, taskIds: string) {
+    const page = await this.prisma.page.findFirst({
+      where: { title, deleted: null },
     });
 
     let tasksExtensionContent = getTaskExtensionInPage(page);
@@ -266,7 +260,11 @@ export class PagesService {
       page,
       tasksExtensionContent,
     );
-    page.description = pageDescription;
+
+    await this.contentService.updateContentForDocument(
+      page.id,
+      JSON.parse(pageDescription),
+    );
 
     return page;
   }

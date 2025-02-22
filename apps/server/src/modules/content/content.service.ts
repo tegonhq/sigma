@@ -2,6 +2,7 @@ import { Database } from '@hocuspocus/extension-database';
 import { Hocuspocus, Server } from '@hocuspocus/server';
 import { TiptapTransformer } from '@hocuspocus/transformer';
 import { Injectable, OnModuleInit } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { getSchema } from '@sigma/editor-extensions';
 import { PrismaService } from 'nestjs-prisma';
 import { prosemirrorJSONToYXmlFragment } from 'y-prosemirror';
@@ -13,7 +14,10 @@ export class ContentService implements OnModuleInit {
   private readonly logger: LoggerService = new LoggerService('ContentGateway');
   private server: Hocuspocus;
 
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private eventEmitter: EventEmitter2,
+  ) {}
 
   async onModuleInit() {
     const loggerScope = this.logger;
@@ -45,10 +49,10 @@ export class ContentService implements OnModuleInit {
               },
             });
 
-            // this.tasksService.clearDeletedTasksFromPage(
-            //   TiptapTransformer.fromYdoc(document).default,
-            //   documentName,
-            // );
+            this.eventEmitter.emit('task.delete.tasksFromPage', {
+              pageId: documentName,
+              tiptapJson: TiptapTransformer.fromYdoc(document).default,
+            });
           },
         }),
       ],

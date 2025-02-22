@@ -46,7 +46,7 @@ export class TaskHooksService {
     if (!tx) {
       await Promise.all([
         this.handleDueDate(task, context),
-        this.handleCalendarTask(task, context),
+        // this.handleCalendarTask(task, context),
         // this.handleBeautifyTask(task, context),
         // this.handleGenerateSummary(task, context),
       ]);
@@ -65,11 +65,13 @@ export class TaskHooksService {
         if (task.dueDate !== context.previousTask?.dueDate) {
           // Remove from old date page if there was a previous due date
           if (context.previousTask?.dueDate) {
-            const formattedDate = format(task.dueDate, 'dd-MM-yyyy');
+            const formattedDate = format(
+              context.previousTask.dueDate,
+              'dd-MM-yyyy',
+            );
             await this.pagesService.removeTaskFromPageByTitle(
               formattedDate,
               context.previousTask.id,
-              context.workspaceId,
             );
           }
           // Add to new date page if there is a new due date
@@ -85,7 +87,6 @@ export class TaskHooksService {
           await this.pagesService.removeTaskFromPageByTitle(
             formattedDate,
             context.previousTask.id,
-            context.workspaceId,
           );
         }
         return { message: 'Handled duedate delete' };

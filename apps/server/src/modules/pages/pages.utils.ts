@@ -8,10 +8,7 @@ export function getTaskExtensionInPage(page: Page) {
       typeof description === 'string' ? JSON.parse(description) : description;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let tasksExtension: any = {
-      type: 'tasksExtension',
-      content: [],
-    };
+    let tasksExtension: any;
 
     if (descriptionJson) {
       // Find the tasksExtension node in the document content
@@ -19,6 +16,12 @@ export function getTaskExtensionInPage(page: Page) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (node: any) => node.type === 'tasksExtension',
       );
+    }
+    if (!tasksExtension) {
+      tasksExtension = {
+        type: 'tasksExtension',
+        content: [],
+      };
     }
 
     return tasksExtension;
@@ -105,16 +108,16 @@ export function upsertTaskInExtension(
     taskExtensions.content.push(...newTaskNodes);
   }
 
-  // Check for empty paragraph only if we modified content
-  const hasEmptyParagraph = taskExtensions.content.some(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (node: any) =>
-      node.type === 'paragraph' && (!node.content || node.content.length === 0),
-  );
+  // // Check for empty paragraph only if we modified content
+  // const hasEmptyParagraph = taskExtensions.content.some(
+  //   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  //   (node: any) =>
+  //     node.type === 'paragraph' && (!node.content || node.content.length === 0),
+  // );
 
-  if (!hasEmptyParagraph) {
-    taskExtensions.content.push({ type: 'paragraph' });
-  }
+  // if (!hasEmptyParagraph) {
+  //   taskExtensions.content.push({ type: 'paragraph' });
+  // }
 
   return taskExtensions;
 }
@@ -137,18 +140,18 @@ export function removeTaskInExtension(
     return true;
   });
 
-  // Ensure there's always an empty paragraph at the end if content exists
-  if (
-    taskExtensions.content.length > 0 &&
-    !taskExtensions.content.some(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (node: any) =>
-        node.type === 'paragraph' &&
-        (!node.content || node.content.length === 0),
-    )
-  ) {
-    taskExtensions.content.push({ type: 'paragraph' });
-  }
+  // // Ensure there's always an empty paragraph at the end if content exists
+  // if (
+  //   taskExtensions.content.length > 0 &&
+  //   !taskExtensions.content.some(
+  //     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  //     (node: any) =>
+  //       node.type === 'paragraph' &&
+  //       (!node.content || node.content.length === 0),
+  //   )
+  // ) {
+  //   taskExtensions.content.push({ type: 'paragraph' });
+  // }
 
   return taskExtensions;
 }
