@@ -28,16 +28,27 @@ export const TasksCommand = React.forwardRef(
       const task = getItems()[index];
       const { from } = editor.state.selection;
 
-      editor.commands.command(({ tr, state }) => {
-        const node = state.schema.nodes['task'].create({
-          type: 'inline',
-          id: task.id,
-        });
-
-        tr.replaceWith(from - 2, from, node);
-
-        return true;
-      });
+      editor
+        .chain()
+        .deleteRange({
+          from: from - 2,
+          to: from,
+        })
+        .wrapIn('listItem')
+        .wrapIn('bulletList')
+        .insertContent([
+          {
+            type: 'task',
+            attrs: { id: task.id },
+            content: [
+              {
+                type: 'text',
+                text: task.title,
+              },
+            ],
+          },
+        ])
+        .run();
     };
 
     const [selectedIndex, setSelectedIndex] = React.useState(0);
@@ -84,7 +95,7 @@ export const TasksCommand = React.forwardRef(
           getItems().map((item, index) => (
             <button
               className={cn(
-                'flex items-center gap-1 w-full text-left bg-transparent hover:bg-grayAlpha-100 p-1',
+                'flex items-center gap-1 w-full text-left bg-transparent hover:bg-grayAlpha-100 p-1 rounded',
                 index === selectedIndex ? 'bg-grayAlpha-100' : '',
               )}
               key={index}

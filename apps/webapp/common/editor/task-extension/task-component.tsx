@@ -1,13 +1,19 @@
-import { cn, Input } from '@tegonhq/ui';
-import { NodeViewWrapper } from '@tiptap/react';
+import type { CreateTaskDto } from '@sigma/types';
+
+import { Checkbox, cn } from '@tegonhq/ui';
+import { NodeViewContent, NodeViewWrapper } from '@tiptap/react';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
+import { useDebouncedCallback } from 'use-debounce';
 
 import { getCreateTaskPropsOnSource } from 'modules/tasks/add-task/utils';
 
 import type { TaskType } from 'common/types';
 
+import { useUpdatePageMutation } from 'services/pages';
 import { useCreateTaskMutation } from 'services/tasks';
+
+import { useContextStore } from 'store/global-context-provider';
 
 import { TaskMetadata } from './task-metadata';
 import { EditorContext } from '../editor-context';
@@ -15,10 +21,13 @@ import { EditorContext } from '../editor-context';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const TaskComponent = observer((props: any) => {
   const { source, date } = React.useContext(EditorContext);
-  const [value, setValue] = React.useState('');
+
   const taskId = props.node.attrs.id;
-  const editor = props.editor;
-  const inputRef = React.useRef(null);
+  const content = props.node.textContent;
+
+  const { tasksStore } = useContextStore();
+  const task = tasksStore.getTaskWithId(taskId);
+
   const { mutate: addTaskMutation } = useCreateTaskMutation({
     onSuccess: (data: TaskType) => {
       props.updateAttributes({
@@ -27,80 +36,37 @@ export const TaskComponent = observer((props: any) => {
     },
   });
 
-  console.log(props.node.attrs);
-  const submitTask = () => {
-    if (!value) {
-      props.deleteNode();
-    }
-
-    addTaskMutation({
-      title: value,
-      ...getCreateTaskPropsOnSource(source, date),
-    });
-  };
+  const debounceAddTask = useDebouncedCallback(async (props: CreateTaskDto) => {
+    addTaskMutation(props);
+  }, 500);
 
   React.useEffect(() => {
-    if (inputRef.current) {
-      setTimeout(() => {
-        inputRef.current.focus();
-      }, 10);
+    if (!taskId && content) {
+      debounceAddTask({
+        title: content,
+        ...getCreateTaskPropsOnSource(source, date),
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const onKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter') {
-      submitTask();
-      editor.chain().focus().run();
-    }
-
-    if (event.key === 'Escape') {
-      props.deleteNode();
-      editor.chain().focus().run();
-    }
-
-    if (event.key === 'ArrowUp') {
-      submitTask();
-
-      editor
-        .chain()
-        .focus()
-        .setTextSelection(editor.state.selection.$anchor.before())
-        .run();
-    }
-
-    if (event.key === 'ArrowDown') {
-      submitTask();
-
-      editor
-        .chain()
-        .focus()
-        .setTextSelection(editor.state.selection.$anchor.after())
-        .run();
-    }
-  };
+  }, [content, taskId]);
 
   return (
-    <NodeViewWrapper className="task-item-component" as="span">
+    <NodeViewWrapper className="task-item-component" as="p">
       <div
         className={cn(
-          'items-center inline-flex gap-1 mx-1 h-6 items-center max-w-[100%] px-2 bg-grayAlpha-100 rounded text-sm relative top-[2px]',
-          taskId && 'w-fit',
+          'items-center inline-flex gap-2 pb-0.5 items-start px-2 hover:bg-grayAlpha-100 rounded w-fit',
           props.selected && 'bg-grayAlpha-300',
         )}
       >
-        <TaskMetadata taskId={props.node.attrs.id} />
+        <div
+          className={cn('flex items-start shrink-0 gap-2 py-1')}
+          contentEditable={false}
+        >
+          <Checkbox className="shrink-0 relative top-[1px] h-[18px] w-[18px]" />
+          {task && <TaskMetadata taskId={task.id} />}
+        </div>
 
-        {!taskId && (
-          <Input
-            className="content is-editable max-w-[600px] bg-transparent h-5 px-0 py-0"
-            onChange={(e) => setValue(e.currentTarget.value)}
-            value={value}
-            ref={inputRef}
-            onBlur={submitTask}
-            onKeyDown={onKeyDown}
-          />
-        )}
+        <NodeViewContent as="p" className="text-sm relative top-[2px]" />
       </div>
     </NodeViewWrapper>
   );

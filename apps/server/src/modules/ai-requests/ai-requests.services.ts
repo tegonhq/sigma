@@ -31,9 +31,10 @@ export default class AIRequestsService {
     private configService: ConfigService,
   ) {
     if (
-      !configService.get('OPENAI_API_KEY') ||
+      !configService.get('OPENAI_API_KEY') &&
       !configService.get('ANTHROPIC_API_KEY')
     ) {
+      console.log('here');
       const ollama = new Ollama({ host: process.env['OLLAMA_HOST'] });
       ollama.pull({ model: process.env['LOCAL_MODEL'] });
     }

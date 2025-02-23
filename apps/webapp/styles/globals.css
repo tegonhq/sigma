@@ -84,3 +84,7 @@ strong {
 .editor-container p {
   line-height: 24px;
 }
+
+.list-item--task {
+  list-style-type: none;
+}

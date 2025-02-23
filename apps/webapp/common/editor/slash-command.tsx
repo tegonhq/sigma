@@ -151,7 +151,7 @@ export const suggestionItems = createSuggestionItems([
     },
   },
   {
-    title: 'Task',
+    title: 'Add tasks for this day',
     description: 'Search or create task',
     searchTerms: ['task'],
     icon: <IssuesLine size={20} />,

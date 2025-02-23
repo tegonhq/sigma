@@ -5,7 +5,6 @@ export const taskExtension = Node.create({
   priority: 51,
   name: 'task',
   group: 'inline',
-  inline: true,
 
   addAttributes() {
     return {

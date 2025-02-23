@@ -4,6 +4,7 @@ import Collaboration from '@tiptap/extension-collaboration';
 import { format } from 'date-fns';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
+import { useDebouncedCallback } from 'use-debounce';
 import { IndexeddbPersistence } from 'y-indexeddb';
 import * as Y from 'yjs';
 
@@ -15,9 +16,10 @@ import {
   suggestionItems,
 } from 'common/editor';
 import { AddTaskSelector } from 'common/editor/add-task-selector';
+import { TaskExtension } from 'common/editor/task-extension';
 import type { PageType } from 'common/types';
 
-import { useCreatePageMutation } from 'services/pages';
+import { useCreatePageMutation, useUpdatePageMutation } from 'services/pages';
 
 import { useContextStore } from 'store/global-context-provider';
 
@@ -35,6 +37,18 @@ export const EditorWithPage = observer(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [_, setProvider] = React.useState<HocuspocusProvider>(undefined);
     const [doc, setDoc] = React.useState(undefined);
+    const { tasksStore } = useContextStore();
+    const { mutate: updatePage } = useUpdatePageMutation({});
+
+    const debounceUpdateTask = useDebouncedCallback(
+      async ({ title, pageId }: { title: string; pageId: string }) => {
+        updatePage({
+          title,
+          pageId,
+        });
+      },
+      500,
+    );
 
     React.useEffect(() => {
       initPageSocket();
@@ -64,6 +78,19 @@ export const EditorWithPage = observer(
 
     const onDescriptionChange = () => {};
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const onTaskExtensionUpdate = ({ newNode }: any) => {
+      const task = tasksStore.getTaskWithId(newNode.attrs.id);
+      if (task) {
+        debounceUpdateTask({
+          title: newNode.textContent,
+          pageId: task.pageId,
+        });
+      }
+
+      return true;
+    };
+
     if (page && doc) {
       return (
         <EditorContext.Provider
@@ -75,6 +102,7 @@ export const EditorWithPage = observer(
               Collaboration.configure({
                 document: doc,
               }),
+              TaskExtension({ update: onTaskExtensionUpdate }),
             ]}
             className="min-h-[calc(100vh_-_65vh)] my-1"
             placeholder="Write notes..."

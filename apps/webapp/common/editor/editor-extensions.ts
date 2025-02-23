@@ -17,8 +17,9 @@ import { datePageExtension } from './date-page-extension';
 import { fileExtension } from './file-extension';
 import { imageExtension } from './image-extension';
 import { LinkTaskExtension } from './link-task';
-import { taskExtension } from './task-extension';
+import listItem from './list-item';
 import { tasksExtension } from './tasks';
+import trailingNode from './trailing-node';
 
 // create a lowlight instance with all languages loaded
 const lowlight = createLowlight(all);
@@ -58,19 +59,15 @@ const starterKit = StarterKit.configure({
   history: false,
   bulletList: {
     HTMLAttributes: {
-      class: cx('list-disc list-outside leading-1 my-1'),
+      class: cx('list-disc list-outside [&_ul]:pl-4 leading-1 my-1'),
     },
   },
   orderedList: {
     HTMLAttributes: {
-      class: cx('list-decimal list-outside pl-6 leading-1 my-1'),
+      class: cx('list-decimal list-outside [&_ol]:pl-4 leading-1 my-1'),
     },
   },
-  listItem: {
-    HTMLAttributes: {
-      class: cx('leading-normal'),
-    },
-  },
+  listItem: false,
   blockquote: {
     HTMLAttributes: {
       class: cx('border-l-4 border-gray-400 dark:border-gray-500'),
@@ -141,11 +138,12 @@ export const defaultExtensions = [
   fileExtension,
   imageExtension,
   HighlightExtension,
-  taskExtension,
+  listItem,
   datePageExtension,
   tasksExtension,
   CustomKeymap,
   LinkTaskExtension,
+  trailingNode,
   CodeBlockLowlight.configure({
     lowlight,
   }),

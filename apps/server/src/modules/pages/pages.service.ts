@@ -165,24 +165,26 @@ export class PagesService {
     tx?: TransactionClient,
   ): Promise<Page> {
     const prismaClient = tx || this.prisma;
+
     let finalDescription = description;
     if (htmlDescription && !description) {
       finalDescription = JSON.stringify(
-        await convertHtmlToTiptapJson(htmlDescription),
+        convertHtmlToTiptapJson(htmlDescription),
       );
     }
 
     // Update the page with new description in the same transaction
-    await this.contentService.updateContentForDocument(
-      pageId,
-      JSON.parse(description),
-    );
+    if (finalDescription) {
+      await this.contentService.updateContentForDocument(
+        pageId,
+        JSON.parse(description),
+      );
+    }
 
     return prismaClient.page.update({
       where: { id: pageId },
       data: {
         ...pageData,
-        description: finalDescription,
         ...(parentId && { parent: { connect: { id: parentId } } }),
       },
       select: PageSelect,

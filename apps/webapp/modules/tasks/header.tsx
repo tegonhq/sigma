@@ -41,7 +41,9 @@ export const Header = observer(({ actions }: HeaderProps) => {
               <>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>{page.title}</BreadcrumbPage>
+                  <BreadcrumbPage className="max-w-[500px] truncate">
+                    {page.title}
+                  </BreadcrumbPage>
                 </BreadcrumbItem>
               </>
             )}

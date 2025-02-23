@@ -1,73 +1,150 @@
-import { InputRule, mergeAttributes, Node } from '@tiptap/core';
-import { ReactNodeViewRenderer } from '@tiptap/react';
+import { InputRule, mergeAttributes } from '@tiptap/core';
+import { Paragraph } from '@tiptap/extension-paragraph';
+import {
+  ReactNodeViewRenderer,
+  type ReactNodeViewRendererOptions,
+} from '@tiptap/react';
 
 import { TaskComponent } from './task-component';
+export const INLINE_TASK_CONTENT_NAME = 'task';
 
 export const inputRegex = /^\s*(\[([( |x])?\])\s$/;
-/**
- * Matches a task item to a - [ ] on input.
- */
-export const taskInputRegex = /^\s*(T-\d+)\s$/;
 
-export const taskExtension = Node.create({
-  priority: 51,
-  name: 'task',
-  group: 'inline',
-  inline: true,
+export const TaskExtension = ({
+  update,
+}: {
+  update: ReactNodeViewRendererOptions['update'];
+}) =>
+  Paragraph.extend({
+    name: INLINE_TASK_CONTENT_NAME,
+    selectable: true,
 
-  addAttributes() {
-    return {
-      id: {
-        default: undefined,
-      },
-      number: {
-        default: undefined,
-      },
-    };
-  },
+    addOptions() {
+      return {
+        HTMLAttributes: {},
+      };
+    },
 
-  parseHTML() {
-    return [
-      {
-        tag: 'task',
-      },
-    ];
-  },
+    addAttributes() {
+      return {
+        id: {
+          default: undefined,
+        },
+        number: {
+          default: undefined,
+        },
+      };
+    },
 
-  renderHTML({ HTMLAttributes }) {
-    return ['task', mergeAttributes(HTMLAttributes)];
-  },
+    parseHTML() {
+      return [
+        {
+          tag: INLINE_TASK_CONTENT_NAME,
+        },
+      ];
+    },
 
-  addNodeView() {
-    return ReactNodeViewRenderer(TaskComponent, {});
-  },
+    renderHTML({ HTMLAttributes }) {
+      return [INLINE_TASK_CONTENT_NAME, mergeAttributes(HTMLAttributes), 0];
+    },
 
-  addInputRules() {
-    return [
-      new InputRule({
-        find: inputRegex,
-        handler: ({ state, range, chain }) => {
-          // const editor = ctx.editor()!;
-          const tr = state.tr.delete(range.from, range.to);
-          const $start = tr.doc.resolve(range.from);
-          const blockRange = $start.blockRange();
-          if (!blockRange) {
-            return null;
+    addNodeView() {
+      return ReactNodeViewRenderer(TaskComponent, {
+        update: (props) => {
+          update(props);
+
+          props.updateProps();
+        },
+      } as ReactNodeViewRendererOptions);
+    },
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    addKeyboardShortcuts(this: any) {
+      const isTaskContent = () => {
+        const selection = this.editor.state.selection;
+        return selection.$from.parent.type.name === INLINE_TASK_CONTENT_NAME;
+      };
+
+      return {
+        Enter: () => {
+          if (!isTaskContent()) {
+            return false;
+          }
+          const state = this.editor.state;
+          const selection = state.selection;
+
+          console.log(selection, state);
+          // if it's not the top level node, let list handle it
+          if (
+            selection.$from.depth > 3 ||
+            selection.$from.parent.nodeSize > 2
+          ) {
+            const task = this.editor.schema.nodes.task;
+            this.editor
+              .chain()
+              .splitListItem('listItem')
+              .setNode(task, {
+                id: undefined,
+              })
+              .run();
+            return true;
           }
 
-          chain()
-            .insertContent([
-              {
-                type: 'task',
-                attrs: {
-                  id: undefined,
-                },
-              },
-            ])
-            .focus()
-            .run();
+          return this.editor.commands.setNode('paragraph');
         },
-      }),
-    ];
-  },
-});
+        Backspace: () => {
+          if (!isTaskContent()) {
+            return false;
+          }
+          const state = this.editor.state;
+          const selection = state.selection;
+          const blockRange = selection.$from.blockRange();
+          if (!blockRange) {
+            return false;
+          }
+          if (blockRange.start + 1 === selection.from && selection.empty) {
+            this.editor.commands.setNode('paragraph');
+          }
+          return false;
+        },
+        'Shift-Tab': () => {
+          if (!isTaskContent()) {
+            return false;
+          }
+          if (this.editor.state.selection.$head.depth < 4) {
+            return this.editor
+              .chain()
+              .liftListItem('listItem')
+              .setNode('paragraph', {})
+              .run();
+          }
+          return false;
+        },
+      };
+    },
+
+    addInputRules() {
+      return [
+        new InputRule({
+          find: inputRegex,
+          handler: ({ state, range, chain }) => {
+            const tr = state.tr.delete(range.from, range.to);
+            const $start = tr.doc.resolve(range.from);
+            const blockRange = $start.blockRange();
+            // eslint-disable-next-line curly
+            if (!blockRange) return null;
+
+            const task = state.schema.nodes.task;
+
+            chain()
+              .setNode(task, {
+                id: undefined,
+              })
+              .wrapIn('listItem')
+              .wrapIn('bulletList')
+              .run();
+          },
+        }),
+      ];
+    },
+  });
