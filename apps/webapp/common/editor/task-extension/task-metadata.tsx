@@ -9,10 +9,10 @@ export const TaskMetadata = observer(({ taskId }: { taskId: string }) => {
 
   return (
     <div
-      className={cn('flex items-center shrink-0 gap-2 leading-[20px]')}
+      className={cn('flex items-start shrink-0 gap-2 h-4 text-xs')}
       contentEditable={false}
     >
-      <div className="text-muted-foreground font-mono min-w-[40px] text-xs self-center">
+      <div className="text-muted-foreground font-mono min-w-[40px] relative bottom-[2px] text-xs">
         T-{task.number}
       </div>
     </div>
