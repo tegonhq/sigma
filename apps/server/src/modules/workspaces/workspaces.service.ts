@@ -1,5 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { Workspace, WorkspaceRequestParamsDto } from '@sigma/types';
+import {
+  PageTypeEnum,
+  Workspace,
+  WorkspaceRequestParamsDto,
+} from '@sigma/types';
+import { format } from 'date-fns';
 import { Request, Response } from 'express';
 import { PrismaService } from 'nestjs-prisma';
 import supertokens from 'supertokens-node';
@@ -48,6 +53,34 @@ export default class WorkspacesService {
             .replace(/[^a-z0-9]/g, ''),
         },
       });
+
+      // Create daily pages for next 30 days
+      const today = new Date();
+      await Promise.all(
+        Array.from({ length: 30 }).map(async (_, i) => {
+          const date = new Date(today);
+          date.setDate(today.getDate() + i);
+          const formattedDate = format(date, 'dd-MM-yyyy');
+
+          await prisma.page.create({
+            data: {
+              title: formattedDate,
+              type: PageTypeEnum.Daily,
+              workspace: { connect: { id: workspace.id } },
+              sortOrder: '',
+              description: JSON.stringify({
+                type: 'doc',
+                content: [
+                  {
+                    type: 'tasksExtension',
+                    content: [],
+                  },
+                ],
+              }),
+            },
+          });
+        }),
+      );
 
       return workspace;
     });

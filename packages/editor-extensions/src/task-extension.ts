@@ -1,10 +1,10 @@
-import { mergeAttributes, Node } from '@tiptap/core';
+import { mergeAttributes } from '@tiptap/core';
+import { Paragraph } from '@tiptap/extension-paragraph';
 
 /// Copy of webapp/common/editor/task-extension
-export const taskExtension = Node.create({
-  priority: 51,
+export const taskExtension = Paragraph.extend({
   name: 'task',
-  group: 'inline',
+  selectable: true,
 
   addAttributes() {
     return {
@@ -26,6 +26,6 @@ export const taskExtension = Node.create({
   },
 
   renderHTML({ HTMLAttributes }) {
-    return ['task', mergeAttributes(HTMLAttributes)];
+    return ['task', mergeAttributes(HTMLAttributes), 0];
   },
 });

@@ -101,7 +101,7 @@ export class TaskOccurenceService {
     const now = new Date();
     const startDate = new Date(now);
     const endDate = new Date(now);
-    endDate.setDate(endDate.getDate() + 10);
+    endDate.setDate(endDate.getDate() + 30);
 
     // Get base occurrences for the date range
     const baseOccurrences = rrule.between(startDate, endDate);

@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { OnEvent } from '@nestjs/event-emitter';
 import {
   convertHtmlToTiptapJson,
   convertTiptapJsonToHtml,
@@ -8,6 +9,8 @@ import {
   EnhancePageResponse,
   GetPageByTitleDto,
   LLMModelEnum,
+  OutlinkType,
+  Outlink,
   Page,
   PageSelect,
   UpdatePageDto,
@@ -94,16 +97,21 @@ export class PagesService {
 
     // Update task extensions if needed
     if (taskIds?.length > 0) {
+      const tasks = await this.prisma.task.findMany({
+        where: { id: { in: taskIds } },
+        include: { page: true },
+      });
       let tasksExtensionContent = getTaskExtensionInPage(page);
       tasksExtensionContent = upsertTaskInExtension(
         tasksExtensionContent,
-        taskIds,
+        tasks,
       );
 
       const description = updateTaskExtensionInPage(
         page,
         tasksExtensionContent,
       );
+      console.log(description);
 
       // Update the page with new description in the same transaction
       await this.contentService.updateContentForDocument(
@@ -269,5 +277,57 @@ export class PagesService {
     );
 
     return page;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async storeOutlinks(tiptapJson: any, pageId: string) {
+    const outlinks: Outlink[] = [];
+
+    // Recursive function to traverse the JSON and find task nodes
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const findTasks = (node: any, path: number[] = []) => {
+      if (node.type === 'task' && node.attrs?.id) {
+        outlinks.push({
+          type: OutlinkType.Task,
+          id: node.attrs.id,
+          position: {
+            path: [...path],
+          },
+        });
+      }
+
+      if (node.content && Array.isArray(node.content)) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        node.content.forEach((child: any, index: number) => {
+          findTasks(child, [...path, index]);
+        });
+      }
+    };
+
+    // Start traversing from the root
+    if (tiptapJson.content) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      tiptapJson.content.forEach((node: any, index: number) => {
+        findTasks(node, [index]);
+      });
+    }
+
+    // Update the page with the new outlinks
+    await this.prisma.page.update({
+      where: { id: pageId },
+      data: {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        outlinks: outlinks as any,
+      },
+    });
+  }
+
+  @OnEvent('page.storeOutlinks')
+  async handleStoreOutlinks(payload: {
+    pageId: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    tiptapJson: any;
+  }) {
+    await this.storeOutlinks(payload.tiptapJson, payload.pageId);
   }
 }

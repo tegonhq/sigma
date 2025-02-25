@@ -1,4 +1,4 @@
-import type { beautifyTask } from 'triggers/beautify-task';
+import type { beautifyTask } from 'triggers/task/beautify-task';
 
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
@@ -6,6 +6,7 @@ import {
   CreateBulkTasksDto,
   CreateTaskDto,
   JsonObject,
+  OutlinkType,
   PageTypeEnum,
   Task,
   UpdateTaskDto,
@@ -190,7 +191,7 @@ export class TasksService {
     });
 
     if (exisitingTask.length > 0 && exisitingTask[0]) {
-      await prismaClient.task.update({
+      const task = await prismaClient.task.update({
         where: {
           id: exisitingTask[0].id,
         },
@@ -198,9 +199,21 @@ export class TasksService {
           deleted: null,
           source: source ? { ...source } : undefined,
         },
+        include: {
+          page: true,
+        },
       });
 
-      return exisitingTask[0];
+      await this.taskHooksService.executeHooks(
+        task,
+        {
+          workspaceId,
+          userId,
+          action: 'create',
+        },
+        tx,
+      );
+      return task;
     }
 
     // Create the task first
@@ -220,7 +233,7 @@ export class TasksService {
             sortOrder: '',
             tags: [],
             type: PageTypeEnum.Default,
-            workspaceId,
+            workspace: { connect: { id: workspaceId } },
           },
         },
         source: source ? { ...source } : undefined,
@@ -251,31 +264,15 @@ export class TasksService {
       );
     }
 
-    // Handle recurring task creation
-    if (task.recurrence) {
-      await this.taskOccurenceService.createTaskOccurance(task.id, tx);
-    }
-
-    // Handle calendar integration if task has timing
-    if (task.startTime && task.endTime) {
-      await handleCalendarTask(
-        prismaClient,
-        this.integrationService,
-        workspaceId,
-        userId,
-        'create',
-        task,
-      );
-    }
-
-    // Only trigger when task is created from the API not from third-party source
-    if (!tx) {
-      await this.taskHooksService.executeHooks(task, {
+    await this.taskHooksService.executeHooks(
+      task,
+      {
         workspaceId,
         userId,
         action: 'create',
-      });
-    }
+      },
+      tx,
+    );
 
     return task;
   }
@@ -319,6 +316,7 @@ export class TasksService {
     const [existingTask, updatedTask] = [
       await prismaClient.task.findUnique({
         where: { id: taskId },
+        include: { page: true },
       }),
       await prismaClient.task.update({
         where: { id: taskId },
@@ -329,38 +327,16 @@ export class TasksService {
       }),
     ];
 
-    // Check if schedule related fields were updated
-    const scheduleChanged =
-      JSON.stringify(existingTask.recurrence) !==
-        JSON.stringify(updatedTask.recurrence) ||
-      existingTask.startTime?.toISOString() !==
-        updatedTask.startTime?.toISOString() ||
-      existingTask.endTime?.toISOString() !==
-        updatedTask.endTime?.toISOString();
-
-    if (scheduleChanged) {
-      await Promise.all([
-        this.taskOccurenceService.updateTaskOccuranceByTask(updatedTask.id, tx),
-        handleCalendarTask(
-          prismaClient,
-          this.integrationService,
-          workspaceId,
-          userId,
-          'update',
-          updatedTask,
-        ),
-      ]);
-    }
-
-    // Only trigger when task is created from the API not from third-party source
-    if (!tx) {
-      await this.taskHooksService.executeHooks(updatedTask, {
+    await this.taskHooksService.executeHooks(
+      updatedTask,
+      {
         workspaceId,
         userId,
         action: 'update',
         previousTask: existingTask,
-      });
-    }
+      },
+      tx,
+    );
 
     return updatedTask;
   }
@@ -398,6 +374,16 @@ export class TasksService {
             task,
           ),
       ]);
+
+      await this.taskHooksService.executeHooks(
+        task,
+        {
+          workspaceId,
+          userId,
+          action: 'delete',
+        },
+        tx,
+      );
 
       // Soft delete the task
       return await tx.task.update({
@@ -449,63 +435,64 @@ export class TasksService {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async clearDeletedTasksFromPage(tiptapJson: any, pageId: string) {
+    // Get current task IDs from the page content
     const currentTaskIds = getCurrentTaskIds(tiptapJson);
 
-    const currentTasks = await this.prisma.task.findMany({
+    // Undelete tasks that are currently in the page
+    await this.prisma.task.updateMany({
       where: {
-        id: {
-          in: currentTaskIds,
-        },
+        id: { in: currentTaskIds },
+        deleted: { not: null },
+      },
+      data: {
+        deleted: null,
       },
     });
 
-    for (const task of currentTasks) {
-      if (task.deleted) {
-        await this.prisma.task.update({
-          where: {
-            id: task.id,
-          },
-          data: {
-            deleted: null,
-          },
-        });
-      }
-    }
-
-    const allTaskIdsForPage = await this.prisma.task.findMany({
+    // Find tasks that were previously in this page but are no longer in currentTaskIds
+    const tasksToCheck = await this.prisma.task.findMany({
       where: {
         source: {
           path: ['type'],
           equals: 'page',
         },
         AND: {
-          source: {
-            path: ['id'],
-            equals: pageId,
+          deleted: null,
+          NOT: {
+            id: { in: currentTaskIds },
           },
         },
-        deleted: null,
       },
     });
 
-    const updateTasksPromise = [];
+    // Delete tasks that have no references in any page
+    const deletePromises = tasksToCheck.map(async (task) => {
+      const referencingPage = await this.prisma.page.findFirst({
+        where: {
+          id: { not: pageId },
+          outlinks: {
+            array_contains: [
+              {
+                type: OutlinkType.Task,
+                id: task.id,
+              },
+            ],
+          },
+        },
+        select: { id: true },
+      });
 
-    for (const task of allTaskIdsForPage) {
-      if (!currentTaskIds.includes(task.id)) {
-        updateTasksPromise.push(
-          this.prisma.task.update({
-            where: {
-              id: task.id,
-            },
-            data: {
-              deleted: new Date(),
-            },
-          }),
-        );
+      if (!referencingPage) {
+        return this.prisma.task.update({
+          where: { id: task.id },
+          data: { deleted: new Date() },
+        });
       }
-    }
 
-    return await Promise.all(updateTasksPromise);
+      return undefined;
+    });
+
+    return Promise.all(deletePromises);
   }
 
   @OnEvent('task.delete.tasksFromPage')

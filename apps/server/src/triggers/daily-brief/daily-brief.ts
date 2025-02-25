@@ -1,31 +1,18 @@
 import { PrismaClient } from '@prisma/client';
-import {
-  dailyBriefPrompt,
-  LLMModelEnum,
-  Page,
-  UserTypeEnum,
-} from '@sigma/types';
+import { dailyBriefPrompt, LLMModelEnum, UserTypeEnum } from '@sigma/types';
 import { task } from '@trigger.dev/sdk/v3';
 import axios from 'axios';
+import { format } from 'date-fns';
+
+import { pageGroomTask } from './page-groom';
 
 const prisma = new PrismaClient();
-
-// ... imports ...
 
 export const dailyBriefTask = task({
   id: 'daily-brief',
   run: async (payload: { workspaceId: string }) => {
     const today = new Date();
-    const formattedDate = today
-      .toLocaleDateString('en-GB', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-      })
-      .split('/')
-      .join('-');
-    const startOfDay = new Date(today.setHours(0, 0, 0, 0));
-    const endOfDay = new Date(today.setHours(23, 59, 59, 999));
+    const formattedDate = format(today, 'dd-MM-yyyy');
 
     const workspace = await prisma.workspace.findUnique({
       where: { id: payload.workspaceId },
@@ -34,114 +21,80 @@ export const dailyBriefTask = task({
       where: { userId: workspace.userId, name: 'default' },
     });
 
-    let page: Page;
-    page = await prisma.page.findFirst({
-      where: { type: 'Daily', title: formattedDate },
+    const pageGroomResponse = await pageGroomTask.triggerAndWait({
+      workspaceId: workspace.id,
     });
-    if (!page) {
-      page = await prisma.page.create({
-        data: {
-          title: formattedDate,
-          type: 'Daily',
-          workspace: { connect: { id: payload.workspaceId } },
-          sortOrder: 'a0',
-        },
-      });
+
+    if (!pageGroomResponse.ok) {
+      throw new Error('Failed to groom page');
     }
 
-    // Get all task occurrences for today for the specific workspace
-    const taskOccurrences = await prisma.taskOccurrence.findMany({
-      where: {
-        deleted: null,
-        task: {
-          workspaceId: payload.workspaceId,
-        },
-        OR: [
-          {
-            startTime: {
-              gte: startOfDay,
-              lte: endOfDay,
-            },
-          },
-          {
-            endTime: {
-              gte: startOfDay,
-              lte: endOfDay,
-            },
-          },
-        ],
-      },
-      include: {
-        task: {
-          include: {
-            page: true,
-            summary: {
-              where: {
-                archived: null,
-                deleted: null,
-              },
-            },
-            suggestion: true,
-          },
-        },
-      },
-    });
-
-    const tasks = await prisma.task.findMany({
-      where: {
-        deleted: null,
-        workspaceId: payload.workspaceId,
-        OR: [
-          { dueDate: { gte: startOfDay, lte: endOfDay } },
-          { remindAt: { gte: startOfDay, lte: endOfDay } },
-        ],
-      },
-      include: {
-        page: true,
-        summary: {
-          where: {
-            archived: null,
-            deleted: null,
-          },
-        },
-        suggestion: true,
-      },
-    });
+    const { page, todayTaskIds, yesterdayTaskIds, dueTaskIds } =
+      pageGroomResponse.output;
 
     // Skip if no tasks for today
-    if (taskOccurrences.length === 0 && tasks.length === 0) {
+    if (
+      todayTaskIds.length === 0 ||
+      yesterdayTaskIds.length === 0 ||
+      dueTaskIds.length === 0
+    ) {
       return {
         message: 'No tasks scheduled for today',
         tasksCount: 0,
       };
     }
 
+    const todayTasks = await getTasks(todayTaskIds);
+    const yesterdayTasks = await getTasks(yesterdayTaskIds);
+    const dueTasks = await getTasks(dueTaskIds);
     // Combine tasks from both taskOccurrences and tasks
     const tasksData = [
-      ...taskOccurrences.map(
-        (occurrence) =>
-          `
-          title: ${occurrence.task.page.title}, 
-          summary: ${occurrence.task.summary?.[0]?.content || ''}, 
-          suggestions: ${occurrence.task.suggestion?.map((s) => `- ${s.content}`).join('\n') || ''}
-          
-          `,
-      ),
-      ...tasks.map(
+      `Today's tasks`,
+      ...todayTasks.map(
         (task) =>
           `
-          title: ${task.page.title},
-          summary: ${task.summary?.[0]?.content || ''},
+          title: ${task.page.title}, 
+          summary: ${task.summary?.[0]?.content || ''}, 
           suggestions: ${task.suggestion?.map((s) => `- ${s.content}`).join('\n') || ''}
-          
+
           `,
       ),
+
+      // Add section for due tasks if they exist
+      ...(dueTasks.length > 0
+        ? [
+            `\nDue Today:`,
+            ...dueTasks.map(
+              (task) =>
+                `
+        title: ${task.page.title}, 
+        summary: ${task.summary?.[0]?.content || ''}, 
+        suggestions: ${task.suggestion?.map((s) => `- ${s.content}`).join('\n') || ''}
+        `,
+            ),
+          ]
+        : []),
+
+      // Add section for yesterday's incomplete tasks if they exist
+      ...(yesterdayTasks.length > 0
+        ? [
+            `\nIncomplete tasks from yesterday:`,
+            ...yesterdayTasks.map(
+              (task) =>
+                `
+        title: ${task.page.title}, 
+        summary: ${task.summary?.[0]?.content || ''}, 
+        suggestions: ${task.suggestion?.map((s) => `- ${s.content}`).join('\n') || ''}
+        `,
+            ),
+          ]
+        : []),
     ];
 
     // Call your AI service endpoint
     const briefResponse = (
       await axios.post(
-        `http://localhost:3001/v1/ai_requests`,
+        `${process.env.BACKEND_HOST}/v1/ai_requests`,
         {
           messages: [
             {
@@ -185,7 +138,28 @@ export const dailyBriefTask = task({
 
     return {
       brief: dailyBrief,
-      tasksCount: taskOccurrences.length,
     };
   },
 });
+
+async function getTasks(taskIds: string[]) {
+  // Get all task occurrences for today for the specific workspace
+  return await prisma.task.findMany({
+    where: {
+      deleted: null,
+      id: {
+        in: taskIds,
+      },
+    },
+    include: {
+      page: true,
+      summary: {
+        where: {
+          archived: null,
+          deleted: null,
+        },
+      },
+      suggestion: true,
+    },
+  });
+}

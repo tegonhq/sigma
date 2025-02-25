@@ -53,6 +53,11 @@ export class ContentService implements OnModuleInit {
               pageId: documentName,
               tiptapJson: TiptapTransformer.fromYdoc(document).default,
             });
+
+            this.eventEmitter.emit('page.storeOutlinks', {
+              pageId: documentName,
+              tiptapJson: TiptapTransformer.fromYdoc(document).default,
+            });
           },
         }),
       ],

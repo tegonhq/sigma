@@ -31,6 +31,53 @@ export function getTaskExtensionInPage(page: Page) {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function getCurrentTaskIds(tiptapJson: any): string[] {
+  const taskIds: string[] = [];
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const findTaskIds = (node: any) => {
+    // Check if node is a task
+    if (node.type === 'task' && node.attrs?.id) {
+      taskIds.push(node.attrs.id);
+      return;
+    }
+
+    // Recursively check content array
+    if (node.content && Array.isArray(node.content)) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      node.content.forEach((child: any) => findTaskIds(child));
+    }
+
+    // For tasksExtension, check all bulletLists
+    if (node.type === 'tasksExtension') {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      node.content?.forEach((child: any) => {
+        if (child.type === 'bulletList') {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          child.content?.forEach((listItem: any) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            listItem.content?.forEach((taskNode: any) => {
+              if (taskNode.type === 'task' && taskNode.attrs?.id) {
+                taskIds.push(taskNode.attrs.id);
+              }
+            });
+          });
+        }
+      });
+    }
+  };
+
+  // Start traversing from the root
+  if (tiptapJson.content) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    tiptapJson.content.forEach((node: any) => findTaskIds(node));
+  }
+
+  // Remove duplicates and return
+  return [...new Set(taskIds)];
+}
+
 export function updateTaskExtensionInPage(
   page: Page,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -77,17 +124,7 @@ export function upsertTaskInExtension(
   }
 
   // Create a Set of existing task IDs for O(1) lookup
-  const existingTaskIds = new Set(
-    taskExtensions.content
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .map((node: any) => {
-        if (node.type === 'listItem' && node.content?.[0]?.type === 'task') {
-          return node.content[0].attrs.id;
-        }
-        return null;
-      })
-      .filter(Boolean),
-  );
+  const existingTaskIds = new Set(getCurrentTaskIds(taskExtensions));
 
   // Add only new tasks
   const newTasks = tasks.filter((task: Task) => !existingTaskIds.has(task.id));
@@ -119,7 +156,6 @@ export function upsertTaskInExtension(
     taskExtensions.content.push(...newTaskNodes);
   }
 
-  console.log(JSON.stringify(taskExtensions));
   return taskExtensions;
 }
 
@@ -132,17 +168,32 @@ export function removeTaskInExtension(
     return taskExtensions;
   }
 
-  // Filter out the task node with matching taskId
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  taskExtensions.content = taskExtensions.content.filter((node: any) => {
-    if (node.type === 'bulletList' && node.content?.[0]?.type === 'listItem') {
-      const taskNode = node.content[0].content?.[0];
-      if (taskNode?.type === 'task') {
-        return taskNode.attrs.id !== taskId;
+  // Filter bulletLists and their content
+  taskExtensions.content = taskExtensions.content
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .map((node: any) => {
+      if (node.type === 'bulletList') {
+        return {
+          ...node,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          content: node.content?.filter((listItem: any) => {
+            const taskNode = listItem.content?.[0];
+            return !(
+              taskNode?.type === 'task' && taskNode.attrs?.id === taskId
+            );
+          }),
+        };
       }
-    }
-    return true;
-  });
+      return node;
+    })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .filter((node: any) => {
+      // Remove empty bulletLists
+      if (node.type === 'bulletList') {
+        return node.content && node.content.length > 0;
+      }
+      return true;
+    });
 
   return taskExtensions;
 }

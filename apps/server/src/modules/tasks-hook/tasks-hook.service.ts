@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { Task, TaskHookContext } from '@sigma/types';
+import { Outlink, OutlinkType, Task, TaskHookContext } from '@sigma/types';
 import { tasks } from '@trigger.dev/sdk/v3';
 import { format } from 'date-fns/format';
 import { PrismaService } from 'nestjs-prisma';
-import { beautifyTask } from 'triggers/beautify-task';
-import { generateSummaryTask } from 'triggers/generate-summary';
+import { beautifyTask } from 'triggers/task/beautify-task';
+import { generateSummaryTask } from 'triggers/task/generate-summary';
 
 import { IntegrationsService } from 'modules/integrations/integrations.service';
 import { PagesService } from 'modules/pages/pages.service';
@@ -16,7 +16,6 @@ import {
   handleCalendarTask,
   TransactionClient,
 } from '../tasks/tasks.utils';
-import { addTaskToDatePage } from './hooks/due-date';
 
 @Injectable()
 export class TaskHooksService {
@@ -43,53 +42,121 @@ export class TaskHooksService {
     context: TaskHookContext,
     tx?: TransactionClient,
   ) {
+    // Only trigger when task is CUD from the API not from third-party source
     if (!tx) {
       await Promise.all([
         this.handleDueDate(task, context),
+        this.handleTitleChange(task, context),
+        this.handleDeleteTask(task, context),
         // this.handleCalendarTask(task, context),
         // this.handleBeautifyTask(task, context),
         // this.handleGenerateSummary(task, context),
       ]);
     }
+
+    await this.handleScheduleTask(task, context, tx);
+  }
+
+  async handleDeleteTask(task: Task, context: TaskHookContext) {
+    if (context.action === 'delete') {
+      if (!task.recurrence?.length && !task.startTime && !task.endTime) {
+        const referencingPages = await this.prisma.page.findMany({
+          where: {
+            outlinks: {
+              array_contains: [
+                {
+                  type: OutlinkType.Task,
+                  id: task.id,
+                },
+              ],
+            },
+          },
+        });
+
+        if (referencingPages.length > 0) {
+          await Promise.all(
+            referencingPages.map(async (page) => {
+              await this.pagesService.removeTaskFromPageByTitle(
+                page.title,
+                task.id,
+              );
+            }),
+          );
+        }
+      }
+    }
   }
 
   private async handleDueDate(task: Task, context: TaskHookContext) {
     switch (context.action) {
-      case 'create':
-        if (task.dueDate) {
-          await addTaskToDatePage(this.pagesService, task);
-        }
-        return { message: 'Handled duedate create' };
-      case 'update':
-        // Handle case where due date changes
-        if (task.dueDate !== context.previousTask?.dueDate) {
-          // Remove from old date page if there was a previous due date
-          if (context.previousTask?.dueDate) {
-            const formattedDate = format(
-              context.previousTask.dueDate,
-              'dd-MM-yyyy',
-            );
-            await this.pagesService.removeTaskFromPageByTitle(
-              formattedDate,
-              context.previousTask.id,
-            );
-          }
-          // Add to new date page if there is a new due date
-          if (task.dueDate) {
-            await addTaskToDatePage(this.pagesService, task);
-          }
-        }
-        return { message: 'Handled duedate update' };
-
       case 'delete':
         if (task.dueDate) {
           const formattedDate = format(task.dueDate, 'dd-MM-yyyy');
           await this.pagesService.removeTaskFromPageByTitle(
             formattedDate,
-            context.previousTask.id,
+            task.id,
           );
         }
         return { message: 'Handled duedate delete' };
+
+      default:
+        return { message: `Unhandled duedate case ${context.action}` };
+    }
+  }
+
+  async handleTitleChange(task: Task, context: TaskHookContext) {
+    if (
+      context.previousTask &&
+      task.page.title !== context.previousTask.page.title
+    ) {
+      const pagesWithTask = await this.prisma.page.findMany({
+        where: {
+          outlinks: {
+            array_contains: [
+              {
+                type: OutlinkType.Task,
+                id: task.id,
+              },
+            ],
+          },
+        },
+        select: { id: true, description: true, outlinks: true },
+      });
+
+      await Promise.all(
+        pagesWithTask.map(async (page) => {
+          if (!page.description) {
+            return;
+          }
+
+          try {
+            const description = JSON.parse(page.description as string);
+            const taskOutlinks = (page.outlinks as unknown as Outlink[]).filter(
+              (o) => o.id === task.id && o.type === OutlinkType.Task,
+            );
+
+            let updated = false;
+            for (const outlink of taskOutlinks) {
+              let node = description;
+              for (const index of outlink.position.path) {
+                node = node.content[index];
+              }
+
+              node.content = [{ type: 'text', text: task.page.title }];
+              updated = true;
+            }
+
+            if (updated) {
+              await this.pagesService.updatePage(
+                { description: JSON.stringify(description) },
+                page.id,
+              );
+            }
+          } catch (error) {
+            console.error(`Failed to update task in page ${page.id}:`, error);
+          }
+        }),
+      );
     }
   }
 
@@ -120,6 +187,12 @@ export class TaskHooksService {
         return { message: 'Handled schedule update' };
 
       case 'delete':
+        if (task.recurrence || task.startTime || task.endTime) {
+          await this.taskOccurenceService.deleteTaskOccuranceByTask(
+            task.id,
+            tx,
+          );
+        }
         return { message: 'Handled schedule delete' };
     }
   }

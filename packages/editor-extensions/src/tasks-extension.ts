@@ -3,7 +3,8 @@ import { mergeAttributes, Node } from '@tiptap/core';
 export const tasksExtension = Node.create({
   name: 'tasksExtension',
   group: 'block',
-  content: 'block+',
+  content: '(paragraph | bulletList | listItem | task)+',
+  selectable: false,
 
   parseHTML() {
     return [

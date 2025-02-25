@@ -190,7 +190,8 @@ model Page {
   parent    Page?   @relation("ParentChild", fields: [parentId], references: [id])
   children  Page[]  @relation("ParentChild")
 
-  tags String[]
+  outlinks Json?    @default("[]")
+  tags     String[]
 
   type PageType @default(Default)
 

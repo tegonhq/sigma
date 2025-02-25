@@ -1,3 +1,4 @@
+import { JsonValue } from '../common';
 import { Status } from '../status';
 import { Workspace } from '../workspace';
 
@@ -12,6 +13,23 @@ export const PageType = {
 };
 
 export type PageType = (typeof PageType)[keyof typeof PageType];
+
+export enum OutlinkEnum {
+  Task = 'Task',
+}
+
+export const OutlinkType = {
+  Task: 'Task',
+};
+
+export type OutlinkType = (typeof OutlinkType)[keyof typeof OutlinkType];
+export interface Outlink {
+  type: OutlinkType;
+  id: string;
+  position: {
+    path: number[];
+  };
+}
 
 export class Page {
   id: string;
@@ -30,6 +48,7 @@ export class Page {
   parent?: Page | null;
   children?: Page[];
 
+  outlinks?: JsonValue;
   tags: string[];
 
   type: PageType;
