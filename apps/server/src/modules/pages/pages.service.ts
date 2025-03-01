@@ -111,7 +111,6 @@ export class PagesService {
         page,
         tasksExtensionContent,
       );
-      console.log(description);
 
       // Update the page with new description in the same transaction
       await this.contentService.updateContentForDocument(

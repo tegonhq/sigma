@@ -70,10 +70,41 @@ export const TaskExtension = ({
           if (!isTaskContent()) {
             return false;
           }
+
           const state = this.editor.state;
           const selection = state.selection;
 
-          console.log(selection, state);
+          let insideTasksExtension = false;
+
+          // Traverse up the hierarchy to check if any parent node is `tasksExtension`
+          for (let depth = selection.$from.depth; depth > 0; depth--) {
+            const parentNode = selection.$from.node(depth);
+            if (parentNode.type.name === 'tasksExtension') {
+              insideTasksExtension = true;
+            }
+          }
+
+          if (insideTasksExtension) {
+            if (selection.$from.parentOffset === 0) {
+              return this.editor
+                .chain()
+                .liftListItem('listItem')
+                .setNode('paragraph', {})
+                .run();
+            }
+
+            const task = this.editor.schema.nodes.task;
+
+            this.editor
+              .chain()
+              .splitListItem('listItem')
+              .setNode(task, {
+                id: undefined,
+              })
+              .run();
+            return true;
+          }
+
           // if it's not the top level node, let list handle it
           if (
             selection.$from.depth > 3 ||
@@ -93,11 +124,13 @@ export const TaskExtension = ({
           return this.editor.commands.setNode('paragraph');
         },
         Backspace: () => {
+          const state = this.editor.state;
+          const selection = state.selection;
+
           if (!isTaskContent()) {
             return false;
           }
-          const state = this.editor.state;
-          const selection = state.selection;
+
           const blockRange = selection.$from.blockRange();
           if (!blockRange) {
             return false;
@@ -137,11 +170,11 @@ export const TaskExtension = ({
             const task = state.schema.nodes.task;
 
             chain()
+              .wrapIn('bulletList')
+              .wrapIn('listItem')
               .setNode(task, {
                 id: undefined,
               })
-              .wrapIn('listItem')
-              .wrapIn('bulletList')
               .run();
           },
         }),

@@ -10,6 +10,7 @@ import {
   Placeholder,
   HighlightExtension,
   AIHighlight,
+  TaskList,
   CustomKeymap,
 } from 'novel/extensions';
 
@@ -64,7 +65,7 @@ const starterKit = StarterKit.configure({
   },
   orderedList: {
     HTMLAttributes: {
-      class: cx('list-decimal list-outside [&_ol]:pl-4 leading-1 my-1'),
+      class: cx('list-decimal list-outside pl-4 leading-1 my-1'),
     },
   },
   listItem: false,

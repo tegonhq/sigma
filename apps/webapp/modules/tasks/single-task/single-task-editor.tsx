@@ -12,6 +12,10 @@ import {
   suggestionItems,
 } from 'common/editor';
 import type { PageType } from 'common/types';
+import { TaskExtension } from 'common/editor/task-extension';
+import { useContextStore } from 'store/global-context-provider';
+import { useDebouncedCallback } from 'use-debounce';
+import { useUpdatePageMutation } from 'services/pages';
 
 interface SingleTaskEditorProps {
   page: PageType;
@@ -26,6 +30,18 @@ export function SingleTaskEditor({
 }: SingleTaskEditorProps) {
   const [provider, setProvider] = React.useState(undefined);
   const [doc, setDoc] = React.useState(undefined);
+  const { tasksStore } = useContextStore();
+  const { mutate: updatePage } = useUpdatePageMutation({});
+
+  const debounceUpdateTask = useDebouncedCallback(
+    async ({ title, pageId }: { title: string; pageId: string }) => {
+      updatePage({
+        title,
+        pageId,
+      });
+    },
+    500,
+  );
 
   React.useEffect(() => {
     initPageSocket();
@@ -52,6 +68,19 @@ export function SingleTaskEditor({
     return null;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const onTaskExtensionUpdate = ({ newNode }: any) => {
+    const task = tasksStore.getTaskWithId(newNode.attrs.id);
+    if (task) {
+      debounceUpdateTask({
+        title: newNode.textContent,
+        pageId: task.pageId,
+      });
+    }
+
+    return true;
+  };
+
   return (
     <div className="flex flex-col min-h-[calc(100vh_-_30vh)]">
       <EditorContext.Provider
@@ -63,6 +92,7 @@ export function SingleTaskEditor({
             Collaboration.configure({
               document: doc,
             }),
+            TaskExtension({ update: onTaskExtensionUpdate }),
           ]}
           placeholder="Write notes..."
           autoFocus={autoFocus}

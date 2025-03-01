@@ -34,8 +34,8 @@ export const TasksCommand = React.forwardRef(
           from: from - 2,
           to: from,
         })
-        .wrapIn('listItem')
         .wrapIn('bulletList')
+        .wrapIn('listItem')
         .insertContent([
           {
             type: 'task',

@@ -41,7 +41,7 @@ export const TaskComponent = observer((props: any) => {
   }, 500);
 
   React.useEffect(() => {
-    if (!taskId && content) {
+    if (!taskId && content && !content.includes('[')) {
       debounceAddTask({
         title: content,
         ...getCreateTaskPropsOnSource(source, date),

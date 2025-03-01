@@ -1,6 +1,7 @@
 import type { Editor } from '@tiptap/core';
 
 import { type ImageUploadOptions } from 'novel/plugins';
+import type { EditorT } from './editor';
 
 const onUploadFile = async (file: File) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -148,3 +149,37 @@ export const uploadFileFn = createFileUpload({
     return true;
   },
 });
+
+export const createTasksExtension = (editor: EditorT) => {
+  const json = editor.getJSON();
+
+  if (json.content[0].type !== 'tasksExtension') {
+    editor
+      .chain()
+      .focus()
+      .insertContentAt(0, [
+        {
+          type: 'tasksExtension',
+          content: [
+            {
+              type: 'bulletList',
+              content: [
+                {
+                  type: 'listItem',
+                  content: [
+                    {
+                      type: 'task',
+                      attrs: {
+                        id: undefined,
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ])
+      .run();
+  }
+};

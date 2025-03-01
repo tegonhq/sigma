@@ -119,7 +119,6 @@ export function upsertTaskInExtension(
     taskExtensions.content.push(...newTaskNodes);
   }
 
-  console.log(JSON.stringify(taskExtensions));
   return taskExtensions;
 }
 

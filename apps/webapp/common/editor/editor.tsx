@@ -14,7 +14,11 @@ import { useDebouncedCallback } from 'use-debounce';
 import { defaultExtensions, getPlaceholder } from './editor-extensions';
 import { LinkSelector, NodeSelector, TextButtons } from './selectors';
 import { slashCommand } from './slash-command';
-import { handleMarkAndImagePaste, uploadFn } from './utils';
+import {
+  createTasksExtension,
+  handleMarkAndImagePaste,
+  uploadFn,
+} from './utils';
 import {
   EditorRoot,
   EditorCommand,
@@ -138,6 +142,9 @@ export const Editor = ({
   const debouncedUpdates = useDebouncedCallback(
     async (editor: EditorInstance) => {
       const json = editor.getJSON();
+
+      createTasksExtension(editor);
+
       onChange &&
         onChange(
           JSON.stringify({

@@ -32,12 +32,21 @@ export const suggestionItems = createSuggestionItems([
     },
   },
   {
-    title: 'To-do List',
+    title: 'Task',
     description: 'Track tasks with a to-do list.',
     searchTerms: ['todo', 'task', 'list', 'check', 'checkbox'],
-    icon: <CheckLine size={20} />,
+    icon: <IssuesLine size={20} />,
     command: ({ editor, range }) => {
-      editor.chain().focus().deleteRange(range).toggleTaskList().run();
+      editor
+        .chain()
+        .focus()
+        .deleteRange(range)
+        .wrapIn('listItem')
+        .wrapIn('bulletList')
+        .setNode('task', {
+          id: undefined,
+        })
+        .run();
     },
   },
   {
@@ -151,6 +160,23 @@ export const suggestionItems = createSuggestionItems([
     },
   },
   {
+    title: 'Date',
+    description: 'Add date to page',
+    searchTerms: ['date'],
+    icon: <CalendarLine size={20} />,
+    command: ({ editor, range }) => {
+      editor.commands.command(({ tr, state }) => {
+        const node = state.schema.nodes['datePageExtension'].create({
+          type: 'inline',
+        });
+
+        tr.replaceWith(range.from, range.to, node);
+
+        return true;
+      });
+    },
+  },
+  {
     title: 'Add tasks for this day',
     description: 'Search or create task',
     searchTerms: ['task'],
@@ -167,11 +193,18 @@ export const suggestionItems = createSuggestionItems([
             type: 'tasksExtension',
             content: [
               {
-                type: 'paragraph',
+                type: 'bulletList',
                 content: [
                   {
-                    type: 'text',
-                    text: 'Add tasks here',
+                    type: 'listItem',
+                    content: [
+                      {
+                        type: 'task',
+                        attrs: {
+                          id: undefined,
+                        },
+                      },
+                    ],
                   },
                 ],
               },
@@ -179,23 +212,6 @@ export const suggestionItems = createSuggestionItems([
           },
         ])
         .run();
-    },
-  },
-  {
-    title: 'Date',
-    description: 'Add date to page',
-    searchTerms: ['date'],
-    icon: <CalendarLine size={20} />,
-    command: ({ editor, range }) => {
-      editor.commands.command(({ tr, state }) => {
-        const node = state.schema.nodes['datePageExtension'].create({
-          type: 'inline',
-        });
-
-        tr.replaceWith(range.from, range.to, node);
-
-        return true;
-      });
     },
   },
 ]);
