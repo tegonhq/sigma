@@ -38,7 +38,7 @@ export async function removeTaskFromDatePage(
 
   let taskExtensions = getTaskExtensionInPage(page);
 
-  taskExtensions = removeTaskInExtension(taskExtensions, task.id);
+  taskExtensions = removeTaskInExtension(taskExtensions, [task.id]);
   const pageDescription = updateTaskExtensionInPage(page, taskExtensions);
 
   return await contentService.updateContentForDocument(

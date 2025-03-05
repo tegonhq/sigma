@@ -15,6 +15,7 @@ import {
   PageSelect,
   UpdatePageDto,
   enchancePrompt,
+  MoveTaskToPageDto,
 } from '@sigma/types';
 import { PrismaService } from 'nestjs-prisma';
 
@@ -254,16 +255,15 @@ export class PagesService {
     return tasks;
   }
 
-  async removeTaskFromPageByTitle(title: string, taskIds: string) {
+  async removeTaskFromPageByTitle(title: string, taskId: string) {
     const page = await this.prisma.page.findFirst({
       where: { title, deleted: null },
     });
 
     let tasksExtensionContent = getTaskExtensionInPage(page);
-    tasksExtensionContent = removeTaskInExtension(
-      tasksExtensionContent,
-      taskIds,
-    );
+    tasksExtensionContent = removeTaskInExtension(tasksExtensionContent, [
+      taskId,
+    ]);
 
     const pageDescription = updateTaskExtensionInPage(
       page,
@@ -328,5 +328,49 @@ export class PagesService {
     tiptapJson: any;
   }) {
     await this.storeOutlinks(payload.tiptapJson, payload.pageId);
+  }
+
+  async moveTaskToPage(moveTaskToPageData: MoveTaskToPageDto) {
+    const fromPage = await this.prisma.page.findFirst({
+      where: { title: moveTaskToPageData.fromDate },
+    });
+    const toPage = await this.prisma.page.findFirst({
+      where: { title: moveTaskToPageData.toDate },
+    });
+
+    if (fromPage) {
+      let fromTaskExtension = getTaskExtensionInPage(fromPage);
+      fromTaskExtension = removeTaskInExtension(
+        fromTaskExtension,
+        moveTaskToPageData.taskIds,
+      );
+
+      const pageDescription = updateTaskExtensionInPage(
+        fromPage,
+        fromTaskExtension,
+      );
+      await this.contentService.updateContentForDocument(
+        fromPage.id,
+        JSON.parse(pageDescription),
+      );
+    }
+
+    if (toPage) {
+      let toTaskExtension = getTaskExtensionInPage(toPage);
+      const tasks = await this.prisma.task.findMany({
+        where: { id: { in: moveTaskToPageData.taskIds } },
+        include: { page: true },
+      });
+      toTaskExtension = upsertTaskInExtension(toTaskExtension, tasks);
+      const pageDescription = updateTaskExtensionInPage(
+        toPage,
+        toTaskExtension,
+      );
+      await this.contentService.updateContentForDocument(
+        toPage.id,
+        JSON.parse(pageDescription),
+      );
+    }
+    return { success: true };
   }
 }

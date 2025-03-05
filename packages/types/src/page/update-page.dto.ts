@@ -1,4 +1,4 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsArray, IsOptional, IsString } from 'class-validator';
 
 export class UpdatePageDto {
   @IsString()
@@ -24,4 +24,17 @@ export class UpdatePageDto {
   @IsString()
   @IsOptional()
   archived?: string;
+}
+
+export class MoveTaskToPageDto {
+  @IsString()
+  @IsOptional()
+  fromDate?: string;
+
+  @IsString()
+  @IsOptional()
+  toDate?: string;
+
+  @IsArray()
+  taskIds: string[];
 }

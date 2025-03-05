@@ -77,71 +77,138 @@ export function upsertTaskInExtension(
   }
 
   // Create a Set of existing task IDs for O(1) lookup
-  const existingTaskIds = new Set(
-    taskExtensions.content
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .map((node: any) => {
-        if (node.type === 'listItem' && node.content?.[0]?.type === 'task') {
-          return node.content[0].attrs.id;
-        }
-        return null;
-      })
-      .filter(Boolean),
-  );
+  const existingTaskIds = new Set(getCurrentTaskIds(taskExtensions));
 
   // Add only new tasks
   const newTasks = tasks.filter((task: Task) => !existingTaskIds.has(task.id));
 
   if (newTasks.length > 0) {
-    const newTaskNodes = newTasks.map((task: Task) => ({
-      type: 'bulletList',
+    // Find the first bulletList in the content array, if it exists
+    const existingBulletListIndex = taskExtensions.content.findIndex(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (item: any) => item.type === 'bulletList',
+    );
+
+    // Create task list items
+    const newTaskListItems = newTasks.map((task: Task) => ({
+      type: 'listItem',
       content: [
         {
-          type: 'listItem',
+          type: 'task',
+          attrs: {
+            id: task.id,
+          },
           content: [
             {
-              type: 'task',
-              attrs: {
-                id: task.id,
-              },
-              content: [
-                {
-                  type: 'text',
-                  text: task.page.title,
-                },
-              ],
+              type: 'text',
+              text: task.page.title,
             },
           ],
         },
       ],
     }));
 
-    taskExtensions.content.push(...newTaskNodes);
+    // If a bulletList exists, add the new tasks to it
+    if (existingBulletListIndex !== -1) {
+      // Add the new task list items to the existing bullet list
+      taskExtensions.content[existingBulletListIndex].content.push(
+        ...newTaskListItems,
+      );
+    } else {
+      // Create a new bulletList with the tasks
+      const newBulletList = {
+        type: 'bulletList',
+        content: newTaskListItems,
+      };
+      taskExtensions.content.push(newBulletList);
+    }
   }
 
   return taskExtensions;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function getCurrentTaskIds(tiptapJson: any): string[] {
+  const taskIds: string[] = [];
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const findTaskIds = (node: any) => {
+    // Check if node is a task
+    if (node.type === 'task' && node.attrs?.id) {
+      taskIds.push(node.attrs.id);
+      return;
+    }
+
+    // Recursively check content array
+    if (node.content && Array.isArray(node.content)) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      node.content.forEach((child: any) => findTaskIds(child));
+    }
+
+    // For tasksExtension, check all bulletLists
+    if (node.type === 'tasksExtension') {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      node.content?.forEach((child: any) => {
+        if (child.type === 'bulletList') {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          child.content?.forEach((listItem: any) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            listItem.content?.forEach((taskNode: any) => {
+              if (taskNode.type === 'task' && taskNode.attrs?.id) {
+                taskIds.push(taskNode.attrs.id);
+              }
+            });
+          });
+        }
+      });
+    }
+  };
+
+  // Start traversing from the root
+  if (tiptapJson.content) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    tiptapJson.content.forEach((node: any) => findTaskIds(node));
+  }
+
+  // Remove duplicates and return
+  return [...new Set(taskIds)];
+}
+
 export function removeTaskInExtension(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   taskExtensions: Record<string, any>,
-  taskId: string,
+  taskIds: string[],
 ) {
   if (!taskExtensions.content) {
     return taskExtensions;
   }
 
-  // Filter out the task node with matching taskId
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  taskExtensions.content = taskExtensions.content.filter((node: any) => {
-    if (node.type === 'bulletList' && node.content?.[0]?.type === 'listItem') {
-      const taskNode = node.content[0].content?.[0];
-      if (taskNode?.type === 'task') {
-        return taskNode.attrs.id !== taskId;
+  // Filter bulletLists and their content
+  taskExtensions.content = taskExtensions.content
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .map((node: any) => {
+      if (node.type === 'bulletList') {
+        return {
+          ...node,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          content: node.content?.filter((listItem: any) => {
+            const taskNode = listItem.content?.[0];
+            return !(
+              taskNode?.type === 'task' && taskIds.includes(taskNode.attrs?.id)
+            );
+          }),
+        };
       }
-    }
-    return true;
-  });
+      return node;
+    })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .filter((node: any) => {
+      // Remove empty bulletLists
+      if (node.type === 'bulletList') {
+        return node.content && node.content.length > 0;
+      }
+      return true;
+    });
 
   return taskExtensions;
 }

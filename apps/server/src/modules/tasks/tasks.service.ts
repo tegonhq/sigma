@@ -1,5 +1,3 @@
-import type { beautifyTask } from 'triggers/task/beautify-task';
-
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import {
@@ -11,13 +9,12 @@ import {
   Task,
   UpdateTaskDto,
 } from '@sigma/types';
-import { tasks } from '@trigger.dev/sdk/v3';
 import { PrismaService } from 'nestjs-prisma';
 
 import { IntegrationsService } from 'modules/integrations/integrations.service';
 import { PagesService } from 'modules/pages/pages.service';
+import { getTaskExtensionInPage } from 'modules/pages/pages.utils';
 import { TaskOccurenceService } from 'modules/task-occurence/task-occurence.service';
-import { UsersService } from 'modules/users/users.service';
 
 import {
   getCurrentTaskIds,
@@ -33,7 +30,6 @@ export class TasksService {
     private taskHooksService: TaskHooksService,
     private taskOccurenceService: TaskOccurenceService,
     private integrationService: IntegrationsService,
-    private usersService: UsersService,
     private pageService: PagesService,
   ) {}
 
@@ -113,14 +109,12 @@ export class TasksService {
         },
       )
       .then(async (sigmaTasks: Task[]) => {
-        // Trigger beautify tasks after transaction commits
-        const pat = await this.usersService.getOrCreatePat(userId, workspaceId);
-
         await Promise.all(
           sigmaTasks.map((task) =>
-            tasks.trigger<typeof beautifyTask>('beautify-task', {
-              taskId: task.id,
-              pat,
+            this.taskHooksService.executeHooks(task, {
+              workspaceId,
+              userId,
+              action: 'create',
             }),
           ),
         );
@@ -502,5 +496,31 @@ export class TasksService {
     tiptapJson: any;
   }) {
     await this.clearDeletedTasksFromPage(payload.tiptapJson, payload.pageId);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async updateTasksFromPage(tiptapJson: any, pageId: string) {
+    const page = await this.prisma.page.findUnique({
+      where: { id: pageId },
+    });
+
+    page.description = JSON.stringify(tiptapJson);
+
+    const taskExtension = getTaskExtensionInPage(page);
+    const taskIds = getCurrentTaskIds(taskExtension);
+
+    await this.prisma.task.updateMany({
+      where: { id: { in: taskIds }, dueDate: null },
+      data: { dueDate: new Date().toISOString() },
+    });
+  }
+
+  @OnEvent('task.update.tasksFromPage')
+  async handleTasksFromPageUpdate(payload: {
+    pageId: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    tiptapJson: any;
+  }) {
+    await this.updateTasksFromPage(payload.tiptapJson, payload.pageId);
   }
 }

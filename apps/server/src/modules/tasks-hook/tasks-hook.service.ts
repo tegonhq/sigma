@@ -27,34 +27,23 @@ export class TaskHooksService {
     private integrationService: IntegrationsService,
   ) {}
 
-  // async onModuleInit() {
-  //   const task = await this.prisma.task.findUnique({
-  //     where: { id: '9c76c273-81de-439d-9abb-679f455a0dfe' },
-  //   });
-  //   await this.executeHooks(task, {
-  //     workspaceId: 'b1cb7b75-d109-4baa-b879-66f3c9f853aa',
-  //     userId: 'e1895007-a8a1-4935-9c11-8f61accc9382',
-  //     action: 'create',
-  //   });
-  // }
   async executeHooks(
     task: Task,
     context: TaskHookContext,
     tx?: TransactionClient,
   ) {
-    // Only trigger when task is CUD from the API not from third-party source
+    // Only trigger when task is CUD from the API without transaction
     if (!tx) {
       await Promise.all([
         this.handleDueDate(task, context),
         this.handleTitleChange(task, context),
         this.handleDeleteTask(task, context),
+        this.handleScheduleTask(task, context, tx),
         // this.handleCalendarTask(task, context),
         // this.handleBeautifyTask(task, context),
         // this.handleGenerateSummary(task, context),
       ]);
     }
-
-    await this.handleScheduleTask(task, context, tx);
   }
 
   async handleDeleteTask(task: Task, context: TaskHookContext) {

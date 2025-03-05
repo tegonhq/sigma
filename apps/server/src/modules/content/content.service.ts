@@ -49,7 +49,7 @@ export class ContentService implements OnModuleInit {
               },
             });
 
-            this.eventEmitter.emit('task.delete.tasksFromPage', {
+            this.eventEmitter.emit('task.update.tasksFromPage', {
               pageId: documentName,
               tiptapJson: TiptapTransformer.fromYdoc(document).default,
             });
