@@ -9,12 +9,14 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 
 import { LoggerService } from 'modules/logger/logger.service';
+import { PagesService } from 'modules/pages/pages.service';
 import { SyncGateway } from 'modules/sync/sync.gateway';
 import SyncActionsService from 'modules/sync-actions/sync-actions.service';
 
 import {
   logChangeType,
   logType,
+  tableHooks,
   tablesToSendMessagesFor,
 } from './replication.interface';
 
@@ -32,6 +34,7 @@ export default class ReplicationService {
     private configService: ConfigService,
     private syncGateway: SyncGateway,
     private syncActionsService: SyncActionsService,
+    private pagesService: PagesService,
   ) {
     this.client = new Client({
       user: configService.get('POSTGRES_USER'),
@@ -225,6 +228,12 @@ export default class ReplicationService {
             this.syncGateway.wss
               .to(recipientId)
               .emit('message', JSON.stringify(syncActionData));
+          }
+
+          if (tableHooks.has(modelName)) {
+            const changedData = this.getChangedData(change);
+
+            this.pagesService.handleHooks({ pageId: modelId, changedData });
           }
         });
       } else {

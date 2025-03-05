@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Outlink, OutlinkType, Task, TaskHookContext } from '@sigma/types';
 import { tasks } from '@trigger.dev/sdk/v3';
-import { format } from 'date-fns/format';
 import { PrismaService } from 'nestjs-prisma';
 import { beautifyTask } from 'triggers/task/beautify-task';
 import { generateSummaryTask } from 'triggers/task/generate-summary';
@@ -35,7 +34,6 @@ export class TaskHooksService {
     // Only trigger when task is CUD from the API without transaction
     if (!tx) {
       await Promise.all([
-        this.handleDueDate(task, context),
         this.handleTitleChange(task, context),
         this.handleDeleteTask(task, context),
         this.handleScheduleTask(task, context, tx),
@@ -73,23 +71,6 @@ export class TaskHooksService {
           );
         }
       }
-    }
-  }
-
-  private async handleDueDate(task: Task, context: TaskHookContext) {
-    switch (context.action) {
-      case 'delete':
-        if (task.dueDate) {
-          const formattedDate = format(task.dueDate, 'dd-MM-yyyy');
-          await this.pagesService.removeTaskFromPageByTitle(
-            formattedDate,
-            task.id,
-          );
-        }
-        return { message: 'Handled duedate delete' };
-
-      default:
-        return { message: `Unhandled duedate case ${context.action}` };
     }
   }
 

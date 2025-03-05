@@ -13,7 +13,6 @@ import { PrismaService } from 'nestjs-prisma';
 
 import { IntegrationsService } from 'modules/integrations/integrations.service';
 import { PagesService } from 'modules/pages/pages.service';
-import { getTaskExtensionInPage } from 'modules/pages/pages.utils';
 import { TaskOccurenceService } from 'modules/task-occurence/task-occurence.service';
 
 import {
@@ -496,31 +495,5 @@ export class TasksService {
     tiptapJson: any;
   }) {
     await this.clearDeletedTasksFromPage(payload.tiptapJson, payload.pageId);
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async updateTasksFromPage(tiptapJson: any, pageId: string) {
-    const page = await this.prisma.page.findUnique({
-      where: { id: pageId },
-    });
-
-    page.description = JSON.stringify(tiptapJson);
-
-    const taskExtension = getTaskExtensionInPage(page);
-    const taskIds = getCurrentTaskIds(taskExtension);
-
-    await this.prisma.task.updateMany({
-      where: { id: { in: taskIds }, dueDate: null },
-      data: { dueDate: new Date().toISOString() },
-    });
-  }
-
-  @OnEvent('task.update.tasksFromPage')
-  async handleTasksFromPageUpdate(payload: {
-    pageId: string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    tiptapJson: any;
-  }) {
-    await this.updateTasksFromPage(payload.tiptapJson, payload.pageId);
   }
 }

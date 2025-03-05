@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { OnEvent } from '@nestjs/event-emitter';
 import {
   convertHtmlToTiptapJson,
   convertTiptapJsonToHtml,
@@ -16,7 +15,9 @@ import {
   UpdatePageDto,
   enchancePrompt,
   MoveTaskToPageDto,
+  JsonObject,
 } from '@sigma/types';
+import { parse } from 'date-fns';
 import { PrismaService } from 'nestjs-prisma';
 
 import AIRequestsService from 'modules/ai-requests/ai-requests.services';
@@ -24,6 +25,7 @@ import { ContentService } from 'modules/content/content.service';
 import { TransactionClient } from 'modules/tasks/tasks.utils';
 
 import {
+  getOutlinksTaskId,
   getTaskExtensionInPage,
   removeTaskInExtension,
   updateTaskExtensionInPage,
@@ -279,55 +281,140 @@ export class PagesService {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async storeOutlinks(tiptapJson: any, pageId: string) {
-    const outlinks: Outlink[] = [];
+  async storeOutlinks(pageId: string) {
+    const page = await this.prisma.page.findUnique({ where: { id: pageId } });
+    const tiptapJson = JSON.parse(page.description);
 
-    // Recursive function to traverse the JSON and find task nodes
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const findTasks = (node: any, path: number[] = []) => {
+    // Parse outlinks from string to JSON
+    const pageOutlinks = page.outlinks ? page.outlinks : [];
+
+    // Extract taskIds from current outlinks
+    const currentOutlinkTaskIds = getOutlinksTaskId(pageOutlinks);
+    const currentTaskExtensionIds = getOutlinksTaskId(pageOutlinks, true);
+
+    const outlinks: Outlink[] = [];
+    const newOutlinkTaskIds: string[] = [];
+    const taskExtensionOutlinkIndices = new Set<number>();
+
+    // Single-pass traversal to collect outlinks and mark those in taskExtension
+    const traverseDocument = (
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      node: any,
+      path: number[] = [],
+      isInTaskExtension = false,
+    ) => {
+      // Check if we're entering a taskExtension node
+      const inTaskExtension =
+        isInTaskExtension || node.type === 'tasksExtension';
+
+      // If this is a task node, create an outlink
       if (node.type === 'task' && node.attrs?.id) {
+        const outlinkIndex = outlinks.length;
+
+        // Add the outlink
         outlinks.push({
           type: OutlinkType.Task,
           id: node.attrs.id,
           position: {
             path: [...path],
           },
+          // Only set taskExtension:true if this task is directly inside a taskExtension node
+          taskExtension: inTaskExtension,
         });
+        newOutlinkTaskIds.push(node.attrs.id);
+
+        // If in taskExtension, mark this outlink's index
+        if (inTaskExtension) {
+          taskExtensionOutlinkIndices.add(outlinkIndex);
+        }
       }
 
+      // Recursively process content
       if (node.content && Array.isArray(node.content)) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         node.content.forEach((child: any, index: number) => {
-          findTasks(child, [...path, index]);
+          traverseDocument(child, [...path, index], inTaskExtension);
         });
       }
     };
 
-    // Start traversing from the root
+    // Process if content exists
     if (tiptapJson.content) {
+      // Single pass traversal
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       tiptapJson.content.forEach((node: any, index: number) => {
-        findTasks(node, [index]);
+        traverseDocument(node, [index], false);
       });
     }
 
-    // Update the page with the new outlinks
-    await this.prisma.page.update({
-      where: { id: pageId },
-      data: {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        outlinks: outlinks as any,
-      },
-    });
+    // Extract task IDs from taskExtension outlinks
+    const taskExtensionTaskIds = new Set(
+      Array.from(taskExtensionOutlinkIndices).map(
+        (index) => outlinks[index].id,
+      ),
+    );
+
+    const taskIdsAreEqual =
+      currentOutlinkTaskIds.length === newOutlinkTaskIds.length &&
+      currentOutlinkTaskIds.every((id) => newOutlinkTaskIds.includes(id));
+
+    if (!taskIdsAreEqual) {
+      // Update the page with the new outlinks
+      await this.prisma.page.update({
+        where: { id: pageId },
+        data: {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          outlinks: outlinks as any,
+        },
+      });
+
+      if (page.type === 'Daily') {
+        // Compare current task IDs with task extension task IDs
+        const removedTaskIds = currentTaskExtensionIds.filter(
+          (taskId) => !taskExtensionTaskIds.has(taskId),
+        );
+        const addedTaskIds = Array.from(taskExtensionTaskIds).filter(
+          (taskId) => !currentTaskExtensionIds.includes(taskId),
+        );
+
+        if (removedTaskIds.length) {
+          await this.prisma.taskOccurrence.updateMany({
+            where: {
+              taskId: { in: removedTaskIds },
+            },
+            data: { deleted: new Date().toISOString() },
+          });
+        }
+
+        if (addedTaskIds.length) {
+          const pageDate = parse(page.title, 'dd-MM-yyyy', new Date());
+
+          const startTime = new Date(pageDate);
+          startTime.setHours(0, 0, 0, 0);
+
+          const endTime = new Date(pageDate);
+          endTime.setHours(23, 59, 59, 999);
+
+          await this.prisma.taskOccurrence.createMany({
+            data: addedTaskIds.map((taskId) => ({
+              taskId,
+              pageId,
+              workspaceId: page.workspaceId,
+              startTime,
+              endTime,
+            })),
+          });
+        }
+      }
+    }
+
+    return { outlinks, taskExtensionTaskIds: Array.from(taskExtensionTaskIds) };
   }
 
-  @OnEvent('page.storeOutlinks')
-  async handleStoreOutlinks(payload: {
-    pageId: string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    tiptapJson: any;
-  }) {
-    await this.storeOutlinks(payload.tiptapJson, payload.pageId);
+  async handleHooks(payload: { pageId: string; changedData: JsonObject }) {
+    if (payload.changedData.description) {
+      await this.storeOutlinks(payload.pageId);
+    }
   }
 
   async moveTaskToPage(moveTaskToPageData: MoveTaskToPageDto) {

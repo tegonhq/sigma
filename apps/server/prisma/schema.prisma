@@ -198,10 +198,11 @@ model Page {
   statusId String? // Status
   status   Status? @relation(fields: [statusId], references: [id])
 
-  workspaceId  String
-  workspace    Workspace      @relation(fields: [workspaceId], references: [id])
-  task         Task[]
-  conversation Conversation[]
+  workspaceId    String
+  workspace      Workspace        @relation(fields: [workspaceId], references: [id])
+  task           Task[]
+  conversation   Conversation[]
+  taskOccurrence TaskOccurrence[]
 }
 
 model PersonalAccessToken {
@@ -370,6 +371,9 @@ model TaskOccurrence {
 
   task   Task   @relation(fields: [taskId], references: [id])
   taskId String
+
+  page   Page?   @relation(fields: [pageId], references: [id])
+  pageId String?
 
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
   workspaceId String

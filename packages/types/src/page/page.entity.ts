@@ -29,6 +29,7 @@ export interface Outlink {
   position: {
     path: number[];
   };
+  taskExtension: boolean;
 }
 
 export class Page {

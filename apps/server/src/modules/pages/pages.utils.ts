@@ -1,4 +1,4 @@
-import { Page, Task } from '@sigma/types';
+import { JsonValue, Page, Task } from '@sigma/types';
 
 export function getTaskExtensionInPage(page: Page) {
   const description = page.description;
@@ -211,4 +211,27 @@ export function removeTaskInExtension(
     });
 
   return taskExtensions;
+}
+
+export function getOutlinksTaskId(
+  pageOutlinks: JsonValue,
+  taskExtensionOnly: boolean = false,
+) {
+  // Extract taskIds from current outlinks
+  if (!pageOutlinks || !Array.isArray(pageOutlinks)) {
+    return [];
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return (
+    pageOutlinks
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .filter((outlink: any) => {
+        // If taskExtensionOnly is true, only include tasks that are in task extensions
+        // Otherwise include all tasks
+        return !taskExtensionOnly || outlink.taskExtension === true;
+      })
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .map((outlink: any) => outlink.id)
+  );
 }

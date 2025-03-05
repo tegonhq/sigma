@@ -1,3 +1,4 @@
+import { Page } from '../page';
 import { Task } from '../task/task.entity';
 
 export enum TaskOccurrenceStatusEnum {
@@ -29,4 +30,7 @@ export class TaskOccurrence {
 
   task: Task;
   taskId: string;
+
+  page?: Page;
+  pageId?: string;
 }
