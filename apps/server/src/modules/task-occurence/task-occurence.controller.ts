@@ -7,8 +7,13 @@ import {
   Body,
   Get,
   Query,
+  Put,
 } from '@nestjs/common';
-import { GetTaskOccurenceDTO, UpdateTaskOccurenceDTO } from '@sigma/types';
+import {
+  CreateTaskOccurenceDTO,
+  GetTaskOccurenceDTO,
+  UpdateTaskOccurenceDTO,
+} from '@sigma/types';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
 import { Workspace } from 'modules/auth/session.decorator';
@@ -42,37 +47,55 @@ export class TaskOccurenceController {
 
   @Post()
   @UseGuards(AuthGuard)
-  async createTaskOccurence(@Body('taskId') taskId: string) {
-    return await this.taskOccurenceService.createTaskOccurance(taskId);
+  async createTaskOccurence(
+    @Body() createTaskOccurencesData: CreateTaskOccurenceDTO,
+    @Workspace() workspaceId: string,
+  ) {
+    return await this.taskOccurenceService.createTaskOccurence(
+      createTaskOccurencesData,
+      workspaceId,
+    );
+  }
+
+  @Put()
+  @UseGuards(AuthGuard)
+  async updateTaskOccurence(
+    @Body() updateTaskOccurenceDto: UpdateTaskOccurenceDTO,
+    @Workspace() workspaceId: string,
+  ) {
+    return await this.taskOccurenceService.updateTaskOccurence(
+      updateTaskOccurenceDto,
+      workspaceId,
+      true,
+    );
+  }
+
+  @Delete()
+  @UseGuards(AuthGuard)
+  async deleteTaskOccurence(
+    @Body('taskOccurenceIds') taskOccurenceIds: string[],
+  ) {
+    return await this.taskOccurenceService.deleteTaskOccurence(
+      taskOccurenceIds,
+      true,
+    );
+  }
+
+  @Post('task')
+  @UseGuards(AuthGuard)
+  async createTaskOccurenceByTask(@Body('taskId') taskId: string) {
+    return await this.taskOccurenceService.createTaskOccurenceByTask(taskId);
   }
 
   @Post('task/:taskId')
   @UseGuards(AuthGuard)
   async updateTaskOccurenceByTask(@Param('taskId') taskId: string) {
-    return await this.taskOccurenceService.updateTaskOccuranceByTask(taskId);
-  }
-
-  @Post(':taskOccurenceId')
-  @UseGuards(AuthGuard)
-  async updateTaskOccurence(
-    @Param('taskOccurenceId') taskOccurenceId: string,
-    @Body() updateTaskOccurenceDto: UpdateTaskOccurenceDTO,
-  ) {
-    return await this.taskOccurenceService.updateTaskOccurance(
-      taskOccurenceId,
-      updateTaskOccurenceDto,
-    );
+    return await this.taskOccurenceService.updateTaskOccurenceByTask(taskId);
   }
 
   @Delete('task/:taskId')
   @UseGuards(AuthGuard)
   async deleteTaskOccurenceByTask(@Param('taskId') taskId: string) {
-    return await this.taskOccurenceService.deleteTaskOccuranceByTask(taskId);
-  }
-
-  @Delete(':taskOccurenceId')
-  @UseGuards(AuthGuard)
-  async deleteTaskOccurence(@Param('taskOccurenceId') taskOccurenceId: string) {
-    return await this.taskOccurenceService.deleteTaskOccurence(taskOccurenceId);
+    return await this.taskOccurenceService.deleteTaskOccurenceByTask(taskId);
   }
 }

@@ -14,7 +14,6 @@ import {
   PageSelect,
   UpdatePageDto,
   enchancePrompt,
-  MoveTaskToPageDto,
   JsonObject,
 } from '@sigma/types';
 import { parse } from 'date-fns';
@@ -257,15 +256,16 @@ export class PagesService {
     return tasks;
   }
 
-  async removeTaskFromPageByTitle(title: string, taskId: string) {
+  async removeTaskFromPageByTitle(title: string, taskIds: string[]) {
     const page = await this.prisma.page.findFirst({
       where: { title, deleted: null },
     });
 
     let tasksExtensionContent = getTaskExtensionInPage(page);
-    tasksExtensionContent = removeTaskInExtension(tasksExtensionContent, [
-      taskId,
-    ]);
+    tasksExtensionContent = removeTaskInExtension(
+      tasksExtensionContent,
+      taskIds,
+    );
 
     const pageDescription = updateTaskExtensionInPage(
       page,
@@ -373,6 +373,7 @@ export class PagesService {
         const removedTaskIds = currentTaskExtensionIds.filter(
           (taskId) => !taskExtensionTaskIds.has(taskId),
         );
+
         const addedTaskIds = Array.from(taskExtensionTaskIds).filter(
           (taskId) => !currentTaskExtensionIds.includes(taskId),
         );
@@ -381,6 +382,7 @@ export class PagesService {
           await this.prisma.taskOccurrence.updateMany({
             where: {
               taskId: { in: removedTaskIds },
+              pageId,
             },
             data: { deleted: new Date().toISOString() },
           });
@@ -415,49 +417,5 @@ export class PagesService {
     if (payload.changedData.description) {
       await this.storeOutlinks(payload.pageId);
     }
-  }
-
-  async moveTaskToPage(moveTaskToPageData: MoveTaskToPageDto) {
-    const fromPage = await this.prisma.page.findFirst({
-      where: { title: moveTaskToPageData.fromDate },
-    });
-    const toPage = await this.prisma.page.findFirst({
-      where: { title: moveTaskToPageData.toDate },
-    });
-
-    if (fromPage) {
-      let fromTaskExtension = getTaskExtensionInPage(fromPage);
-      fromTaskExtension = removeTaskInExtension(
-        fromTaskExtension,
-        moveTaskToPageData.taskIds,
-      );
-
-      const pageDescription = updateTaskExtensionInPage(
-        fromPage,
-        fromTaskExtension,
-      );
-      await this.contentService.updateContentForDocument(
-        fromPage.id,
-        JSON.parse(pageDescription),
-      );
-    }
-
-    if (toPage) {
-      let toTaskExtension = getTaskExtensionInPage(toPage);
-      const tasks = await this.prisma.task.findMany({
-        where: { id: { in: moveTaskToPageData.taskIds } },
-        include: { page: true },
-      });
-      toTaskExtension = upsertTaskInExtension(toTaskExtension, tasks);
-      const pageDescription = updateTaskExtensionInPage(
-        toPage,
-        toTaskExtension,
-      );
-      await this.contentService.updateContentForDocument(
-        toPage.id,
-        JSON.parse(pageDescription),
-      );
-    }
-    return { success: true };
   }
 }

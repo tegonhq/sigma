@@ -47,39 +47,40 @@ export const processTaskOccurrences = task({
           return null;
         }
 
-        const createdOccurrences = await Promise.all(
-          futureOccurrences.map((date) =>
-            prisma.taskOccurrence.upsert({
-              where: {
-                taskId_startTime_endTime: {
-                  taskId: sigmaTask.id,
-                  startTime: date,
-                  endTime: sigmaTask.endTime
-                    ? new Date(
-                        date.getTime() +
-                          (sigmaTask.endTime.getTime() -
-                            sigmaTask.startTime!.getTime()),
-                      )
-                    : date,
-                },
-              },
-              create: {
-                taskId: sigmaTask.id,
-                workspaceId: sigmaTask.workspaceId,
-                startTime: date,
-                endTime: sigmaTask.endTime
-                  ? new Date(
-                      date.getTime() +
-                        (sigmaTask.endTime.getTime() -
-                          sigmaTask.startTime!.getTime()),
-                    )
-                  : date,
-                status: 'Todo',
-              },
-              update: {},
-            }),
-          ),
-        );
+        const createdOccurrences = [];
+        // const createdOccurrences = await Promise.all(
+        //   futureOccurrences.map((date) =>
+        //     prisma.taskOccurrence.upsert({
+        //       where: {
+        //         taskId_startTime_endTime: {
+        //           taskId: sigmaTask.id,
+        //           startTime: date,
+        //           endTime: sigmaTask.endTime
+        //             ? new Date(
+        //                 date.getTime() +
+        //                   (sigmaTask.endTime.getTime() -
+        //                     sigmaTask.startTime!.getTime()),
+        //               )
+        //             : date,
+        //         },
+        //       },
+        //       create: {
+        //         taskId: sigmaTask.id,
+        //         workspaceId: sigmaTask.workspaceId,
+        //         startTime: date,
+        //         endTime: sigmaTask.endTime
+        //           ? new Date(
+        //               date.getTime() +
+        //                 (sigmaTask.endTime.getTime() -
+        //                   sigmaTask.startTime!.getTime()),
+        //             )
+        //           : date,
+        //         status: 'Todo',
+        //       },
+        //       update: {},
+        //     }),
+        //   ),
+        // );
 
         return {
           taskId: sigmaTask.id,

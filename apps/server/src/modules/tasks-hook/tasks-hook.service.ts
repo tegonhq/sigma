@@ -36,7 +36,7 @@ export class TaskHooksService {
       await Promise.all([
         this.handleTitleChange(task, context),
         this.handleDeleteTask(task, context),
-        this.handleScheduleTask(task, context, tx),
+        this.handleScheduleTask(task, context),
         // this.handleCalendarTask(task, context),
         // this.handleBeautifyTask(task, context),
         // this.handleGenerateSummary(task, context),
@@ -63,10 +63,9 @@ export class TaskHooksService {
         if (referencingPages.length > 0) {
           await Promise.all(
             referencingPages.map(async (page) => {
-              await this.pagesService.removeTaskFromPageByTitle(
-                page.title,
+              await this.pagesService.removeTaskFromPageByTitle(page.title, [
                 task.id,
-              );
+              ]);
             }),
           );
         }
@@ -130,15 +129,11 @@ export class TaskHooksService {
     }
   }
 
-  async handleScheduleTask(
-    task: Task,
-    context: TaskHookContext,
-    tx: TransactionClient,
-  ) {
+  async handleScheduleTask(task: Task, context: TaskHookContext) {
     switch (context.action) {
       case 'create':
         if (task.recurrence) {
-          await this.taskOccurenceService.createTaskOccurance(task.id, tx);
+          await this.taskOccurenceService.createTaskOccurenceByTask(task.id);
         }
         return { message: 'Handled schedule create' };
 
@@ -149,19 +144,13 @@ export class TaskHooksService {
           task.startTime !== context.previousTask?.startTime ||
           task.endTime !== context.previousTask?.endTime
         ) {
-          await this.taskOccurenceService.updateTaskOccuranceByTask(
-            task.id,
-            tx,
-          );
+          await this.taskOccurenceService.updateTaskOccurenceByTask(task.id);
         }
         return { message: 'Handled schedule update' };
 
       case 'delete':
         if (task.recurrence || task.startTime || task.endTime) {
-          await this.taskOccurenceService.deleteTaskOccuranceByTask(
-            task.id,
-            tx,
-          );
+          await this.taskOccurenceService.deleteTaskOccurenceByTask(task.id);
         }
         return { message: 'Handled schedule delete' };
     }

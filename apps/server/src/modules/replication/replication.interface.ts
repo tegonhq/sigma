@@ -23,6 +23,7 @@ export const tablesToSendMessagesFor = new Map([
   [ModelNameEnum.Conversation, true],
   [ModelNameEnum.ConversationHistory, true],
   [ModelNameEnum.List, true],
+  [ModelNameEnum.TaskOccurrence, true],
 ]);
 
 export const tableHooks = new Map([[ModelNameEnum.Page, true]]);

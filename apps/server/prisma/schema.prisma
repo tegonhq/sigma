@@ -372,13 +372,13 @@ model TaskOccurrence {
   task   Task   @relation(fields: [taskId], references: [id])
   taskId String
 
-  page   Page?   @relation(fields: [pageId], references: [id])
-  pageId String?
+  page   Page   @relation(fields: [pageId], references: [id])
+  pageId String
 
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
   workspaceId String
 
-  @@unique([taskId, startTime, endTime])
+  @@unique([taskId, pageId])
 }
 
 model Template {
@@ -466,6 +466,7 @@ enum ModelName {
   Conversation
   ConversationHistory
   List
+  TaskOccurrence
 }
 
 enum ActionType {

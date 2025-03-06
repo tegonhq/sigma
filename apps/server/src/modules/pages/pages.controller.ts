@@ -12,7 +12,6 @@ import {
   CreatePageDto,
   EnhancePageResponse,
   GetPageByTitleDto,
-  MoveTaskToPageDto,
   Page,
   PageRequestParamsDto,
   UpdatePageDto,
@@ -54,12 +53,6 @@ export class PagesController {
     @Body() pageData: CreatePageDto,
   ): Promise<Page> {
     return await this.pagesService.createPage(pageData, workspaceId);
-  }
-
-  @Post('move-task')
-  @UseGuards(AuthGuard)
-  async moveTaskToPage(@Body() moveTaskToPageData: MoveTaskToPageDto) {
-    return await this.pagesService.moveTaskToPage(moveTaskToPageData);
   }
 
   @Post(':pageId')
