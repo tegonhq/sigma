@@ -118,7 +118,14 @@ export const TaskListItem = observer(({ taskId }: TaskListItemProps) => {
                   T-{task.number}
                 </div>
                 <div className="inline-flex items-center justify-start shrink min-w-[0px] min-h-[24px]">
-                  <div className="text-left truncate">{page?.title}</div>
+                  <div
+                    className={cn(
+                      'text-left truncate',
+                      task.status === 'Done' && 'line-through',
+                    )}
+                  >
+                    {page?.title}
+                  </div>
                 </div>
                 <TaskInfo task={task} />
               </div>

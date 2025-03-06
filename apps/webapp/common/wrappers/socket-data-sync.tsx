@@ -64,7 +64,6 @@ export const SocketDataSyncWrapper: React.FC<Props> = observer(
       const MODEL_STORE_MAP = {
         [MODELS.Workspace]: workspaceStore,
         [MODELS.IntegrationAccount]: integrationAccountsStore,
-
         [MODELS.Page]: pagesStore,
         [MODELS.Task]: tasksStore,
         [MODELS.TaskOccurrence]: taskOccurrencesStore,

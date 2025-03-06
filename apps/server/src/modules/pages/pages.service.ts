@@ -397,6 +397,8 @@ export class PagesService {
           (taskId) => !currentTaskExtensionIds.includes(taskId),
         );
 
+        console.log(removedTaskIds, addedTaskIds);
+
         if (removedTaskIds.length) {
           await this.prisma.taskOccurrence.updateMany({
             where: {

@@ -1,7 +1,8 @@
 import { cn } from '@tegonhq/ui';
-import { TaskViewContext } from 'layouts/side-task-view';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
+
+import { TaskViewContext } from 'layouts/side-task-view';
 
 import { useContextStore } from 'store/global-context-provider';
 

@@ -6,6 +6,7 @@ import type { TaskType } from 'common/types';
 import { useContextStore } from 'store/global-context-provider';
 
 import { ScheduleDropdown, ScheduleDropdownVariant } from './metadata';
+import { PlanDropdown, PlanDropdownVariant } from './metadata/plan';
 
 export const TaskInfo = observer(({ task }: { task: TaskType }) => {
   const { listsStore } = useContextStore();
@@ -28,6 +29,7 @@ export const TaskInfo = observer(({ task }: { task: TaskType }) => {
           </Badge>
         )}
         <ScheduleDropdown task={task} variant={ScheduleDropdownVariant.SHORT} />
+        <PlanDropdown task={task} variant={PlanDropdownVariant.SHORT} />
       </div>
     </div>
   );

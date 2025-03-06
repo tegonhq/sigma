@@ -7,6 +7,7 @@ import React from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { getCreateTaskPropsOnSource } from 'modules/tasks/add-task/utils';
+import { TaskInfo } from 'modules/tasks/task-info';
 
 import type { TaskType } from 'common/types';
 
@@ -18,7 +19,6 @@ import { useContextStore } from 'store/global-context-provider';
 
 import { TaskMetadata } from './task-metadata';
 import { EditorContext } from '../editor-context';
-import { TaskInfo } from 'modules/tasks/task-info';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const TaskComponent = observer((props: any) => {
@@ -61,7 +61,7 @@ export const TaskComponent = observer((props: any) => {
           props.selected && 'bg-grayAlpha-300',
         )}
         onMouseOver={() => {
-          if (selectedTasks.length === 0 && task.id !== hoverTask) {
+          if (selectedTasks.length === 0 && task && task.id !== hoverTask) {
             setHoverTask(task.id);
           }
         }}
@@ -76,7 +76,7 @@ export const TaskComponent = observer((props: any) => {
         <NodeViewContent as="p" className="text-sm relative top-[2px]" />
         {task && (
           <div
-            className={cn('flex items-start shrink-0 gap-2 py-1')}
+            className={cn('flex items-start shrink-0 gap-2 py-1 !text-sm')}
             contentEditable={false}
           >
             <TaskInfo task={task} />

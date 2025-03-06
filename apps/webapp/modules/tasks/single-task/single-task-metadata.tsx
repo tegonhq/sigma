@@ -6,6 +6,7 @@ import { useCreateListMutation } from 'services/lists';
 import { useUpdateTaskMutation } from 'services/tasks';
 
 import { ScheduleDropdown, StatusDropdown, ListDropdown } from '../metadata';
+import { PlanDropdown } from '../metadata/plan';
 
 interface SingleTaskMetadataProps {
   task: TaskType;
@@ -53,6 +54,7 @@ export const SingleTaskMetadata = observer(
         <StatusDropdown value={task.status} onChange={statusChange} />
         <ListDropdown value={task.listId} onChange={listChange} />
         <ScheduleDropdown task={task} />
+        <PlanDropdown task={task} />
       </div>
     );
   },

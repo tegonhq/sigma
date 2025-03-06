@@ -83,16 +83,15 @@ export const TaskExtension = ({
               insideTasksExtension = true;
             }
           }
+          if (selection.$from.parentOffset === 0) {
+            return this.editor
+              .chain()
+              .liftListItem('listItem')
+              .setNode('paragraph', {})
+              .run();
+          }
 
           if (insideTasksExtension) {
-            if (selection.$from.parentOffset === 0) {
-              return this.editor
-                .chain()
-                .liftListItem('listItem')
-                .setNode('paragraph', {})
-                .run();
-            }
-
             const task = this.editor.schema.nodes.task;
 
             this.editor
@@ -122,7 +121,11 @@ export const TaskExtension = ({
             return true;
           }
 
-          return this.editor.commands.setNode('paragraph');
+          return this.editor
+            .chain()
+            .liftListItem('listItem')
+            .setNode('paragraph', {})
+            .run();
         },
         Backspace: () => {
           const state = this.editor.state;

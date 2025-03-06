@@ -5,6 +5,7 @@ import {
   differenceInDays,
   isPast,
 } from 'date-fns';
+import { Clock } from 'lucide-react';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 
@@ -74,7 +75,7 @@ export const ScheduleDropdown = observer(
               variant !== ScheduleDropdownVariant.SHORT && 'h-7 px-2 text-base',
             )}
           >
-            <Fire size={variant === ScheduleDropdownVariant.SHORT ? 12 : 14} />{' '}
+            <Fire size={variant === ScheduleDropdownVariant.SHORT ? 12 : 14} />
             {timeText}
           </Badge>
         );
@@ -86,7 +87,7 @@ export const ScheduleDropdown = observer(
             <TooltipWrapper tooltip={task.scheduleText}>
               <Badge
                 variant="secondary"
-                className="flex items-center gap-1 shrink min-w-[0px]"
+                className="flex items-center gap-1 shrink min-w-[0px] text-xs"
               >
                 <Cycle size={16} />
               </Badge>
@@ -104,7 +105,18 @@ export const ScheduleDropdown = observer(
         );
       }
 
-      return null;
+      if (variant === ScheduleDropdownVariant.SHORT) {
+        return null;
+      }
+
+      return (
+        <Badge
+          variant="secondary"
+          className="flex items-center gap-1 shrink min-w-[0px] h-7 px-2"
+        >
+          <Clock size={16} />
+        </Badge>
+      );
     };
 
     return (
