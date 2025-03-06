@@ -158,14 +158,33 @@ export class PagesService {
       );
     }
 
-    return this.prisma.page.create({
-      data: {
-        ...pageData,
-        description: finalDescription,
-        workspace: { connect: { id: workspaceId } },
-        ...(parentId && { parent: { connect: { id: parentId } } }),
-      },
+    const page = await this.prisma.$transaction(async (tx) => {
+      // Try to find existing page
+      let page = await tx.page.findFirst({
+        where: {
+          title: pageData.title,
+          type: pageData.type,
+          workspaceId,
+          deleted: null,
+        },
+        select: PageSelect,
+      });
+
+      if (!page) {
+        page = await this.prisma.page.create({
+          data: {
+            ...pageData,
+            description: finalDescription,
+            workspace: { connect: { id: workspaceId } },
+            ...(parentId && { parent: { connect: { id: parentId } } }),
+          },
+        });
+      }
+
+      return page;
     });
+
+    return page;
   }
 
   async updatePage(

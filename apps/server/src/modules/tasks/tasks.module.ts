@@ -6,7 +6,7 @@ import { ContentModule } from 'modules/content/content.module';
 import { ConversationModule } from 'modules/conversation/conversation.module';
 import { IntegrationsService } from 'modules/integrations/integrations.service';
 import { PagesService } from 'modules/pages/pages.service';
-import { TaskOccurenceService } from 'modules/task-occurence/task-occurence.service';
+import { TaskOccurenceService } from 'modules/task-occurrence/task-occurrence.service';
 import { UsersService } from 'modules/users/users.service';
 
 import { TasksAIController } from './tasks-ai.controller';

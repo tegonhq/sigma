@@ -2,6 +2,7 @@ import { HocuspocusProvider } from '@hocuspocus/provider';
 import { SourceType } from '@sigma/types';
 import Collaboration from '@tiptap/extension-collaboration';
 import React from 'react';
+import { useDebouncedCallback } from 'use-debounce';
 import * as Y from 'yjs';
 
 import {
@@ -11,11 +12,12 @@ import {
   getSocketURL,
   suggestionItems,
 } from 'common/editor';
-import type { PageType, TaskType } from 'common/types';
 import { TaskExtension } from 'common/editor/task-extension';
+import type { PageType, TaskType } from 'common/types';
+
+import { useUpdateTaskMutation } from 'services/tasks';
+
 import { useContextStore } from 'store/global-context-provider';
-import { useDebouncedCallback } from 'use-debounce';
-import { useUpdatePageMutation } from 'services/pages';
 
 interface SingleTaskEditorProps {
   page: PageType;
@@ -33,13 +35,13 @@ export function SingleTaskEditor({
   const [provider, setProvider] = React.useState(undefined);
   const [doc, setDoc] = React.useState(undefined);
   const { tasksStore } = useContextStore();
-  const { mutate: updatePage } = useUpdatePageMutation({});
+  const { mutate: updateTask } = useUpdateTaskMutation({});
 
   const debounceUpdateTask = useDebouncedCallback(
-    async ({ title, pageId }: { title: string; pageId: string }) => {
-      updatePage({
+    async ({ title, taskId }: { title: string; taskId: string }) => {
+      updateTask({
         title,
-        pageId,
+        taskId,
       });
     },
     500,
@@ -76,7 +78,7 @@ export function SingleTaskEditor({
     if (task) {
       debounceUpdateTask({
         title: newNode.textContent,
-        pageId: task.pageId,
+        taskId: task.id,
       });
     }
 

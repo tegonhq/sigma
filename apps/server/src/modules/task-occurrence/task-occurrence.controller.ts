@@ -18,7 +18,7 @@ import {
 import { AuthGuard } from 'modules/auth/auth.guard';
 import { Workspace } from 'modules/auth/session.decorator';
 
-import { TaskOccurenceService } from './task-occurence.service';
+import { TaskOccurenceService } from './task-occurrence.service';
 
 @Controller({
   version: '1',

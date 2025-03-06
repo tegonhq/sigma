@@ -9,11 +9,8 @@ import {
   type ListRowProps,
 } from 'react-virtualized';
 
-import { statuses } from 'modules/tasks/status-dropdown';
-import {
-  getStatusColor,
-  getStatusIcon,
-} from 'modules/tasks/status-dropdown/status-utils';
+import { statuses } from 'modules/tasks/metadata';
+import { getStatusColor, getStatusIcon } from 'modules/tasks/metadata';
 import { TaskListItem } from 'modules/tasks/task-item';
 import { useFilterTasks } from 'modules/tasks/utils';
 
@@ -72,7 +69,7 @@ export const StatusList = observer(() => {
         <Button
           className={cn(
             'flex items-center w-fit rounded-2xl text-accent-foreground cursor-default group',
-            index !== 0 && 'mt-1',
+            index !== 0 && 'mt-4',
           )}
           size="lg"
           style={{ backgroundColor: getStatusColor(status).background }}

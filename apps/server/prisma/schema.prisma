@@ -290,13 +290,15 @@ model Task {
   status   String?
   metadata Json    @default("{}")
 
+  // This is used in recurring tasks
   startTime    DateTime?
   endTime      DateTime?
   recurrence   String[]
   scheduleText String?
-  dueDate      DateTime?
-  remindAt     DateTime?
-  tags         String[]
+
+  dueDate  DateTime?
+  remindAt DateTime?
+  tags     String[]
 
   source Json?
 

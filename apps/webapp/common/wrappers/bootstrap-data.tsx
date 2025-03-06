@@ -29,22 +29,22 @@ export function BootstrapWrapper({ children }: Props) {
     workspaceStore,
     integrationAccountsStore,
     pagesStore,
-    activityStore,
     tasksStore,
     conversationsStore,
     conversationHistoryStore,
     listsStore,
+    taskOccurrencesStore,
   } = useContextStore();
 
   const MODEL_STORE_MAP = {
     [MODELS.Workspace]: workspaceStore,
     [MODELS.IntegrationAccount]: integrationAccountsStore,
-    [MODELS.Activity]: activityStore,
     [MODELS.Task]: tasksStore,
     [MODELS.Page]: pagesStore,
     [MODELS.Conversation]: conversationsStore,
     [MODELS.ConversationHistory]: conversationHistoryStore,
     [MODELS.List]: listsStore,
+    [MODELS.TaskOccurrence]: taskOccurrencesStore,
   };
 
   React.useEffect(() => {

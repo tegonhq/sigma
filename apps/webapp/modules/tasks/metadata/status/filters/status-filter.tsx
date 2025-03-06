@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite';
 
-import { StatusDropdownContent } from 'modules/tasks/status-dropdown';
+import { StatusDropdownContent } from 'modules/tasks/metadata';
 
 import { useApplication } from 'hooks/application';
 

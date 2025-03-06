@@ -3,7 +3,7 @@ import React from 'react';
 
 import type { ListType } from 'common/types';
 
-import { DropdownItem } from '../status-dropdown/dropdown-item';
+import { DropdownItem } from '..';
 
 interface ListDropdownContentProps {
   onChange?: (id: string | string[]) => void;

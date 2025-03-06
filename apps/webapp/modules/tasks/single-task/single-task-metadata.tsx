@@ -5,9 +5,7 @@ import type { ListType, TaskType } from 'common/types';
 import { useCreateListMutation } from 'services/lists';
 import { useUpdateTaskMutation } from 'services/tasks';
 
-import { ListDropdown } from '../list-dropdown';
-import { ScheduleDropdown } from '../schedule';
-import { StatusDropdown } from '../status-dropdown';
+import { ScheduleDropdown, StatusDropdown, ListDropdown } from '../metadata';
 
 interface SingleTaskMetadataProps {
   task: TaskType;

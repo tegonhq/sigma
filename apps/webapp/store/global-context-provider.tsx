@@ -1,7 +1,6 @@
 import { types } from 'mobx-state-tree';
 import React from 'react';
 
-import { ActivityStore, type ActivityStoreType } from './activity';
 import {
   ApplicationStore,
   defaultApplicationStoreValue,
@@ -28,6 +27,10 @@ import { ListsStore, type ListsStoreType } from './lists';
 import { PagesStore, type PagesStoreType } from './pages';
 import { TasksStore, type TasksStoreType } from './tasks';
 import { WorkspaceStore, type WorkspaceStoreType } from './workspace';
+import {
+  TaskOccurrencesStore,
+  type TaskOccurrencesStoreType,
+} from './task-occurrences';
 
 const StoreContextModel = types.model({
   commonStore: CommonStore,
@@ -39,8 +42,8 @@ const StoreContextModel = types.model({
   applicationStore: ApplicationStore,
   pagesStore: PagesStore,
   tasksStore: TasksStore,
-  activityStore: ActivityStore,
   listsStore: ListsStore,
+  taskOccurrencesStore: TaskOccurrencesStore,
 });
 
 export const storeContextStore = StoreContextModel.create({
@@ -63,10 +66,11 @@ export const storeContextStore = StoreContextModel.create({
   tasksStore: {
     tasks: [],
   },
-
-  activityStore: {
-    activities: [],
+  taskOccurrencesStore: {
+    taskOccurrences: {},
+    taskOccurrencesWithPages: {},
   },
+
   conversationsStore: {
     conversations: [],
   },
@@ -85,11 +89,11 @@ export interface StoreContextInstanceType {
   integrationAccountsStore: IntegrationAccountsStoreType;
   pagesStore: PagesStoreType;
   tasksStore: TasksStoreType;
-  activityStore: ActivityStoreType;
   conversationsStore: ConversationStoreType;
   conversationHistoryStore: ConversationHistoryStoreType;
   commonStore: CommonStoreType;
   listsStore: ListsStoreType;
+  taskOccurrencesStore: TaskOccurrencesStoreType;
 }
 export const StoreContext =
   React.createContext<null | StoreContextInstanceType>(null);

@@ -1,13 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  Button,
-  Checkbox,
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  IssuesLine,
-} from '@tegonhq/ui';
+import { Button, Form, FormControl, FormField, FormItem } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { useForm } from 'react-hook-form';
@@ -23,9 +15,7 @@ import type { ListType } from 'common/types';
 import { useCreateListMutation } from 'services/lists';
 import { useCreateTaskMutation } from 'services/tasks';
 
-import { StatusDropdown, StatusDropdownVariant } from '../status-dropdown';
 import { NewTaskSchema } from './add-task-type';
-import { ListDropdown, ListDropdownVariant } from '../list-dropdown';
 
 interface AddTaskProps {
   onCancel: () => void;
@@ -76,7 +66,7 @@ export const AddTask = observer(({ onCancel }: AddTaskProps) => {
   };
 
   useHotkeys(
-    [`${Key.Meta}+${Key.Enter}`],
+    [`${Key.Enter}`],
     () => {
       form.handleSubmit(addTask)();
     },
@@ -94,24 +84,6 @@ export const AddTask = observer(({ onCancel }: AddTaskProps) => {
           <div className="font-normal w-full flex items-center">
             <FormField
               control={form.control}
-              name="status"
-              render={({ field }) => (
-                <FormItem className="overflow-hidden">
-                  <FormControl>
-                    <Checkbox
-                      className="shrink-0 relative top-[1px] h-[18px] w-[18px]"
-                      checked={field.value === 'Done'}
-                      onCheckedChange={(value: boolean) =>
-                        field.onChange(value === true ? 'Done' : 'Todo')
-                      }
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
               name="title"
               render={({ field }) => (
                 <FormItem className="grow overflow-hidden">
@@ -121,8 +93,8 @@ export const AddTask = observer(({ onCancel }: AddTaskProps) => {
                         {...field}
                         placeholder="Check my emails everyday at 9 in the morning"
                         autoFocus
-                        className="bg-transparent text-md px-2"
-                        placeholderClassName="pl-2 text-md"
+                        className="bg-transparent text-md"
+                        placeholderClassName="text-md"
                       />
                     </div>
                   </FormControl>
@@ -131,27 +103,10 @@ export const AddTask = observer(({ onCancel }: AddTaskProps) => {
             />
           </div>
 
-          <div className="flex justify-between mt-3 items-end text-sm gap-4">
-            <div className="flex gap-1 grow flex-wrap">
-              <FormField
-                control={form.control}
-                name="listId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <ListDropdown
-                        variant={ListDropdownVariant.DEFAULT}
-                        onChange={(listId: string) => field.onChange(listId)}
-                        value={field.value}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-            </div>
+          <div className="flex justify-end mt-3 items-end text-sm gap-2">
             <Button variant="secondary" className="items-center" type="submit">
               Create task
-              <Shortcut shortcut="Cmd + Enter" className="ml-1" />
+              <Shortcut shortcut="Enter" className="ml-1" />
             </Button>
           </div>
         </form>

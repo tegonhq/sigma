@@ -10,12 +10,11 @@ import { AILayout } from 'layouts/ai-layout';
 
 import { useApplication } from 'hooks/application';
 
-import { useUpdatePageMutation } from 'services/pages';
+import { useUpdateTaskMutation } from 'services/tasks';
 
 import { useContextStore } from 'store/global-context-provider';
 
 import { SingleTaskEditor } from './single-task-editor';
-import { SingleTaskIntegration } from './single-task-integration';
 import { SingleTaskMetadata } from './single-task-metadata';
 import { PageTitle } from './single-task-title';
 import { Header } from '../header';
@@ -33,7 +32,7 @@ export const SingleTask = observer(
     const task = tasksStore.getTaskWithId(taskId);
     const page = pagesStore.getPageWithId(task?.pageId);
     const { back } = useRouter();
-    const { mutate: updatePage } = useUpdatePageMutation({});
+    const { mutate: updateTask } = useUpdateTaskMutation({});
 
     useHotkeys(
       [Key.Escape],
@@ -58,8 +57,8 @@ export const SingleTask = observer(
     }, [task]);
 
     const onChange = (title: string) => {
-      updatePage({
-        pageId: page.id,
+      updateTask({
+        taskId: task.id,
         title,
       });
     };

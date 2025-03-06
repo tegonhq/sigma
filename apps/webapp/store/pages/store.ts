@@ -44,25 +44,7 @@ export const PagesStore: IAnyStateTreeNode = types
     };
 
     const load = flow(function* () {
-      const pages = (yield sigmaDatabase.pages.toArray()).map(
-        (page: PageType) => {
-          try {
-            if (!page.description) {
-              return page;
-            }
-
-            return {
-              ...page,
-              description: extractTextFromHTML(
-                generateHTML(JSON.parse(page.description), defaultExtensions),
-              ),
-            };
-          } catch (e) {
-            console.log(e);
-            return page;
-          }
-        },
-      );
+      const pages = yield sigmaDatabase.pages.toArray();
 
       // Sort pages lexically by title before building the tree
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

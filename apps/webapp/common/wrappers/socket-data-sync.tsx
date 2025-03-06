@@ -28,7 +28,7 @@ export const SocketDataSyncWrapper: React.FC<Props> = observer(
       integrationAccountsStore,
       pagesStore,
       tasksStore,
-      activityStore,
+      taskOccurrencesStore,
       conversationsStore,
       conversationHistoryStore,
       listsStore,
@@ -53,7 +53,7 @@ export const SocketDataSyncWrapper: React.FC<Props> = observer(
     async function initSocket() {
       const socket = io(publicRuntimeConfig.NEXT_PUBLIC_BACKEND_HOST, {
         query: {
-          workspaceId: workspaceStore.workspace.id,
+          workspaceId: user.workspace.id,
           userId: user.id,
         },
         withCredentials: true,
@@ -67,7 +67,7 @@ export const SocketDataSyncWrapper: React.FC<Props> = observer(
 
         [MODELS.Page]: pagesStore,
         [MODELS.Task]: tasksStore,
-        [MODELS.Activity]: activityStore,
+        [MODELS.TaskOccurrence]: taskOccurrencesStore,
         [MODELS.Conversation]: conversationsStore,
         [MODELS.ConversationHistory]: conversationHistoryStore,
         [MODELS.List]: listsStore,

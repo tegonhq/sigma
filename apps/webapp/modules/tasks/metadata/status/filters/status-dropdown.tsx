@@ -8,14 +8,14 @@ import {
 } from '@tegonhq/ui';
 import * as React from 'react';
 
-import { StatusDropdownContent } from 'modules/tasks/status-dropdown';
+import { StatusDropdownContent } from 'modules/tasks/metadata';
 
 interface StatusProps {
   value?: string[];
   onChange?: (newStatus: string[]) => void;
 }
 
-export function StatusDropdown({ value, onChange }: StatusProps) {
+export function StatusFilterDropdown({ value, onChange }: StatusProps) {
   const [open, setOpen] = React.useState(false);
 
   const change = (value: string[]) => {

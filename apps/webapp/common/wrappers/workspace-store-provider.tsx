@@ -18,6 +18,7 @@ export const WorkspaceStoreInit = observer(
       conversationsStore,
       conversationHistoryStore,
       listsStore,
+      taskOccurrencesStore,
     } = useContextStore();
 
     const currentWorkspace = useWorkspace();
@@ -49,6 +50,7 @@ export const WorkspaceStoreInit = observer(
         conversationsStore.load(),
         conversationHistoryStore.load(),
         listsStore.load(),
+        taskOccurrencesStore.load(),
       ]);
 
       // eslint-disable-next-line react-hooks/exhaustive-deps

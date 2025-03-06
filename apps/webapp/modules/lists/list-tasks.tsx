@@ -1,8 +1,8 @@
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 
-import { PlanList } from 'modules/tasks/category/plan';
-import { StatusList } from 'modules/tasks/category/status';
+import { PlanList } from 'modules/tasks/group-view/plan';
+import { StatusList } from 'modules/tasks/group-view/status';
 import { Filters } from 'modules/tasks/filters';
 import { Header } from 'modules/tasks/header';
 

@@ -1,6 +1,6 @@
 import { Checkbox, CommandGroup } from '@tegonhq/ui';
 
-import { DropdownItem } from './dropdown-item';
+import { DropdownItem } from '../dropdown-item';
 import { getStatusColor, getStatusIcon } from './status-utils';
 
 interface IssueStatusDropdownContentProps {

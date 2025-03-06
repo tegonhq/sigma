@@ -9,3 +9,4 @@ export * from './activity';
 export * from './task';
 export * from './conversation';
 export * from './list';
+export * from './task-occurrence';

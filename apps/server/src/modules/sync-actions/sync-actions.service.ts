@@ -62,7 +62,7 @@ export default class SyncActionsService {
       orderBy: {
         sequenceId: 'asc',
       },
-      distinct: ['modelName', 'workspaceId', 'modelId', 'action'],
+      distinct: ['modelId'],
     });
 
     const deleteModelIds = new Set(
@@ -98,7 +98,7 @@ export default class SyncActionsService {
       orderBy: {
         sequenceId: 'asc',
       },
-      distinct: ['modelId', 'modelName', 'workspaceId', 'action'],
+      distinct: ['modelId'],
     });
 
     return {

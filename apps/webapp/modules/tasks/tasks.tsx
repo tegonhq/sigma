@@ -9,8 +9,8 @@ import { useScope } from 'hooks/use-scope';
 
 import { GroupingEnum } from 'store/application';
 
-import { PlanList } from './category/plan';
-import { StatusList } from './category/status';
+import { PlanList } from './group-view/plan';
+import { StatusList } from './group-view/status';
 import { Filters } from './filters';
 import { Header } from './header';
 import { SingleTask } from './single-task';

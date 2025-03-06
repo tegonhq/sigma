@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 
-import { ScheduleDialog } from 'modules/tasks/schedule';
+import { ScheduleDialog } from 'modules/tasks/metadata';
 
 import { SCOPES } from 'common/shortcut-scopes';
 
@@ -72,7 +72,7 @@ export const DialogViewsProvider = observer(
     };
 
     useHotkeys(
-      ['s', 'd'],
+      ['s', 'p'],
       (event) => {
         switch (event.key) {
           case 's':

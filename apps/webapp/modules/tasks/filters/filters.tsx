@@ -18,7 +18,7 @@ import { useApplication } from 'hooks/application';
 import type { FilterTypeEnum } from 'store/application';
 
 import { AppliedFiltersView } from './applied-filters-view';
-import { StatusFilter } from './components';
+import { StatusFilter } from '../metadata';
 import { DefaultFilterDropdown } from './default-filter-dropdown';
 import { GroupingOrderingOptions } from './grouping-ordering-options';
 import { ViewOptions } from './view-options';

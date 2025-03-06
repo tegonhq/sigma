@@ -90,6 +90,9 @@ export const TasksStore: IAnyStateTreeNode = types
     getTaskWithId(taskId: string) {
       return self.tasks.find((task: TaskType) => task.id === taskId);
     },
+    getTaskWithIds(taskIds: string[]) {
+      return self.tasks.filter((task: TaskType) => taskIds.includes(task.id));
+    },
     getTaskForPage(pageId: string) {
       return self.tasks.find((task: TaskType) => task.pageId === pageId);
     },
@@ -112,6 +115,7 @@ export interface TasksStoreType {
 
   getTasks: (params: { listId?: string }) => TaskType[];
   getTaskWithId: (taskId: string) => TaskType;
+  getTaskWithIds: (taskIds: string[]) => TaskType[];
   getTaskForPage: (pageId: string) => TaskType;
   getLastTaskNumber: () => number;
   getCompletedTasksForDate: (date: Date) => TaskType[];

@@ -27,7 +27,7 @@ import { ReplicationModule } from 'modules/replication/replication.module';
 import { SuggestionModule } from 'modules/suggestion/suggestion.module';
 import { SummaryModule } from 'modules/summary/summary.module';
 import { SyncActionsModule } from 'modules/sync-actions/sync-actions.module';
-import { TaskOccurenceModule } from 'modules/task-occurence/task-occurence.model';
+import { TaskOccurenceModule } from 'modules/task-occurrence/task-occurrence.model';
 import { TasksModule } from 'modules/tasks/tasks.module';
 import { TasksHookModule } from 'modules/tasks-hook/tasks-hooks.module';
 import { TriggerdevModule } from 'modules/triggerdev/triggerdev.module';

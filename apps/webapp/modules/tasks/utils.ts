@@ -17,7 +17,7 @@ import {
   type FiltersModelType,
 } from 'store/application';
 
-import { statuses } from './status-dropdown';
+import { statuses } from './metadata';
 
 // Add this helper function above the TaskCategory component
 export const getStatusPriority = (status: string) => {
@@ -272,6 +272,18 @@ export function useFilterTasks(tasks: TaskType[]): TaskType[] {
     return sort(filteredTasks).by({ desc: (task: TaskType) => task.updatedAt });
     // eslint-disable-next-line react-hooks/exhaustive-deps, @typescript-eslint/no-explicit-any
   }, [(filters as any).toJSON(), (displaySettings as any).toJSON(), tasks]);
+}
+
+export function filterTasksNoHook(
+  tasks: TaskType[],
+  filters: FiltersModelType,
+  displaySettings: DisplaySettingsModelType,
+): TaskType[] {
+  const computedFilters = getFilters(filters, displaySettings);
+
+  const filteredTasks = filterTasks(tasks, computedFilters);
+
+  return sort(filteredTasks).by({ desc: (task: TaskType) => task.updatedAt });
 }
 
 export const hasMoreInfo = (task: TaskType) => {

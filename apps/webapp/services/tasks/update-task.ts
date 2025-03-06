@@ -1,11 +1,11 @@
 import { updateTask } from '@sigma/services';
 import { useMutation } from 'react-query';
 
-import type { PageType } from 'common/types';
+import type { TaskType } from 'common/types';
 
 interface MutationParams {
   onMutate?: () => void;
-  onSuccess?: (data: PageType) => void;
+  onSuccess?: (data: TaskType) => void;
   onError?: (error: string) => void;
 }
 
@@ -25,7 +25,7 @@ export function useUpdateTaskMutation({
     onError && onError(errorText);
   };
 
-  const onMutationSuccess = (data: PageType) => {
+  const onMutationSuccess = (data: TaskType) => {
     onSuccess && onSuccess(data);
   };
 

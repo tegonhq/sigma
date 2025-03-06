@@ -92,7 +92,12 @@ export const TaskListItem = observer(({ taskId }: TaskListItemProps) => {
             taskSelected && 'bg-primary/10',
           )}
         >
-          <div className="pt-2 shrink-0 flex items-center">
+          <div
+            className="pt-2 shrink-0 flex items-center"
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
             <Checkbox
               className="shrink-0 relative top-0.5 h-[18px] w-[18px]"
               checked={task.status === 'Done'}

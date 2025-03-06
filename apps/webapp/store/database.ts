@@ -3,13 +3,13 @@ import type { ApplicationStoreType } from './application';
 import Dexie from 'dexie';
 
 import type {
-  ActivityType,
   ConversationHistoryType,
   ConversationType,
   IntegrationAccountType,
   ListType,
   PageType,
   StatusType,
+  TaskOccurrenceType,
   TaskType,
 } from 'common/types';
 import type { WorkspaceType } from 'common/types';
@@ -26,11 +26,12 @@ export class SigmaDatabase extends Dexie {
   conversations: Dexie.Table<ConversationType, string>;
   conversationHistory: Dexie.Table<ConversationHistoryType, string>;
   lists: Dexie.Table<ListType, string>;
+  taskOccurrences: Dexie.Table<TaskOccurrenceType, string>;
 
   constructor(databaseName: string) {
     super(databaseName);
 
-    this.version(23).stores({
+    this.version(24).stores({
       [MODELS.Workspace]: 'id,createdAt,updatedAt,name,slug,userId',
       [MODELS.IntegrationAccount]:
         'id,createdAt,updatedAt,accountId,settings,integratedById,integrationDefinitionId,workspaceId',
@@ -38,6 +39,9 @@ export class SigmaDatabase extends Dexie {
         'id,createdAt,updatedAt,archived,title,description,parentId,sortOrder,workspaceId,tags,type',
       [MODELS.Task]:
         'id,createdAt,updatedAt,sourceId,url,status,metadata,workspaceId,pageId,integrationAccountId,startTime,endTime,recurrence,number,completedAt,listId,dueDate,remindAt,scheduleText',
+      [MODELS.TaskOccurrence]:
+        'id,createdAt,updatedAt,workspaceId,pageId,taskId,startTime,endTime,status',
+
       [MODELS.Conversation]: 'id,createdAt,updatedAt,title,userId,workspaceId',
       [MODELS.ConversationHistory]:
         'id,createdAt,updatedAt,message,userType,context,thoughts,userId,conversationId',
@@ -53,6 +57,7 @@ export class SigmaDatabase extends Dexie {
     this.conversations = this.table(MODELS.Conversation);
     this.conversationHistory = this.table(MODELS.ConversationHistory);
     this.lists = this.table(MODELS.List);
+    this.taskOccurrences = this.table(MODELS.TaskOccurrence);
     this.application = this.table('Application');
   }
 }

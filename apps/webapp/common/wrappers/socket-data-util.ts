@@ -2,13 +2,13 @@ import { runInAction } from 'mobx';
 
 import type { SyncActionRecord } from 'common/types';
 
-import { saveActivityData } from 'store/activity';
 import { saveConversationHistorytData } from 'store/conversation-history';
 import { saveConversationData } from 'store/conversations';
 import { saveIntegrationAccountData } from 'store/integration-accounts';
 import { saveListData } from 'store/lists';
 import { MODELS } from 'store/models';
 import { savePageData } from 'store/pages';
+import { saveTaskOccurrencesData } from 'store/task-occurrences';
 import { saveTaskData } from 'store/tasks';
 import { saveWorkspaceData } from 'store/workspace';
 
@@ -46,7 +46,7 @@ export async function saveSocketData(
       [MODELS.ConversationHistory]: saveConversationHistorytData,
       [MODELS.Page]: savePageData,
       [MODELS.Task]: saveTaskData,
-      [MODELS.Activity]: saveActivityData,
+      [MODELS.TaskOccurrence]: saveTaskOccurrencesData,
       [MODELS.List]: saveListData,
     };
 

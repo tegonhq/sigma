@@ -7,7 +7,7 @@ import { generateSummaryTask } from 'triggers/task/generate-summary';
 
 import { IntegrationsService } from 'modules/integrations/integrations.service';
 import { PagesService } from 'modules/pages/pages.service';
-import { TaskOccurenceService } from 'modules/task-occurence/task-occurence.service';
+import { TaskOccurenceService } from 'modules/task-occurrence/task-occurrence.service';
 import { UsersService } from 'modules/users/users.service';
 
 import {

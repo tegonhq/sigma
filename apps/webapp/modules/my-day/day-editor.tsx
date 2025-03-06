@@ -19,7 +19,8 @@ import { AddTaskSelector } from 'common/editor/add-task-selector';
 import { TaskExtension } from 'common/editor/task-extension';
 import type { PageType } from 'common/types';
 
-import { useCreatePageMutation, useUpdatePageMutation } from 'services/pages';
+import { useCreatePageMutation } from 'services/pages';
+import { useUpdateTaskMutation } from 'services/tasks';
 
 import { useContextStore } from 'store/global-context-provider';
 
@@ -38,13 +39,13 @@ export const EditorWithPage = observer(
     const [_, setProvider] = React.useState<HocuspocusProvider>(undefined);
     const [doc, setDoc] = React.useState(undefined);
     const { tasksStore } = useContextStore();
-    const { mutate: updatePage } = useUpdatePageMutation({});
+    const { mutate: updateTask } = useUpdateTaskMutation({});
 
     const debounceUpdateTask = useDebouncedCallback(
-      async ({ title, pageId }: { title: string; pageId: string }) => {
-        updatePage({
+      async ({ title, taskId }: { title: string; taskId: string }) => {
+        updateTask({
           title,
-          pageId,
+          taskId,
         });
       },
       500,
@@ -84,7 +85,7 @@ export const EditorWithPage = observer(
       if (task) {
         debounceUpdateTask({
           title: newNode.textContent,
-          pageId: task.pageId,
+          taskId: task.id,
         });
       }
 
@@ -128,7 +129,7 @@ export const DayEditor = observer(({ date }: DayEditorProps) => {
   React.useEffect(() => {
     if (!page) {
       createPage({
-        sortOrder: pagesStore.getSortOrderForNewPage,
+        sortOrder: '',
         title: dateTitle,
         type: PageTypeEnum.Daily,
       });

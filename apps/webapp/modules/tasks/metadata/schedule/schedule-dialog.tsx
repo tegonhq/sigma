@@ -8,14 +8,7 @@ import {
   Cycle,
   Loader,
 } from '@tegonhq/ui';
-import {
-  endOfDay,
-  addDays,
-  endOfWeek,
-  addWeeks,
-  isToday,
-  formatISO,
-} from 'date-fns';
+import { endOfDay, addDays, endOfWeek, addWeeks, formatISO } from 'date-fns';
 import { Clock } from 'lucide-react';
 import React from 'react';
 

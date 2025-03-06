@@ -22,10 +22,11 @@ interface CommandComponentProps {
 export const CommandComponent = observer(
   ({ onClose }: CommandComponentProps) => {
     const { tasksStore, pagesStore } = useContextStore();
-    const { selectedTasks } = useApplication();
+    const { selectedTasks, hoverTask } = useApplication();
+    const finalSelectedTasks = [...selectedTasks, hoverTask];
     const [value, setValue] = React.useState('');
     const commands = useSearchCommands(value, onClose);
-    const task = tasksStore.getTaskWithId(selectedTasks[0]);
+    const task = tasksStore.getTaskWithId(finalSelectedTasks[0]);
     const page = pagesStore.getPageWithId(task?.pageId);
 
     const defaultCommands = () => {
