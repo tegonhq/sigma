@@ -68,9 +68,9 @@ export const SingleTask = observer(
       return null;
     }
 
-    if (task.integrationAccountId) {
-      return <SingleTaskIntegration task={task} page={page} onBack={back} />;
-    }
+    // if (task.integrationAccountId) {
+    //   return <SingleTaskIntegration task={task} page={page} onBack={back} />;
+    // }
 
     return (
       <AILayout header={<Header />}>
@@ -84,7 +84,7 @@ export const SingleTask = observer(
               <SingleTaskMetadata task={task} />
 
               <div className="flex flex-col gap-0 pt-3">
-                <SingleTaskEditor page={page} />
+                <SingleTaskEditor page={page} task={task} />
               </div>
             </div>
           </div>

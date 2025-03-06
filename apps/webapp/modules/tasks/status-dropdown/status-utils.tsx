@@ -1,14 +1,7 @@
-import {
-  CanceledLine,
-  DoneFill,
-  InProgressLine,
-  InReviewLine,
-  TodoLine,
-} from '@tegonhq/ui';
+import { CanceledLine, DoneFill, InReviewLine, TodoLine } from '@tegonhq/ui';
 
 export const STATUS_ICONS = {
   Todo: TodoLine,
-  'In Progress': InProgressLine,
   'In Review': InReviewLine,
   Done: DoneFill,
   Canceled: CanceledLine,
@@ -25,15 +18,6 @@ export function getStatusColor(status: string) {
     return {
       background: cssVar,
       color: `var(--status-icon-3)`,
-    };
-  }
-
-  if (status === 'In Progress') {
-    const cssVar = `var(--status-pill-4)`;
-
-    return {
-      background: cssVar,
-      color: `var(--status-icon-4)`,
     };
   }
 

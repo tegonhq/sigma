@@ -219,7 +219,7 @@ export class TasksService {
         ...(listId && {
           list: { connect: { id: listId } },
         }),
-        ...(parentId && { list: { connect: { id: parentId } } }),
+        ...(parentId && { parent: { connect: { id: parentId } } }),
         page: {
           create: {
             title,

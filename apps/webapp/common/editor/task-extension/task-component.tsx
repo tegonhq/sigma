@@ -10,7 +10,6 @@ import { getCreateTaskPropsOnSource } from 'modules/tasks/add-task/utils';
 
 import type { TaskType } from 'common/types';
 
-import { useUpdatePageMutation } from 'services/pages';
 import { useCreateTaskMutation } from 'services/tasks';
 
 import { useContextStore } from 'store/global-context-provider';
@@ -28,7 +27,7 @@ export const TaskComponent = observer((props: any) => {
   const { tasksStore } = useContextStore();
   const task = tasksStore.getTaskWithId(taskId);
 
-  const { mutate: addTaskMutation } = useCreateTaskMutation({
+  const { mutate: addTaskMutation, isLoading } = useCreateTaskMutation({
     onSuccess: (data: TaskType) => {
       props.updateAttributes({
         id: data.id,
@@ -41,14 +40,14 @@ export const TaskComponent = observer((props: any) => {
   }, 500);
 
   React.useEffect(() => {
-    if (!taskId && content && !content.includes('[')) {
+    if (!taskId && content && !content.includes('[') && !isLoading) {
       debounceAddTask({
         title: content,
         ...getCreateTaskPropsOnSource(source, date),
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [content, taskId]);
+  }, [content, taskId, isLoading]);
 
   return (
     <NodeViewWrapper className="task-item-component" as="p">
@@ -63,10 +62,17 @@ export const TaskComponent = observer((props: any) => {
           contentEditable={false}
         >
           <Checkbox className="shrink-0 relative top-[1px] h-[18px] w-[18px]" />
-          {task && <TaskMetadata taskId={task.id} />}
         </div>
 
         <NodeViewContent as="p" className="text-sm relative top-[2px]" />
+        {task && (
+          <div
+            className={cn('flex items-start shrink-0 gap-2 py-1')}
+            contentEditable={false}
+          >
+            <TaskMetadata taskId={task.id} />
+          </div>
+        )}
       </div>
     </NodeViewWrapper>
   );

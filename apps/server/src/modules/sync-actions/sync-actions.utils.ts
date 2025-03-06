@@ -41,12 +41,6 @@ export async function getWorkspaceId(
       });
       return task.workspaceId;
 
-    case ModelName.Status:
-      const status = await prisma.status.findUnique({
-        where: { id: modelId },
-      });
-      return status.workspaceId;
-
     case ModelName.Template:
       const template = await prisma.template.findUnique({
         where: { id: modelId },
@@ -93,7 +87,6 @@ export async function getModelData(
   const modelMap: Record<ModelName, any> = {
     Workspace: prisma.workspace,
     Template: prisma.template,
-    Status: prisma.status,
     Page: prisma.page,
     Task: prisma.task,
     Conversation: prisma.conversation,

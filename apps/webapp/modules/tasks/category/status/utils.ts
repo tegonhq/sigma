@@ -10,7 +10,7 @@ export const useTaskRows = (
 ) => {
   const { displaySettings } = useApplication();
 
-  const sortedStatues = ['In Progress', 'Todo', 'Done', 'Canceled'];
+  const sortedStatues = ['Todo', 'Done', 'Canceled'];
 
   const rows = getTasksRows(
     tasks,

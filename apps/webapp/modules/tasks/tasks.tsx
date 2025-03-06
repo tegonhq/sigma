@@ -7,6 +7,9 @@ import { AILayout } from 'layouts/ai-layout';
 import { useApplication } from 'hooks/application';
 import { useScope } from 'hooks/use-scope';
 
+import { GroupingEnum } from 'store/application';
+
+import { PlanList } from './category/plan';
 import { StatusList } from './category/status';
 import { Filters } from './filters';
 import { Header } from './header';
@@ -19,7 +22,7 @@ interface TabsProps {
 export const Tasks = observer(({ entity_id }: TabsProps) => {
   useScope(SCOPES.Task);
 
-  const { clearSelectedTask } = useApplication();
+  const { clearSelectedTask, displaySettings } = useApplication();
 
   React.useEffect(() => {
     return () => {
@@ -32,11 +35,19 @@ export const Tasks = observer(({ entity_id }: TabsProps) => {
     return <SingleTask index={0} taskId={entity_id} />;
   }
 
+  const getComponent = () => {
+    if (displaySettings.grouping === GroupingEnum.plan) {
+      return <PlanList />;
+    }
+
+    return <StatusList />;
+  };
+
   return (
     <AILayout header={<Header />}>
       <Filters />
 
-      <StatusList />
+      {getComponent()}
     </AILayout>
   );
 });

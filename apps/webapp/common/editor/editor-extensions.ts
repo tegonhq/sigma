@@ -10,8 +10,6 @@ import {
   Placeholder,
   HighlightExtension,
   AIHighlight,
-  TaskList,
-  CustomKeymap,
 } from 'novel/extensions';
 
 import { datePageExtension } from './date-page-extension';
@@ -33,7 +31,7 @@ const tiptapLink = TiptapLink.configure({
 
 const horizontalRule = HorizontalRule.configure({
   HTMLAttributes: {
-    class: cx('mt-4 mb-6 border-t border-muted-foreground'),
+    class: cx('my-2 border-t border-muted-foreground'),
   },
 });
 
@@ -142,7 +140,6 @@ export const defaultExtensions = [
   listItem,
   datePageExtension,
   tasksExtension,
-  CustomKeymap,
   LinkTaskExtension,
   trailingNode,
   CodeBlockLowlight.configure({

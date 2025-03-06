@@ -11,7 +11,7 @@ import {
   getSocketURL,
   suggestionItems,
 } from 'common/editor';
-import type { PageType } from 'common/types';
+import type { PageType, TaskType } from 'common/types';
 import { TaskExtension } from 'common/editor/task-extension';
 import { useContextStore } from 'store/global-context-provider';
 import { useDebouncedCallback } from 'use-debounce';
@@ -19,12 +19,14 @@ import { useUpdatePageMutation } from 'services/pages';
 
 interface SingleTaskEditorProps {
   page: PageType;
+  task: TaskType;
   onDescriptionChange?: (description: string) => void;
   autoFocus?: boolean;
 }
 
 export function SingleTaskEditor({
   page,
+  task,
   onDescriptionChange,
   autoFocus,
 }: SingleTaskEditorProps) {
@@ -84,7 +86,7 @@ export function SingleTaskEditor({
   return (
     <div className="flex flex-col min-h-[calc(100vh_-_30vh)]">
       <EditorContext.Provider
-        value={{ source: { type: SourceType.PAGE, id: page.id } }}
+        value={{ source: { type: SourceType.TASK, id: task.id } }}
       >
         <Editor
           onChange={onDescriptionChange}

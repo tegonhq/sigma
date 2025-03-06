@@ -88,3 +88,7 @@ strong {
 .list-item--task {
   list-style-type: none;
 }
+
+.tasks-component ul {
+  margin: 0 !important;
+}

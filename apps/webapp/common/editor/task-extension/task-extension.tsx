@@ -102,6 +102,7 @@ export const TaskExtension = ({
                 id: undefined,
               })
               .run();
+
             return true;
           }
 
@@ -135,15 +136,46 @@ export const TaskExtension = ({
           if (!blockRange) {
             return false;
           }
+
           if (blockRange.start + 1 === selection.from && selection.empty) {
-            this.editor.commands.setNode('paragraph');
+            return this.editor
+              .chain()
+              .liftListItem('listItem')
+              .setNode('paragraph', {})
+              .run();
           }
+
           return false;
         },
+        'Mod-Backspace': () => {
+          return this.editor
+            .chain()
+            .liftListItem('listItem')
+            .setNode('paragraph', {})
+            .run();
+        },
+
         'Shift-Tab': () => {
           if (!isTaskContent()) {
             return false;
           }
+
+          const state = this.editor.state;
+          const selection = state.selection;
+          let insideTasksExtension = false;
+
+          // Traverse up the hierarchy to check if any parent node is `tasksExtension`
+          for (let depth = selection.$from.depth; depth > 0; depth--) {
+            const parentNode = selection.$from.node(depth);
+            if (parentNode.type.name === 'tasksExtension') {
+              insideTasksExtension = true;
+            }
+          }
+
+          if (insideTasksExtension) {
+            return true;
+          }
+
           if (this.editor.state.selection.$head.depth < 4) {
             return this.editor
               .chain()

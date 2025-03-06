@@ -63,7 +63,7 @@ export const ScheduleDropdown = observer(
     const getSchedule = () => {
       if (task.dueDate) {
         const timeRelative = getRelativeTime(new Date(task.dueDate));
-        const timeText = `${timeRelative.overdue ? 'overdue' : 'in'} ${timeRelative.text}`;
+        const timeText = `${timeRelative.overdue ? '' : 'in'} ${timeRelative.text}`;
 
         return (
           <Badge

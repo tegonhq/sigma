@@ -195,9 +195,6 @@ model Page {
 
   type PageType @default(Default)
 
-  statusId String? // Status
-  status   Status? @relation(fields: [statusId], references: [id])
-
   workspaceId    String
   workspace      Workspace        @relation(fields: [workspaceId], references: [id])
   task           Task[]
@@ -236,25 +233,6 @@ model Prompt {
   workspaceId String
 
   @@unique([name, workspaceId])
-}
-
-model Status {
-  id        String    @id @default(uuid())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deleted   DateTime?
-
-  name        String
-  description String?
-  position    Int
-  color       String
-
-  workspace   Workspace? @relation(fields: [workspaceId], references: [id])
-  workspaceId String
-
-  pages Page[]
-
-  @@unique([name, workspaceId], map: "_ci")
 }
 
 model SyncAction {
@@ -443,7 +421,6 @@ model Workspace {
   integrationDefinition IntegrationDefinitionV2[]
   attachments           Attachment[]
   pages                 Page[]
-  statuses              Status[]
   Conversation          Conversation[]
   IndexJob              IndexJob[]
   tasks                 Task[]
@@ -462,7 +439,6 @@ enum ModelName {
   User
   Workspace
   Page
-  Status
   Conversation
   ConversationHistory
   List

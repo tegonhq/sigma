@@ -24,6 +24,8 @@ interface DialogViewsContextType {
 export const DailogViewsContext =
   React.createContext<DialogViewsContextType>(undefined);
 
+// This handles the shortcut dialogs
+// s - schedule
 export const DialogViewsProvider = observer(
   ({ children }: { children: React.ReactNode }) => {
     const ComponentType = {

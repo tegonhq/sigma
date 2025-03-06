@@ -14,7 +14,6 @@ import {
   CreateInitialResourcesDto,
   CreateWorkspaceInput,
   UpdateWorkspaceInput,
-  workflowSeedData,
 } from './workspaces.interface';
 
 @Injectable()
@@ -47,7 +46,6 @@ export default class WorkspacesService {
         data: {
           name: workspaceData.workspaceName,
           userId,
-          statuses: { create: workflowSeedData },
           slug: workspaceData.workspaceName
             .toLowerCase()
             .replace(/[^a-z0-9]/g, ''),

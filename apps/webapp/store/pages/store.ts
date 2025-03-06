@@ -123,6 +123,11 @@ export const PagesStore: IAnyStateTreeNode = types
           page.title === format(date, 'dd-MM-yyyy') && page.type === 'Daily',
       );
     },
+    getDailyPageWithDateArray(dates: string[]) {
+      return self.pages.filter(
+        (page: PageType) => dates.includes(page.title) && page.type === 'Daily',
+      );
+    },
     get getSortOrderForNewPage() {
       const lastPage = self.pages[self.pages.length - 1];
 
@@ -173,6 +178,7 @@ export interface PagesStoreType {
   // Functions
   getSortOrder: (firstPageId: string, secondPageId: string) => string;
   getDailyPageWithDate: (date: Date) => PageType | undefined;
+  getDailyPageWithDateArray: (dates: string[]) => PageType[];
   getPageWithId: (id: string) => PageType | undefined;
   getPages: () => Array<{
     key: string;

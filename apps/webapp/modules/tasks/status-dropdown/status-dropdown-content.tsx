@@ -10,7 +10,7 @@ interface IssueStatusDropdownContentProps {
   value: string | string[];
 }
 
-export const statuses = ['Todo', 'In Progress', 'Done', 'Canceled'];
+export const statuses = ['Todo', 'Done', 'Canceled'];
 
 export function StatusDropdownContent({
   onChange,

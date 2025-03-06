@@ -1,5 +1,7 @@
+import { observer } from 'mobx-react-lite';
 import React from 'react';
 
+import { PlanList } from 'modules/tasks/category/plan';
 import { StatusList } from 'modules/tasks/category/status';
 import { Filters } from 'modules/tasks/filters';
 import { Header } from 'modules/tasks/header';
@@ -10,10 +12,12 @@ import { AILayout } from 'layouts/ai-layout';
 import { useApplication } from 'hooks/application';
 import { useScope } from 'hooks/use-scope';
 
-export const ListTasks = () => {
+import { GroupingEnum } from 'store/application';
+
+export const ListTasks = observer(() => {
   useScope(SCOPES.Task);
 
-  const { clearSelectedTask } = useApplication();
+  const { clearSelectedTask, displaySettings } = useApplication();
 
   React.useEffect(() => {
     return () => {
@@ -22,11 +26,19 @@ export const ListTasks = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const getComponent = () => {
+    if (displaySettings.grouping === GroupingEnum.plan) {
+      return <PlanList />;
+    }
+
+    return <StatusList />;
+  };
+
   return (
     <AILayout header={<Header />}>
       <Filters />
 
-      <StatusList />
+      {getComponent()}
     </AILayout>
   );
-};
+});

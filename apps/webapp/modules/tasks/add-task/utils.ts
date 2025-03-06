@@ -1,5 +1,5 @@
 import { SourceType, type Source } from '@sigma/types';
-import { isToday, isBefore, startOfDay } from 'date-fns';
+import { endOfDay, isBefore, startOfDay } from 'date-fns';
 
 export const getPropertiesBasedOnDate = (
   date: Date,
@@ -7,14 +7,13 @@ export const getPropertiesBasedOnDate = (
   const normalizedDate = startOfDay(date);
   const today = startOfDay(new Date());
 
-  if (isToday(normalizedDate)) {
-    return { status: 'In Progress' };
-  } else if (isBefore(normalizedDate, today)) {
+  if (isBefore(normalizedDate, today)) {
     return { status: 'Done' };
   }
+
   return {
     status: 'Todo',
-    dueDate: date.toISOString(),
+    dueDate: endOfDay(date).toISOString(),
   };
 };
 

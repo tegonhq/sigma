@@ -132,7 +132,7 @@ export const defaultApplicationStoreValue: {
   ],
   filters: {},
   displaySettings: {
-    grouping: GroupingEnum.status,
+    grouping: GroupingEnum.plan,
     completedFilter: TimeBasedFilterEnum.All,
     showEmptyGroups: false,
   },

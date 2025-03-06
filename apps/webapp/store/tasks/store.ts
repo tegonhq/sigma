@@ -57,44 +57,6 @@ export const TasksStore: IAnyStateTreeNode = types
         return isListTask;
       });
     },
-    getTasksForToday() {
-      const tasks = self.tasks.filter((task) => {
-        if (task.status === 'In Progress') {
-          return true;
-        }
-
-        if (task.status === 'Done' || task.status === 'Canceled') {
-          return task.completedAt && isToday(new Date(task.completedAt));
-        }
-
-        return false;
-      });
-
-      return sort(tasks).by([
-        { desc: (task) => task.status === 'In Progress' },
-        { desc: (task) => task.status === 'Done' },
-        { desc: (task) => task.status === 'Canceled' },
-      ]);
-    },
-    getTasksNotToday() {
-      const tasks = self.tasks.filter((task) => {
-        if (task.status === 'In Progress') {
-          return false;
-        }
-
-        if (task.status === 'Done' || task.status === 'Canceled') {
-          return !task.completedAt || !isToday(new Date(task.completedAt));
-        }
-
-        return true;
-      });
-
-      return sort(tasks).by([
-        { desc: (task) => task.status === 'In Progress' },
-        { desc: (task) => task.status === 'Done' },
-        { desc: (task) => task.status === 'Canceled' },
-      ]);
-    },
     getCompletedTasksForDate(date: Date) {
       const tasks = self.tasks.filter((task) => {
         if (task.status === 'Done' || task.status === 'Canceled') {
@@ -105,7 +67,6 @@ export const TasksStore: IAnyStateTreeNode = types
       });
 
       return sort(tasks).by([
-        { desc: (task) => task.status === 'In Progress' },
         { desc: (task) => task.status === 'Done' },
         { desc: (task) => task.status === 'Canceled' },
       ]);
@@ -152,8 +113,6 @@ export interface TasksStoreType {
   getTasks: (params: { listId?: string }) => TaskType[];
   getTaskWithId: (taskId: string) => TaskType;
   getTaskForPage: (pageId: string) => TaskType;
-  getTasksForToday: () => TaskType[];
-  getTasksNotToday: () => TaskType[];
   getLastTaskNumber: () => number;
   getCompletedTasksForDate: (date: Date) => TaskType[];
   getTasksForDate: (date: Date) => TaskType[];

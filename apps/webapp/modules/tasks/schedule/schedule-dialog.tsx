@@ -32,7 +32,7 @@ interface ScheduleDialogProps {
 interface ScheduleSample {
   text: string;
   isRecurring: boolean;
-  status?: 'In Progress' | 'Todo';
+  status?: 'Todo';
   schedule?:
     | {
         dueDate?: string;
@@ -107,20 +107,6 @@ const scheduleSamples: ScheduleSample[] = [
   { text: 'Every year on July 4 at noon', isRecurring: true },
 ];
 
-const getStatus = ({
-  dueDate,
-  endTime,
-}: {
-  dueDate?: string;
-  endTime?: string;
-}) => {
-  if (dueDate) {
-    return isToday(new Date(dueDate)) ? 'In Progress' : 'Todo';
-  }
-
-  return isToday(new Date(endTime)) ? 'In Progress' : 'Todo';
-};
-
 export const ScheduleDialog = ({ onClose, taskIds }: ScheduleDialogProps) => {
   const [value, setValue] = React.useState('');
 
@@ -165,16 +151,11 @@ export const ScheduleDialog = ({ onClose, taskIds }: ScheduleDialogProps) => {
         },
         {
           onSuccess: (data) => {
-            const status = getStatus({
-              dueDate: data.dueDate,
-              endTime: data.endTime,
-            });
-
             taskIds.forEach((taskId) => {
               updateIssue({
                 taskId,
                 dueDate: data.dueDate ? data.dueDate : null,
-                status,
+                status: 'Todo',
                 recurrence: data.recurrenceRule ? [data.recurrenceRule] : [],
                 scheduleText: data.scheduleText ? data.scheduleText : null,
                 startTime: data.startTime ? data.startTime : null,

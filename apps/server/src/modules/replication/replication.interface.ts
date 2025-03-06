@@ -18,7 +18,6 @@ export const tablesToSendMessagesFor = new Map([
   [ModelNameEnum.Workspace, true],
   [ModelNameEnum.IntegrationAccount, true],
   [ModelNameEnum.Page, true],
-  [ModelNameEnum.Status, true],
   [ModelNameEnum.Task, true],
   [ModelNameEnum.Conversation, true],
   [ModelNameEnum.ConversationHistory, true],

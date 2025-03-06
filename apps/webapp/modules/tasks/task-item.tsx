@@ -10,7 +10,6 @@ import { useUpdateTaskMutation } from 'services/tasks';
 
 import { useContextStore } from 'store/global-context-provider';
 
-import { StatusDropdown, StatusDropdownVariant } from './status-dropdown';
 import { TaskInfo } from './task-info';
 
 interface TaskListItemProps {
@@ -28,9 +27,9 @@ export const TaskListItem = observer(({ taskId }: TaskListItemProps) => {
     removeSelectedTask,
   } = useApplication();
   const task = tasksStore.getTaskWithId(taskId);
-  const page = pagesStore.getPageWithId(task.pageId);
+  const page = pagesStore.getPageWithId(task?.pageId);
   const { mutate: updateTask } = useUpdateTaskMutation({});
-  const taskSelected = selectedTasks.includes(task.id);
+  const taskSelected = selectedTasks.includes(task?.id);
 
   const statusChange = (status: string) => {
     updateTask({
@@ -42,6 +41,10 @@ export const TaskListItem = observer(({ taskId }: TaskListItemProps) => {
   const taskSelect = (taskId: string) => {
     openTask(taskId);
   };
+
+  if (!task) {
+    return null;
+  }
 
   return (
     <div
@@ -89,11 +92,13 @@ export const TaskListItem = observer(({ taskId }: TaskListItemProps) => {
             taskSelected && 'bg-primary/10',
           )}
         >
-          <div className="pt-2 shrink-0">
-            <StatusDropdown
-              value={task.status}
-              onChange={statusChange}
-              variant={StatusDropdownVariant.NO_BACKGROUND}
+          <div className="pt-2 shrink-0 flex items-center">
+            <Checkbox
+              className="shrink-0 relative top-0.5 h-[18px] w-[18px]"
+              checked={task.status === 'Done'}
+              onCheckedChange={(value: boolean) =>
+                statusChange(value === true ? 'Done' : 'Todo')
+              }
             />
           </div>
 

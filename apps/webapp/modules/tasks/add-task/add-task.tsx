@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Button,
+  Checkbox,
   Form,
   FormControl,
   FormField,
@@ -19,12 +20,8 @@ import { Shortcut } from 'common/shortcut';
 import { SCOPES } from 'common/shortcut-scopes';
 import type { ListType } from 'common/types';
 
-import { useApplication } from 'hooks/application';
-
-import { useCreateListMutation } from 'services/lists/create-list';
+import { useCreateListMutation } from 'services/lists';
 import { useCreateTaskMutation } from 'services/tasks';
-
-import { TabViewType } from 'store/application';
 
 import { StatusDropdown, StatusDropdownVariant } from '../status-dropdown';
 import { NewTaskSchema } from './add-task-type';
@@ -35,13 +32,11 @@ interface AddTaskProps {
 }
 
 export const AddTask = observer(({ onCancel }: AddTaskProps) => {
-  const { tabs } = useApplication();
-
   // The form has a array of issues where first issue is the parent and the later sub issues
   const form = useForm<z.infer<typeof NewTaskSchema>>({
     resolver: zodResolver(NewTaskSchema),
     defaultValues: {
-      status: tabs[0].type === TabViewType.MY_DAY ? 'In Progress' : 'Todo',
+      status: 'Todo',
     },
   });
 
@@ -97,7 +92,24 @@ export const AddTask = observer(({ onCancel }: AddTaskProps) => {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(addTask)}>
           <div className="font-normal w-full flex items-center">
-            <IssuesLine size={18} className="shrink-0" />
+            <FormField
+              control={form.control}
+              name="status"
+              render={({ field }) => (
+                <FormItem className="overflow-hidden">
+                  <FormControl>
+                    <Checkbox
+                      className="shrink-0 relative top-[1px] h-[18px] w-[18px]"
+                      checked={field.value === 'Done'}
+                      onCheckedChange={(value: boolean) =>
+                        field.onChange(value === true ? 'Done' : 'Todo')
+                      }
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
             <FormField
               control={form.control}
               name="title"
@@ -121,22 +133,6 @@ export const AddTask = observer(({ onCancel }: AddTaskProps) => {
 
           <div className="flex justify-between mt-3 items-end text-sm gap-4">
             <div className="flex gap-1 grow flex-wrap">
-              <FormField
-                control={form.control}
-                name="status"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <StatusDropdown
-                        variant={StatusDropdownVariant.DEFAULT}
-                        onChange={(status: string) => field.onChange(status)}
-                        value={field.value}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-
               <FormField
                 control={form.control}
                 name="listId"

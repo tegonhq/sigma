@@ -1,7 +1,8 @@
 import { observer } from 'mobx-react-lite';
 
-import type { TaskType } from 'common/types';
+import type { ListType, TaskType } from 'common/types';
 
+import { useCreateListMutation } from 'services/lists';
 import { useUpdateTaskMutation } from 'services/tasks';
 
 import { ListDropdown } from '../list-dropdown';
@@ -15,6 +16,7 @@ interface SingleTaskMetadataProps {
 export const SingleTaskMetadata = observer(
   ({ task }: SingleTaskMetadataProps) => {
     const { mutate: updateTask } = useUpdateTaskMutation({});
+    const { mutate: createList } = useCreateListMutation({});
 
     const statusChange = (status: string) => {
       updateTask({
@@ -24,6 +26,24 @@ export const SingleTaskMetadata = observer(
     };
 
     const listChange = (listId: string) => {
+      if (listId && listId.includes('__new')) {
+        createList(
+          {
+            name: listId.replace('__new', ''),
+          },
+          {
+            onSuccess: (list: ListType) => {
+              updateTask({
+                taskId: task.id,
+                listId: list.id,
+              });
+            },
+          },
+        );
+
+        return;
+      }
+
       updateTask({
         taskId: task.id,
         listId,

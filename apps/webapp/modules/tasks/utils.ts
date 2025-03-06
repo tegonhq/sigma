@@ -24,8 +24,6 @@ export const getStatusPriority = (status: string) => {
   switch (status) {
     case 'Done':
       return 1;
-    case 'In Progress':
-      return 3;
     case 'Todo':
       return 2;
     default:
@@ -48,7 +46,7 @@ export const getIntegrationURL = async (
   return url;
 };
 
-type IssueRow =
+export type IssueRow =
   | { type: 'header'; key: string; count: number }
   | { type: 'task'; taskId: string; forHeader: string };
 

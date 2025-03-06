@@ -63,12 +63,9 @@ export interface UpdateBody {
 }
 
 export enum GroupingEnum {
-  assignee = 'assignee',
-  label = 'label',
+  plan = 'plan',
+  list = 'list',
   status = 'status',
-  priority = 'priority',
-  project = 'project',
-  team = 'team',
 }
 
 export enum TimeBasedFilterEnum {
@@ -102,7 +99,7 @@ export const FiltersModel = types.model({
 });
 
 export const DisplayViewModel = types.model({
-  grouping: types.enumeration(['status', 'list', 'tag', 'source']),
+  grouping: types.enumeration(['status', 'list', 'plan']),
   completedFilter: types.enumeration(['All', 'Past day', 'Past week', 'None']),
   showEmptyGroups: types.boolean,
 });
