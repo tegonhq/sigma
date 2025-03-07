@@ -79,6 +79,19 @@ export async function getWorkspaceId(
         });
       return conversationHistoryEntity.conversation.workspaceId;
 
+    case ModelName.TaskOccurrence:
+      const taskOccurence = await prisma.taskOccurrence.findUnique({
+        where: { id: modelId },
+      });
+
+      return taskOccurence.workspaceId;
+
+    case ModelName.AgentWorklog:
+      const agentWorklog = await prisma.agentWorklog.findUnique({
+        where: { id: modelId },
+      });
+
+      return agentWorklog.workspaceId;
     default:
       return undefined;
   }
@@ -116,6 +129,8 @@ export async function getModelData(
           },
         }),
     },
+    TaskOccurence: prisma.taskOccurrence,
+    AgentWorklog: prisma.agentWorklog,
   };
 
   const model = modelMap[modelName];

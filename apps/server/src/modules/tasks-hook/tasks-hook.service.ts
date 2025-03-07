@@ -37,8 +37,8 @@ export class TaskHooksService {
         this.handleTitleChange(task, context),
         this.handleDeleteTask(task, context),
         this.handleScheduleTask(task, context),
+        this.handleBeautifyTask(task, context),
         // this.handleCalendarTask(task, context),
-        // this.handleBeautifyTask(task, context),
         // this.handleGenerateSummary(task, context),
       ]);
     }
@@ -141,8 +141,8 @@ export class TaskHooksService {
         if (
           JSON.stringify(context.previousTask.recurrence) !==
             JSON.stringify(task.recurrence) ||
-          task.startTime !== context.previousTask?.startTime ||
-          task.endTime !== context.previousTask?.endTime
+          String(task.startTime) !== String(context.previousTask?.startTime) ||
+          String(task.endTime) !== String(context.previousTask?.endTime)
         ) {
           await this.taskOccurenceService.updateTaskOccurenceByTask(task.id);
         }
@@ -176,8 +176,8 @@ export class TaskHooksService {
         if (
           JSON.stringify(context.previousTask.recurrence) !==
             JSON.stringify(task.recurrence) ||
-          task.startTime !== context.previousTask?.startTime ||
-          task.endTime !== context.previousTask?.endTime
+          String(task.startTime) !== String(context.previousTask?.startTime) ||
+          String(task.endTime) !== String(context.previousTask?.endTime)
         ) {
           await handleCalendarTask(
             this.prisma,

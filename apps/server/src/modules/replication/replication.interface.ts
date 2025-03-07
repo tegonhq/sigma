@@ -15,14 +15,15 @@ export interface logType {
 }
 
 export const tablesToSendMessagesFor = new Map([
-  [ModelNameEnum.Workspace, true],
-  [ModelNameEnum.IntegrationAccount, true],
-  [ModelNameEnum.Page, true],
-  [ModelNameEnum.Task, true],
+  [ModelNameEnum.AgentWorklog, true],
   [ModelNameEnum.Conversation, true],
   [ModelNameEnum.ConversationHistory, true],
+  [ModelNameEnum.IntegrationAccount, true],
   [ModelNameEnum.List, true],
+  [ModelNameEnum.Page, true],
+  [ModelNameEnum.Task, true],
   [ModelNameEnum.TaskOccurrence, true],
+  [ModelNameEnum.Workspace, true],
 ]);
 
 export const tableHooks = new Map([[ModelNameEnum.Page, true]]);

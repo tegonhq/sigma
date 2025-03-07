@@ -9,21 +9,18 @@ import { PagesService } from 'modules/pages/pages.service';
 import { TaskOccurenceService } from 'modules/task-occurrence/task-occurrence.service';
 import { UsersService } from 'modules/users/users.service';
 
-import { TasksAIController } from './tasks-ai.controller';
-import TasksAIService from './tasks-ai.service';
 import { TasksController } from './tasks.controller';
 import { TasksService } from './tasks.service';
 import { TaskHooksService } from '../tasks-hook/tasks-hook.service';
 
 @Module({
   imports: [PrismaModule, ConversationModule, ContentModule],
-  controllers: [TasksController, TasksAIController],
+  controllers: [TasksController],
   providers: [
     PrismaService,
     TasksService,
     UsersService,
     TaskOccurenceService,
-    TasksAIService,
     AIRequestsService,
     IntegrationsService,
     PagesService,

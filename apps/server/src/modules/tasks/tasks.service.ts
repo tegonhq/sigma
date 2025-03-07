@@ -282,6 +282,7 @@ export class TasksService {
       title,
       status: taskStatus,
       source,
+      listId,
       ...otherTaskData
     } = updateTaskDto;
 
@@ -299,6 +300,9 @@ export class TasksService {
         page: {
           update: { title },
         },
+      }),
+      ...(listId && {
+        list: { connect: { id: listId } },
       }),
       ...('recurrence' in updateTaskDto && {
         recurrence: updateTaskDto.recurrence || [],

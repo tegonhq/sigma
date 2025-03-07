@@ -26,8 +26,8 @@ export enum LLMMappings {
   GPT4O = 'gpt-4o',
   LLAMA3 = 'llama3',
   CLAUDEOPUS = 'claude-3-opus-20240229',
-  CLAUDESONNET = 'claude-3-5-sonnet-20241022',
-  CLAUDEHAIKU = 'claude-3-haiku-20240307',
+  CLAUDESONNET = 'claude-3-7-sonnet-20250219',
+  CLAUDEHAIKU = 'claude-3-5-haiku-20241022',
 }
 
 export const OpenAIModels = [

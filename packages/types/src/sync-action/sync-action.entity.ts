@@ -1,30 +1,34 @@
 import { Workspace } from '../workspace';
 
 export enum ModelNameEnum {
-  IntegrationAccount = 'IntegrationAccount',
-  IntegrationDefinitionV2 = 'IntegrationDefinitionV2',
-  User = 'User',
-  Workspace = 'Workspace',
-  Page = 'Page',
-  Task = 'Task',
+  AgentWorklog = 'AgentWorklog',
   Conversation = 'Conversation',
   ConversationHistory = 'ConversationHistory',
+  IntegrationAccount = 'IntegrationAccount',
+  IntegrationDefinitionV2 = 'IntegrationDefinitionV2',
   List = 'List',
+  Page = 'Page',
+  Status = 'Status',
+  Task = 'Task',
   TaskOccurrence = 'TaskOccurrence',
+  User = 'User',
+  Workspace = 'Workspace',
 }
 
 export const ModelName = {
-  Template: 'Template',
-  IntegrationAccount: 'IntegrationAccount',
-  IntegrationDefinitionV2: 'IntegrationDefinitionV2',
-  User: 'User',
-  Workspace: 'Workspace',
-  Page: 'Page',
-  Task: 'Task',
+  AgentWorklog: 'AgentWorklog',
   Conversation: 'Conversation',
   ConversationHistory: 'ConversationHistory',
+  IntegrationAccount: 'IntegrationAccount',
+  IntegrationDefinitionV2: 'IntegrationDefinitionV2',
   List: 'List',
+  Page: 'Page',
+  Status: 'Status',
+  Task: 'Task',
   TaskOccurrence: 'TaskOccurrence',
+  Template: 'Template',
+  User: 'User',
+  Workspace: 'Workspace',
 };
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];

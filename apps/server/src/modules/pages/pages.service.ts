@@ -416,15 +416,29 @@ export class PagesService {
           const endTime = new Date(pageDate);
           endTime.setHours(23, 59, 59, 999);
 
-          await this.prisma.taskOccurrence.createMany({
-            data: addedTaskIds.map((taskId) => ({
-              taskId,
-              pageId,
-              workspaceId: page.workspaceId,
-              startTime,
-              endTime,
-            })),
-          });
+          await Promise.all(
+            addedTaskIds.map((taskId) =>
+              this.prisma.taskOccurrence.upsert({
+                where: {
+                  taskId_pageId: {
+                    taskId,
+                    pageId,
+                  },
+                },
+                create: {
+                  taskId,
+                  pageId,
+                  workspaceId: page.workspaceId,
+                  startTime,
+                  endTime,
+                  status: 'Todo',
+                },
+                update: {
+                  deleted: null,
+                },
+              }),
+            ),
+          );
         }
       }
     }

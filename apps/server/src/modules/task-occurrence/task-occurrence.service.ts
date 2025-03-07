@@ -203,35 +203,67 @@ export class TaskOccurenceService {
 
   async createTaskOccurenceByTask(taskId: string) {
     const task = await this.prisma.task.findUnique({ where: { id: taskId } });
-    if (!task.recurrence || task.recurrence.length === 0 || !task.startTime) {
+    if (!task.recurrence.length && !task.startTime) {
       return null;
     }
-    const rrule = RRule.fromString(task.recurrence[0]);
-
-    // Set up the date range for next 2 days
-    const now = new Date();
-    const startDate = new Date(now);
-    const endDate = new Date(now);
-    endDate.setDate(endDate.getDate() + 30);
-
-    // Get base occurrences for the date range
-    const baseOccurrences = rrule.between(startDate, endDate);
 
     const taskStartTime = new Date(task.startTime);
-    // Map the base dates to include the correct time from task.startTime
-    const occurrences = baseOccurrences.map((date) => {
-      const occurrence = new Date(date);
-      occurrence.setHours(
-        taskStartTime.getHours(),
-        taskStartTime.getMinutes(),
-        taskStartTime.getSeconds(),
-        taskStartTime.getMilliseconds(),
-      );
-      return occurrence;
-    });
 
-    // Filter out any occurrences that have already passed
-    const futureOccurrences = occurrences.filter((date) => date > now);
+    let futureOccurrences;
+    if (task.recurrence.length) {
+      // Set up the date range for next 30 days
+      const now = new Date();
+      const startDate = new Date(now);
+      const endDate = new Date(now);
+      endDate.setDate(endDate.getDate() + 30);
+
+      // Process all RRules and collect occurrences
+      let allOccurrences: Date[] = [];
+
+      for (const rruleString of task.recurrence) {
+        const rrule = RRule.fromString(rruleString);
+
+        // Get base occurrences for the date range from this rule
+        const baseOccurrences = rrule.between(startDate, endDate);
+
+        // Check if the RRule contains time information
+        const hasTimeInRRule =
+          rruleString.includes('BYHOUR') ||
+          rruleString.includes('BYMINUTE') ||
+          rruleString.includes('BYSECOND') ||
+          (rruleString.includes('DTSTART=') && rruleString.includes('T'));
+
+        // Map the base dates to include the correct time
+        const occurrences = baseOccurrences.map((date) => {
+          // If RRule already has time information, use it as is
+          if (hasTimeInRRule) {
+            return date;
+          }
+
+          // Otherwise, apply the time from task.startTime
+          const occurrence = new Date(date);
+          occurrence.setHours(
+            taskStartTime.getHours(),
+            taskStartTime.getMinutes(),
+            taskStartTime.getSeconds(),
+            taskStartTime.getMilliseconds(),
+          );
+          return occurrence;
+        });
+
+        // Add occurrences from this rule to the collection
+        allOccurrences = [...allOccurrences, ...occurrences];
+      }
+
+      // Filter out any occurrences that have already passed
+      futureOccurrences = allOccurrences.filter((date) => date > now);
+
+      // Sort occurrences by date
+      futureOccurrences.sort((a, b) => a.getTime() - b.getTime());
+    } else if (task.startTime) {
+      futureOccurrences = [task.startTime];
+    }
+
     if (futureOccurrences.length === 0) {
       return [];
     }
@@ -295,8 +327,6 @@ export class TaskOccurenceService {
     });
 
     // Step 4: Bulk upsert task occurrences
-    // Now we can use the enhanced map for more efficient operations
-
     // Create a list of unique taskId_pageId combinations for upsert
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const upsertOperations = taskOccurrenceData.map((data: any) => {
@@ -317,6 +347,8 @@ export class TaskOccurenceService {
         },
         update: {
           deleted: null,
+          startTime: data.startTime,
+          endTime: data.endTime,
         },
       });
     });

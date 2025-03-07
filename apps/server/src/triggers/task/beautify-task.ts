@@ -1,5 +1,11 @@
 import { PrismaClient } from '@prisma/client';
-import { task } from '@trigger.dev/sdk/v3';
+import {
+  AgentWorklogStateEnum,
+  beautifyPrompt,
+  LLMModelEnum,
+  ModelNameEnum,
+} from '@sigma/types';
+import { logger, task } from '@trigger.dev/sdk/v3';
 import axios from 'axios';
 
 const prisma = new PrismaClient();
@@ -11,49 +17,98 @@ export const beautifyTask = task({
       where: { id: payload.taskId },
       include: { page: true },
     });
+    const agentWorklog = await prisma.agentWorklog.create({
+      data: {
+        modelId: payload.taskId,
+        modelName: ModelNameEnum.Task,
+        state: AgentWorklogStateEnum.Thinking,
+        type: 'Beautify Task',
+        workspaceId: sigmaTask.workspaceId,
+      },
+    });
 
-    const recurrenceData = (
+    const listsData = await prisma.list.findMany({ where: { deleted: null } });
+
+    const lists = listsData.map((list) => `${list.id}_${list.name}`);
+
+    const beautifyOutput = (
       await axios.post(
-        `http://localhost:3001/v1/tasks/ai/recurrence`,
+        `${process.env.BACKEND_HOST}/v1/ai_requests`,
         {
-          text: sigmaTask.page.title,
-          currentTime: new Date().toISOString(),
+          messages: [
+            {
+              role: 'user',
+              content: beautifyPrompt
+                .replace('{{text}}', sigmaTask.page.title)
+                .replace('{{currentTime}}', new Date().toISOString())
+                .replace('{{lists}}', lists.join('\n')),
+            },
+          ],
+          llmModel: LLMModelEnum.CLAUDESONNET,
+          model: 'beautify',
         },
         { headers: { Authorization: `Bearer ${payload.pat}` } },
       )
     ).data;
 
-    let updatedTask;
-    if (recurrenceData) {
-      const updateData = {
-        // Basic task fields
-        ...(recurrenceData.startTime && {
-          startTime: recurrenceData.startTime,
-        }),
-        ...(recurrenceData.endTime && { endTime: recurrenceData.endTime }),
-        ...(recurrenceData.dueDate && { dueDate: recurrenceData.dueDate }),
-        ...(recurrenceData.remindAt && { remindAt: recurrenceData.remindAt }),
+    const outputMatch = beautifyOutput.match(/<output>(.*?)<\/output>/s);
 
-        // Recurrence related fields
-        ...(recurrenceData.recurrenceRule && {
-          recurrence: [recurrenceData.recurrenceRule],
-        }),
-        ...(recurrenceData.scheduleText && {
-          scheduleText: recurrenceData.scheduleText,
-        }),
-
-        // Page related updates
-        ...(recurrenceData.title && {
-          page: {
-            update: { title: recurrenceData.title },
-          },
-        }),
-      };
-
-      updatedTask = await prisma.task.update({
-        where: { id: payload.taskId },
-        data: updateData,
+    if (!outputMatch) {
+      logger.error('No output found in recurrence response');
+      await prisma.agentWorklog.update({
+        where: { id: agentWorklog.id },
+        data: { state: AgentWorklogStateEnum.Failed },
       });
+      throw new Error('Invalid response format from AI');
+    }
+
+    let updatedTask;
+    try {
+      const jsonStr = outputMatch[1].trim();
+      const beautifyData = JSON.parse(jsonStr);
+      if (beautifyData) {
+        const updateData = {
+          // Basic task fields
+          ...(beautifyData.startTime && {
+            startTime: beautifyData.startTime,
+          }),
+          ...(beautifyData.endTime && { endTime: beautifyData.endTime }),
+          ...(beautifyData.dueDate && { dueDate: beautifyData.dueDate }),
+
+          // Recurrence related fields
+          ...(beautifyData.recurrenceRule && {
+            recurrence: [beautifyData.recurrenceRule],
+          }),
+          ...(beautifyData.scheduleText && {
+            scheduleText: beautifyData.scheduleText,
+          }),
+
+          // Page related updates
+          ...(beautifyData.title && { title: beautifyData.title }),
+
+          ...(beautifyData.listId && { listId: beautifyData.listId }),
+        };
+        updatedTask = (
+          await axios.post(
+            `${process.env.BACKEND_HOST}/v1/tasks/${payload.taskId}`,
+            updateData,
+            { headers: { Authorization: `Bearer ${payload.pat}` } },
+          )
+        ).data;
+      }
+
+      await prisma.agentWorklog.update({
+        where: { id: agentWorklog.id },
+        data: { state: AgentWorklogStateEnum.Done },
+      });
+    } catch (error) {
+      logger.error('Failed to parse recurrence JSON output');
+
+      await prisma.agentWorklog.update({
+        where: { id: agentWorklog.id },
+        data: { state: AgentWorklogStateEnum.Failed },
+      });
+      throw new Error('Invalid JSON in AI response');
     }
 
     return {

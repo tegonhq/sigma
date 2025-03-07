@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 
 export * from './action-schedule';
+export * from './agent-worklog';
 export * from './ai-request';
 export * from './attachment';
 export * from './common';

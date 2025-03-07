@@ -24,6 +24,21 @@ model AIRequest {
   successful Boolean @default(false)
 }
 
+model AgentWorklog {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  modelName String
+  modelId   String
+  state     String
+  type      String
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId String
+}
+
 model Attachment {
   id        String    @id @default(uuid())
   createdAt DateTime  @default(now())
@@ -430,21 +445,24 @@ model Workspace {
   aIRequest             AIRequest[]
   Prompt                Prompt[]
   List                  List[]
+  agentWorklog          AgentWorklog[]
 }
 
 enum ModelName {
+  AgentWorklog
   Attachment
-  IntegrationAccount
-  IntegrationDefinitionV2
-  Task
-  SyncAction
-  User
-  Workspace
-  Page
   Conversation
   ConversationHistory
+  IntegrationAccount
+  IntegrationDefinitionV2
   List
+  Page
+  Status
+  SyncAction
+  Task
   TaskOccurrence
+  User
+  Workspace
 }
 
 enum ActionType {

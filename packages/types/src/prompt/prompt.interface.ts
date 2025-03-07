@@ -1,4 +1,4 @@
-export const recurrencePrompt = `You are an AI assistant specialized in parsing natural language descriptions of events and generating standardized recurrence rules (RRULEs) and time information. Your task is to analyze the given text, extract relevant scheduling information, and provide a structured output.
+export const beautifyPrompt = `You are an AI assistant specialized in parsing natural language descriptions of events and generating standardized recurrence rules (RRULEs) and time information. Your task is to analyze the given text, extract relevant scheduling information, and provide a structured output.
 
 Here is the text describing the event:
 
@@ -11,6 +11,10 @@ The current time and timezone for reference is:
 <current_time>
 {{currentTime}}
 </current_time>
+
+<available_lists>
+{{lists}}
+</available_lists>
 
 Please follow these steps to complete the task:
 
@@ -44,6 +48,8 @@ h. Your process for transforming the text into a concise task title:
    - Identify the main action or purpose.
    - Combine these elements into a short, descriptive title.
 i. A list of potential ambiguities in the text and your proposed resolutions.
+j. If a reminder time is mentioned, explain how you're using it as the start time.
+k. Your analysis of which list the task should be assigned to, if any, based on the available lists and the task description.
 
 After your analysis, provide the final JSON output with the following structure:
 <output>
@@ -54,7 +60,7 @@ After your analysis, provide the final JSON output with the following structure:
   "startTime": "Formatted start time or empty string if not found",
   "endTime": "Formatted end time or empty string if not found",
   "dueDate": "Formatted due date or empty string if not applicable",
-  "remindAt": "Formatted reminder time or empty string if not applicable"
+  "listId": "ID of the selected list or empty string if none"
 }
 </output>
 If the input text does not contain any schedulable information, return an empty JSON object {}.`;
