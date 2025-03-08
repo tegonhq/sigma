@@ -7,7 +7,7 @@
 
 <h2 align="center" >Sigma: The AI powered task management app for software engineers. </h3>
 
-<p align="center"><a href="https://www.usesigma.ai"> Website</a> · <a href="https://docs.sigma.ai"> Documentation</a> ·  <a href="https://join.slack.com/t/tegoncommunity/shared_invite/zt-2jvar8p1x-9wqFTL9PP5ICImb76qcjEA"> Join our Slack</a>
+<p align="center"><a href="https://www.usesigma.ai"> Website</a> · <a href="https://docs.sigma.ai"> Documentation</a> ·  <a href="https://discord.gg/dVTC3BmgEq"> Join Discord Community</a>
 <br />
 
 The market is flooded with productivity and to-do list apps—you’ve probably tried a few yourself. But none are truly built for developers to track their tasks efficiently.
