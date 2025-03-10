@@ -1,4 +1,41 @@
-export const beautifyPrompt = `You are an AI assistant specialized in parsing natural language descriptions of events and generating standardized recurrence rules (RRULEs) and time information. Your task is to analyze the given text, extract relevant scheduling information, and provide a structured output.
+export const beautifyPrompt = `You are an AI assistant specialized in parsing natural language descriptions of tasks and generating concise titles and appropriate list assignments. Your task is to analyze the given text and provide a structured output.
+
+Here is the text describing the task:
+
+<event_description>
+{{text}}
+</event_description>
+
+<available_lists>
+{{lists}}
+</available_lists>
+
+Please follow these steps to complete the task:
+
+1. Analyze the input text to understand the core purpose of the task.
+
+2. Transform the text of the task into a concise, clear task title.
+
+3. Determine if the task should be assigned to a specific list based on the available lists and the task description.
+
+Before providing the final output, wrap your analysis in <task_parsing> tags. Include:
+
+a. Your process for transforming the text into a concise task title:
+   - List key elements from the description.
+   - Identify the main action or purpose.
+   - Combine these elements into a short, descriptive title.
+b. Your analysis of which list the task should be assigned to, if any, based on the available lists and the task description.
+
+After your analysis, provide the final JSON output with the following structure:
+<output>
+{
+  "title": "Concise title of the task",
+  "listId": "ID of the selected list or empty string if none"
+}
+</output>
+If the input text does not contain any actionable task information, return an empty JSON object {}.`;
+
+export const recurrencePrompt = `You are an AI assistant specialized in parsing natural language descriptions of events and generating standardized recurrence rules (RRULEs) and time information. Your task is to analyze the given text and extract recurrence patterns and timing details.
 
 Here is the text describing the event:
 
@@ -12,58 +49,43 @@ The current time and timezone for reference is:
 {{currentTime}}
 </current_time>
 
-<available_lists>
-{{lists}}
-</available_lists>
-
 Please follow these steps to complete the task:
 
-1. Analyze the input text to identify information about event frequency, recurrence patterns, start time, end time, due date, and reminders.
+1. Analyze the input text to identify information about event frequency, recurrence patterns, start time, end time, and due date.
 
-2. If frequency information is found, create an RRULE string based on it. The RRULE should follow the iCalendar specification (RFC 5545). Include only the frequency part (e.g., FREQ=DAILY, FREQ=WEEKLY;BYDAY=MO,WE,FR, etc.).
+2. If frequency information is found, create RRULE strings based on it. The RRULE should follow the iCalendar specification (RFC 5545). Include the frequency part (e.g., FREQ=DAILY, FREQ=WEEKLY;BYDAY=MO,WE,FR, etc.) and any time-specific information (BYHOUR, BYMINUTE) if a specific time is associated with the recurrence pattern. If multiple recurrence patterns are detected, create separate RRULE strings for each.
 
 3. Extract start and end times if mentioned in the text. Convert them to the same timezone as the provided current time. Use the format "YYYY-MM-DDTHH:MM:SS±HH:MM" (ISO 8601).
 
 4. If an end time is not explicitly stated for a scheduled task, add 15 minutes to the start time to create an end time.
 
-5. Extract and format any mentioned due date using the same ISO 8601 format.
+5. Extract and format any mentioned due date using the same ISO 8601 format. A due date represents when a task needs to be completed by, as opposed to when it occurs (which would be the start/end time).
 
-6. Extract and format any specified reminder time using the same ISO 8601 format.
+6. Generate a concise, human-readable description of the recurrence pattern and/or schedule. This should be brief (maximum 10-15 words) and easily scannable.
 
-7. Generate a human-readable description of the recurrence pattern or schedule. Only include this if there is a recurrence rule or reminder.
+Before providing the final output, wrap your analysis in <recurrence_parsing> tags. Include:
 
-8. Transform the text of the task into a concise task title.
-
-Before providing the final output, wrap your analysis in <event_parsing> tags. Include:
-
-a. A numbered list of each scheduling component found in the text (frequency, recurrence, start time, end time, due date, reminders).
+a. A list of recurrence and time components found in the text (frequency, days, intervals, start time, end time, due date).
 b. Relevant quotes from the input text for each identified component.
-c. Your interpretation of the scheduling information, considering different possibilities.
-d. If applicable, a step-by-step plan for constructing the RRULE string.
-e. Your approach for generating a clear human-readable description of the recurrence or schedule.
+c. Your interpretation of the recurrence and time information, considering different possibilities.
+d. A step-by-step plan for constructing each RRULE string (if applicable), including how you're incorporating time-specific information.
+e. Your approach for generating a clear human-readable description of the recurrence pattern and/or schedule.
 f. Identification of any ambiguities or missing information and how you'll handle them.
-g. Reasoning for including or excluding any of the JSON fields based on the input.
-h. Your process for transforming the text into a concise task title:
-   - List key elements from the description.
-   - Identify the main action or purpose.
-   - Combine these elements into a short, descriptive title.
-i. A list of potential ambiguities in the text and your proposed resolutions.
-j. If a reminder time is mentioned, explain how you're using it as the start time.
-k. Your analysis of which list the task should be assigned to, if any, based on the available lists and the task description.
+g. If a specific time is mentioned without a recurrence pattern, explain how you're interpreting it (as a one-time event).
+h. If multiple recurrence patterns are detected, explain how you're separating them into distinct rules.
+i. Explain your reasoning for identifying a date as a due date versus a start time, if applicable.
 
 After your analysis, provide the final JSON output with the following structure:
 <output>
 {
-  "title": "Concise title of the task",
-  "recurrenceRule": "RRULE string or empty string if not applicable",
-  "scheduleText": "Human-readable description of the recurrence or schedule (only if there's a rule or reminder)",
+  "recurrenceRule": ["RRULE string 1", "RRULE string 2", ...] or [] if not applicable,
+  "scheduleText": "Brief description (10-15 words max)",
   "startTime": "Formatted start time or empty string if not found",
   "endTime": "Formatted end time or empty string if not found",
-  "dueDate": "Formatted due date or empty string if not applicable",
-  "listId": "ID of the selected list or empty string if none"
+  "dueDate": "Formatted due date or empty string if not applicable"
 }
 </output>
-If the input text does not contain any schedulable information, return an empty JSON object {}.`;
+If the input text does not contain any recurrence or scheduling information, return an empty JSON object {}.`;
 
 export const enhanceExample = `<examples>\n<example>\n<TASK_LIST>\n<ol><li><p>Schedule task UI</p></li><li><p>Change the list view use react virtualised list</p></li><li><p>Also group by options</p><ol><li><p>Status</p></li><li><p>Integration</p></li><li><p>Lists</p></li></ol></li><li><p>Add list functionality</p></li><li><p>Lists should also automatically show up on the left side</p></li><li><p>Show meetings as a separate section in my day</p></li><li><p>Cmd + k</p><ol><li><p>For changing status</p></li><li><p>Changing list</p></li><li><p>changing schedule</p></li></ol></li></ol><p></p><p></p><p></p><p>Personal</p><ol><li><p>Go to gym atlernatively at 5 PM and 6 PM starting from Monday</p></li><li><p>Send documents to insurance by evening</p></li></ol><p></p>\n</TASK_LIST>\n<ideal_output>\n<content_analysis>\nThe content contains both technical/UI development tasks and personal tasks. Key themes:\n- UI development tasks around scheduling, list views, and command palette\n- Feature implementation tasks for lists and meetings\n- Personal tasks with specific timing requirements\n- Grouped functionality requirements that can be combined\n</content_analysis>\n\n<output>\n[\n  {\n    "title": "Implement schedule task UI interface",\n    "description": "Create user interface for task scheduling functionality"\n  },\n  {\n    "title": "Implement virtualized list view",\n    "description": "Convert existing list view to use react-virtualized list for better performance"\n  },\n  {\n    "title": "Add group by filtering options",\n    "description": "Implement grouping functionality for:\\n- Status\\n- Integration\\n- Lists"\n  },\n  {\n    "title": "Implement list management functionality",\n    "description": "Add list creation/management features with automatic display in left sidebar"\n  },\n  {\n    "title": "Create separate meetings section in My Day view",\n    "description": "Add dedicated section to display meetings separately from other tasks in My Day"\n  },\n  {\n    "title": "Implement Command + K menu functionality",\n    "description": "Add command palette features for:\\n- Changing task status\\n- Changing task list\\n- Changing task schedule"\n  },\n  {\n    "title": "Gym",\n    "description": "Gym routine alternating between 5 PM and 6 PM starting Monday"\n  },\n  {\n    "title": "Submit insurance documents",\n    "description": "Send required documentation to insurance company by evening"\n  }\n]\n</output>\n</ideal_output>\n</example>\n</examples>\n\n`;
 

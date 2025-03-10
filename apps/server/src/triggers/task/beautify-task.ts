@@ -31,25 +31,38 @@ export const beautifyTask = task({
 
     const lists = listsData.map((list) => `${list.id}_${list.name}`);
 
-    const beautifyOutput = (
-      await axios.post(
-        `${process.env.BACKEND_HOST}/v1/ai_requests`,
-        {
-          messages: [
-            {
-              role: 'user',
-              content: beautifyPrompt
-                .replace('{{text}}', sigmaTask.page.title)
-                .replace('{{currentTime}}', new Date().toISOString())
-                .replace('{{lists}}', lists.join('\n')),
-            },
-          ],
-          llmModel: LLMModelEnum.CLAUDESONNET,
-          model: 'beautify',
-        },
-        { headers: { Authorization: `Bearer ${payload.pat}` } },
-      )
-    ).data;
+    // Run both API requests in parallel
+    const [recurrenceData, beautifyOutput] = await Promise.all([
+      axios
+        .post(
+          `${process.env.BACKEND_HOST}/v1/tasks/ai/recurrence`,
+          {
+            text: sigmaTask.page.title,
+            currentTime: new Date().toISOString(),
+          },
+          { headers: { Authorization: `Bearer ${payload.pat}` } },
+        )
+        .then((response) => response.data),
+
+      axios
+        .post(
+          `${process.env.BACKEND_HOST}/v1/ai_requests`,
+          {
+            messages: [
+              {
+                role: 'user',
+                content: beautifyPrompt
+                  .replace('{{text}}', sigmaTask.page.title)
+                  .replace('{{lists}}', lists.join('\n')),
+              },
+            ],
+            llmModel: LLMModelEnum.CLAUDESONNET,
+            model: 'beautify',
+          },
+          { headers: { Authorization: `Bearer ${payload.pat}` } },
+        )
+        .then((response) => response.data),
+    ]);
 
     const outputMatch = beautifyOutput.match(/<output>(.*?)<\/output>/s);
 
@@ -66,27 +79,28 @@ export const beautifyTask = task({
     try {
       const jsonStr = outputMatch[1].trim();
       const beautifyData = JSON.parse(jsonStr);
-      if (beautifyData) {
+      const outputData = { ...recurrenceData, ...beautifyData };
+      if (outputData) {
         const updateData = {
           // Basic task fields
-          ...(beautifyData.startTime && {
-            startTime: beautifyData.startTime,
+          ...(outputData.startTime && {
+            startTime: outputData.startTime,
           }),
-          ...(beautifyData.endTime && { endTime: beautifyData.endTime }),
-          ...(beautifyData.dueDate && { dueDate: beautifyData.dueDate }),
+          ...(outputData.endTime && { endTime: outputData.endTime }),
+          ...(outputData.dueDate && { dueDate: outputData.dueDate }),
 
           // Recurrence related fields
-          ...(beautifyData.recurrenceRule && {
-            recurrence: [beautifyData.recurrenceRule],
+          ...(outputData.recurrenceRule && {
+            recurrence: outputData.recurrenceRule,
           }),
-          ...(beautifyData.scheduleText && {
-            scheduleText: beautifyData.scheduleText,
+          ...(outputData.scheduleText && {
+            scheduleText: outputData.scheduleText,
           }),
 
           // Page related updates
-          ...(beautifyData.title && { title: beautifyData.title }),
+          ...(outputData.title && { title: outputData.title }),
 
-          ...(beautifyData.listId && { listId: beautifyData.listId }),
+          ...(outputData.listId && { listId: outputData.listId }),
         };
         updatedTask = (
           await axios.post(
