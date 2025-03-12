@@ -197,11 +197,13 @@ export class TaskOccurenceService {
     return await this.prisma.taskOccurrence.update({
       where: { id: taskOccurrenceId },
       data: {
-        startTime: newStartTime,
+        startTime: updateTaskOccurenceDto.startTime
+          ? new Date(updateTaskOccurenceDto.startTime)
+          : taskOccurrence.startTime,
         endTime: updateTaskOccurenceDto.endTime
           ? new Date(updateTaskOccurenceDto.endTime)
           : taskOccurrence.endTime,
-        status: updateTaskOccurenceDto.status,
+        status: updateTaskOccurenceDto.status || taskOccurrence.status,
       },
     });
   }
