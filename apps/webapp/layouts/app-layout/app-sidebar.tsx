@@ -2,6 +2,7 @@ import {
   AddLine,
   Button,
   CalendarLine,
+  cn,
   Project,
   Sidebar,
   SidebarContent,
@@ -137,14 +138,22 @@ export const AppSidebar = observer(
                 <SidebarMenuItem key={list.id}>
                   <Button
                     variant="secondary"
-                    className="flex gap-1 w-fit"
+                    className={cn(
+                      'flex gap-1 w-fit min-w-0 justify-start',
+                      list.name.length > 10 && 'w-full',
+                    )}
                     isActive={
                       firstTab.type === TabViewType.LIST &&
                       firstTab.entity_id === list.id
                     }
                     onClick={() => navigate(TabViewType.LIST, list.id)}
                   >
-                    <Project size={14} /> {list.name ? list.name : 'Untitled'}
+                    <Project size={14} className="shrink-0" />
+                    <div className="inline-flex items-center gap-1 shrink min-w-[0px]">
+                      <div className="truncate">
+                        {list.name ? list.name : 'Untitled'}
+                      </div>
+                    </div>
                     <span className="ml-0.5 text-muted-foreground">
                       {list.count}
                     </span>

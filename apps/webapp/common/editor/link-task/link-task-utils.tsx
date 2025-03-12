@@ -16,9 +16,14 @@ export const TasksCommand = React.forwardRef(
     const getItems = React.useCallback(() => {
       return tasksWithTitle
         .filter((task) => {
-          return task.title
-            ? task.title.toLowerCase().includes(query.toLowerCase())
-            : false;
+          const searchQuery = query.toLowerCase();
+          const taskNumber = `T-${task.number}`.toLowerCase();
+
+          return (
+            task.title?.toLowerCase().includes(searchQuery) ||
+            false ||
+            taskNumber.includes(searchQuery)
+          );
         })
         .splice(0, 10);
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -101,6 +106,9 @@ export const TasksCommand = React.forwardRef(
               key={index}
               onClick={() => onCommandSelect(index)}
             >
+              <span className="text-muted-foreground font-mono shrink-0">
+                T-{item.number}
+              </span>
               {item.title}
             </button>
           ))

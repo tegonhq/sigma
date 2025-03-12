@@ -38,7 +38,7 @@ export const ListPage = observer(({ entity_id }: TabsProps) => {
               <PageTitle value={page?.title} onChange={onChange} />
             </div>
 
-            <div className="flex flex-col gap-0 pt-3">
+            <div className="flex flex-col gap-0">
               {page && <ListPageEditor page={page} list={list} />}
             </div>
           </div>

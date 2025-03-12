@@ -11,19 +11,6 @@ export default ListItem.extend({
       Tab: () => {
         const state = this.editor.state;
         const selection = state.selection;
-        let insideTasksExtension = false;
-
-        // Traverse up the hierarchy to check if any parent node is `tasksExtension`
-        for (let depth = selection.$from.depth; depth > 0; depth--) {
-          const parentNode = selection.$from.node(depth);
-          if (parentNode.type.name === 'tasksExtension') {
-            insideTasksExtension = true;
-          }
-        }
-
-        if (insideTasksExtension) {
-          return true;
-        }
 
         const blockRange = selection.$from.blockRange();
         if (!blockRange) {

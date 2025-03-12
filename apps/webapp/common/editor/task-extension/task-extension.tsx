@@ -74,35 +74,12 @@ export const TaskExtension = ({
           const state = this.editor.state;
           const selection = state.selection;
 
-          let insideTasksExtension = false;
-
-          // Traverse up the hierarchy to check if any parent node is `tasksExtension`
-          for (let depth = selection.$from.depth; depth > 0; depth--) {
-            const parentNode = selection.$from.node(depth);
-            if (parentNode.type.name === 'tasksExtension') {
-              insideTasksExtension = true;
-            }
-          }
           if (selection.$from.parentOffset === 0) {
             return this.editor
               .chain()
               .liftListItem('listItem')
               .setNode('paragraph', {})
               .run();
-          }
-
-          if (insideTasksExtension) {
-            const task = this.editor.schema.nodes.task;
-
-            this.editor
-              .chain()
-              .splitListItem('listItem')
-              .setNode(task, {
-                id: undefined,
-              })
-              .run();
-
-            return true;
           }
 
           // if it's not the top level node, let list handle it
@@ -161,22 +138,6 @@ export const TaskExtension = ({
         'Shift-Tab': () => {
           if (!isTaskContent()) {
             return false;
-          }
-
-          const state = this.editor.state;
-          const selection = state.selection;
-          let insideTasksExtension = false;
-
-          // Traverse up the hierarchy to check if any parent node is `tasksExtension`
-          for (let depth = selection.$from.depth; depth > 0; depth--) {
-            const parentNode = selection.$from.node(depth);
-            if (parentNode.type.name === 'tasksExtension') {
-              insideTasksExtension = true;
-            }
-          }
-
-          if (insideTasksExtension) {
-            return true;
           }
 
           if (this.editor.state.selection.$head.depth < 4) {
