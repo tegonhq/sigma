@@ -1,5 +1,6 @@
 import { Page } from '../page';
 import { Task } from '../task/task.entity';
+import { Workspace } from '../workspace';
 
 export enum TaskOccurrenceStatusEnum {
   Todo = 'Todo',
@@ -28,9 +29,12 @@ export class TaskOccurrence {
   endTime?: Date;
   status?: TaskOccurrenceStatusType;
 
-  task: Task;
+  task?: Task;
   taskId: string;
 
   page?: Page;
   pageId?: string;
+
+  workspace?: Workspace;
+  workspaceId: string;
 }

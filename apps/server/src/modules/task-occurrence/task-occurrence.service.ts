@@ -5,6 +5,7 @@ import {
   GetTaskOccurrenceDTO,
   Page,
   PageTypeEnum,
+  TaskOccurrence,
   UpdateTaskOccurenceDTO,
 } from '@sigma/types';
 import { format } from 'date-fns/format';
@@ -94,7 +95,7 @@ export class TaskOccurenceService {
     createTaskOccurenceData: CreateTaskOccurrenceDTO,
     workspaceId: string,
     modifyPage?: boolean,
-  ) {
+  ): Promise<TaskOccurrence[]> {
     const { taskIds, startTime, endTime } = createTaskOccurenceData;
     let pageId = createTaskOccurenceData.pageId;
 
@@ -106,14 +107,11 @@ export class TaskOccurenceService {
         type: PageTypeEnum.Daily,
         taskIds,
       });
+      pageId = page.id;
     }
 
     if (!page || !pageId) {
       return null;
-    }
-
-    if (!pageId) {
-      pageId = page.id;
     }
 
     // Create each task occurrence in parallel
@@ -140,7 +138,7 @@ export class TaskOccurenceService {
     updateTaskOccurenceDto: UpdateTaskOccurenceDTO,
     workspaceId: string,
     modifyPage?: boolean,
-  ) {
+  ): Promise<TaskOccurrence[]> {
     const deletedTaskOccurences = await this.deleteTaskOccurence(
       updateTaskOccurenceDto.taskOccurrenceIds,
       modifyPage,
@@ -151,19 +149,67 @@ export class TaskOccurenceService {
       .filter((occurrence) => occurrence.task?.id)
       .map((occurrence) => occurrence.task.id);
 
-    // Combine with existing taskIds, ensuring no duplicates
-    updateTaskOccurenceDto.taskIds = [
-      ...new Set([...updateTaskOccurenceDto.taskIds, ...deletedTaskIds]),
-    ];
-
     return await this.createTaskOccurence(
-      updateTaskOccurenceDto,
+      { ...updateTaskOccurenceDto, taskIds: deletedTaskIds },
       workspaceId,
       modifyPage,
     );
   }
 
-  async deleteTaskOccurence(taskOccurrenceIds: string[], modifyPage?: boolean) {
+  async updateSingleTaskOccurrence(
+    taskOccurrenceId: string,
+    updateTaskOccurenceDto: Partial<UpdateTaskOccurenceDTO>,
+    workspaceId: string,
+  ): Promise<TaskOccurrence> {
+    const taskOccurrence = await this.prisma.taskOccurrence.findUnique({
+      where: { id: taskOccurrenceId },
+      include: { task: true, page: true },
+    });
+
+    if (!taskOccurrence || taskOccurrence.workspaceId !== workspaceId) {
+      return null;
+    }
+
+    // Check if start date is changing
+    const newStartTime = updateTaskOccurenceDto.startTime
+      ? new Date(updateTaskOccurenceDto.startTime)
+      : taskOccurrence.startTime;
+
+    const oldStartDate = taskOccurrence.startTime
+      ? format(taskOccurrence.startTime, 'dd-MM-yyyy')
+      : null;
+    const newStartDate = newStartTime
+      ? format(newStartTime, 'dd-MM-yyyy')
+      : null;
+
+    // If date is changing, we need to move the task occurrence to a different page
+    if (oldStartDate !== newStartDate && newStartDate && taskOccurrence.task) {
+      await this.createTaskOccurence(
+        { ...updateTaskOccurenceDto, taskIds: [taskOccurrence.task.id] },
+        workspaceId,
+        true,
+      );
+
+      return (await this.deleteTaskOccurence([taskOccurrenceId], true))[0];
+    }
+
+    // If date isn't changing, just update the times and status
+    return await this.prisma.taskOccurrence.update({
+      where: { id: taskOccurrenceId },
+      data: {
+        startTime: newStartTime,
+        endTime: updateTaskOccurenceDto.endTime
+          ? new Date(updateTaskOccurenceDto.endTime)
+          : taskOccurrence.endTime,
+        status: updateTaskOccurenceDto.status,
+      },
+    });
+  }
+
+  async deleteTaskOccurence(
+    taskOccurrenceIds: string[],
+    modifyPage?: boolean,
+  ): Promise<TaskOccurrence[]> {
     const taskOccurences = await this.prisma.taskOccurrence.findMany({
       where: { id: { in: taskOccurrenceIds } },
       include: { page: true, task: true },

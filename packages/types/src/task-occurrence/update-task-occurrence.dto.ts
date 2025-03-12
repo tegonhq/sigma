@@ -7,9 +7,6 @@ import {
 
 export class UpdateTaskOccurenceDTO {
   @IsArray()
-  taskIds: string[];
-
-  @IsArray()
   taskOccurrenceIds: string[];
 
   @IsString()

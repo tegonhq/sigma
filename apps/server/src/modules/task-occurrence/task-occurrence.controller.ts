@@ -45,6 +45,20 @@ export class TaskOccurenceController {
     return await this.taskOccurenceService.getTaskOccurence(taskOccurrenceId);
   }
 
+  @Post(':taskOccurrenceId')
+  @UseGuards(AuthGuard)
+  async updateSingleTaskOccurrence(
+    @Param('taskOccurrenceId') taskOccurrenceId: string,
+    @Body() updateTaskOccurenceDto: Partial<UpdateTaskOccurenceDTO>,
+    @Workspace() workspaceId: string,
+  ) {
+    return await this.taskOccurenceService.updateSingleTaskOccurrence(
+      taskOccurrenceId,
+      updateTaskOccurenceDto,
+      workspaceId,
+    );
+  }
+
   @Post()
   @UseGuards(AuthGuard)
   async createTaskOccurence(
