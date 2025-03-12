@@ -27,9 +27,12 @@ export const beautifyTask = task({
       },
     });
 
-    const listsData = await prisma.list.findMany({ where: { deleted: null } });
+    const listsData = await prisma.list.findMany({
+      where: { deleted: null },
+      include: { page: true },
+    });
 
-    const lists = listsData.map((list) => `${list.id}_${list.name}`);
+    const lists = listsData.map((list) => `${list.id}_${list.page.title}`);
 
     // Run both API requests in parallel
     const [recurrenceData, beautifyOutput] = await Promise.all([
@@ -102,13 +105,14 @@ export const beautifyTask = task({
 
           ...(outputData.listId && { listId: outputData.listId }),
         };
-        updatedTask = (
-          await axios.post(
-            `${process.env.BACKEND_HOST}/v1/tasks/${payload.taskId}`,
-            updateData,
-            { headers: { Authorization: `Bearer ${payload.pat}` } },
-          )
-        ).data;
+
+        updatedTask = await prisma.task.update({
+          where: { id: payload.taskId },
+          data: updateData,
+          include: {
+            page: true,
+          },
+        });
       }
 
       await prisma.agentWorklog.update({

@@ -3,7 +3,7 @@ export * from './integration-account';
 export * from './integration-definition';
 export * from './oauth';
 export * from './page';
-export * from './task-occurence';
+export * from './task-occurrence';
 export * from './tasks';
 export * from './user';
 export * from './lists';

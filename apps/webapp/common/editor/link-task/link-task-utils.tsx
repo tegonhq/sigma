@@ -31,10 +31,10 @@ export const TasksCommand = React.forwardRef(
       editor
         .chain()
         .deleteRange({
-          from: from - 2,
+          from: from - (query.length + 2), // Delete the /t and the query text
           to: from,
         })
-        .wrapIn('bulletList')
+        .wrapIn('taskList')
         .wrapIn('listItem')
         .insertContent([
           {

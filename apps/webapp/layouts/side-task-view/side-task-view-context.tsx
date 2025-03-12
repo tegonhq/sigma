@@ -7,8 +7,6 @@ import { useApplication } from 'hooks/application';
 
 import { TabViewType } from 'store/application';
 
-import { SideTaskView } from './side-task-view';
-
 type ViewType = 'view_screen' | 'side_view';
 
 export interface ContextType {
@@ -31,13 +29,14 @@ export const TaskViewProvider = observer(
       'view_screen',
     );
 
-    const openTask = (taskId: string, override: boolean = true) => {
+    const openTask = (taskId: string, override: boolean = false) => {
       if (override) {
         updateTabType(0, TabViewType.MY_TASKS, { entityId: taskId });
 
         return;
       }
 
+      console.log(viewType);
       if (viewType === 'side_view') {
         setTaskId(taskId);
       } else {
@@ -53,7 +52,6 @@ export const TaskViewProvider = observer(
       <TaskViewContext.Provider
         value={{ viewType, taskId, openTask, closeTaskView, setViewType }}
       >
-        {taskId && <SideTaskView />}
         {children}
       </TaskViewContext.Provider>
     );

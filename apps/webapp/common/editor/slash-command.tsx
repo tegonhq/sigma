@@ -41,8 +41,8 @@ export const suggestionItems = createSuggestionItems([
         .chain()
         .focus()
         .deleteRange(range)
+        .wrapIn('taskList')
         .wrapIn('listItem')
-        .wrapIn('bulletList')
         .setNode('task', {
           id: undefined,
         })
@@ -176,44 +176,44 @@ export const suggestionItems = createSuggestionItems([
       });
     },
   },
-  {
-    title: 'Add tasks for this day',
-    description: 'Search or create task',
-    searchTerms: ['task'],
-    icon: <IssuesLine size={20} />,
-    command: ({ editor, range }) => {
-      // editor.chain().focus().deleteRange(range).setNode('tasksExtension').run();
+  // {
+  //   title: 'Add tasks for this day',
+  //   description: 'Search or create task',
+  //   searchTerms: ['task'],
+  //   icon: <IssuesLine size={20} />,
+  //   command: ({ editor, range }) => {
+  //     // editor.chain().focus().deleteRange(range).setNode('tasksExtension').run();
 
-      editor
-        .chain()
-        .focus()
-        .deleteRange(range)
-        .insertContentAt(0, [
-          {
-            type: 'tasksExtension',
-            content: [
-              {
-                type: 'bulletList',
-                content: [
-                  {
-                    type: 'listItem',
-                    content: [
-                      {
-                        type: 'task',
-                        attrs: {
-                          id: undefined,
-                        },
-                      },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
-        ])
-        .run();
-    },
-  },
+  //     editor
+  //       .chain()
+  //       .focus()
+  //       .deleteRange(range)
+  //       .insertContentAt(0, [
+  //         {
+  //           type: 'tasksExtension',
+  //           content: [
+  //             {
+  //               type: 'bulletList',
+  //               content: [
+  //                 {
+  //                   type: 'listItem',
+  //                   content: [
+  //                     {
+  //                       type: 'task',
+  //                       attrs: {
+  //                         id: undefined,
+  //                       },
+  //                     },
+  //                   ],
+  //                 },
+  //               ],
+  //             },
+  //           ],
+  //         },
+  //       ])
+  //       .run();
+  //   },
+  // },
 ]);
 
 export const slashCommand = Command.configure({

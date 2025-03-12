@@ -19,12 +19,9 @@ import { TaskListItem } from 'modules/tasks/task-item';
 
 import { ScrollManagedList } from 'common/virtualized-list';
 
-import { useList } from 'hooks/list';
-
 import { useTaskRows } from './utils';
 
 export const PlanList = observer(() => {
-  const list = useList();
   const [collapsedHeaders, setCollapsedHeaders] = React.useState<
     Record<string, boolean>
   >({});

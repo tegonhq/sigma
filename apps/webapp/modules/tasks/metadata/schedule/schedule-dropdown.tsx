@@ -119,6 +119,12 @@ export const ScheduleDropdown = observer(
       );
     };
 
+    const schedule = getSchedule();
+
+    if (!schedule) {
+      return null;
+    }
+
     return (
       <div
         onClick={(e) => {
@@ -126,7 +132,7 @@ export const ScheduleDropdown = observer(
           openDialog(DialogType.SCHEDULE, [task.id]);
         }}
       >
-        {getSchedule()}
+        {schedule}
       </div>
     );
   },

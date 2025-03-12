@@ -153,7 +153,12 @@ export const uploadFileFn = createFileUpload({
 export const createTasksExtension = (editor: EditorT) => {
   const json = editor.getJSON();
 
-  if (json.content[0].type !== 'tasksExtension') {
+  // Check if there's any tasksExtension in the content
+  const hasTasksExtension = json.content?.some(
+    (node) => node.type === 'tasksExtension',
+  );
+
+  if (!hasTasksExtension) {
     editor
       .chain()
       .focus()
@@ -162,7 +167,7 @@ export const createTasksExtension = (editor: EditorT) => {
           type: 'tasksExtension',
           content: [
             {
-              type: 'bulletList',
+              type: 'taskList',
               content: [
                 {
                   type: 'listItem',

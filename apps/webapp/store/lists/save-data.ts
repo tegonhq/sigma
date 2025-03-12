@@ -15,7 +15,7 @@ export async function saveListData(
         createdAt: record.data.createdAt,
         updatedAt: record.data.updatedAt,
 
-        name: record.data.name,
+        pageId: record.data.pageId,
       };
 
       switch (record.action) {

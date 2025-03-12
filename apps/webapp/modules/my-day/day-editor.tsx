@@ -57,7 +57,6 @@ export const EditorWithPage = observer(
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [page.id]);
 
-    console.log([page.id]);
     const initPageSocket = async () => {
       setDoc(undefined);
       setProvider(undefined);

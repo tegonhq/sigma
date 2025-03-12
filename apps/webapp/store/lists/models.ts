@@ -5,5 +5,5 @@ export const List = types.model({
   createdAt: types.string,
   updatedAt: types.string,
 
-  name: types.string,
+  pageId: types.string,
 });

@@ -13,7 +13,7 @@ import type { TaskType } from 'common/types';
 
 import { useApplication } from 'hooks/application';
 
-import { useCreateTaskMutation } from 'services/tasks';
+import { useCreateTaskMutation, useUpdateTaskMutation } from 'services/tasks';
 
 import { useContextStore } from 'store/global-context-provider';
 
@@ -38,6 +38,21 @@ export const TaskComponent = observer((props: any) => {
       });
     },
   });
+
+  const { mutate: updateTask } = useUpdateTaskMutation({
+    onSuccess: (data: TaskType) => {
+      props.updateAttributes({
+        id: data.id,
+      });
+    },
+  });
+
+  const statusChange = (status: string) => {
+    updateTask({
+      taskId: task.id,
+      status,
+    });
+  };
 
   const debounceAddTask = useDebouncedCallback(async (props: CreateTaskDto) => {
     addTaskMutation(props);
@@ -70,17 +85,29 @@ export const TaskComponent = observer((props: any) => {
           className={cn('flex items-start shrink-0 gap-2 py-1')}
           contentEditable={false}
         >
-          <Checkbox className="shrink-0 relative top-[1px] h-[18px] w-[18px]" />
+          <Checkbox
+            className="shrink-0 relative top-[1px] h-[18px] w-[18px]"
+            checked={task?.status === 'Done'}
+            onCheckedChange={(value) => {
+              statusChange(value === true ? 'Done' : 'Todo');
+            }}
+          />
         </div>
 
-        <NodeViewContent as="p" className="text-sm relative top-[2px]" />
+        <NodeViewContent
+          as="p"
+          className={cn(
+            'text-sm relative top-[2px]',
+            task?.status === 'Done' && 'line-through',
+          )}
+        />
         {task && (
           <div
             className={cn('flex items-start shrink-0 gap-2 py-1 !text-sm')}
             contentEditable={false}
           >
-            <TaskInfo task={task} />
             <TaskMetadata taskId={task.id} />
+            <TaskInfo task={task} inEditor />
           </div>
         )}
       </div>

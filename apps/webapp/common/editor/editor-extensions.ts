@@ -17,7 +17,7 @@ import { fileExtension } from './file-extension';
 import { imageExtension } from './image-extension';
 import { LinkTaskExtension } from './link-task';
 import listItem from './list-item';
-import { tasksExtension } from './tasks';
+import taskList from './task-list';
 import trailingNode from './trailing-node';
 
 // create a lowlight instance with all languages loaded
@@ -138,8 +138,8 @@ export const defaultExtensions = [
   imageExtension,
   HighlightExtension,
   listItem,
+  taskList,
   datePageExtension,
-  tasksExtension,
   LinkTaskExtension,
   trailingNode,
   CodeBlockLowlight.configure({

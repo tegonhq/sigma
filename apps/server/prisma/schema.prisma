@@ -178,14 +178,13 @@ model List {
   updatedAt DateTime  @updatedAt
   deleted   DateTime?
 
-  name String
+  page   Page   @relation(fields: [pageId], references: [id])
+  pageId String
 
   workspace   Workspace? @relation(references: [id], fields: [workspaceId])
   workspaceId String?
 
   Task Task[]
-
-  @@unique([name, workspaceId])
 }
 
 model Page {
@@ -215,6 +214,7 @@ model Page {
   task           Task[]
   conversation   Conversation[]
   taskOccurrence TaskOccurrence[]
+  List           List[]
 }
 
 model PersonalAccessToken {
@@ -457,7 +457,6 @@ enum ModelName {
   IntegrationDefinitionV2
   List
   Page
-  Status
   SyncAction
   Task
   TaskOccurrence
@@ -481,6 +480,7 @@ enum AttachmentStatus {
 
 enum PageType {
   Daily
+  List
   Default
 }
 

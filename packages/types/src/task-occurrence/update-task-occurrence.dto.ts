@@ -3,14 +3,14 @@ import { IsString, IsOptional, IsEnum, IsArray } from 'class-validator';
 import {
   TaskOccurrenceStatusEnum,
   TaskOccurrenceStatusType,
-} from './task-occurence.entity';
+} from './task-occurrence.entity';
 
 export class UpdateTaskOccurenceDTO {
   @IsArray()
   taskIds: string[];
 
   @IsArray()
-  taskOccurenceIds: string[];
+  taskOccurrenceIds: string[];
 
   @IsString()
   startTime: string;

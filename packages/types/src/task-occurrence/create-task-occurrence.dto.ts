@@ -1,6 +1,6 @@
 import { IsArray, IsDateString, IsOptional, IsString } from 'class-validator';
 
-export class CreateTaskOccurenceDTO {
+export class CreateTaskOccurrenceDTO {
   @IsArray()
   taskIds: string[];
 

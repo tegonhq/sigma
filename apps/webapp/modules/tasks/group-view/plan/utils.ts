@@ -58,6 +58,7 @@ export const useTaskRows = (collapsedHeader: Record<string, boolean>) => {
 
       const tasks = tasksStore.getTaskWithIds(
         taskOccurrences.map((occurrence) => occurrence.taskId),
+        {},
       );
 
       return tasks;
@@ -73,13 +74,11 @@ export const useTaskRows = (collapsedHeader: Record<string, boolean>) => {
   ) => {
     if (plan === 'Today') {
       const planPages = pages.filter((page) => page.title === dates.today);
-
       return planPages.flatMap((page) => getTasksForPage(page.id));
     }
 
     if (plan === 'Tomorrow') {
       const planPages = pages.filter((page) => page.title === dates.tomorrow);
-
       return planPages.flatMap((page) => getTasksForPage(page.id));
     }
 
@@ -102,6 +101,7 @@ export const useTaskRows = (collapsedHeader: Record<string, boolean>) => {
 
     planCategories.forEach((plan) => {
       const tasks = getTasksForPlan(plan, pages, existingTasks);
+
       const filteredTasks = filterTasksNoHook(tasks, filters, displaySettings);
       existingTasks = [...existingTasks, ...tasks];
 
@@ -134,8 +134,8 @@ export const useTaskRows = (collapsedHeader: Record<string, boolean>) => {
   }, [
     collapsedHeader,
     pagesStore.pages.length,
-    tasksStore.tasks.length,
-    taskOccurrencesStore.taskOccurrences.length,
+    tasksStore.loading,
+    taskOccurrencesStore.loading,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (filters as any).toJSON(),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

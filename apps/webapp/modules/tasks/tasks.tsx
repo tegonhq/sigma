@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite';
 import React from 'react';
 
 import { SCOPES } from 'common/shortcut-scopes';
-import { AILayout } from 'layouts/ai-layout';
+import { RightSideLayout } from 'layouts/right-side-layout';
 
 import { useApplication } from 'hooks/application';
 import { useScope } from 'hooks/use-scope';
@@ -44,10 +44,10 @@ export const Tasks = observer(({ entity_id }: TabsProps) => {
   };
 
   return (
-    <AILayout header={<Header />}>
+    <RightSideLayout header={<Header />}>
       <Filters />
 
       {getComponent()}
-    </AILayout>
+    </RightSideLayout>
   );
 });

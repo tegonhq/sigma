@@ -6,7 +6,7 @@ import { ReactNodeViewRenderer } from '../ReactNodeView';
 export const tasksExtension = Node.create({
   name: 'tasksExtension',
   group: 'block',
-  content: '(paragraph | bulletList | orderedList | listItem | task)*',
+  content: '(paragraph | taskList | listItem | task)*',
   selectable: false,
 
   parseHTML() {

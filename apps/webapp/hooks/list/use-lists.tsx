@@ -7,18 +7,18 @@ import { useContextStore } from 'store/global-context-provider';
 
 export interface ListTypeWithCount extends ListType {
   count: number;
+  name?: string;
 }
 
 export const useLists = (): ListTypeWithCount[] => {
-  const { tasksStore, listsStore } = useContextStore();
+  const { tasksStore, listsStore, pagesStore } = useContextStore();
   const groupedByList = groupBy(tasksStore.getTasks({}), 'listId');
 
-  const lists = listsStore
-    .getListWithIds(Array.from(groupedByList.keys()) as string[])
-    .map((list: ListType) => ({
-      ...list,
-      count: groupedByList.get(list.id).length,
-    }));
+  const lists = listsStore.lists.map((list: ListType) => ({
+    ...list,
+    count: groupedByList.get(list.id)?.length ?? 0,
+    name: pagesStore.getPageWithId(list.pageId)?.title,
+  }));
 
   return sort(lists).desc((list) => list.count);
 };

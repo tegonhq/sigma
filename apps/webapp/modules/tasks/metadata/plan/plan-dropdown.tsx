@@ -31,7 +31,7 @@ export const PlanDropdown = observer(
       taskOccurrencesStore.getTaskOccurrencesForTask(task.id) ?? [];
 
     const sortedOccurrences = sort(occurrences).by([
-      { asc: (u) => u.startTime },
+      { desc: (u) => u.startTime },
     ]);
     const firstOccurrence = sortedOccurrences[0];
 
@@ -41,13 +41,13 @@ export const PlanDropdown = observer(
       const isCurrentWeek = isThisWeek(date);
       const now = new Date();
 
+      if (isToday(date)) {
+        return 'Today';
+      }
+
       // Skip if date is before today
       if (date < new Date(now.setHours(0, 0, 0, 0))) {
         return null;
-      }
-
-      if (isToday(date)) {
-        return 'Today';
       }
 
       if (isTomorrow(date)) {
@@ -95,6 +95,11 @@ export const PlanDropdown = observer(
       );
     };
 
+    const plan = getPlan();
+
+    if (!plan) {
+      return null;
+    }
     return (
       <div
         onClick={(e) => {
@@ -102,7 +107,7 @@ export const PlanDropdown = observer(
           openDialog(DialogType.PLAN, [task.id]);
         }}
       >
-        {getPlan()}
+        {plan}
       </div>
     );
   },

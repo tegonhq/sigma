@@ -1,6 +1,6 @@
 import { IsString } from 'class-validator';
 
-export class CreateListDto {
+export class TaskOccurrenceDto {
   @IsString()
-  name: string;
+  taskOccurrenceId: string;
 }

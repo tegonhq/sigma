@@ -81,6 +81,10 @@ export const DialogViewsProvider = observer(
           case 's':
             setTaskIds(getTasks());
             setDialogOpen(DialogType.SCHEDULE);
+            break;
+          case 'p':
+            setTaskIds(getTasks());
+            setDialogOpen(DialogType.PLAN);
         }
       },
       {

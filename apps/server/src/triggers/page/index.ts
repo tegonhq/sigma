@@ -6,7 +6,7 @@ import { processWorkspacePage } from './workspace-page';
 const prisma = new PrismaClient();
 
 export const schedulePageTaskOccurence = schedules.task({
-  id: 'schedule-page-task-occurence',
+  id: 'schedule-page-task-occurrence',
   cron: '0 0 * * *',
   run: async () => {
     const workspaces = await prisma.workspace.findMany({

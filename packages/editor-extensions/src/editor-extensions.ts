@@ -8,6 +8,7 @@ import Placeholder from '@tiptap/extension-placeholder';
 import Highlight from '@tiptap/extension-highlight';
 import ListKeymap from '@tiptap/extension-list-keymap';
 import { tasksExtension } from './tasks-extension';
+import taskList from './task-list';
 import { getSchema as fetchSchema } from '@tiptap/core';
 
 export const defaultExtensions = [
@@ -20,6 +21,7 @@ export const defaultExtensions = [
   Link,
   Placeholder,
   Highlight,
+  taskList,
   ListKeymap,
 ];
 

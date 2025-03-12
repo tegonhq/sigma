@@ -1,4 +1,5 @@
 import {
+  AddLine,
   Button,
   CalendarLine,
   Project,
@@ -16,9 +17,12 @@ import { useHotkeys } from 'react-hotkeys-hook';
 
 import { getPlatformModifierKey } from 'common/common-utils';
 import { SCOPES } from 'common/shortcut-scopes';
+import type { ListType } from 'common/types';
 
 import { useApplication } from 'hooks/application';
 import { useLists, type ListTypeWithCount } from 'hooks/list';
+
+import { useCreateListMutation } from 'services/lists';
 
 import { TabViewType } from 'store/application';
 
@@ -29,6 +33,11 @@ export const AppSidebar = observer(
     const { updateTabType, closeRightScreen, tabs } = useApplication();
     const firstTab = tabs[0];
     const lists = useLists();
+    const { mutate: createList } = useCreateListMutation({
+      onSuccess: (data: ListType) => {
+        navigate(TabViewType.LIST, data.id);
+      },
+    });
 
     useHotkeys(
       [`${getPlatformModifierKey()}+1`, `${getPlatformModifierKey()}+2`],
@@ -111,29 +120,36 @@ export const AppSidebar = observer(
           </SidebarGroup>
 
           <SidebarGroup>
-            <h3 className="text-sm text-muted-foreground mb-1">Lists</h3>
+            <h3 className="text-sm text-muted-foreground mb-1 flex justify-between items-center">
+              <p>Lists</p>
+              <Button
+                size="xs"
+                variant="ghost"
+                onClick={() => {
+                  createList();
+                }}
+              >
+                <AddLine size={12} />
+              </Button>
+            </h3>
             <SidebarMenu className="gap-0.5">
               {lists.map((list: ListTypeWithCount) => (
-                <>
-                  {list.count > 0 ? (
-                    <SidebarMenuItem key={list.id}>
-                      <Button
-                        variant="secondary"
-                        className="flex gap-1 w-fit"
-                        isActive={
-                          firstTab.type === TabViewType.LIST &&
-                          firstTab.entity_id === list.id
-                        }
-                        onClick={() => navigate(TabViewType.LIST, list.id)}
-                      >
-                        <Project size={14} /> {list.name}
-                        <span className="ml-0.5 text-muted-foreground">
-                          {list.count}
-                        </span>
-                      </Button>
-                    </SidebarMenuItem>
-                  ) : null}
-                </>
+                <SidebarMenuItem key={list.id}>
+                  <Button
+                    variant="secondary"
+                    className="flex gap-1 w-fit"
+                    isActive={
+                      firstTab.type === TabViewType.LIST &&
+                      firstTab.entity_id === list.id
+                    }
+                    onClick={() => navigate(TabViewType.LIST, list.id)}
+                  >
+                    <Project size={14} /> {list.name ? list.name : 'Untitled'}
+                    <span className="ml-0.5 text-muted-foreground">
+                      {list.count}
+                    </span>
+                  </Button>
+                </SidebarMenuItem>
               ))}
             </SidebarMenu>
           </SidebarGroup>

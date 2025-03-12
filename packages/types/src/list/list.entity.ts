@@ -3,6 +3,6 @@ export class List {
   createdAt: Date;
   updatedAt: Date;
 
-  name: string;
+  pageId: string;
   workspaceId: string;
 }

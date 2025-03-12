@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite';
 
 import { AI } from 'modules/ai';
 import { Instructions } from 'modules/instructions';
-import { ListTasks } from 'modules/lists/list-tasks';
+import { ListPage } from 'modules/lists';
 import { MyDay } from 'modules/my-day';
 import { SearchDialog } from 'modules/search';
 import { Tasks } from 'modules/tasks';
@@ -27,7 +27,7 @@ function getComponent(componentType: string, props: any) {
   }
 
   if (componentType === TabViewType.LIST) {
-    return <ListTasks {...props} />;
+    return <ListPage {...props} />;
   }
 
   if (componentType === TabViewType.INSTRUCTIONS) {

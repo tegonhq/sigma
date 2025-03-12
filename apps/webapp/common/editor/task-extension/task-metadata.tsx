@@ -17,7 +17,7 @@ export const TaskMetadata = observer(({ taskId }: { taskId: string }) => {
       contentEditable={false}
     >
       <div
-        className="text-muted-foreground font-mono min-w-[40px] relative bottom-[2px] text-xs"
+        className="text-muted-foreground font-mono relative bottom-[2px] text-xs"
         onClick={() => {
           openTask(task.id);
         }}

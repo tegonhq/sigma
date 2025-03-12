@@ -18,7 +18,9 @@ export function AppLayout({ children }: AppLayoutProps) {
       }}
     >
       <AppSidebar />
-      <SidebarInset>{children}</SidebarInset>
+      <SidebarInset className="bg-transparent md:peer-data-[variant=inset]:shadow-none">
+        {children}
+      </SidebarInset>
     </SidebarProvider>
   );
 }

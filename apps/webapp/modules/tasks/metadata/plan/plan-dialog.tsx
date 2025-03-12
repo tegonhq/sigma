@@ -72,8 +72,8 @@ export const PlanDialog = ({ onClose, taskIds }: PlanDialogProps) => {
   const now = new Date(); // Get current local time
   const localISOString = formatISO(now, { representation: 'complete' });
 
-  const { mutate: updateIssue } = useUpdateTaskMutation({});
-  const { mutate: getTaskSchedule, isLoading } = useGetTaskScheduleMutation({});
+  const { mutate: updateIssue, isLoading } = useUpdateTaskMutation({});
+
   const onCommand = (plan: PlanSample) => {
     if (plan.text === 'Remove plan') {
       taskIds.forEach((taskId) => {

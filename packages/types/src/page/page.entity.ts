@@ -5,11 +5,13 @@ import { Workspace } from '../workspace';
 export enum PageTypeEnum {
   Default = 'Default',
   Daily = 'Daily',
+  List = 'List',
 }
 
 export const PageType = {
   Default: 'Default',
   Daily: 'Daily',
+  List: 'List',
 };
 
 export type PageType = (typeof PageType)[keyof typeof PageType];

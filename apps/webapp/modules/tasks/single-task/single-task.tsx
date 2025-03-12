@@ -6,7 +6,7 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
 
 import { SCOPES } from 'common/shortcut-scopes';
-import { AILayout } from 'layouts/ai-layout';
+import { RightSideLayout } from 'layouts/right-side-layout';
 
 import { useApplication } from 'hooks/application';
 
@@ -25,7 +25,7 @@ interface SingleTaskProps {
   sideView?: boolean;
 }
 
-export const SingleTask = observer(
+export const SingleTaskWithoutLayout = observer(
   ({ taskId, sideView = false }: SingleTaskProps) => {
     const { tasksStore, pagesStore } = useContextStore();
     const { addToSelectedTask, removeSelectedTask } = useApplication();
@@ -67,28 +67,32 @@ export const SingleTask = observer(
       return null;
     }
 
-    // if (task.integrationAccountId) {
-    //   return <SingleTaskIntegration task={task} page={page} onBack={back} />;
-    // }
-
     return (
-      <AILayout header={<Header />}>
-        <ScrollArea className="w-full h-full flex justify-center p-4">
-          <div className="flex h-full justify-center w-full">
-            <div className="grow flex flex-col gap-2 h-full max-w-[97ch]">
-              <div>
-                <PageTitle value={page.title} onChange={onChange} />
-              </div>
+      <ScrollArea className="w-full h-full flex justify-center p-4">
+        <div className="flex h-full justify-center w-full">
+          <div className="grow flex flex-col gap-2 h-full max-w-[97ch]">
+            <div>
+              <PageTitle value={page.title} onChange={onChange} />
+            </div>
 
-              <SingleTaskMetadata task={task} />
+            <SingleTaskMetadata task={task} />
 
-              <div className="flex flex-col gap-0 pt-3">
-                <SingleTaskEditor page={page} task={task} />
-              </div>
+            <div className="flex flex-col gap-0 pt-3">
+              <SingleTaskEditor page={page} task={task} />
             </div>
           </div>
-        </ScrollArea>
-      </AILayout>
+        </div>
+      </ScrollArea>
+    );
+  },
+);
+
+export const SingleTask = observer(
+  ({ taskId, sideView = false }: SingleTaskProps) => {
+    return (
+      <RightSideLayout header={<Header />}>
+        <SingleTaskWithoutLayout taskId={taskId} sideView={sideView} />
+      </RightSideLayout>
     );
   },
 );

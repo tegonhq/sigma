@@ -1,5 +1,5 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
-import { CreateListDto, List } from '@sigma/types';
+import { Controller, Post, UseGuards } from '@nestjs/common';
+import { List } from '@sigma/types';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
 import { Workspace } from 'modules/auth/session.decorator';
@@ -15,10 +15,7 @@ export class ListsController {
 
   @Post()
   @UseGuards(AuthGuard)
-  async createList(
-    @Workspace() workspaceId: string,
-    @Body() listData: CreateListDto,
-  ): Promise<List> {
-    return await this.lists.createList(workspaceId, listData.name);
+  async createList(@Workspace() workspaceId: string): Promise<List> {
+    return await this.lists.createList(workspaceId);
   }
 }

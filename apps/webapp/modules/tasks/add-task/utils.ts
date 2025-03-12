@@ -19,11 +19,21 @@ export const getPropertiesBasedOnDate = (
 export const getCreateTaskPropsOnSource = (
   source: Source,
   date?: Date,
-): { status: string; source: Source; parentId?: string; dueDate?: string } => {
+): {
+  status: string;
+  source: Source;
+  parentId?: string;
+  dueDate?: string;
+  listId?: string;
+} => {
   let createTaskProps;
 
   if (source.type === SourceType.TASK) {
     return { parentId: source.id, source, status: 'Todo' };
+  }
+
+  if (source.type === SourceType.LIST) {
+    return { source, status: 'Todo', listId: source.id };
   }
 
   if (date) {

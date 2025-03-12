@@ -4,7 +4,7 @@ import { task } from '@trigger.dev/sdk/v3';
 import axios from 'axios';
 import { format } from 'date-fns';
 
-import { processTaskOccurrences } from './task-occurence';
+import { processTaskOccurrences } from './task-occurrence';
 
 const prisma = new PrismaClient();
 

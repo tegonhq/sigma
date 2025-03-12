@@ -17,7 +17,7 @@ export * from './summary';
 export * from './sync-action';
 export * from './task';
 export * from './task-external-link';
-export * from './task-occurence';
+export * from './task-occurrence';
 export * from './template';
 export * from './user';
 export * from './webhook';

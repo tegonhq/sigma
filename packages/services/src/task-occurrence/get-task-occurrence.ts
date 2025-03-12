@@ -1,24 +1,24 @@
 import {
-  GetTaskOccurenceDTO,
-  TaskOccurenceDto,
+  GetTaskOccurrenceDTO,
+  TaskOccurrenceDto,
   TaskOccurrence,
 } from '@sigma/types';
 import axios from 'axios';
 
 export async function getTaskOccurenceById(
-  taskOccurenceDto: TaskOccurenceDto,
+  taskOccurenceDto: TaskOccurrenceDto,
 ): Promise<TaskOccurrence> {
   const response = await axios.get(
-    `/api/v1/task-occurence/${taskOccurenceDto.taskOccurenceId}`,
+    `/api/v1/task-occurrence/${taskOccurenceDto.taskOccurrenceId}`,
   );
 
   return response.data;
 }
 
 export async function getTaskOccurences(
-  query: GetTaskOccurenceDTO,
+  query: GetTaskOccurrenceDTO,
 ): Promise<TaskOccurrence[]> {
-  const response = await axios.get('/api/v1/task-occurence/filter', {
+  const response = await axios.get('/api/v1/task-occurrence/filter', {
     params: query,
   });
 

@@ -1,14 +1,14 @@
 import { observer } from 'mobx-react-lite';
 
-import { AILayout } from 'layouts/ai-layout';
+import { RightSideLayout } from 'layouts/right-side-layout';
 
 import { Day } from './day';
 import { Header } from './header';
 
 export const MyDay = observer(() => {
   return (
-    <AILayout header={<Header />}>
+    <RightSideLayout header={<Header />}>
       <Day />
-    </AILayout>
+    </RightSideLayout>
   );
 });

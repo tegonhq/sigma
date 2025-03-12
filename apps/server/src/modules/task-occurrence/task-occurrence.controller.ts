@@ -10,8 +10,8 @@ import {
   Put,
 } from '@nestjs/common';
 import {
-  CreateTaskOccurenceDTO,
-  GetTaskOccurenceDTO,
+  CreateTaskOccurrenceDTO,
+  GetTaskOccurrenceDTO,
   UpdateTaskOccurenceDTO,
 } from '@sigma/types';
 
@@ -22,7 +22,7 @@ import { TaskOccurenceService } from './task-occurrence.service';
 
 @Controller({
   version: '1',
-  path: 'task-occurence',
+  path: 'task-occurrence',
 })
 export class TaskOccurenceController {
   constructor(private taskOccurenceService: TaskOccurenceService) {}
@@ -30,7 +30,7 @@ export class TaskOccurenceController {
   @Get('filter')
   @UseGuards(AuthGuard)
   async getTaskOccurences(
-    @Query() query: GetTaskOccurenceDTO,
+    @Query() query: GetTaskOccurrenceDTO,
     @Workspace() workspaceId: string,
   ) {
     return await this.taskOccurenceService.getTaskOccurences(
@@ -39,16 +39,16 @@ export class TaskOccurenceController {
     );
   }
 
-  @Get(':taskOccurenceId')
+  @Get(':taskOccurrenceId')
   @UseGuards(AuthGuard)
-  async getTaskOccurence(@Param('taskOccurenceId') taskOccurenceId: string) {
-    return await this.taskOccurenceService.getTaskOccurence(taskOccurenceId);
+  async getTaskOccurence(@Param('taskOccurrenceId') taskOccurrenceId: string) {
+    return await this.taskOccurenceService.getTaskOccurence(taskOccurrenceId);
   }
 
   @Post()
   @UseGuards(AuthGuard)
   async createTaskOccurence(
-    @Body() createTaskOccurencesData: CreateTaskOccurenceDTO,
+    @Body() createTaskOccurencesData: CreateTaskOccurrenceDTO,
     @Workspace() workspaceId: string,
   ) {
     return await this.taskOccurenceService.createTaskOccurence(
@@ -73,10 +73,10 @@ export class TaskOccurenceController {
   @Delete()
   @UseGuards(AuthGuard)
   async deleteTaskOccurence(
-    @Body('taskOccurenceIds') taskOccurenceIds: string[],
+    @Body('taskOccurrenceIds') taskOccurrenceIds: string[],
   ) {
     return await this.taskOccurenceService.deleteTaskOccurence(
-      taskOccurenceIds,
+      taskOccurrenceIds,
       true,
     );
   }

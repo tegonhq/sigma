@@ -5,13 +5,14 @@ import { Conversation } from '../conversation';
 import { List } from '../list';
 import { Page } from '../page';
 import { TaskExternalLink } from '../task-external-link';
-import { TaskOccurrence } from '../task-occurence/task-occurence.entity';
+import { TaskOccurrence } from '../task-occurrence/task-occurrence.entity';
 import { Workspace } from '../workspace';
 
 export enum SourceType {
   EXTERNAL = 'external',
   PAGE = 'page',
   TASK = 'task',
+  LIST = 'list',
 }
 
 export class Source {

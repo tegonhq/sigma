@@ -33,11 +33,11 @@ export class TaskHooksService {
   ) {
     // Only trigger when task is CUD from the API without transaction
     if (!tx) {
+      await this.handleBeautifyTask(task, context);
       await Promise.all([
         this.handleTitleChange(task, context),
         this.handleDeleteTask(task, context),
         this.handleScheduleTask(task, context),
-        this.handleBeautifyTask(task, context),
         // this.handleCalendarTask(task, context),
         // this.handleGenerateSummary(task, context),
       ]);

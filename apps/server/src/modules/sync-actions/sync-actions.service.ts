@@ -98,7 +98,7 @@ export default class SyncActionsService {
       orderBy: {
         sequenceId: 'asc',
       },
-      distinct: ['modelId'],
+      distinct: ['modelId', 'modelName', 'workspaceId', 'action'],
     });
 
     return {

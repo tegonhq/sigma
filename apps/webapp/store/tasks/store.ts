@@ -12,9 +12,16 @@ export const TasksStore: IAnyStateTreeNode = types
   .model({
     tasks: types.array(Task),
     workspaceId: types.union(types.string, types.undefined),
+    loading: types.union(types.undefined, types.boolean),
   })
   .actions((self) => {
+    const setLoading = (value: boolean) => {
+      self.loading = value;
+    };
+
     const update = (task: TaskType, id: string) => {
+      self.loading = true;
+
       const indexToUpdate = self.tasks.findIndex((obj) => obj.id === id);
 
       if (indexToUpdate !== -1) {
@@ -28,16 +35,26 @@ export const TasksStore: IAnyStateTreeNode = types
       } else {
         self.tasks.push(task);
       }
+
+      setTimeout(() => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (self as any).setLoading(false);
+      }, 100);
     };
     const deleteById = (id: string) => {
+      self.loading = true;
+
       const indexToDelete = self.tasks.findIndex((obj) => obj.id === id);
 
       if (indexToDelete !== -1) {
         self.tasks.splice(indexToDelete, 1);
       }
+      self.loading = false;
     };
 
     const load = flow(function* () {
+      self.loading = true;
+
       const tasks = yield sigmaDatabase.tasks.toArray();
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -46,9 +63,10 @@ export const TasksStore: IAnyStateTreeNode = types
       );
 
       self.tasks = sortedTasks;
+      self.loading = false;
     });
 
-    return { update, deleteById, load };
+    return { update, deleteById, load, setLoading };
   })
   .views((self) => ({
     getTasks({ listId }: { listId?: string }) {
@@ -90,8 +108,11 @@ export const TasksStore: IAnyStateTreeNode = types
     getTaskWithId(taskId: string) {
       return self.tasks.find((task: TaskType) => task.id === taskId);
     },
-    getTaskWithIds(taskIds: string[]) {
-      return self.tasks.filter((task: TaskType) => taskIds.includes(task.id));
+    getTaskWithIds(taskIds: string[], { listId }: { listId?: string }) {
+      return self.tasks.filter((task: TaskType) => {
+        const isListTask = listId ? task.listId === listId : true;
+        return isListTask && taskIds.includes(task.id);
+      });
     },
     getTaskForPage(pageId: string) {
       return self.tasks.find((task: TaskType) => task.pageId === pageId);
@@ -108,6 +129,7 @@ export const TasksStore: IAnyStateTreeNode = types
 export interface TasksStoreType {
   tasks: TaskType[];
   workspaceId: string;
+  loading: boolean;
 
   update: (task: TaskType, id: string) => Promise<void>;
   deleteById: (id: string) => Promise<void>;
@@ -115,7 +137,7 @@ export interface TasksStoreType {
 
   getTasks: (params: { listId?: string }) => TaskType[];
   getTaskWithId: (taskId: string) => TaskType;
-  getTaskWithIds: (taskIds: string[]) => TaskType[];
+  getTaskWithIds: (taskIds: string[], {}) => TaskType[];
   getTaskForPage: (pageId: string) => TaskType;
   getLastTaskNumber: () => number;
   getCompletedTasksForDate: (date: Date) => TaskType[];

@@ -16,16 +16,13 @@ import { useFilterTasks } from 'modules/tasks/utils';
 
 import { ScrollManagedList } from 'common/virtualized-list';
 
-import { useList } from 'hooks/list';
-
 import { useContextStore } from 'store/global-context-provider';
 
 import { useTaskRows } from './utils';
 
 export const StatusList = observer(() => {
   const { tasksStore } = useContextStore();
-  const list = useList();
-  const tasks = tasksStore.getTasks({ listId: list?.id });
+  const tasks = tasksStore.getTasks({});
   const [collapsedHeaders, setCollapsedHeaders] = React.useState<
     Record<string, boolean>
   >({});

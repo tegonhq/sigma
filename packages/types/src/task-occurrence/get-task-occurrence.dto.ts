@@ -3,10 +3,10 @@ import { IsString, IsOptional, IsEnum, IsDateString } from 'class-validator';
 import {
   TaskOccurrenceStatusEnum,
   TaskOccurrenceStatusType,
-} from './task-occurence.entity';
+} from './task-occurrence.entity';
 import { DateFilterType } from '../common';
 
-export class GetTaskOccurenceDTO {
+export class GetTaskOccurrenceDTO {
   @IsString()
   @IsOptional()
   taskId?: string;

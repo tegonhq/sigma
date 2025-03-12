@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import {
-  CreateTaskOccurenceDTO,
+  CreateTaskOccurrenceDTO,
   DateFilterEnum,
-  GetTaskOccurenceDTO,
+  GetTaskOccurrenceDTO,
   Page,
   PageTypeEnum,
   UpdateTaskOccurenceDTO,
@@ -20,7 +20,7 @@ export class TaskOccurenceService {
     private pagesService: PagesService,
   ) {}
 
-  async getTaskOccurences(workspaceId: string, filters: GetTaskOccurenceDTO) {
+  async getTaskOccurences(workspaceId: string, filters: GetTaskOccurrenceDTO) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const where: any = {
       workspaceId,
@@ -84,14 +84,14 @@ export class TaskOccurenceService {
     });
   }
 
-  async getTaskOccurence(taskOccurenceId: string) {
+  async getTaskOccurence(taskOccurrenceId: string) {
     return await this.prisma.taskOccurrence.findUnique({
-      where: { id: taskOccurenceId },
+      where: { id: taskOccurrenceId },
     });
   }
 
   async createTaskOccurence(
-    createTaskOccurenceData: CreateTaskOccurenceDTO,
+    createTaskOccurenceData: CreateTaskOccurrenceDTO,
     workspaceId: string,
     modifyPage?: boolean,
   ) {
@@ -142,7 +142,7 @@ export class TaskOccurenceService {
     modifyPage?: boolean,
   ) {
     const deletedTaskOccurences = await this.deleteTaskOccurence(
-      updateTaskOccurenceDto.taskOccurenceIds,
+      updateTaskOccurenceDto.taskOccurrenceIds,
       modifyPage,
     );
 
@@ -163,15 +163,15 @@ export class TaskOccurenceService {
     );
   }
 
-  async deleteTaskOccurence(taskOccurenceIds: string[], modifyPage?: boolean) {
+  async deleteTaskOccurence(taskOccurrenceIds: string[], modifyPage?: boolean) {
     const taskOccurences = await this.prisma.taskOccurrence.findMany({
-      where: { id: { in: taskOccurenceIds } },
+      where: { id: { in: taskOccurrenceIds } },
       include: { page: true, task: true },
     });
 
     // Mark all occurrences as deleted
     await this.prisma.taskOccurrence.updateMany({
-      where: { id: { in: taskOccurenceIds } },
+      where: { id: { in: taskOccurrenceIds } },
       data: { deleted: new Date().toISOString() },
     });
 

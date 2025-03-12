@@ -1,13 +1,9 @@
 import ListItem from '@tiptap/extension-list-item';
-import { Node } from '@tiptap/pm/model';
-import { Plugin, PluginKey, TextSelection } from '@tiptap/pm/state';
-import { Decoration, DecorationSet } from '@tiptap/pm/view';
-
-const listItemDecorationKey = new PluginKey('listItemClassDecorator');
+import { TextSelection } from '@tiptap/pm/state';
 
 export default ListItem.extend({
   content:
-    '(paragraph (bulletList|orderedList)*)|(task (bulletList|orderedList)*)',
+    '(paragraph (taskList|bulletList|orderedList)*)|(task (taskList|bulletList|orderedList)*)',
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   addKeyboardShortcuts(this: any) {
     return {
@@ -42,7 +38,7 @@ export default ListItem.extend({
         let chain = this.editor.chain();
         if (
           beforeRange &&
-          ['bulletList', 'orderedList'].includes(
+          ['taskList', 'bulletList', 'orderedList'].includes(
             beforeRange.$from.nodeBefore?.type.name as string,
           ) &&
           this.editor.can().joinBackward()
@@ -84,42 +80,5 @@ export default ListItem.extend({
         });
       },
     };
-  },
-  addProseMirrorPlugins() {
-    return [
-      ...(this.parent?.() ?? []),
-      // adds custom class to list items with tasks in them
-      new Plugin({
-        key: listItemDecorationKey,
-        props: {
-          decorations: (state) => {
-            const decorations: Decoration[] = [];
-            state.doc.nodesBetween(
-              0,
-              Math.max(0, state.doc.nodeSize - 2),
-              (node: Node, pos: number, parent: Node | null, _: number) => {
-                if (!node.type.isBlock) {
-                  return false;
-                }
-
-                if (node.type.name === 'task') {
-                  decorations.push(
-                    Decoration.node(
-                      Math.max(pos - 1, 0),
-                      pos - 1 + parent!.nodeSize,
-                      {
-                        class: 'list-item--task',
-                      },
-                    ),
-                  );
-                  return false;
-                }
-              },
-            );
-            return DecorationSet.create(state.doc, decorations);
-          },
-        },
-      }),
-    ];
   },
 });

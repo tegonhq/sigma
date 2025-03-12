@@ -100,6 +100,7 @@ interface EditorProps {
 
   readonly children: React.ReactNode;
   extensions?: Array<Mark<any, any> | Node<any, any> | Extension<any, any>>;
+  hasTaskExtension?: boolean;
 }
 
 export const Editor = ({
@@ -142,8 +143,6 @@ export const Editor = ({
   const debouncedUpdates = useDebouncedCallback(
     async (editor: EditorInstance) => {
       const json = editor.getJSON();
-
-      createTasksExtension(editor);
 
       onChange &&
         onChange(

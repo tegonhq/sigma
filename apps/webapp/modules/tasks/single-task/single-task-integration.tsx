@@ -4,7 +4,7 @@ import React from 'react';
 
 import { useRemoteComponent } from 'common/RemoteComponent';
 import type { PageType, TaskType } from 'common/types';
-import { AILayout } from 'layouts/ai-layout';
+import { RightSideLayout } from 'layouts/right-side-layout';
 
 import { useIntegrationFromAccount } from 'hooks/integration';
 import { useIPC } from 'hooks/ipc';
@@ -50,19 +50,21 @@ export const SingleTaskIntegration = observer(
     }
 
     return (
-      <AILayout header={<Header />}>
+      <RightSideLayout header={<Header />}>
         <ScrollArea className="w-full h-full flex justify-center p-4">
           <div className="flex h-full justify-center w-full">
             <div className="grow flex flex-col gap-2 h-full max-w-[97ch]">
               <Component
                 task={task}
                 page={page}
-                pageNode={<SingleTaskEditor page={page} autoFocus />}
+                pageNode={
+                  <SingleTaskEditor task={task} page={page} autoFocus />
+                }
               />
             </div>
           </div>
         </ScrollArea>
-      </AILayout>
+      </RightSideLayout>
     );
   },
 );

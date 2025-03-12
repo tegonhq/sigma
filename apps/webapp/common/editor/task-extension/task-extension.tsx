@@ -205,7 +205,7 @@ export const TaskExtension = ({
             const task = state.schema.nodes.task;
 
             chain()
-              .wrapIn('bulletList')
+              .wrapIn('taskList')
               .wrapIn('listItem')
               .setNode(task, {
                 id: undefined,

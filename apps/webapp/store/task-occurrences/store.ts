@@ -11,9 +11,12 @@ export const TaskOccurrencesStore: IAnyStateTreeNode = types
     taskOccurrences: types.map(TaskOccurrenceArray),
     taskOccurrencesWithPages: types.map(TaskOccurrenceArray),
     workspaceId: types.union(types.string, types.undefined),
+    loading: types.union(types.undefined, types.boolean),
   })
   .actions((self) => {
     const update = (taskOccurrence: TaskOccurrenceType, id: string) => {
+      self.loading = true;
+
       const taskId = taskOccurrence.taskId;
       if (!self.taskOccurrences.has(taskId)) {
         self.taskOccurrences.set(taskId, TaskOccurrenceArray.create([]));
@@ -58,9 +61,13 @@ export const TaskOccurrencesStore: IAnyStateTreeNode = types
       } else {
         taskOccurrencesByPageArray.push(taskOccurrence);
       }
+
+      self.loading = false;
     };
     const deleteById = (id: string) => {
-      // Iterate through all task occurences arrays in the map
+      self.loading = true;
+
+      // Iterate through all task occurrences arrays in the map
       for (const [
         taskId,
         taskOccurrencesArray,
@@ -97,15 +104,20 @@ export const TaskOccurrencesStore: IAnyStateTreeNode = types
           break; // Exit loop once we've found and deleted the task occurrence
         }
       }
+
+      self.loading = false;
     };
 
     const load = flow(function* () {
+      self.loading = true;
+
       const taskOccurrences = yield sigmaDatabase.taskOccurrences.toArray();
 
       taskOccurrences.forEach((taskOccurrence: TaskOccurrenceType) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (self as any).update(taskOccurrence, taskOccurrence.id);
       });
+      self.loading = false;
     });
 
     return { update, deleteById, load };
@@ -123,6 +135,7 @@ export interface TaskOccurrencesStoreType {
   taskOccurrences: Record<string, TaskOccurrenceType[]>;
   taskOccurrencesWithPages: Record<string, TaskOccurrenceType[]>;
   workspaceId: string;
+  loading: boolean;
 
   update: (task: TaskOccurrenceType, id: string) => Promise<void>;
   deleteById: (id: string) => Promise<void>;
