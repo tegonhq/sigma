@@ -10,8 +10,9 @@ import { PlanDropdown, PlanDropdownVariant } from './metadata/plan';
 
 export const TaskInfo = observer(
   ({ task, inEditor = false }: { task: TaskType; inEditor?: boolean }) => {
-    const { listsStore } = useContextStore();
+    const { listsStore, pagesStore } = useContextStore();
     const list = listsStore.getListWithId(task.listId);
+    const page = pagesStore.getPageWithId(list?.pageId);
 
     return (
       <div className="flex flex-col w-fit items-center">
@@ -26,16 +27,15 @@ export const TaskInfo = observer(
               variant="secondary"
               className="flex items-center gap-1 shrink min-w-[0px]"
             >
-              <Project size={12} /> {list?.name}
+              <Project size={12} /> {page?.title}
             </Badge>
           )}
           <ScheduleDropdown
             task={task}
             variant={ScheduleDropdownVariant.SHORT}
           />
-          {!inEditor && (
-            <PlanDropdown task={task} variant={PlanDropdownVariant.SHORT} />
-          )}
+
+          <PlanDropdown task={task} variant={PlanDropdownVariant.SHORT} />
         </div>
       </div>
     );

@@ -10,6 +10,8 @@ import { MoveDiagonal } from 'lucide-react';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 
+import { TaskViewContext } from 'layouts/side-task-view';
+
 import { useContextStore } from 'store/global-context-provider';
 
 interface RightSideHeaderProps {
@@ -20,7 +22,7 @@ interface RightSideHeaderProps {
 export const RightSideHeader = observer(
   ({ taskId, onClose }: RightSideHeaderProps) => {
     const { tasksStore, pagesStore } = useContextStore();
-
+    const { openTask, closeTaskView } = React.useContext(TaskViewContext);
     const task = tasksStore.getTaskWithId(taskId);
     const page = pagesStore.getPageWithId(task?.pageId);
 
@@ -33,7 +35,14 @@ export const RightSideHeader = observer(
             </Button>
 
             {taskId && (
-              <Button size="sm" variant="ghost">
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => {
+                  closeTaskView();
+                  openTask(task.id, true);
+                }}
+              >
                 <MoveDiagonal size={14} />
               </Button>
             )}

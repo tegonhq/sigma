@@ -140,7 +140,7 @@ export const AppSidebar = observer(
                     variant="secondary"
                     className={cn(
                       'flex gap-1 w-fit min-w-0 justify-start',
-                      list.name.length > 10 && 'w-full',
+                      list.name?.length > 10 && 'w-full',
                     )}
                     isActive={
                       firstTab.type === TabViewType.LIST &&

@@ -30,9 +30,13 @@ export const PlanDropdown = observer(
     const occurrences =
       taskOccurrencesStore.getTaskOccurrencesForTask(task.id) ?? [];
 
-    const sortedOccurrences = sort(occurrences).by([
-      { desc: (u) => u.startTime },
-    ]);
+    const sortedOccurrences = sort(
+      occurrences.filter((occ) => {
+        const date = new Date(occ.startTime);
+        const now = new Date();
+        return date >= new Date(now.setHours(0, 0, 0, 0));
+      }),
+    ).by([{ asc: (u) => u.startTime }]);
     const firstOccurrence = sortedOccurrences[0];
 
     const formatStartTime = (startTime: string) => {

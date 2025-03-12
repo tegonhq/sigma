@@ -25,7 +25,8 @@ export const useTaskRows = (collapsedHeader: Record<string, boolean>) => {
   const dates = React.useMemo(() => {
     const today = new Date();
     const tomorrow = format(endOfTomorrow(), 'dd-MM-yyyy');
-    const weekDates = Array.from({ length: 7 }, (_, index) =>
+    const daysUntilEndOfWeek = 7 - today.getDay();
+    const weekDates = Array.from({ length: daysUntilEndOfWeek }, (_, index) =>
       format(addDays(today, index), 'dd-MM-yyyy'),
     );
 
@@ -33,7 +34,9 @@ export const useTaskRows = (collapsedHeader: Record<string, boolean>) => {
       today: format(today, 'dd-MM-yyyy'),
       tomorrow,
       weekDates,
-      restOfWeekDates: weekDates.slice(2),
+      restOfWeekDates: weekDates.filter(
+        (date) => date !== format(today, 'dd-MM-yyyy') && date !== tomorrow,
+      ),
     };
   }, []);
 

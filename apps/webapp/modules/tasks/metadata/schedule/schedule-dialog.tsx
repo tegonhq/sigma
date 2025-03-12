@@ -149,7 +149,7 @@ export const ScheduleDialog = ({ onClose, taskIds }: ScheduleDialogProps) => {
                 taskId,
                 dueDate: data.dueDate ? data.dueDate : null,
                 status: 'Todo',
-                recurrence: data.recurrenceRule ? [data.recurrenceRule] : [],
+                recurrence: data.recurrenceRule ? data.recurrenceRule : [],
                 scheduleText: data.scheduleText ? data.scheduleText : null,
                 startTime: data.startTime ? data.startTime : null,
                 endTime: data.endTime ? data.endTime : null,

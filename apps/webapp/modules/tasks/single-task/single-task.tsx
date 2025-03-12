@@ -28,7 +28,6 @@ interface SingleTaskProps {
 export const SingleTaskWithoutLayout = observer(
   ({ taskId, sideView = false }: SingleTaskProps) => {
     const { tasksStore, pagesStore } = useContextStore();
-    const { addToSelectedTask, removeSelectedTask } = useApplication();
     const task = tasksStore.getTaskWithId(taskId);
     const page = pagesStore.getPageWithId(task?.pageId);
     const { back } = useRouter();
@@ -44,17 +43,6 @@ export const SingleTaskWithoutLayout = observer(
         enabled: !sideView,
       },
     );
-
-    React.useEffect(() => {
-      if (task) {
-        addToSelectedTask(task.id, true);
-      }
-
-      return () => {
-        removeSelectedTask(task?.id);
-      };
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [task]);
 
     const onChange = (title: string) => {
       updateTask({

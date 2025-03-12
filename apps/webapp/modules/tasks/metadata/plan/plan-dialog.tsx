@@ -8,14 +8,14 @@ import {
   CommandList,
   Loader,
 } from '@tegonhq/ui';
-import { endOfDay, addDays, endOfWeek, formatISO } from 'date-fns';
+import { endOfDay, addDays, endOfWeek, startOfDay } from 'date-fns';
+import { sort } from 'fast-sort';
 import { Clock } from 'lucide-react';
 import React from 'react';
 
-import {
-  useGetTaskScheduleMutation,
-  useUpdateTaskMutation,
-} from 'services/tasks';
+import { useUpdateTaskOccurrenceMutation } from 'services/task-occurrence';
+
+import { useContextStore } from 'store/global-context-provider';
 
 interface PlanDialogProps {
   taskIds?: string[];
@@ -66,66 +66,69 @@ const planSamples: PlanSample[] = [
   },
 ];
 
+const useTaskOccurrenceIds = (taskIds: string[]) => {
+  const { taskOccurrencesStore } = useContextStore();
+  console.log(taskIds);
+  return React.useMemo(() => {
+    const taskOccurrenceToTask: Record<string, string> = {};
+
+    taskIds.forEach((taskId: string) => {
+      const occurrences =
+        taskOccurrencesStore.getTaskOccurrencesForTask(taskId) ?? [];
+
+      const sortedOccurrences = sort(
+        occurrences.filter((occ) => {
+          const date = new Date(occ.startTime);
+          const now = new Date();
+          return date >= new Date(now.setHours(0, 0, 0, 0));
+        }),
+      ).by([{ asc: (u) => u.startTime }]);
+      const firstOccurrence = sortedOccurrences[0];
+
+      if (firstOccurrence?.id) {
+        taskOccurrenceToTask[taskId] = firstOccurrence.id;
+      }
+    });
+
+    return taskOccurrenceToTask;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [taskIds, taskOccurrencesStore.loading]);
+};
+
 export const PlanDialog = ({ onClose, taskIds }: PlanDialogProps) => {
   const [value, setValue] = React.useState('');
+  const taskOccurrenceToTask = useTaskOccurrenceIds(taskIds);
 
-  const now = new Date(); // Get current local time
-  const localISOString = formatISO(now, { representation: 'complete' });
-
-  const { mutate: updateIssue, isLoading } = useUpdateTaskMutation({});
+  console.log(taskOccurrenceToTask);
+  const { mutate: updateTaskOccurrence, isLoading } =
+    useUpdateTaskOccurrenceMutation({});
 
   const onCommand = (plan: PlanSample) => {
     if (plan.text === 'Remove plan') {
-      taskIds.forEach((taskId) => {
-        updateIssue({
-          taskId,
-          dueDate: null,
-          recurrence: [],
-          scheduleText: null,
-          startTime: null,
-          endTime: null,
-        });
-      });
+      // Remove plan
 
       onClose();
     }
 
-    if (schedule.schedule) {
-      taskIds.forEach((taskId) => {
-        updateIssue({
-          taskId,
-          dueDate: schedule.schedule.dueDate,
-          recurrence: [],
-          scheduleText: null,
-          startTime: null,
-          endTime: null,
-        });
-      });
-      onClose();
-    } else {
-      getTaskSchedule(
-        {
-          text: schedule.text,
-          currentTime: localISOString,
-        },
-        {
-          onSuccess: (data) => {
-            taskIds.forEach((taskId) => {
-              updateIssue({
-                taskId,
-                dueDate: data.dueDate ? data.dueDate : null,
-                status: 'Todo',
-                recurrence: data.recurrenceRule ? [data.recurrenceRule] : [],
-                scheduleText: data.scheduleText ? data.scheduleText : null,
-                startTime: data.startTime ? data.startTime : null,
-                endTime: data.endTime ? data.endTime : null,
-              });
-            });
+    if (plan.plan) {
+      const finalTaskIds: string[] = [];
+      const taskOccurrenceIds: string[] = [];
 
-            onClose();
-          },
-        },
-      );
+      taskIds.forEach((taskId: string) => {
+        console.log(taskOccurrenceToTask[taskId], taskId);
+        if (taskOccurrenceToTask[taskId]) {
+          taskOccurrenceIds.push(taskOccurrenceToTask[taskId]);
+        } else {
+          finalTaskIds.push(taskId);
+        }
+      });
+
+      updateTaskOccurrence({
+        taskOccurrenceIds,
+        taskIds: finalTaskIds,
+        startTime: startOfDay(plan.plan).toISOString(),
+        endTime: plan.plan,
+      });
     }
   };
 
