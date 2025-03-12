@@ -46,7 +46,15 @@ export class TaskHooksService {
 
   async handleDeleteTask(task: Task, context: TaskHookContext) {
     if (context.action === 'delete') {
-      if (!task.recurrence?.length && !task.startTime && !task.endTime) {
+      const taskOccurences = await this.prisma.taskOccurrence.findMany({
+        where: { taskId: task.id },
+      });
+      if (taskOccurences.length) {
+        await this.prisma.taskOccurrence.updateMany({
+          where: { taskId: task.id },
+          data: { deleted: new Date().toISOString() },
+        });
+
         const referencingPages = await this.prisma.page.findMany({
           where: {
             outlinks: {

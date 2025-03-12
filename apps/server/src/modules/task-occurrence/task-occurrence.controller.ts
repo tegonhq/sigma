@@ -73,7 +73,7 @@ export class TaskOccurenceController {
   @Delete()
   @UseGuards(AuthGuard)
   async deleteTaskOccurence(
-    @Body('taskOccurrenceIds') taskOccurrenceIds: string[],
+    @Query('taskOccurrenceIds') taskOccurrenceIds: string[],
   ) {
     return await this.taskOccurenceService.deleteTaskOccurence(
       taskOccurrenceIds,

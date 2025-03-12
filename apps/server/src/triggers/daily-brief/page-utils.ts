@@ -1,33 +1,23 @@
 import { Page, Task } from '@sigma/types';
 
-export function getTaskExtensionInPage(page: Page) {
+export function getTaskListsInPage(page: Page) {
   const description = page.description;
 
   try {
     const descriptionJson =
       typeof description === 'string' ? JSON.parse(description) : description;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let tasksExtension: any;
-
-    if (descriptionJson) {
-      // Find the tasksExtension node in the document content
-      tasksExtension = descriptionJson.content?.find(
+    // Find all taskList nodes in the document content
+    const taskLists =
+      descriptionJson.content?.filter(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (node: any) => node.type === 'tasksExtension',
-      );
-    }
-    if (!tasksExtension) {
-      tasksExtension = {
-        type: 'tasksExtension',
-        content: [],
-      };
-    }
+        (node: any) => node.type === 'taskList',
+      ) || [];
 
-    return tasksExtension;
+    return taskLists;
   } catch (error) {
     console.error('Error parsing page description:', error);
-    return null;
+    return [];
   }
 }
 
@@ -48,24 +38,6 @@ export function getCurrentTaskIds(tiptapJson: any): string[] {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       node.content.forEach((child: any) => findTaskIds(child));
     }
-
-    // For tasksExtension, check all bulletLists
-    if (node.type === 'tasksExtension') {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      node.content?.forEach((child: any) => {
-        if (child.type === 'bulletList') {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          child.content?.forEach((listItem: any) => {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            listItem.content?.forEach((taskNode: any) => {
-              if (taskNode.type === 'task' && taskNode.attrs?.id) {
-                taskIds.push(taskNode.attrs.id);
-              }
-            });
-          });
-        }
-      });
-    }
   };
 
   // Start traversing from the root
@@ -78,10 +50,10 @@ export function getCurrentTaskIds(tiptapJson: any): string[] {
   return [...new Set(taskIds)];
 }
 
-export function updateTaskExtensionInPage(
+export function updateTaskListsInPage(
   page: Page,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  taskExtensionJson: Record<string, any>,
+  updatedTaskLists: Array<Record<string, any>>,
 ) {
   try {
     const descriptionJson =
@@ -89,111 +61,88 @@ export function updateTaskExtensionInPage(
         ? JSON.parse(page.description)
         : page.description || { type: 'doc', content: [] };
 
-    // Find the index of existing tasksExtension node
-    const taskExtensionIndex = descriptionJson.content?.findIndex(
+    // Find all taskList nodes and their indices
+    const taskListIndices: number[] = [];
+    descriptionJson.content?.forEach(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (node: any) => node.type === 'tasksExtension',
+      (node: any, index: number) => {
+        if (node.type === 'taskList') {
+          taskListIndices.push(index);
+        }
+      },
     );
 
-    // If tasksExtension exists, update it
-    if (taskExtensionIndex !== -1) {
-      descriptionJson.content[taskExtensionIndex] = taskExtensionJson;
-    } else {
-      // If it doesn't exist, add it at the beginning
+    // If we have existing task lists and updated task lists
+    if (taskListIndices.length > 0 && updatedTaskLists.length > 0) {
+      // Update the first task list
+      const [firstTaskListIndex] = taskListIndices;
+      const updatedTaskList = updatedTaskLists[0];
+      descriptionJson.content[firstTaskListIndex] = updatedTaskList;
+    } else if (updatedTaskLists.length > 0) {
+      // No existing task lists, but we have updated ones to add
+      // Add them at the beginning of the content
       descriptionJson.content = [
-        taskExtensionJson,
-        ...(descriptionJson.content || []),
+        ...updatedTaskLists,
+        ...descriptionJson.content,
       ];
     }
+    // If no updated task lists, we don't need to change anything
 
     return JSON.stringify(descriptionJson);
   } catch (error) {
-    console.error('Error updating taskExtension in page:', error);
+    console.error('Error updating taskLists in page:', error);
     return page.description;
   }
 }
-
-export function upsertTaskInExtension(
+export function upsertTasksInPage(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  taskExtensions: Record<string, any>,
+  taskLists: Array<Record<string, any>>,
   tasks: Task[],
 ) {
-  // Initialize content array if it doesn't exist
-  if (!taskExtensions.content) {
-    taskExtensions.content = [];
-  }
-
   // Create a Set of existing task IDs for O(1) lookup
-  const existingTaskIds = new Set(getCurrentTaskIds(taskExtensions));
+  const existingTaskIds = new Set(getCurrentTaskIds({ content: taskLists }));
 
   // Add only new tasks
   const newTasks = tasks.filter((task: Task) => !existingTaskIds.has(task.id));
 
-  if (newTasks.length > 0) {
-    const newTaskNodes = newTasks.map((task: Task) => ({
-      type: 'bulletList',
-      content: [
-        {
-          type: 'listItem',
-          content: [
-            {
-              type: 'task',
-              attrs: {
-                id: task.id,
-              },
-              content: [
-                {
-                  type: 'text',
-                  text: task.page.title,
-                },
-              ],
-            },
-          ],
+  if (newTasks.length === 0) {
+    return taskLists;
+  }
+
+  // Create new task list items
+  const newTaskListItems = newTasks.map((task: Task) => ({
+    type: 'listItem',
+    content: [
+      {
+        type: 'task',
+        attrs: {
+          id: task.id,
         },
-      ],
-    }));
+        content: [
+          {
+            type: 'text',
+            text: task.page.title,
+          },
+        ],
+      },
+    ],
+  }));
 
-    taskExtensions.content.push(...newTaskNodes);
-  }
-
-  return taskExtensions;
-}
-
-export function removeTaskInExtension(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  taskExtensions: Record<string, any>,
-  taskId: string,
-) {
-  if (!taskExtensions.content) {
-    return taskExtensions;
-  }
-
-  // Filter bulletLists and their content
-  taskExtensions.content = taskExtensions.content
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    .map((node: any) => {
-      if (node.type === 'bulletList') {
-        return {
-          ...node,
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          content: node.content?.filter((listItem: any) => {
-            const taskNode = listItem.content?.[0];
-            return !(
-              taskNode?.type === 'task' && taskNode.attrs?.id === taskId
-            );
-          }),
-        };
-      }
-      return node;
-    })
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    .filter((node: any) => {
-      // Remove empty bulletLists
-      if (node.type === 'bulletList') {
-        return node.content && node.content.length > 0;
-      }
-      return true;
+  // If there's an existing taskList, add to it, otherwise create a new one
+  if (taskLists.length > 0) {
+    // Add to the first taskList
+    taskLists[0].content = [
+      ...(taskLists[0].content || []),
+      ...newTaskListItems,
+    ];
+  } else {
+    // Create a new taskList
+    taskLists.push({
+      type: 'taskList',
+      attrs: { class: 'task-list' },
+      content: newTaskListItems,
     });
+  }
 
-  return taskExtensions;
+  return taskLists;
 }

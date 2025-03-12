@@ -25,10 +25,10 @@ import { TransactionClient } from 'modules/tasks/tasks.utils';
 
 import {
   getOutlinksTaskId,
-  getTaskExtensionInPage,
-  removeTaskInExtension,
-  updateTaskExtensionInPage,
-  upsertTaskInExtension,
+  getTaskListsInPage,
+  removeTasksFromPage,
+  updateTaskListsInPage,
+  upsertTasksInPage,
 } from './pages.utils';
 
 @Injectable()
@@ -103,16 +103,15 @@ export class PagesService {
         where: { id: { in: taskIds } },
         include: { page: true },
       });
-      let tasksExtensionContent = getTaskExtensionInPage(page);
-      tasksExtensionContent = upsertTaskInExtension(
-        tasksExtensionContent,
-        tasks,
-      );
 
-      const description = updateTaskExtensionInPage(
-        page,
-        tasksExtensionContent,
-      );
+      // Get existing task lists
+      const taskLists = getTaskListsInPage(page);
+
+      // Update task lists with new tasks
+      const updatedTaskLists = upsertTasksInPage(taskLists, tasks);
+
+      // Update the page description with the updated task lists
+      const description = updateTaskListsInPage(page, updatedTaskLists);
 
       // Update the page with new description in the same transaction
       await this.contentService.updateContentForDocument(
@@ -280,16 +279,8 @@ export class PagesService {
       where: { title, deleted: null },
     });
 
-    let tasksExtensionContent = getTaskExtensionInPage(page);
-    tasksExtensionContent = removeTaskInExtension(
-      tasksExtensionContent,
-      taskIds,
-    );
-
-    const pageDescription = updateTaskExtensionInPage(
-      page,
-      tasksExtensionContent,
-    );
+    // Remove specified tasks
+    const pageDescription = removeTasksFromPage(page, taskIds);
 
     await this.contentService.updateContentForDocument(
       page.id,
@@ -308,28 +299,20 @@ export class PagesService {
     const pageOutlinks = page.outlinks ? page.outlinks : [];
 
     // Extract taskIds from current outlinks
-    const currentOutlinkTaskIds = getOutlinksTaskId(pageOutlinks);
-    const currentTaskExtensionIds = getOutlinksTaskId(pageOutlinks, true);
+    const currentTaskIds = getOutlinksTaskId(pageOutlinks);
 
     const outlinks: Outlink[] = [];
     const newOutlinkTaskIds: string[] = [];
-    const taskExtensionOutlinkIndices = new Set<number>();
+    const allTaskIds = new Set<string>();
 
-    // Single-pass traversal to collect outlinks and mark those in taskExtension
+    // Single-pass traversal to collect outlinks and all task IDs
     const traverseDocument = (
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       node: any,
       path: number[] = [],
-      isInTaskExtension = false,
     ) => {
-      // Check if we're entering a taskExtension node
-      const inTaskExtension =
-        isInTaskExtension || node.type === 'tasksExtension';
-
       // If this is a task node, create an outlink
       if (node.type === 'task' && node.attrs?.id) {
-        const outlinkIndex = outlinks.length;
-
         // Add the outlink
         outlinks.push({
           type: OutlinkType.Task,
@@ -337,22 +320,18 @@ export class PagesService {
           position: {
             path: [...path],
           },
-          // Only set taskExtension:true if this task is directly inside a taskExtension node
-          taskExtension: inTaskExtension,
         });
         newOutlinkTaskIds.push(node.attrs.id);
 
-        // If in taskExtension, mark this outlink's index
-        if (inTaskExtension) {
-          taskExtensionOutlinkIndices.add(outlinkIndex);
-        }
+        // Add all task IDs to the set regardless of location
+        allTaskIds.add(node.attrs.id);
       }
 
       // Recursively process content
       if (node.content && Array.isArray(node.content)) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         node.content.forEach((child: any, index: number) => {
-          traverseDocument(child, [...path, index], inTaskExtension);
+          traverseDocument(child, [...path, index]);
         });
       }
     };
@@ -362,20 +341,13 @@ export class PagesService {
       // Single pass traversal
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       tiptapJson.content.forEach((node: any, index: number) => {
-        traverseDocument(node, [index], false);
+        traverseDocument(node, [index]);
       });
     }
 
-    // Extract task IDs from taskExtension outlinks
-    const taskExtensionTaskIds = new Set(
-      Array.from(taskExtensionOutlinkIndices).map(
-        (index) => outlinks[index].id,
-      ),
-    );
-
     const taskIdsAreEqual =
-      currentOutlinkTaskIds.length === newOutlinkTaskIds.length &&
-      currentOutlinkTaskIds.every((id) => newOutlinkTaskIds.includes(id));
+      currentTaskIds.length === newOutlinkTaskIds.length &&
+      currentTaskIds.every((id) => newOutlinkTaskIds.includes(id));
 
     if (!taskIdsAreEqual) {
       // Update the page with the new outlinks
@@ -387,16 +359,16 @@ export class PagesService {
         },
       });
 
+      // Compare current task IDs with task extension task IDs
+      const removedTaskIds = currentTaskIds.filter(
+        (taskId) => !allTaskIds.has(taskId),
+      );
+
+      const addedTaskIds = Array.from(allTaskIds).filter(
+        (taskId) => !currentTaskIds.includes(taskId),
+      );
+
       if (page.type === 'Daily') {
-        // Compare current task IDs with task extension task IDs
-        const removedTaskIds = currentTaskExtensionIds.filter(
-          (taskId) => !taskExtensionTaskIds.has(taskId),
-        );
-
-        const addedTaskIds = Array.from(taskExtensionTaskIds).filter(
-          (taskId) => !currentTaskExtensionIds.includes(taskId),
-        );
-
         if (removedTaskIds.length) {
           await this.prisma.taskOccurrence.updateMany({
             where: {
@@ -440,10 +412,92 @@ export class PagesService {
             ),
           );
         }
+      } else if (page.type === 'List') {
+        const list = await this.prisma.list.findFirst({
+          where: { pageId: page.id, deleted: null },
+        });
+        if (addedTaskIds.length) {
+          await this.prisma.task.updateMany({
+            where: {
+              id: { in: addedTaskIds },
+              deleted: null,
+            },
+            data: {
+              listId: list.id,
+            },
+          });
+        }
+
+        if (removedTaskIds.length) {
+          const tasksToCheck = await this.prisma.task.findMany({
+            where: { id: { in: removedTaskIds } },
+            select: { id: true, source: true },
+          });
+
+          // Filter tasks that need to be deleted
+          const tasksToDelete = tasksToCheck
+            .filter(
+              (task) =>
+                task.source &&
+                typeof task.source === 'object' &&
+                'id' in task.source &&
+                task.source.id === list.id,
+            )
+            .map((task) => task.id);
+
+          // Delete in a single batch operation
+          if (tasksToDelete.length) {
+            await this.prisma.task.updateMany({
+              where: { id: { in: tasksToDelete } },
+              data: { deleted: new Date().toISOString() },
+            });
+          }
+        }
+      } else if (page.type === 'Default') {
+        const pageTask = await this.prisma.task.findFirst({
+          where: { pageId: page.id, deleted: null },
+        });
+        if (addedTaskIds.length) {
+          await this.prisma.task.updateMany({
+            where: {
+              id: { in: addedTaskIds },
+              deleted: null,
+            },
+            data: {
+              parentId: pageTask.id,
+            },
+          });
+        }
+
+        if (removedTaskIds.length) {
+          const tasksToCheck = await this.prisma.task.findMany({
+            where: { id: { in: removedTaskIds } },
+            select: { id: true, source: true },
+          });
+
+          // Filter tasks that need to be deleted
+          const tasksToDelete = tasksToCheck
+            .filter(
+              (task) =>
+                task.source &&
+                typeof task.source === 'object' &&
+                'id' in task.source &&
+                task.source.id === pageTask.id,
+            )
+            .map((task) => task.id);
+
+          // Delete in a single batch operation
+          if (tasksToDelete.length) {
+            await this.prisma.task.updateMany({
+              where: { id: { in: tasksToDelete } },
+              data: { deleted: new Date().toISOString() },
+            });
+          }
+        }
       }
     }
 
-    return { outlinks, taskExtensionTaskIds: Array.from(taskExtensionTaskIds) };
+    return { outlinks, allTaskIds };
   }
 
   async handleHooks(payload: { pageId: string; changedData: JsonObject }) {

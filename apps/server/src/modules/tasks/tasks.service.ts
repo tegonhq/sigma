@@ -1,10 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { OnEvent } from '@nestjs/event-emitter';
 import {
   CreateBulkTasksDto,
   CreateTaskDto,
   JsonObject,
-  OutlinkType,
   PageTypeEnum,
   Task,
   UpdateTaskDto,
@@ -15,11 +13,7 @@ import { IntegrationsService } from 'modules/integrations/integrations.service';
 import { PagesService } from 'modules/pages/pages.service';
 import { TaskOccurenceService } from 'modules/task-occurrence/task-occurrence.service';
 
-import {
-  getCurrentTaskIds,
-  handleCalendarTask,
-  TransactionClient,
-} from './tasks.utils';
+import { handleCalendarTask, TransactionClient } from './tasks.utils';
 import { TaskHooksService } from '../tasks-hook/tasks-hook.service';
 
 @Injectable()
@@ -340,55 +334,31 @@ export class TasksService {
 
   async deleteTask(taskId: string, workspaceId: string, userId: string) {
     // Get task and update in a single transaction
-    return await this.prisma.$transaction(async (tx: TransactionClient) => {
-      const task = await tx.task.findUnique({
-        where: { id: taskId },
-        include: { page: true },
-      });
+    const task = await this.prisma.task.findUnique({
+      where: { id: taskId },
+      include: { page: true },
+    });
 
-      if (!task) {
-        throw new Error('Task not found');
-      }
+    if (!task) {
+      throw new Error('Task not found');
+    }
 
-      if (task.deleted) {
-        return task;
-      }
+    // if (task.deleted) {
+    //   return task;
+    // }
 
-      // Run these operations in parallel since they're independent
-      await Promise.all([
-        // Delete task occurrences if it's recurring
-        task.recurrence &&
-          this.taskOccurenceService.deleteTaskOccurenceByTask(task.id),
+    await this.taskHooksService.executeHooks(task, {
+      workspaceId,
+      userId,
+      action: 'delete',
+    });
 
-        // Update calendar if task has dates
-        (task.startTime || task.endTime) &&
-          handleCalendarTask(
-            this.prisma,
-            this.integrationService,
-            workspaceId,
-            userId,
-            'delete',
-            task,
-          ),
-      ]);
-
-      await this.taskHooksService.executeHooks(
-        task,
-        {
-          workspaceId,
-          userId,
-          action: 'delete',
-        },
-        tx,
-      );
-
-      // Soft delete the task
-      return await tx.task.update({
-        where: { id: taskId },
-        data: {
-          deleted: new Date().toISOString(),
-        },
-      });
+    // Soft delete the task
+    return await this.prisma.task.update({
+      where: { id: taskId },
+      data: {
+        deleted: new Date().toISOString(),
+      },
     });
   }
 
@@ -428,76 +398,5 @@ export class TasksService {
         },
       });
     });
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async clearDeletedTasksFromPage(tiptapJson: any, pageId: string) {
-    // Get current task IDs from the page content
-    const currentTaskIds = getCurrentTaskIds(tiptapJson);
-
-    // Undelete tasks that are currently in the page
-    await this.prisma.task.updateMany({
-      where: {
-        id: { in: currentTaskIds },
-        deleted: { not: null },
-      },
-      data: {
-        deleted: null,
-      },
-    });
-
-    // Find tasks that were previously in this page but are no longer in currentTaskIds
-    const tasksToCheck = await this.prisma.task.findMany({
-      where: {
-        source: {
-          path: ['type'],
-          equals: 'page',
-        },
-        AND: {
-          deleted: null,
-          NOT: {
-            id: { in: currentTaskIds },
-          },
-        },
-      },
-    });
-
-    // Delete tasks that have no references in any page
-    const deletePromises = tasksToCheck.map(async (task) => {
-      const referencingPage = await this.prisma.page.findFirst({
-        where: {
-          id: { not: pageId },
-          outlinks: {
-            array_contains: [
-              {
-                type: OutlinkType.Task,
-                id: task.id,
-              },
-            ],
-          },
-        },
-        select: { id: true },
-      });
-
-      if (!referencingPage) {
-        return this.prisma.task.update({
-          where: { id: task.id },
-          data: { deleted: new Date() },
-        });
-      }
-
-      return undefined;
-    });
-
-    return Promise.all(deletePromises);
-  }
-
-  @OnEvent('task.delete.tasksFromPage')
-  async handleClearDeletedTasksFromPage(payload: {
-    pageId: string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    tiptapJson: any;
-  }) {
-    await this.clearDeletedTasksFromPage(payload.tiptapJson, payload.pageId);
   }
 }

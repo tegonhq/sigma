@@ -4,10 +4,10 @@ import axios from 'axios';
 import { format } from 'date-fns';
 
 import {
-  getTaskExtensionInPage,
   getCurrentTaskIds,
-  updateTaskExtensionInPage,
-  upsertTaskInExtension,
+  getTaskListsInPage,
+  updateTaskListsInPage,
+  upsertTasksInPage,
 } from './page-utils';
 
 const prisma = new PrismaClient();
@@ -30,7 +30,20 @@ export const pageGroomTask = task({
     const page = await prisma.page.findFirst({
       where: { title: formattedDate },
     });
-    let taskExtension = getTaskExtensionInPage(page);
+
+    // Get existing task lists
+    let taskLists = getTaskListsInPage(page);
+
+    // If no task lists exist, create an empty array
+    if (taskLists.length === 0) {
+      taskLists = [
+        {
+          type: 'taskList',
+          attrs: { class: 'task-list' },
+          content: [],
+        },
+      ];
+    }
 
     // 1. Get task occurrences for today
     const taskOccurrences = await prisma.taskOccurrence.findMany({
@@ -53,12 +66,17 @@ export const pageGroomTask = task({
       },
     });
 
-    taskExtension = upsertTaskInExtension(
-      taskExtension,
+    // Add task occurrences to the task list
+    taskLists = upsertTasksInPage(
+      taskLists,
       taskOccurrences.map((occurrence) => occurrence.task),
     );
 
-    const todayTaskIds = getCurrentTaskIds(taskExtension);
+    // Update the page with the task lists
+    let updatedDescription = updateTaskListsInPage(page, taskLists);
+
+    // Get all task IDs currently in the page
+    const todayTaskIds = getCurrentTaskIds({ content: taskLists });
 
     // 2. Get tasks due today
     const dueTasks = await prisma.task.findMany({
@@ -75,7 +93,11 @@ export const pageGroomTask = task({
     });
 
     if (dueTasks && dueTasks.length > 0) {
-      taskExtension.content.push(
+      // Parse the updated description
+      const descriptionJson = JSON.parse(updatedDescription);
+
+      // Add section header for due tasks
+      descriptionJson.content.push(
         {
           type: 'paragraph',
         },
@@ -88,11 +110,34 @@ export const pageGroomTask = task({
             },
           ],
         },
+        // Add a new task list for due tasks
+        {
+          type: 'taskList',
+          attrs: { class: 'task-list' },
+          content: dueTasks.map((task) => ({
+            type: 'listItem',
+            content: [
+              {
+                type: 'task',
+                attrs: {
+                  id: task.id,
+                },
+                content: [
+                  {
+                    type: 'text',
+                    text: task.page.title,
+                  },
+                ],
+              },
+            ],
+          })),
+        },
       );
-      taskExtension = upsertTaskInExtension(taskExtension, dueTasks);
+      updatedDescription = JSON.stringify(descriptionJson);
     }
 
     const dueTaskIds = dueTasks.map((t) => t.id);
+
     // 3. Get uncompleted tasks from previous day
     const yesterdayTasks = await getIncompletePastDayTasks();
 
@@ -103,7 +148,11 @@ export const pageGroomTask = task({
     );
 
     if (yesterdayTasksFiltered && yesterdayTasksFiltered.length > 0) {
-      taskExtension.content.push(
+      // Parse the updated description
+      const descriptionJson = JSON.parse(updatedDescription);
+
+      // Add section header for yesterday's tasks
+      descriptionJson.content.push(
         {
           type: 'paragraph',
         },
@@ -116,20 +165,38 @@ export const pageGroomTask = task({
             },
           ],
         },
+        // Add a new task list for yesterday's tasks
+        {
+          type: 'taskList',
+          attrs: { class: 'task-list' },
+          content: yesterdayTasksFiltered.map((task) => ({
+            type: 'listItem',
+            content: [
+              {
+                type: 'task',
+                attrs: {
+                  id: task.id,
+                },
+                content: [
+                  {
+                    type: 'text',
+                    text: task.page.title,
+                  },
+                ],
+              },
+            ],
+          })),
+        },
       );
-      taskExtension = upsertTaskInExtension(
-        taskExtension,
-        yesterdayTasksFiltered,
-      );
+      // Update the description
+      updatedDescription = JSON.stringify(descriptionJson);
     }
-
-    const pageDescription = updateTaskExtensionInPage(page, taskExtension);
 
     try {
       await axios.post(
         `${process.env.BACKEND_HOST}/v1/pages/${page.id}`,
         {
-          description: pageDescription,
+          description: updatedDescription,
         },
         { headers: { Authorization: `Bearer ${pat.token}` } },
       );
@@ -156,8 +223,7 @@ async function getIncompletePastDayTasks() {
     where: { title: yesterdayFormattedDate },
   });
 
-  const yesterdayTaskExtension = getTaskExtensionInPage(yesterdayPage);
-  const yesterdayTaskIds = getCurrentTaskIds(yesterdayTaskExtension);
+  const yesterdayTaskIds = getCurrentTaskIds(yesterdayPage);
 
   const yesterdayTasks = await prisma.task.findMany({
     where: { id: { in: yesterdayTaskIds } },
