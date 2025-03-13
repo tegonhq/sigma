@@ -68,12 +68,7 @@ export default class WorkspacesService {
               sortOrder: '',
               description: JSON.stringify({
                 type: 'doc',
-                content: [
-                  {
-                    type: 'tasksExtension',
-                    content: [],
-                  },
-                ],
+                content: [],
               }),
             },
           });

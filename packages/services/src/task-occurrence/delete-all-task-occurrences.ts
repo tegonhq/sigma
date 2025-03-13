@@ -1,4 +1,4 @@
-import { TaskBySourceDto, TaskDto } from '@sigma/types';
+import { TaskDto } from '@sigma/types';
 import axios from 'axios';
 
 export async function deleteAllTaskOccurrences({ taskId }: TaskDto) {

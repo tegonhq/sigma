@@ -71,10 +71,10 @@ export function updateTaskListsInPage(
     }
     // If no updated task lists, we don't need to change anything
 
-    return JSON.stringify(descriptionJson);
+    return descriptionJson;
   } catch (error) {
     console.error('Error updating taskLists in page:', error);
-    return page.description;
+    return JSON.parse(page.description);
   }
 }
 

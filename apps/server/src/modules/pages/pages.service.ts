@@ -113,7 +113,6 @@ export class PagesService {
       // Update the page description with the updated task lists
       const description = updateTaskListsInPage(page, updatedTaskLists);
 
-      console.log(JSON.stringify(description));
       // Update the page with new description in the same transaction
       await this.contentService.updateContentForDocument(page.id, description);
     }

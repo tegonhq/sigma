@@ -9,18 +9,24 @@ import Highlight from '@tiptap/extension-highlight';
 import ListKeymap from '@tiptap/extension-list-keymap';
 import { getSchema as fetchSchema } from '@tiptap/core';
 import TaskList from '@tiptap/extension-task-list';
+import AutoJoiner from 'tiptap-extension-auto-joiner'; // optional
 
 export const defaultExtensions = [
   fileExtension,
   imageExtension,
   TaskExtension,
   datePageExtension,
-  StarterKit,
+  StarterKit.configure({
+    history: false,
+    gapcursor: false,
+    codeBlock: false,
+  }),
   Link,
   Placeholder,
   Highlight,
   TaskList,
   ListKeymap,
+  AutoJoiner,
 ];
 
 export const getSchema = () => fetchSchema(defaultExtensions);

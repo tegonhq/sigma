@@ -95,7 +95,7 @@ export const pageGroomTask = task({
 
     if (dueTasks && dueTasks.length > 0) {
       // Parse the updated description
-      const descriptionJson = JSON.parse(updatedDescription);
+      const descriptionJson = updatedDescription;
 
       // Add section header for due tasks
       descriptionJson.content.push(
@@ -124,7 +124,7 @@ export const pageGroomTask = task({
           })),
         },
       );
-      updatedDescription = JSON.stringify(descriptionJson);
+      updatedDescription = descriptionJson;
     }
 
     const dueTaskIds = dueTasks.map((t) => t.id);
@@ -140,7 +140,7 @@ export const pageGroomTask = task({
 
     if (yesterdayTasksFiltered && yesterdayTasksFiltered.length > 0) {
       // Parse the updated description
-      const descriptionJson = JSON.parse(updatedDescription);
+      const descriptionJson = updatedDescription;
 
       // Add section header for yesterday's tasks
       descriptionJson.content.push(
@@ -170,14 +170,14 @@ export const pageGroomTask = task({
         },
       );
       // Update the description
-      updatedDescription = JSON.stringify(descriptionJson);
+      updatedDescription = descriptionJson;
     }
 
     try {
       await axios.post(
         `${process.env.BACKEND_HOST}/v1/pages/${page.id}`,
         {
-          description: updatedDescription,
+          description: JSON.stringify(updatedDescription),
         },
         { headers: { Authorization: `Bearer ${pat.token}` } },
       );
