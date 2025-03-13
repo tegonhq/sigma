@@ -39,16 +39,24 @@ export const TasksCommand = React.forwardRef(
           from: from - (query.length + 2), // Delete the /t and the query text
           to: from,
         })
-        .wrapIn('taskList')
-        .wrapIn('listItem')
         .insertContent([
           {
-            type: 'task',
-            attrs: { id: task.id },
+            type: 'taskList',
             content: [
               {
-                type: 'text',
-                text: task.title,
+                type: 'taskItem',
+                attrs: { id: task.id },
+                content: [
+                  {
+                    type: 'paragraph',
+                    content: [
+                      {
+                        type: 'text',
+                        text: task.title,
+                      },
+                    ],
+                  },
+                ],
               },
             ],
           },

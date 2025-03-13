@@ -1,12 +1,16 @@
-import { InputRule, mergeAttributes } from '@tiptap/core';
-import { Paragraph } from '@tiptap/extension-paragraph';
+import {
+  InputRule,
+  mergeAttributes,
+  Node,
+  type KeyboardShortcutCommand,
+} from '@tiptap/core';
 import {
   ReactNodeViewRenderer,
   type ReactNodeViewRendererOptions,
 } from '@tiptap/react';
 
 import { TaskComponent } from './task-component';
-export const INLINE_TASK_CONTENT_NAME = 'task';
+export const INLINE_TASK_CONTENT_NAME = 'taskItem';
 
 export const inputRegex = /^\s*(\[([( |x])?\])\s$/;
 
@@ -15,13 +19,20 @@ export const TaskExtension = ({
 }: {
   update: ReactNodeViewRendererOptions['update'];
 }) =>
-  Paragraph.extend({
+  Node.create({
     name: INLINE_TASK_CONTENT_NAME,
-    selectable: true,
+
+    content() {
+      return this.options.nested ? 'paragraph block*' : 'paragraph+';
+    },
+
+    defining: true,
 
     addOptions() {
       return {
+        nested: false,
         HTMLAttributes: {},
+        taskListTypeName: 'taskList',
       };
     },
 
@@ -50,6 +61,10 @@ export const TaskExtension = ({
 
     addNodeView() {
       return ReactNodeViewRenderer(TaskComponent, {
+        as: 'li',
+        attrs: {
+          'data-type': 'taskItem',
+        } as Record<string, string>,
         update: (props) => {
           update(props);
 
@@ -58,28 +73,23 @@ export const TaskExtension = ({
       } as ReactNodeViewRendererOptions);
     },
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    addKeyboardShortcuts(this: any) {
+    addKeyboardShortcuts() {
       const isTaskContent = () => {
         const selection = this.editor.state.selection;
         return selection.$from.parent.type.name === INLINE_TASK_CONTENT_NAME;
       };
 
-      return {
+      const shortcuts: Record<string, KeyboardShortcutCommand> = {
         Enter: () => {
+          const state = this.editor.state;
+          const selection = state.selection;
+
           if (!isTaskContent()) {
             return false;
           }
 
-          const state = this.editor.state;
-          const selection = state.selection;
-
           if (selection.$from.parentOffset === 0) {
-            return this.editor
-              .chain()
-              .liftListItem('listItem')
-              .setNode('paragraph', {})
-              .run();
+            return this.editor.commands.setNode('paragraph');
           }
 
           // if it's not the top level node, let list handle it
@@ -87,23 +97,16 @@ export const TaskExtension = ({
             selection.$from.depth > 3 ||
             selection.$from.parent.nodeSize > 2
           ) {
-            const task = this.editor.schema.nodes.task;
-            this.editor
-              .chain()
-              .splitListItem('listItem')
-              .setNode(task, {
-                id: undefined,
-              })
-              .run();
+            this.editor.commands.splitListItem(this.name, {
+              id: undefined,
+            });
+
             return true;
           }
 
-          return this.editor
-            .chain()
-            .liftListItem('listItem')
-            .setNode('paragraph', {})
-            .run();
+          return this.editor.commands.setNode('paragraph');
         },
+        'Shift-Tab': () => this.editor.commands.liftListItem(this.name),
         Backspace: () => {
           const state = this.editor.state;
           const selection = state.selection;
@@ -130,25 +133,19 @@ export const TaskExtension = ({
         'Mod-Backspace': () => {
           return this.editor
             .chain()
-            .liftListItem('listItem')
+            .liftListItem('taskItem')
             .setNode('paragraph', {})
             .run();
         },
+      };
 
-        'Shift-Tab': () => {
-          if (!isTaskContent()) {
-            return false;
-          }
+      if (!this.options.nested) {
+        return shortcuts;
+      }
 
-          if (this.editor.state.selection.$head.depth < 4) {
-            return this.editor
-              .chain()
-              .liftListItem('listItem')
-              .setNode('paragraph', {})
-              .run();
-          }
-          return false;
-        },
+      return {
+        ...shortcuts,
+        Tab: () => this.editor.commands.sinkListItem(this.name),
       };
     },
 
@@ -163,12 +160,11 @@ export const TaskExtension = ({
             // eslint-disable-next-line curly
             if (!blockRange) return null;
 
-            const task = state.schema.nodes.task;
+            const taskItem = state.schema.nodes.taskItem;
 
             chain()
               .wrapIn('taskList')
-              .wrapIn('listItem')
-              .setNode(task, {
+              .setNode(taskItem, {
                 id: undefined,
               })
               .run();

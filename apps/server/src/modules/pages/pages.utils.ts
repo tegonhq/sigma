@@ -78,6 +78,20 @@ export function updateTaskListsInPage(
   }
 }
 
+export function getTaskItemContent(title: string) {
+  return [
+    {
+      type: 'paragraph',
+      content: [
+        {
+          type: 'text',
+          text: title,
+        },
+      ],
+    },
+  ];
+}
+
 export function upsertTasksInPage(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   taskLists: Array<Record<string, any>>,
@@ -95,21 +109,11 @@ export function upsertTasksInPage(
 
   // Create new task list items
   const newTaskListItems = newTasks.map((task: Task) => ({
-    type: 'listItem',
-    content: [
-      {
-        type: 'task',
-        attrs: {
-          id: task.id,
-        },
-        content: [
-          {
-            type: 'text',
-            text: task.page.title,
-          },
-        ],
-      },
-    ],
+    type: 'taskItem',
+    attrs: {
+      id: task.id,
+    },
+    content: getTaskItemContent(task.page.title),
   }));
 
   // If there's an existing taskList, add to it, otherwise create a new one
@@ -123,7 +127,6 @@ export function upsertTasksInPage(
     // Create a new taskList
     taskLists.push({
       type: 'taskList',
-      attrs: { class: 'task-list' },
       content: newTaskListItems,
     });
   }
@@ -138,7 +141,7 @@ export function getCurrentTaskIds(tiptapJson: any): string[] {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const findTaskIds = (node: any) => {
     // Check if node is a task
-    if (node.type === 'task' && node.attrs?.id) {
+    if (node.type === 'taskItem' && node.attrs?.id) {
       taskIds.push(node.attrs.id);
       return;
     }
@@ -178,13 +181,8 @@ export function removeTasksFromPage(page: Page, taskIds: string[]) {
             // Filter out tasks with matching IDs
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             content: node.content?.filter((listItem: any) => {
-              // Find the task node in the listItem
-              const taskNode = listItem.content?.find(
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                (childNode: any) => childNode.type === 'task',
-              );
               // Keep the listItem if the task ID is not in the list to remove
-              return !(taskNode && taskIds.includes(taskNode.attrs?.id));
+              return !taskIds.includes(listItem.attrs?.id);
             }),
           };
         }

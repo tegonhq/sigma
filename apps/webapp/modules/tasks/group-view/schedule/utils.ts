@@ -11,6 +11,10 @@ import { useApplication } from 'hooks/application';
 
 import { useContextStore } from 'store/global-context-provider';
 
+interface TaskTypeWithOccurrence extends TaskType {
+  taskOccurrenceId: string;
+}
+
 export const useTaskRows = (collapsedHeader: Record<string, boolean>) => {
   const { pagesStore, taskOccurrencesStore, tasksStore } = useContextStore();
   const { filters, displaySettings } = useApplication();
@@ -50,7 +54,7 @@ export const useTaskRows = (collapsedHeader: Record<string, boolean>) => {
     [dates.weekDates, pagesStore.pages.length],
   );
 
-  const getTasksForPage = (pageId: string): TaskType[] => {
+  const getTasksForPage = (pageId: string): TaskTypeWithOccurrence[] => {
     if (pageId) {
       const taskOccurrences =
         taskOccurrencesStore.getTaskOccurrencesForPage(pageId);
@@ -59,10 +63,12 @@ export const useTaskRows = (collapsedHeader: Record<string, boolean>) => {
         return [];
       }
 
-      const tasks = tasksStore.getTaskWithIds(
-        taskOccurrences.map((occurrence) => occurrence.taskId),
-        {},
-      );
+      const tasks = taskOccurrences.map((occurrence) => {
+        return {
+          taskOccurrenceId: occurrence.id,
+          ...tasksStore.getTaskWithId(occurrence.taskId),
+        };
+      });
 
       return tasks;
     }
@@ -123,9 +129,13 @@ export const useTaskRows = (collapsedHeader: Record<string, boolean>) => {
         for (const task of sort(filteredTasks).by([
           { desc: (task) => task.status === 'Todo' },
         ])) {
+          const taskOccurrenceId = (task as TaskTypeWithOccurrence)
+            .taskOccurrenceId;
           rows.push({
             type: 'task',
-            taskId: task.id,
+            taskId: taskOccurrenceId
+              ? `${task.id}__${(task as TaskTypeWithOccurrence).taskOccurrenceId}`
+              : task.id,
             forHeader: plan,
           });
         }

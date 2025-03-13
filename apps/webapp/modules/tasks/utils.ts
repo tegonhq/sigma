@@ -278,7 +278,7 @@ export function filterTasksNoHook(
   tasks: TaskType[],
   filters: FiltersModelType,
   displaySettings: DisplaySettingsModelType,
-): TaskType[] {
+) {
   const computedFilters = getFilters(filters, displaySettings);
 
   const filteredTasks = filterTasks(tasks, computedFilters);

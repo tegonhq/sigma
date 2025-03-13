@@ -73,7 +73,12 @@ export class ContentService implements OnModuleInit {
 
     await docConnection.transact((doc) => {
       const editorState = doc.getXmlFragment('default');
-      prosemirrorJSONToYXmlFragment(getSchema(), json, editorState);
+      try {
+        prosemirrorJSONToYXmlFragment(getSchema(), json, editorState);
+      } catch (e) {
+        console.log(e);
+        this.logger.error(e);
+      }
     });
   }
 }

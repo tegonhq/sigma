@@ -42,8 +42,7 @@ export const suggestionItems = createSuggestionItems([
         .focus()
         .deleteRange(range)
         .wrapIn('taskList')
-        .wrapIn('listItem')
-        .setNode('task', {
+        .setNode('taskItem', {
           id: undefined,
         })
         .run();

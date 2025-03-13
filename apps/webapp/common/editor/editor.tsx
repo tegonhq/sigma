@@ -14,11 +14,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { defaultExtensions, getPlaceholder } from './editor-extensions';
 import { LinkSelector, NodeSelector, TextButtons } from './selectors';
 import { slashCommand } from './slash-command';
-import {
-  createTasksExtension,
-  handleMarkAndImagePaste,
-  uploadFn,
-} from './utils';
+import { handleMarkAndImagePaste, uploadFn } from './utils';
 import {
   EditorRoot,
   EditorCommand,
@@ -210,6 +206,7 @@ export const Editor = ({
                 if (event.key === 'Escape') {
                   return editor.commands.blur();
                 }
+
                 return handleCommandNavigation(event);
               },
             },

@@ -9,6 +9,7 @@ import {
   updateTaskListsInPage,
   upsertTasksInPage,
 } from './page-utils';
+import { getTaskItemContent } from 'modules/pages/pages.utils';
 
 const prisma = new PrismaClient();
 
@@ -115,21 +116,11 @@ export const pageGroomTask = task({
           type: 'taskList',
           attrs: { class: 'task-list' },
           content: dueTasks.map((task) => ({
-            type: 'listItem',
-            content: [
-              {
-                type: 'task',
-                attrs: {
-                  id: task.id,
-                },
-                content: [
-                  {
-                    type: 'text',
-                    text: task.page.title,
-                  },
-                ],
-              },
-            ],
+            type: 'taskItem',
+            attrs: {
+              id: task.id,
+            },
+            content: getTaskItemContent(task.page.title),
           })),
         },
       );
@@ -170,21 +161,11 @@ export const pageGroomTask = task({
           type: 'taskList',
           attrs: { class: 'task-list' },
           content: yesterdayTasksFiltered.map((task) => ({
-            type: 'listItem',
-            content: [
-              {
-                type: 'task',
-                attrs: {
-                  id: task.id,
-                },
-                content: [
-                  {
-                    type: 'text',
-                    text: task.page.title,
-                  },
-                ],
-              },
-            ],
+            type: 'taskItem',
+            attrs: {
+              id: task.id,
+            },
+            content: getTaskItemContent(task.page.title),
           })),
         },
       );

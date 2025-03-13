@@ -20,7 +20,6 @@ import type { FilterTypeEnum } from 'store/application';
 import { AppliedFiltersView } from './applied-filters-view';
 import { StatusFilter } from '../metadata';
 import { DefaultFilterDropdown } from './default-filter-dropdown';
-import { GroupingOrderingOptions } from './grouping-ordering-options';
 import { ViewOptions } from './view-options';
 
 const ContentMap = {
@@ -110,7 +109,6 @@ export const Filters = observer(() => {
         </PopoverContent>
       </Popover>
       <div className="flex gap-2 h-full">
-        <GroupingOrderingOptions />
         <ViewOptions />
       </div>
     </div>

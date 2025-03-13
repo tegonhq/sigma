@@ -1,4 +1,5 @@
 import { Page, Task } from '@sigma/types';
+import { getTaskItemContent } from 'modules/pages/pages.utils';
 
 export function getTaskListsInPage(page: Page) {
   const description = page.description;
@@ -28,7 +29,7 @@ export function getCurrentTaskIds(tiptapJson: any): string[] {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const findTaskIds = (node: any) => {
     // Check if node is a task
-    if (node.type === 'task' && node.attrs?.id) {
+    if (node.type === 'taskItem' && node.attrs?.id) {
       taskIds.push(node.attrs.id);
       return;
     }
@@ -88,10 +89,10 @@ export function updateTaskListsInPage(
     }
     // If no updated task lists, we don't need to change anything
 
-    return JSON.stringify(descriptionJson);
+    return descriptionJson;
   } catch (error) {
     console.error('Error updating taskLists in page:', error);
-    return page.description;
+    return JSON.parse(page.description);
   }
 }
 export function upsertTasksInPage(
@@ -111,21 +112,11 @@ export function upsertTasksInPage(
 
   // Create new task list items
   const newTaskListItems = newTasks.map((task: Task) => ({
-    type: 'listItem',
-    content: [
-      {
-        type: 'task',
-        attrs: {
-          id: task.id,
-        },
-        content: [
-          {
-            type: 'text',
-            text: task.page.title,
-          },
-        ],
-      },
-    ],
+    type: 'taskItem',
+    attrs: {
+      id: task.id,
+    },
+    content: getTaskItemContent(task.page.title),
   }));
 
   // If there's an existing taskList, add to it, otherwise create a new one

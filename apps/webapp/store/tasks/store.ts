@@ -1,4 +1,4 @@
-import { isToday, isSameDay } from 'date-fns';
+import { isSameDay } from 'date-fns';
 import { sort } from 'fast-sort';
 import { type IAnyStateTreeNode, types, flow } from 'mobx-state-tree';
 

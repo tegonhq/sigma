@@ -6,10 +6,17 @@ import type { TaskType } from 'common/types';
 import { useContextStore } from 'store/global-context-provider';
 
 import { ScheduleDropdown, ScheduleDropdownVariant } from './metadata';
-import { PlanDropdown, PlanDropdownVariant } from './metadata/plan';
 
 export const TaskInfo = observer(
-  ({ task, inEditor = false }: { task: TaskType; inEditor?: boolean }) => {
+  ({
+    task,
+    taskOccurrenceId,
+    inEditor = false,
+  }: {
+    task: TaskType;
+    taskOccurrenceId?: string;
+    inEditor?: boolean;
+  }) => {
     const { listsStore, pagesStore } = useContextStore();
     const list = listsStore.getListWithId(task.listId);
     const page = pagesStore.getPageWithId(list?.pageId);
@@ -33,9 +40,8 @@ export const TaskInfo = observer(
           <ScheduleDropdown
             task={task}
             variant={ScheduleDropdownVariant.SHORT}
+            taskOccurrenceId={taskOccurrenceId}
           />
-
-          <PlanDropdown task={task} variant={PlanDropdownVariant.SHORT} />
         </div>
       </div>
     );

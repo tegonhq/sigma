@@ -132,7 +132,7 @@ export const defaultApplicationStoreValue: {
   ],
   filters: {},
   displaySettings: {
-    grouping: GroupingEnum.plan,
+    grouping: GroupingEnum.schedule,
     completedFilter: TimeBasedFilterEnum.All,
     showEmptyGroups: false,
   },
@@ -182,6 +182,7 @@ const ApplicationStore = types
     };
     const clearSelectedTask = () => {
       self.hoverTask = undefined;
+      self.selectedTasks.replace([]);
     };
     const setHoverTask = (taskId: string) => {
       self.hoverTask = taskId;

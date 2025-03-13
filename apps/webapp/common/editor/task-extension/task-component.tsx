@@ -23,10 +23,8 @@ import { EditorContext } from '../editor-context';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const TaskComponent = observer((props: any) => {
   const { source, date } = React.useContext(EditorContext);
-
   const taskId = props.node.attrs.id;
   const content = props.node.textContent;
-
   const { tasksStore } = useContextStore();
   const task = tasksStore.getTaskWithId(taskId);
   const { selectedTasks, setHoverTask, hoverTask } = useApplication();
@@ -59,7 +57,7 @@ export const TaskComponent = observer((props: any) => {
   }, 500);
 
   React.useEffect(() => {
-    if (!taskId && content && !isLoading) {
+    if (!taskId && content && content.trim() && !isLoading) {
       debounceAddTask({
         title: content,
         ...getCreateTaskPropsOnSource(source, date),
@@ -69,7 +67,7 @@ export const TaskComponent = observer((props: any) => {
   }, [content, taskId, isLoading]);
 
   return (
-    <NodeViewWrapper className="task-item-component" as="p">
+    <NodeViewWrapper className="task-item-component" as="div">
       <div
         className={cn(
           'items-center inline-flex gap-2 pb-0.5 items-start px-2 -ml-2 hover:bg-grayAlpha-100 rounded w-fit',
@@ -81,24 +79,26 @@ export const TaskComponent = observer((props: any) => {
           }
         }}
       >
-        <div
+        <label
           className={cn('flex items-start shrink-0 gap-2 py-1')}
           contentEditable={false}
         >
           <Checkbox
             className="shrink-0 relative top-[1px] h-[18px] w-[18px]"
             checked={task?.status === 'Done'}
+            contentEditable={false}
             onCheckedChange={(value) => {
               statusChange(value === true ? 'Done' : 'Todo');
             }}
           />
-        </div>
+        </label>
 
         <NodeViewContent
           as="p"
           className={cn(
             'text-sm relative top-[2px]',
-            task?.status === 'Done' && 'line-through',
+            task?.status === 'Done' &&
+              'line-through opacity-60 decoration-[1px] decoration-transparent animate-multiline-strikethrough',
           )}
         />
         {task && (

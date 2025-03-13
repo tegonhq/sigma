@@ -15,6 +15,7 @@ import {
   handleCalendarTask,
   TransactionClient,
 } from '../tasks/tasks.utils';
+import { getTaskItemContent } from 'modules/pages/pages.utils';
 
 @Injectable()
 export class TaskHooksService {
@@ -119,7 +120,8 @@ export class TaskHooksService {
                 node = node.content[index];
               }
 
-              node.content = [{ type: 'text', text: task.page.title }];
+              node.content = getTaskItemContent(task.page.title);
+
               updated = true;
             }
 

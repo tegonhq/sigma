@@ -9,11 +9,9 @@ import { SCOPES } from 'common/shortcut-scopes';
 import { useApplication } from 'hooks/application';
 
 import { TabViewType } from 'store/application';
-import { PlanDialog } from 'modules/tasks/metadata/plan';
 
 export enum DialogType {
   SCHEDULE = 'schedule',
-  PLAN = 'plan',
 }
 
 interface DialogViewsContextType {
@@ -32,7 +30,6 @@ export const DialogViewsProvider = observer(
   ({ children }: { children: React.ReactNode }) => {
     const ComponentType = {
       [DialogType.SCHEDULE]: ScheduleDialog,
-      [DialogType.PLAN]: PlanDialog,
     };
 
     const [dialogOpen, setDialogOpen] = React.useState<DialogType>(undefined);
@@ -82,9 +79,6 @@ export const DialogViewsProvider = observer(
             setTaskIds(getTasks());
             setDialogOpen(DialogType.SCHEDULE);
             break;
-          case 'p':
-            setTaskIds(getTasks());
-            setDialogOpen(DialogType.PLAN);
         }
       },
       {

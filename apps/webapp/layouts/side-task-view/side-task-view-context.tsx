@@ -36,7 +36,6 @@ export const TaskViewProvider = observer(
         return;
       }
 
-      console.log(viewType);
       if (viewType === 'side_view') {
         setTaskId(taskId);
       } else {

@@ -192,10 +192,16 @@ const config = {
             height: '0',
           },
         },
+        'multiline-strikethrough': {
+          '0%': { textDecorationColor: 'transparent' },
+          '100%': { textDecorationColor: 'currentColor' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        'multiline-strikethrough':
+          'multiline-strikethrough 0.3s ease-in forwards',
       },
     },
   },

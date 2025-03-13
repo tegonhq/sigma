@@ -8,14 +8,29 @@ import {
   Cycle,
   Loader,
 } from '@tegonhq/ui';
-import { endOfDay, addDays, endOfWeek, addWeeks, formatISO } from 'date-fns';
+import {
+  endOfDay,
+  addDays,
+  endOfWeek,
+  addWeeks,
+  formatISO,
+  startOfDay,
+} from 'date-fns';
+import { sort } from 'fast-sort';
 import { Clock } from 'lucide-react';
 import React from 'react';
 
 import {
+  useCreateTaskOccurrenceMutation,
+  useDeleteTaskOccurrenceMutation,
+  useUpdateTaskOccurrenceMutation,
+} from 'services/task-occurrence';
+import {
   useGetTaskScheduleMutation,
   useUpdateTaskMutation,
 } from 'services/tasks';
+
+import { useContextStore } from 'store/global-context-provider';
 
 interface ScheduleDialogProps {
   taskIds?: string[];
@@ -28,7 +43,7 @@ interface ScheduleSample {
   status?: 'Todo';
   schedule?:
     | {
-        dueDate?: string;
+        plan?: string;
       }
     | undefined;
 }
@@ -62,32 +77,23 @@ const scheduleSamples: ScheduleSample[] = [
     text: 'Today',
     isRecurring: false,
     schedule: {
-      dueDate: getScheduleDate('today'),
+      plan: getScheduleDate('today'),
     },
   },
   {
     text: 'Tomorrow',
     isRecurring: false,
     schedule: {
-      dueDate: getScheduleDate('tomorrow'),
+      plan: getScheduleDate('tomorrow'),
     },
   },
   {
     text: 'End of this week',
     isRecurring: false,
     schedule: {
-      dueDate: getScheduleDate('endOfWeek'),
+      plan: getScheduleDate('endOfWeek'),
     },
   },
-
-  {
-    text: 'In one week',
-    isRecurring: false,
-    schedule: {
-      dueDate: getScheduleDate('inOneWeek'),
-    },
-  },
-
   { text: 'Tomorrow at 10 AM', isRecurring: false },
   { text: 'Every Monday at 9 AM', isRecurring: true },
   { text: 'Next Friday at 3 PM', isRecurring: false },
@@ -102,38 +108,80 @@ const scheduleSamples: ScheduleSample[] = [
 
 export const ScheduleDialog = ({ onClose, taskIds }: ScheduleDialogProps) => {
   const [value, setValue] = React.useState('');
+  const { taskOccurrencesStore } = useContextStore();
 
   const now = new Date(); // Get current local time
   const localISOString = formatISO(now, { representation: 'complete' });
 
   const { mutate: updateIssue } = useUpdateTaskMutation({});
   const { mutate: getTaskSchedule, isLoading } = useGetTaskScheduleMutation({});
+  const { mutate: deleteTaskOccurrence } = useDeleteTaskOccurrenceMutation({});
+  const { mutate: updateTaskOccurrenceAPI } = useUpdateTaskOccurrenceMutation(
+    {},
+  );
+  const { mutate: createTaskOccurrence } = useCreateTaskOccurrenceMutation({});
+
+  const getTaskAndOccurrence = (taskIdWithOccurrence: string) => {
+    const taskId = taskIdWithOccurrence.split('__')[0];
+    const taskOccurrenceId = taskIdWithOccurrence.split('__')[1];
+
+    if (!taskIdWithOccurrence) {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      const occurrences =
+        taskOccurrencesStore.getTaskOccurrencesForTask(taskId) ?? [];
+      // Get yesterday's end of day
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      yesterday.setHours(23, 59, 59, 999);
+
+      // Filter and sort occurrences after yesterday
+      const sortedOccurrences = sort(
+        occurrences.filter((occ) => new Date(occ.startTime) > yesterday),
+      ).by([{ desc: (u) => u.startTime }]);
+
+      const firstOccurrence = sortedOccurrences[0];
+
+      return { taskId, taskOccurrenceId: firstOccurrence?.id };
+    }
+
+    return { taskId, taskOccurrenceId };
+  };
+
+  const updateTaskOccurrence = (taskIdWithOccurrence: string, date: string) => {
+    const { taskOccurrenceId, taskId } =
+      getTaskAndOccurrence(taskIdWithOccurrence);
+    if (taskOccurrenceId) {
+      updateTaskOccurrenceAPI({
+        taskOccurrenceIds: [taskOccurrenceId],
+        startTime: startOfDay(date),
+        endTime: endOfDay(date),
+      });
+    } else {
+      createTaskOccurrence({
+        startTime: startOfDay(date),
+        endTime: endOfDay(date),
+        taskIds: [taskId],
+      });
+    }
+  };
+
   const onCommand = (schedule: ScheduleSample) => {
     if (schedule.text === 'Remove schedule') {
-      taskIds.forEach((taskId) => {
-        updateIssue({
-          taskId,
-          dueDate: null,
-          recurrence: [],
-          scheduleText: null,
-          startTime: null,
-          endTime: null,
-        });
+      taskIds.forEach((taskIdWithOccurrence) => {
+        const { taskOccurrenceId } = getTaskAndOccurrence(taskIdWithOccurrence);
+        if (taskOccurrenceId) {
+          deleteTaskOccurrence({
+            taskOccurrenceId,
+          });
+        }
       });
 
       onClose();
     }
 
     if (schedule.schedule) {
-      taskIds.forEach((taskId) => {
-        updateIssue({
-          taskId,
-          dueDate: schedule.schedule.dueDate,
-          recurrence: [],
-          scheduleText: null,
-          startTime: null,
-          endTime: null,
-        });
+      taskIds.forEach((taskIdWithOccurrence) => {
+        updateTaskOccurrence(taskIdWithOccurrence, schedule.schedule.plan);
       });
       onClose();
     } else {

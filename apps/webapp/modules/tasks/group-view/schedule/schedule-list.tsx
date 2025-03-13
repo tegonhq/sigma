@@ -19,12 +19,15 @@ import { TaskListItem } from 'modules/tasks/task-item';
 
 import { ScrollManagedList } from 'common/virtualized-list';
 
+import { useApplication } from 'hooks/application';
+
 import { useTaskRows } from './utils';
 
-export const PlanList = observer(() => {
+export const ScheduleList = observer(() => {
   const [collapsedHeaders, setCollapsedHeaders] = React.useState<
     Record<string, boolean>
   >({});
+  const { clearSelectedTask } = useApplication();
 
   const rows = useTaskRows(collapsedHeaders);
 
@@ -38,6 +41,13 @@ export const PlanList = observer(() => {
     cache.clearAll();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rows]);
+
+  React.useEffect(() => {
+    return () => {
+      clearSelectedTask();
+      console.log('asdf');
+    };
+  }, []);
 
   const toggleHeaderCollapse = (planDay: string) => {
     setCollapsedHeaders((prev) => ({
@@ -120,10 +130,10 @@ export const PlanList = observer(() => {
       {({ width, height }) => (
         <ScrollManagedList
           className=""
-          listId="plan-list"
+          listId="schedule-list"
           height={height}
           overscanRowCount={10}
-          noRowsRenderer={() => <>No planned tasks</>}
+          noRowsRenderer={() => <>No scheduled tasks</>}
           rowCount={rows.length + 2}
           rowHeight={rowHeight}
           deferredMeasurementCache={cache}

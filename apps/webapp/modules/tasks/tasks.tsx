@@ -9,9 +9,9 @@ import { useScope } from 'hooks/use-scope';
 
 import { GroupingEnum } from 'store/application';
 
-import { PlanList } from './group-view/plan';
-import { StatusList } from './group-view/status';
 import { Filters } from './filters';
+import { ScheduleList } from './group-view/schedule';
+import { StatusList } from './group-view/status';
 import { Header } from './header';
 import { SingleTask } from './single-task';
 
@@ -36,8 +36,8 @@ export const Tasks = observer(({ entity_id }: TabsProps) => {
   }
 
   const getComponent = () => {
-    if (displaySettings.grouping === GroupingEnum.plan) {
-      return <PlanList />;
+    if (displaySettings.grouping === GroupingEnum.schedule) {
+      return <ScheduleList />;
     }
 
     return <StatusList />;

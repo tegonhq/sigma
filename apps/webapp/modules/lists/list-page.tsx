@@ -3,12 +3,13 @@ import { observer } from 'mobx-react-lite';
 
 import { PageTitle } from 'modules/tasks/single-task/single-task-title';
 
+import { RightSideLayout } from 'layouts/right-side-layout';
+
 import { useUpdatePageMutation } from 'services/pages';
 
 import { useContextStore } from 'store/global-context-provider';
 
 import { ListPageEditor } from './list-page-editor';
-import { RightSideLayout } from 'layouts/right-side-layout';
 import { ListPageHeader } from './list-page-header';
 
 interface TabsProps {
@@ -21,7 +22,6 @@ export const ListPage = observer(({ entity_id }: TabsProps) => {
   const page = pagesStore.getPageWithId(list?.pageId);
   const { mutate: updatePage } = useUpdatePageMutation({});
 
-  console.log(page, list);
   const onChange = (title: string) => {
     updatePage({
       pageId: page.id,

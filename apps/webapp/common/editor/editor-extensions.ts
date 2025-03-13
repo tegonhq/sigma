@@ -10,14 +10,16 @@ import {
   Placeholder,
   HighlightExtension,
   AIHighlight,
+  TaskList,
+  CustomKeymap,
 } from 'novel/extensions';
+import AutoJoiner from 'tiptap-extension-auto-joiner'; // optional
+// import GlobalDragHandle from 'tiptap-extension-global-drag-handle';
 
 import { datePageExtension } from './date-page-extension';
 import { fileExtension } from './file-extension';
 import { imageExtension } from './image-extension';
 import { LinkTaskExtension } from './link-task';
-import listItem from './list-item';
-import taskList from './task-list';
 import trailingNode from './trailing-node';
 
 // create a lowlight instance with all languages loaded
@@ -66,7 +68,7 @@ const starterKit = StarterKit.configure({
       class: cx('list-decimal list-outside pl-4 leading-1 my-1'),
     },
   },
-  listItem: false,
+  listItem: {},
   blockquote: {
     HTMLAttributes: {
       class: cx('border-l-4 border-gray-400 dark:border-gray-500'),
@@ -137,10 +139,11 @@ export const defaultExtensions = [
   fileExtension,
   imageExtension,
   HighlightExtension,
-  listItem,
-  taskList,
+  AutoJoiner,
+  TaskList,
   datePageExtension,
   LinkTaskExtension,
+  CustomKeymap,
   trailingNode,
   CodeBlockLowlight.configure({
     lowlight,

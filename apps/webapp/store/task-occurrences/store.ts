@@ -14,6 +14,10 @@ export const TaskOccurrencesStore: IAnyStateTreeNode = types
     loading: types.union(types.undefined, types.boolean),
   })
   .actions((self) => {
+    const setLoading = (value: boolean) => {
+      self.loading = value;
+    };
+
     const update = (taskOccurrence: TaskOccurrenceType, id: string) => {
       self.loading = true;
 
@@ -62,7 +66,10 @@ export const TaskOccurrencesStore: IAnyStateTreeNode = types
         taskOccurrencesByPageArray.push(taskOccurrence);
       }
 
-      self.loading = false;
+      setTimeout(() => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (self as any).setLoading(false);
+      }, 100);
     };
     const deleteById = (id: string) => {
       self.loading = true;
@@ -120,7 +127,7 @@ export const TaskOccurrencesStore: IAnyStateTreeNode = types
       self.loading = false;
     });
 
-    return { update, deleteById, load };
+    return { update, deleteById, load, setLoading };
   })
   .views((self) => ({
     getTaskOccurrencesForTask(taskId: string) {

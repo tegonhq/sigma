@@ -35,7 +35,6 @@ export function Auth() {
     onSuccess: async (data: AuthCodeResponse) => {
       setLoading(true);
 
-      console.log(ipc);
       ipc.openUrl(
         `${publicRuntimeConfig.NEXT_PUBLIC_BASE_HOST}/authorize?code=${data.code}`,
       );

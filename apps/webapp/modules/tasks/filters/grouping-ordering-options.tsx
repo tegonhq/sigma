@@ -34,7 +34,7 @@ export const GroupingOrderingOptions = observer(() => {
         <SelectContent>
           <SelectGroup>
             <SelectLabel className="text-xs font-normal">Group by</SelectLabel>
-            <SelectItem value="plan">Plan</SelectItem>
+            <SelectItem value="schedule">Schedule</SelectItem>
             <SelectItem value="status">Status</SelectItem>
             <SelectItem value="assignee">List</SelectItem>
           </SelectGroup>

@@ -86,7 +86,7 @@ export const getCurrentTaskIds = (tiptapJson: any) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const traverseNodes = (node: any) => {
     // Check if current node is a task with an id
-    if (node.type === 'task' && node.attrs?.id) {
+    if (node.type === 'taskItem' && node.attrs?.id) {
       taskIds.push(node.attrs.id);
     }
 

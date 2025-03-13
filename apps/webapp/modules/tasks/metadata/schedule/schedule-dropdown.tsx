@@ -1,10 +1,6 @@
-import { Badge, cn, Cycle, Fire } from '@tegonhq/ui';
-import {
-  differenceInMinutes,
-  differenceInHours,
-  differenceInDays,
-  isPast,
-} from 'date-fns';
+import { Badge, cn, Cycle } from '@tegonhq/ui';
+import { format, isThisWeek, isToday, isTomorrow } from 'date-fns';
+import { sort } from 'fast-sort';
 import { Clock } from 'lucide-react';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
@@ -12,7 +8,9 @@ import * as React from 'react';
 import { DailogViewsContext, DialogType } from 'modules/dialog-views-provider';
 
 import { TooltipWrapper } from 'common/tooltip';
-import type { TaskType } from 'common/types';
+import type { TaskOccurrenceType, TaskType } from 'common/types';
+
+import { useContextStore } from 'store/global-context-provider';
 
 export enum ScheduleDropdownVariant {
   DEFAULT = 'DEFAULT',
@@ -22,63 +20,109 @@ export enum ScheduleDropdownVariant {
 interface ScheduleDropdownProps {
   task: TaskType;
   variant?: ScheduleDropdownVariant;
+  taskOccurrenceId?: string;
 }
 
-interface TimeStatus {
-  text: string;
-  overdue: boolean;
-}
+// interface TimeStatus {
+//   text: string;
+//   overdue: boolean;
+// }
 
-const getRelativeTime = (date: Date): TimeStatus => {
-  const now = new Date();
-  const isOverdue = isPast(date);
+// const getRelativeTime = (date: Date): TimeStatus => {
+//   const now = new Date();
+//   const isOverdue = isPast(date);
 
-  const days = Math.abs(differenceInDays(date, now));
-  const hours = Math.abs(differenceInHours(date, now));
-  const minutes = Math.abs(differenceInMinutes(date, now));
+//   const days = Math.abs(differenceInDays(date, now));
+//   const hours = Math.abs(differenceInHours(date, now));
+//   const minutes = Math.abs(differenceInMinutes(date, now));
 
-  let text = '';
-  if (days > 0) {
-    text = `${days}d`;
-  } else if (hours > 0) {
-    text = `${hours}h`;
-  } else if (minutes > 0) {
-    text = `${minutes}m`;
-  } else {
-    text = 'now';
-  }
+//   let text = '';
+//   if (days > 0) {
+//     text = `${days}d`;
+//   } else if (hours > 0) {
+//     text = `${hours}h`;
+//   } else if (minutes > 0) {
+//     text = `${minutes}m`;
+//   } else {
+//     text = 'now';
+//   }
 
-  return {
-    text: isOverdue ? `${text} ago` : text,
-    overdue: isOverdue,
-  };
-};
+//   return {
+//     text: isOverdue ? `${text} ago` : text,
+//     overdue: isOverdue,
+//   };
+// };
 
 export const ScheduleDropdown = observer(
   ({
     task,
     variant = ScheduleDropdownVariant.DEFAULT,
+    taskOccurrenceId,
   }: ScheduleDropdownProps) => {
     const { openDialog } = React.useContext(DailogViewsContext);
+    const { taskOccurrencesStore } = useContextStore();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const occurrences =
+      taskOccurrencesStore.getTaskOccurrencesForTask(task.id) ?? [];
+    // Get yesterday's end of day
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    yesterday.setHours(23, 59, 59, 999);
+
+    // Filter and sort occurrences after yesterday
+    const sortedOccurrences = sort(
+      occurrences.filter((occ) => new Date(occ.startTime) > yesterday),
+    ).by([{ desc: (u) => u.startTime }]);
+
+    const firstOccurrence = sortedOccurrences[0];
+    const passedTaskOccurrence = taskOccurrenceId
+      ? occurrences.find((occ) => occ.id === taskOccurrenceId)
+      : undefined;
+
+    const formatStartTime = (startTime: string) => {
+      const date = new Date(startTime);
+      const dayName = format(date, 'EEEE');
+      const isCurrentWeek = isThisWeek(date);
+      const now = new Date();
+
+      if (isToday(date)) {
+        return 'Today';
+      }
+
+      // Skip if date is before today
+      if (date < new Date(now.setHours(0, 0, 0, 0))) {
+        return null;
+      }
+
+      if (isTomorrow(date)) {
+        return 'Tomorrow';
+      }
+
+      if (isCurrentWeek) {
+        return dayName;
+      }
+
+      return `${dayName}, ${format(date, 'dd-MM-yyyy')}`;
+    };
+
+    const getScheduleForOccurrence = (taskOccurrence: TaskOccurrenceType) => {
+      return (
+        <Badge
+          variant="secondary"
+          className={cn(
+            'flex items-center gap-1 shrink min-w-[0px] text-xs',
+            variant !== ScheduleDropdownVariant.SHORT && 'h-7 px-2 text-base',
+          )}
+        >
+          <Clock size={variant === ScheduleDropdownVariant.SHORT ? 12 : 14} />
+          {formatStartTime(taskOccurrence.startTime)}
+        </Badge>
+      );
+    };
 
     const getSchedule = () => {
-      if (task.dueDate) {
-        const timeRelative = getRelativeTime(new Date(task.dueDate));
-        const timeText = `${timeRelative.overdue ? '' : 'in'} ${timeRelative.text}`;
-
-        return (
-          <Badge
-            variant="secondary"
-            className={cn(
-              'flex items-center gap-1 shrink min-w-[0px] text-xs',
-              timeRelative.overdue && 'text-red-600',
-              variant !== ScheduleDropdownVariant.SHORT && 'h-7 px-2 text-base',
-            )}
-          >
-            <Fire size={variant === ScheduleDropdownVariant.SHORT ? 12 : 14} />
-            {timeText}
-          </Badge>
-        );
+      if (firstOccurrence && !task.startTime && firstOccurrence?.startTime) {
+        return getScheduleForOccurrence(firstOccurrence);
       }
 
       if (task.startTime) {
@@ -126,13 +170,18 @@ export const ScheduleDropdown = observer(
     }
 
     return (
-      <div
-        onClick={(e) => {
-          e.stopPropagation();
-          openDialog(DialogType.SCHEDULE, [task.id]);
-        }}
-      >
-        {schedule}
+      <div className="flex gap-1">
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            openDialog(DialogType.SCHEDULE, [task.id]);
+          }}
+        >
+          {passedTaskOccurrence
+            ? getScheduleForOccurrence(passedTaskOccurrence)
+            : schedule}
+        </div>
+        {passedTaskOccurrence && <div>{schedule}</div>}
       </div>
     );
   },
