@@ -6,6 +6,8 @@ import type { TaskType } from 'common/types';
 import { useContextStore } from 'store/global-context-provider';
 
 import { ScheduleDropdown, ScheduleDropdownVariant } from './metadata';
+import { DuedateDropdown, DuedateDropdownVariant } from './metadata/due-date';
+import { getIcon } from 'common/icon-picker';
 
 export const TaskInfo = observer(
   ({
@@ -34,7 +36,7 @@ export const TaskInfo = observer(
               variant="secondary"
               className="flex items-center gap-1 shrink min-w-[0px]"
             >
-              <Project size={12} /> {page?.title}
+              {getIcon(list?.icon, 12)} {page?.title}
             </Badge>
           )}
           <ScheduleDropdown
@@ -42,6 +44,7 @@ export const TaskInfo = observer(
             variant={ScheduleDropdownVariant.SHORT}
             taskOccurrenceId={taskOccurrenceId}
           />
+          <DuedateDropdown task={task} variant={DuedateDropdownVariant.SHORT} />
         </div>
       </div>
     );

@@ -45,7 +45,7 @@ export class SigmaDatabase extends Dexie {
       [MODELS.Conversation]: 'id,createdAt,updatedAt,title,userId,workspaceId',
       [MODELS.ConversationHistory]:
         'id,createdAt,updatedAt,message,userType,context,thoughts,userId,conversationId',
-      [MODELS.List]: 'id,createdAt,updatedAt,pageId',
+      [MODELS.List]: 'id,createdAt,updatedAt,pageId,icon',
 
       Application: 'id,sidebarCollapsed,tabGroups,activeTabGroupId',
     });

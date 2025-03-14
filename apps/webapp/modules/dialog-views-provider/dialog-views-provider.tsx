@@ -9,9 +9,11 @@ import { SCOPES } from 'common/shortcut-scopes';
 import { useApplication } from 'hooks/application';
 
 import { TabViewType } from 'store/application';
+import { DueDateDialog } from 'modules/tasks/metadata/due-date';
 
 export enum DialogType {
   SCHEDULE = 'schedule',
+  DUEDATE = 'due-date',
 }
 
 interface DialogViewsContextType {
@@ -30,6 +32,7 @@ export const DialogViewsProvider = observer(
   ({ children }: { children: React.ReactNode }) => {
     const ComponentType = {
       [DialogType.SCHEDULE]: ScheduleDialog,
+      [DialogType.DUEDATE]: DueDateDialog,
     };
 
     const [dialogOpen, setDialogOpen] = React.useState<DialogType>(undefined);
@@ -72,12 +75,16 @@ export const DialogViewsProvider = observer(
     };
 
     useHotkeys(
-      ['s', 'p'],
+      ['s', 'd'],
       (event) => {
         switch (event.key) {
           case 's':
             setTaskIds(getTasks());
             setDialogOpen(DialogType.SCHEDULE);
+            break;
+          case 'd':
+            setTaskIds(getTasks());
+            setDialogOpen(DialogType.DUEDATE);
             break;
         }
       },

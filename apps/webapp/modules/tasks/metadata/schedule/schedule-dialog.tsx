@@ -113,7 +113,7 @@ export const ScheduleDialog = ({ onClose, taskIds }: ScheduleDialogProps) => {
   const now = new Date(); // Get current local time
   const localISOString = formatISO(now, { representation: 'complete' });
 
-  const { mutate: updateIssue } = useUpdateTaskMutation({});
+  const { mutate: updateTask } = useUpdateTaskMutation({});
   const { mutate: getTaskSchedule, isLoading } = useGetTaskScheduleMutation({});
   const { mutate: deleteTaskOccurrence } = useDeleteTaskOccurrenceMutation({});
   const { mutate: updateTaskOccurrenceAPI } = useUpdateTaskOccurrenceMutation(
@@ -153,13 +153,13 @@ export const ScheduleDialog = ({ onClose, taskIds }: ScheduleDialogProps) => {
     if (taskOccurrenceId) {
       updateTaskOccurrenceAPI({
         taskOccurrenceIds: [taskOccurrenceId],
-        startTime: startOfDay(date),
-        endTime: endOfDay(date),
+        startTime: startOfDay(date).toISOString(),
+        endTime: endOfDay(date).toISOString(),
       });
     } else {
       createTaskOccurrence({
-        startTime: startOfDay(date),
-        endTime: endOfDay(date),
+        startTime: startOfDay(date).toISOString(),
+        endTime: endOfDay(date).toISOString(),
         taskIds: [taskId],
       });
     }
@@ -192,10 +192,24 @@ export const ScheduleDialog = ({ onClose, taskIds }: ScheduleDialogProps) => {
         },
         {
           onSuccess: (data) => {
+            if (data.dueDate) {
+              return;
+            }
+
+            if (data.startTime && !data.recurrenceRule[0]) {
+              taskIds.forEach((taskIdWithOccurrence) => {
+                updateTaskOccurrence(
+                  taskIdWithOccurrence,
+                  startOfDay(data.startTime).toISOString(),
+                );
+              });
+              onClose();
+              return;
+            }
+
             taskIds.forEach((taskId) => {
-              updateIssue({
+              updateTask({
                 taskId,
-                dueDate: data.dueDate ? data.dueDate : null,
                 status: 'Todo',
                 recurrence: data.recurrenceRule ? data.recurrenceRule : [],
                 scheduleText: data.scheduleText ? data.scheduleText : null,
@@ -252,7 +266,7 @@ export const ScheduleDialog = ({ onClose, taskIds }: ScheduleDialogProps) => {
         </div>
       </div>
       <CommandInput
-        placeholder="Due by 10pm | Every day at 9"
+        placeholder="Every day at 9 | work tomorrow"
         className="rounded-md h-10"
         value={value}
         autoFocus

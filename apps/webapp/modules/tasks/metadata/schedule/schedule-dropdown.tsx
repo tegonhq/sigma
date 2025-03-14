@@ -23,36 +23,6 @@ interface ScheduleDropdownProps {
   taskOccurrenceId?: string;
 }
 
-// interface TimeStatus {
-//   text: string;
-//   overdue: boolean;
-// }
-
-// const getRelativeTime = (date: Date): TimeStatus => {
-//   const now = new Date();
-//   const isOverdue = isPast(date);
-
-//   const days = Math.abs(differenceInDays(date, now));
-//   const hours = Math.abs(differenceInHours(date, now));
-//   const minutes = Math.abs(differenceInMinutes(date, now));
-
-//   let text = '';
-//   if (days > 0) {
-//     text = `${days}d`;
-//   } else if (hours > 0) {
-//     text = `${hours}h`;
-//   } else if (minutes > 0) {
-//     text = `${minutes}m`;
-//   } else {
-//     text = 'now';
-//   }
-
-//   return {
-//     text: isOverdue ? `${text} ago` : text,
-//     overdue: isOverdue,
-//   };
-// };
-
 export const ScheduleDropdown = observer(
   ({
     task,

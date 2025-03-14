@@ -16,6 +16,7 @@ export async function saveListData(
         updatedAt: record.data.updatedAt,
 
         pageId: record.data.pageId,
+        icon: record.data.icon,
       };
 
       switch (record.action) {

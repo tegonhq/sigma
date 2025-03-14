@@ -178,6 +178,8 @@ model List {
   updatedAt DateTime  @updatedAt
   deleted   DateTime?
 
+  icon String?
+
   page   Page   @relation(fields: [pageId], references: [id])
   pageId String
 

@@ -45,7 +45,6 @@ export const ScheduleList = observer(() => {
   React.useEffect(() => {
     return () => {
       clearSelectedTask();
-      console.log('asdf');
     };
   }, []);
 

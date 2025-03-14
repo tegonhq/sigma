@@ -28,6 +28,7 @@ import { useCreateListMutation } from 'services/lists';
 import { TabViewType } from 'store/application';
 
 import { WorkspaceDropdown } from './workspace-dropdown';
+import { getIcon } from 'common/icon-picker';
 
 export const AppSidebar = observer(
   ({ ...props }: React.ComponentProps<typeof Sidebar>) => {
@@ -148,7 +149,7 @@ export const AppSidebar = observer(
                     }
                     onClick={() => navigate(TabViewType.LIST, list.id)}
                   >
-                    <Project size={14} className="shrink-0" />
+                    {getIcon(list?.icon, 14)}
                     <div className="inline-flex items-center gap-1 shrink min-w-[0px]">
                       <div className="truncate">
                         {list.name ? list.name : 'Untitled'}
