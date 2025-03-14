@@ -32,7 +32,8 @@ interface RightSideLayoutProps {
 export const RightSideLayout = observer(
   ({ children, header }: RightSideLayoutProps) => {
     const [size, setSize] = useLocalCommonState('panelSize', 15);
-    const [aiCollapsed, setAICollapsed] = React.useState(true);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [aiCollapsed, _setAICollapsed] = React.useState(true);
     const [rightSideCollapsed, setRightSideCollapsed] = React.useState(true);
     const { open } = useSidebar();
     const { taskId, closeTaskView } = React.useContext(TaskViewContext);

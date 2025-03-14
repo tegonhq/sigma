@@ -3,17 +3,13 @@ import {
   BreadcrumbItem,
   BreadcrumbList,
   BreadcrumbPage,
-  BreadcrumbSeparator,
 } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 
+import type { ListType } from 'common/types';
 import { Navigation } from 'layouts/app-layout';
 
-import { useApplication } from 'hooks/application';
-
-import { TabViewType } from 'store/application';
 import { useContextStore } from 'store/global-context-provider';
-import type { ListType } from 'common/types';
 
 interface ListPageHeaderProps {
   list: ListType;

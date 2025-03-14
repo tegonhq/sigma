@@ -3,13 +3,13 @@ import React from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 
 import { ScheduleDialog } from 'modules/tasks/metadata';
+import { DueDateDialog } from 'modules/tasks/metadata/due-date';
 
 import { SCOPES } from 'common/shortcut-scopes';
 
 import { useApplication } from 'hooks/application';
 
 import { TabViewType } from 'store/application';
-import { DueDateDialog } from 'modules/tasks/metadata/due-date';
 
 export enum DialogType {
   SCHEDULE = 'schedule',

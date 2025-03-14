@@ -10,9 +10,7 @@ import { z } from 'zod';
 import { AdjustableTextArea } from 'common/adjustable-textarea';
 import { Shortcut } from 'common/shortcut';
 import { SCOPES } from 'common/shortcut-scopes';
-import type { ListType } from 'common/types';
 
-import { useCreateListMutation } from 'services/lists';
 import { useCreateTaskMutation } from 'services/tasks';
 
 import { NewTaskSchema } from './add-task-type';
@@ -36,28 +34,7 @@ export const AddTask = observer(({ onCancel }: AddTaskProps) => {
     },
   });
 
-  const { mutate: createList } = useCreateListMutation({});
-
   const addTask = (data: z.infer<typeof NewTaskSchema>) => {
-    if (data.listId && data.listId.includes('__new')) {
-      createList(
-        {
-          name: data.listId.replace('__new', ''),
-        },
-        {
-          onSuccess: (list: ListType) => {
-            addTaskMutation({
-              title: data.title,
-              status: data.status,
-              listId: list.id,
-            });
-          },
-        },
-      );
-
-      return;
-    }
-
     addTaskMutation({
       title: data.title,
       status: data.status,

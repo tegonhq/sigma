@@ -7,6 +7,7 @@ import { generateSummaryTask } from 'triggers/task/generate-summary';
 
 import { IntegrationsService } from 'modules/integrations/integrations.service';
 import { PagesService } from 'modules/pages/pages.service';
+import { getTaskItemContent } from 'modules/pages/pages.utils';
 import { TaskOccurenceService } from 'modules/task-occurrence/task-occurrence.service';
 import { UsersService } from 'modules/users/users.service';
 
@@ -15,7 +16,6 @@ import {
   handleCalendarTask,
   TransactionClient,
 } from '../tasks/tasks.utils';
-import { getTaskItemContent } from 'modules/pages/pages.utils';
 
 @Injectable()
 export class TaskHooksService {

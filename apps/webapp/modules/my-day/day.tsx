@@ -1,5 +1,5 @@
 import { AI, ScrollArea } from '@tegonhq/ui';
-import { format, isBefore, isToday } from 'date-fns';
+import { format } from 'date-fns';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 

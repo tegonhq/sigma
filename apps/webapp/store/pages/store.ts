@@ -1,12 +1,9 @@
 import { PageTypeEnum } from '@sigma/types';
-import { generateHTML } from '@tiptap/core';
 import { format } from 'date-fns';
 import { generateKeyBetween } from 'fractional-indexing'; // Import the fractional-index package
 import Fuse from 'fuse.js';
 import { type IAnyStateTreeNode, types, flow } from 'mobx-state-tree';
 
-import { extractTextFromHTML } from 'common/common-utils';
-import { defaultExtensions } from 'common/editor';
 import type { PageType } from 'common/types';
 
 import { sigmaDatabase } from 'store/database';

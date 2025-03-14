@@ -19,15 +19,12 @@ import { TaskListItem } from 'modules/tasks/task-item';
 
 import { ScrollManagedList } from 'common/virtualized-list';
 
-import { useApplication } from 'hooks/application';
-
 import { useTaskRows } from './utils';
 
 export const ScheduleList = observer(() => {
   const [collapsedHeaders, setCollapsedHeaders] = React.useState<
     Record<string, boolean>
   >({});
-  const { clearSelectedTask } = useApplication();
 
   const rows = useTaskRows(collapsedHeaders);
 
@@ -41,12 +38,6 @@ export const ScheduleList = observer(() => {
     cache.clearAll();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rows]);
-
-  React.useEffect(() => {
-    return () => {
-      clearSelectedTask();
-    };
-  }, []);
 
   const toggleHeaderCollapse = (planDay: string) => {
     setCollapsedHeaders((prev) => ({

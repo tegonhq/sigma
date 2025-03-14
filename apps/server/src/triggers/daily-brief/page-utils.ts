@@ -1,4 +1,5 @@
 import { Page, Task } from '@sigma/types';
+
 import { getTaskItemContent } from 'modules/pages/pages.utils';
 
 export function getTaskListsInPage(page: Page) {

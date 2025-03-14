@@ -3,13 +3,14 @@ import { task } from '@trigger.dev/sdk/v3';
 import axios from 'axios';
 import { format } from 'date-fns';
 
+import { getTaskItemContent } from 'modules/pages/pages.utils';
+
 import {
   getCurrentTaskIds,
   getTaskListsInPage,
   updateTaskListsInPage,
   upsertTasksInPage,
 } from './page-utils';
-import { getTaskItemContent } from 'modules/pages/pages.utils';
 
 const prisma = new PrismaClient();
 

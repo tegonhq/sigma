@@ -40,7 +40,7 @@ export default Extension.create<TrailingNodeOptions>({
           const type = schema.nodes[this.options.node];
 
           if (!shouldInsertNodeAtEnd) {
-            return;
+            return null;
           }
 
           return tr.insert(endPosition, type.create());

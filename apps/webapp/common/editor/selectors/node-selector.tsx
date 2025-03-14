@@ -2,7 +2,6 @@ import {
   BulletListLine,
   CodingLine,
   HeadingLine,
-  IssuesLine,
   NumberedListLine,
   TextLine,
   Button,

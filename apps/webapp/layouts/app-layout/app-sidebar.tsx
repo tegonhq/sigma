@@ -3,7 +3,6 @@ import {
   Button,
   CalendarLine,
   cn,
-  Project,
   Sidebar,
   SidebarContent,
   SidebarGroup,
@@ -17,6 +16,7 @@ import * as React from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 
 import { getPlatformModifierKey } from 'common/common-utils';
+import { getIcon } from 'common/icon-picker';
 import { SCOPES } from 'common/shortcut-scopes';
 import type { ListType } from 'common/types';
 
@@ -28,7 +28,6 @@ import { useCreateListMutation } from 'services/lists';
 import { TabViewType } from 'store/application';
 
 import { WorkspaceDropdown } from './workspace-dropdown';
-import { getIcon } from 'common/icon-picker';
 
 export const AppSidebar = observer(
   ({ ...props }: React.ComponentProps<typeof Sidebar>) => {

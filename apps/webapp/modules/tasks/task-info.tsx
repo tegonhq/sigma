@@ -1,19 +1,18 @@
-import { Badge, Project } from '@tegonhq/ui';
+import { Badge } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 
+import { getIcon } from 'common/icon-picker';
 import type { TaskType } from 'common/types';
 
 import { useContextStore } from 'store/global-context-provider';
 
 import { ScheduleDropdown, ScheduleDropdownVariant } from './metadata';
 import { DuedateDropdown, DuedateDropdownVariant } from './metadata/due-date';
-import { getIcon } from 'common/icon-picker';
 
 export const TaskInfo = observer(
   ({
     task,
     taskOccurrenceId,
-    inEditor = false,
   }: {
     task: TaskType;
     taskOccurrenceId?: string;

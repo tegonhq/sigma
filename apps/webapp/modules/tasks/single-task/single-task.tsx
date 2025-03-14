@@ -8,8 +8,6 @@ import { Key } from 'ts-key-enum';
 import { SCOPES } from 'common/shortcut-scopes';
 import { RightSideLayout } from 'layouts/right-side-layout';
 
-import { useApplication } from 'hooks/application';
-
 import { useUpdateTaskMutation } from 'services/tasks';
 
 import { useContextStore } from 'store/global-context-provider';
