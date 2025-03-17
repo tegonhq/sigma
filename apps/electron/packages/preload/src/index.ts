@@ -17,8 +17,7 @@ const electronHandler = {
     sendMessage(channel: Channels, ...args: unknown[]) {
       ipcRenderer.send(channel, ...args);
     },
-    onWindowStateChange: (callback: (state: string) => void) =>
-      ipcRenderer.on('window-state', (event, state) => callback(state)),
+
     convertPathToUrl: (filePath: string) => ipcRenderer.invoke('convert-path-to-url', filePath),
     on(channel: Channels, func: (...args: unknown[]) => void) {
       const subscription = (_event: IpcRendererEvent, ...args: unknown[]) => func(...args);
@@ -36,6 +35,10 @@ const electronHandler = {
     },
     getIntegrationsFolder: () => ipcRenderer.invoke('get-integrations-folder'),
     getSources: () => ipcRenderer.invoke('get-sources'),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    getAutoUpdates: (callback: (event: IpcRendererEvent, ...args: any[]) => void) => {
+      ipcRenderer.on('auto-update', callback);
+    },
   },
 };
 

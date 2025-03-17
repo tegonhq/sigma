@@ -4,7 +4,6 @@ import {app, type App} from 'electron';
 import Fastify from 'fastify';
 import path from 'node:path';
 import fs from 'node:fs';
-import {integrationsInit} from './integrations-init';
 import fastifyStatic from '@fastify/static';
 
 const isDev = process.env.NODE_ENV === 'development';
@@ -68,6 +67,5 @@ export const startAPI = (app: App) => {
   // Start everything
   app.whenReady().then(async () => {
     await startFastifyServer();
-    await integrationsInit();
   });
 };

@@ -52,17 +52,3 @@ export async function createMainWindow() {
 
   return browserWindow;
 }
-
-export function registerMainWindowStates(window: BrowserWindow) {
-  if (window.isMaximized()) {
-    window.webContents.send('window-state', 'maximized');
-  }
-
-  window.on('enter-full-screen', () => {
-    window.webContents.send('window-state', 'maximized');
-  });
-
-  window.on('leave-full-screen', () => {
-    window.webContents.send('window-state', 'restored');
-  });
-}

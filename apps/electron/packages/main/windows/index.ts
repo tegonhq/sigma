@@ -1,11 +1,12 @@
 import {globalShortcut, nativeImage, Tray, type BrowserWindow, screen} from 'electron';
-import {createMainWindow, registerMainWindowStates} from './main';
+import {createMainWindow} from './main';
 import {createQuickWindow, recalculatePositionToDisplay, registerQuickStates} from './quick';
 
 import path, {dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {registerDeepLink} from '/@/deeplink';
+import {registerDeepLink} from '../src/deeplink';
 import log from 'electron-log';
+import {setupAutoUpdater} from '../src/auto-update';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -28,8 +29,8 @@ export const appWindows: Windows = {
 export async function restoreOrCreateWindow() {
   if (!appWindows.main || appWindows.main.isDestroyed()) {
     appWindows.main = await createMainWindow();
-    registerMainWindowStates(appWindows.main);
     registerDeepLink(appWindows.main);
+    setupAutoUpdater();
   }
 
   if (appWindows.main.isMinimized()) {

@@ -3,7 +3,8 @@ export interface IPCRenderer {
   sendMessage(channel: string, ...args: any[]): void;
   on(channel: string[], listener: (event: any, ...args: any[]) => void): void;
   once(channel: string, listener: (event: any, ...args: any[]) => void): void;
-  onWindowStateChange(callback: (state: string) => void): void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  getAutoUpdates(callback: (event: any, ...args: any[]) => void): void;
   openUrl: (url: string) => void;
   getIntegrationsFolder: () => Promise<string>;
 }

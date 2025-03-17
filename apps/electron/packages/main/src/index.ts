@@ -7,7 +7,6 @@ import updater from 'electron-updater';
 import {startAPI} from './api';
 import {listeners} from '../windows/listeners';
 import {registerStore} from './store';
-import {setupAutoUpdater} from './auto-update';
 import log from 'electron-log';
 
 /**
@@ -49,7 +48,6 @@ app
     restoreOrCreateWindow();
     // registerShortcut();
     listeners();
-    setupAutoUpdater();
   })
   .catch(e => log.error('Failed create window:', e));
 

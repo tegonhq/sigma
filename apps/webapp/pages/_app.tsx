@@ -17,6 +17,7 @@ import { Provider } from 'modules/provider';
 import { AddTaskDialog } from 'modules/tasks/add-task';
 
 import { initSuperTokens } from 'common/init-config';
+import { Updates } from 'modules/updates/updates';
 
 TimeAgo.addDefaultLocale(en);
 
@@ -41,6 +42,7 @@ export const MyApp = ({
           {getLayout(<Component {...pageProps} />)}
 
           <AddTaskDialog />
+          <Updates />
         </div>
       </Hydrate>
     </Provider>
