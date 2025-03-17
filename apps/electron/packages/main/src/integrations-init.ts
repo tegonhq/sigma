@@ -2,7 +2,7 @@ import {app, session} from 'electron';
 import axios from 'axios';
 import path from 'node:path';
 import fs from 'fs';
-import log from 'electron-log/main';
+import log from 'electron-log';
 
 async function getAccessToken(): Promise<string | null> {
   const keyName = 'sAccessToken';

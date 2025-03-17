@@ -8,10 +8,7 @@ import {startAPI} from './api';
 import {listeners} from '../windows/listeners';
 import {registerStore} from './store';
 import {setupAutoUpdater} from './auto-update';
-import log from 'electron-log/main';
-
-// Optional, initialize the logger for any renderer process
-log.initialize();
+import log from 'electron-log';
 
 /**
  * Prevent electron from running multiple instances.

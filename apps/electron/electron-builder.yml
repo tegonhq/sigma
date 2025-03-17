@@ -5,6 +5,7 @@ extraMetadata:
 copyright: Copyright © 2025 tegon
 appId: com.mysigma.mysigma-desktop
 asar: true
+afterSign: './notarize/notarize.cjs'
 publish:
   - provider: github
     owner: tegonhq
@@ -23,9 +24,10 @@ mac:
   target:
     - target: default
       arch:
-        - arm64
-        - x64
+        - universal
   entitlements: './notarize/entitlements.mac.plist'
+  entitlementsInherit: './notarize/entitlements.mac.plist'
+  gatekeeperAssess: false
   icon: './buildResources/icon.icns'
   extraResources:
     - from: './buildResources'

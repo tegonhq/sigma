@@ -4,15 +4,14 @@
   <dict>
     <key>com.apple.security.cs.allow-unsigned-executable-memory</key>
     <true/>
+
     <key>com.apple.security.cs.allow-jit</key>
     <true/>
+
     <key>com.apple.security.cs.disable-library-validation</key>
     <true/>
+    
     <key>com.apple.security.personal-information.calendars</key>
     <true/>
-    <key>com.apple.security.app-sandbox</key>
-	  <true/>
-	  <key>com.apple.security.device.audio-input</key>
-	  <true/>
   </dict>
 </plist>

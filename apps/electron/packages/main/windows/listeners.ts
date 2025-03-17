@@ -1,7 +1,7 @@
 import {app, desktopCapturer, ipcMain, shell} from 'electron';
 import {integrationsInit} from '/@/integrations-init';
 import path from 'node:path';
-import log from 'electron-log/main';
+import log from 'electron-log';
 
 export function listeners() {
   // Listen for URL open requests

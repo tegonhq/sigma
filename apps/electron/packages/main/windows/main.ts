@@ -1,6 +1,6 @@
 import {app, BrowserWindow} from 'electron';
 import path, {dirname, join} from 'node:path';
-import log from 'electron-log/main';
+import log from 'electron-log';
 import {fileURLToPath} from 'node:url';
 
 // Initialize Fastify

@@ -5,7 +5,7 @@ import {createQuickWindow, recalculatePositionToDisplay, registerQuickStates} fr
 import path, {dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {registerDeepLink} from '/@/deeplink';
-import log from 'electron-log/main';
+import log from 'electron-log';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

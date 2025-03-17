@@ -36,7 +36,7 @@ export function Auth() {
       setLoading(true);
 
       ipc.openUrl(
-        `${publicRuntimeConfig.NEXT_PUBLIC_BASE_HOST}/authorize?code=${data.code}`,
+        `${publicRuntimeConfig.NEXT_PUBLIC_NODE_ENV === 'production' ? 'https://app.mysigma.ai' : publicRuntimeConfig.NEXT_PUBLIC_BASE_HOST}/authorize?code=${data.code}`,
       );
 
       try {
@@ -61,8 +61,7 @@ export function Auth() {
 
         // This is where Google should redirect the user back after login or error.
         // This URL goes on the Google's dashboard as well.
-        frontendRedirectURI:
-          'https://a9bc-223-185-130-157.ngrok-free.app/auth/google',
+        frontendRedirectURI: 'https://app.mysigma.ai/auth/google',
       });
 
       /*
