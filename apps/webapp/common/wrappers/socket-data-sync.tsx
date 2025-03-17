@@ -51,7 +51,8 @@ export const SocketDataSyncWrapper: React.FC<Props> = observer(
     }, []);
 
     async function initSocket() {
-      const socket = io(publicRuntimeConfig.NEXT_PUBLIC_BACKEND_HOST, {
+      const socket = io(publicRuntimeConfig.NEXT_PUBLIC_BASE_HOST, {
+        path: '/api/socket.io',
         query: {
           workspaceId: user.workspace.id,
           userId: user.id,
