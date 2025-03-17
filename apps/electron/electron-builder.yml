@@ -4,7 +4,7 @@ extraMetadata:
   name: mysigma
 copyright: Copyright © 2025 tegon
 appId: com.mysigma.mysigma-desktop
-asar: false
+asar: true
 afterSign: './notarize/notarize.cjs'
 publish:
   - provider: github
@@ -24,7 +24,7 @@ mac:
   target:
     - target: default
       arch:
-        - arm64
+        - universal
   entitlements: './notarize/entitlements.mac.plist'
   entitlementsInherit: './notarize/entitlements.mac.plist'
   gatekeeperAssess: false
