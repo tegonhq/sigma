@@ -29,7 +29,7 @@ export const AddTaskSelector = () => {
                   to: taskContent.end,
                 },
                 {
-                  type: 'taskExtension',
+                  type: 'taskItem',
                   attrs: {
                     id,
                   },

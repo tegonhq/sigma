@@ -21,8 +21,7 @@ export const Day = observer(() => {
 
           <div className="flex flex-col ml-2 grow">
             <h3 className="text-xl mb-2 flex gap-1">
-              {format(date, 'EEEE, MMMM do, yyyy')}
-              <AI />
+              {format(date, 'EE, MMM do, yyyy')}
             </h3>
 
             <DayEditor date={date} />

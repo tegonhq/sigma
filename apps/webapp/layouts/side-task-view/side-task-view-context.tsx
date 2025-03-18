@@ -26,7 +26,7 @@ export const TaskViewProvider = observer(
     const [taskId, setTaskId] = React.useState<string | undefined>(undefined);
     const [viewType, setViewType] = useLocalCommonState(
       'view_type',
-      'view_screen',
+      'side_view',
     );
 
     const openTask = (taskId: string, override: boolean = false) => {

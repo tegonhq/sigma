@@ -1,8 +1,11 @@
 import {
   AI,
   CalendarLine,
+  DeleteLine,
   DocumentLine,
+  Fire,
   IssuesLine,
+  Project,
   TodoLine,
 } from '@tegonhq/ui';
 import { parse } from 'date-fns';
@@ -12,6 +15,9 @@ import { useApplication } from 'hooks/application';
 
 import { TabViewType } from 'store/application';
 import { useContextStore } from 'store/global-context-provider';
+import { DailogViewsContext, DialogType } from 'modules/dialog-views-provider';
+import { Check } from 'lucide-react';
+import { useTaskOperations } from './use-task-operations';
 
 interface CommandType {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -43,9 +49,20 @@ function isValidDateFormat(dateString: string) {
 }
 
 export const useSearchCommands = (value: string, onClose: () => void) => {
-  const { tasksStore, pagesStore } = useContextStore();
-  const { updateTabData, tabs, updateTabType } = useApplication();
-  const secondTab = tabs[1];
+  const { tasksStore, pagesStore, listsStore } = useContextStore();
+  const { updateTabData, tabs, updateTabType, selectedTasks } =
+    useApplication();
+  const firstTab = tabs[0];
+  const { openDialog } = React.useContext(DailogViewsContext);
+  const { markComplete, deleteTasks } = useTaskOperations();
+
+  const getTasks = () => {
+    if (selectedTasks.length > 0) {
+      return selectedTasks;
+    }
+
+    return [];
+  };
 
   return React.useMemo(() => {
     const commands: Record<string, CommandType[]> = {};
@@ -91,19 +108,41 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
     }
 
     if (
-      secondTab.type === TabViewType.MY_TASKS &&
-      secondTab.entity_id !== 'my_tasks'
+      firstTab.type === TabViewType.MY_TASKS &&
+      (getTasks().length > 0 || firstTab.entity_id)
     ) {
       commands['Task'] = [
         {
           Icon: CalendarLine,
-          text: 'Set due date',
-          command: () => {},
+          text: 'Schedule',
+          command: () => {
+            onClose();
+            openDialog(DialogType.SCHEDULE, getTasks());
+          },
         },
         {
-          Icon: TodoLine,
-          text: 'Set status',
-          command: () => {},
+          Icon: Fire,
+          text: 'Set due date',
+          command: () => {
+            onClose();
+            openDialog(DialogType.DUEDATE, getTasks());
+          },
+        },
+        {
+          Icon: Check,
+          text: 'Mark completed',
+          command: () => {
+            onClose();
+            markComplete(getTasks());
+          },
+        },
+        {
+          Icon: DeleteLine,
+          text: 'Delete task',
+          command: () => {
+            onClose();
+            deleteTasks(getTasks());
+          },
         },
       ];
     }
@@ -113,6 +152,7 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
 
       commands['Pages'] = pages.map((page) => {
         const task = tasksStore.getTaskForPage(page.id);
+        const list = listsStore.getListWithPageId(page.id);
 
         if (task) {
           return {
@@ -128,8 +168,22 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
           };
         }
 
+        if (list) {
+          return {
+            Icon: Project,
+            text: page.title,
+            command: () => {
+              updateTabType(0, TabViewType.LIST, {
+                entityId: list.id,
+              });
+
+              onClose();
+            },
+          };
+        }
+
         return {
-          Icon: DocumentLine,
+          Icon: CalendarLine,
           text: page.title,
           command: () => {
             updateTabData(0, {

@@ -40,10 +40,9 @@ export class TasksController {
   @UseGuards(AuthGuard)
   async createTask(
     @Workspace() workspaceId: string,
-    @UserId() userId: string,
     @Body() taskData: CreateTaskDto,
   ): Promise<Task> {
-    return await this.tasksService.createTask(taskData, workspaceId, userId);
+    return await this.tasksService.createTask(taskData, workspaceId);
   }
 
   @Post('source')

@@ -8,3 +8,19 @@ interface EditorContextType {
 }
 
 export const EditorContext = React.createContext<EditorContextType>(undefined);
+
+export const EditorContextProvider = ({
+  source,
+  date,
+  children,
+}: {
+  source: Source;
+  date?: Date;
+  children: React.ReactNode;
+}) => {
+  return (
+    <EditorContext.Provider value={{ source, date }}>
+      {children}
+    </EditorContext.Provider>
+  );
+};

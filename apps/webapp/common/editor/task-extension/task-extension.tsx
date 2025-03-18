@@ -8,8 +8,10 @@ import {
   ReactNodeViewRenderer,
   type ReactNodeViewRendererOptions,
 } from '@tiptap/react';
+import { TextSelection } from '@tiptap/pm/state';
 
 import { TaskComponent } from './task-component';
+
 export const INLINE_TASK_CONTENT_NAME = 'taskItem';
 
 export const inputRegex = /^\s*(\[([( |x])?\])\s$/;
@@ -21,9 +23,11 @@ export const TaskExtension = ({
 }) =>
   Node.create({
     name: INLINE_TASK_CONTENT_NAME,
+    selectable: true, // Allows the whole node to be selectable
+    isolating: true, // Ensures that selecting part of the text doesn't include the node itself
 
     content() {
-      return this.options.nested ? 'paragraph block*' : 'paragraph+';
+      return this.options.nested ? 'paragraph block*' : 'paragraph';
     },
 
     defining: true,
@@ -39,9 +43,6 @@ export const TaskExtension = ({
     addAttributes() {
       return {
         id: {
-          default: undefined,
-        },
-        number: {
           default: undefined,
         },
       };
@@ -76,59 +77,88 @@ export const TaskExtension = ({
     addKeyboardShortcuts() {
       const isTaskContent = () => {
         const selection = this.editor.state.selection;
-        return selection.$from.parent.type.name === INLINE_TASK_CONTENT_NAME;
+
+        let depth = selection.$from.depth;
+
+        while (depth > 0) {
+          const node = selection.$from.node(depth);
+          if (node.type.name === INLINE_TASK_CONTENT_NAME) {
+            return true;
+          }
+          depth--;
+        }
+
+        // Check the root node too
+        if (selection.$from.node(0).type.name === INLINE_TASK_CONTENT_NAME) {
+          return true;
+        }
+
+        return false;
       };
 
       const shortcuts: Record<string, KeyboardShortcutCommand> = {
         Enter: () => {
-          const state = this.editor.state;
-          const selection = state.selection;
-
           if (!isTaskContent()) {
             return false;
           }
 
-          if (selection.$from.parentOffset === 0) {
-            return this.editor.commands.setNode('paragraph');
+          const { selection } = this.editor.state;
+          const { empty, $from } = selection;
+
+          // Only handle empty selections (cursor positions)
+          if (!empty) {
+            return this.editor.commands.splitListItem(this.name);
           }
 
-          // if it's not the top level node, let list handle it
-          if (
-            selection.$from.depth > 3 ||
-            selection.$from.parent.nodeSize > 2
-          ) {
-            this.editor.commands.splitListItem(this.name, {
-              id: undefined,
-            });
-
-            return true;
+          // If cursor is at the start of the task item
+          if ($from.parentOffset === 0) {
+            return this.editor
+              .chain()
+              .liftListItem('taskItem')
+              .setNode('paragraph', {})
+              .run();
           }
 
-          return this.editor.commands.setNode('paragraph');
+          // If cursor is in the middle or at the end
+          return this.editor
+            .chain()
+            .insertContentAt($from.after(), {
+              type: this.name,
+              attrs: {
+                id: undefined,
+              },
+              content: [{ type: 'paragraph' }],
+            })
+            .setTextSelection($from.after() + 2) // Move cursor to the new task
+            .run();
         },
         'Shift-Tab': () => this.editor.commands.liftListItem(this.name),
         Backspace: () => {
           const state = this.editor.state;
           const selection = state.selection;
-
-          if (!isTaskContent()) {
-            return false;
-          }
-
           const blockRange = selection.$from.blockRange();
           if (!blockRange) {
             return false;
           }
 
-          if (blockRange.start + 1 === selection.from && selection.empty) {
-            return this.editor
-              .chain()
-              .liftListItem('listItem')
-              .setNode('paragraph', {})
-              .run();
+          if (blockRange.start + 1 !== selection.from) {
+            return false;
           }
 
-          return false;
+          const beforeSelection = TextSelection.findFrom(
+            state.doc.resolve(blockRange.start - 1),
+            -1,
+            true,
+          );
+
+          const beforeBlockRange = beforeSelection?.$from.blockRange();
+          if (beforeBlockRange?.parent.type.name !== this.name) {
+            return false;
+          }
+          return this.editor.commands.deleteRange({
+            from: beforeSelection!.from,
+            to: selection.from,
+          });
         },
         'Mod-Backspace': () => {
           return this.editor
@@ -160,11 +190,9 @@ export const TaskExtension = ({
             // eslint-disable-next-line curly
             if (!blockRange) return null;
 
-            const taskItem = state.schema.nodes.taskItem;
-
             chain()
               .wrapIn('taskList')
-              .setNode(taskItem, {
+              .setNode('taskItem', {
                 id: undefined,
               })
               .run();

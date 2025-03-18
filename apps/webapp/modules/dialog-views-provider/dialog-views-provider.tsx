@@ -10,11 +10,8 @@ import { SCOPES } from 'common/shortcut-scopes';
 import { useApplication } from 'hooks/application';
 
 import { TabViewType } from 'store/application';
-
-export enum DialogType {
-  SCHEDULE = 'schedule',
-  DUEDATE = 'due-date',
-}
+import { ActionBar } from 'modules/tasks/action-bar';
+import { DialogType } from './types';
 
 interface DialogViewsContextType {
   taskIds?: string[];
@@ -96,12 +93,16 @@ export const DialogViewsProvider = observer(
     );
 
     return (
-      <DailogViewsContext.Provider
-        value={{ taskIds, dialogType: dialogOpen, openDialog, closeDialog }}
-      >
-        {taskIds.length > 0 && dialogOpen && getDialogComponent()}
-        {children}
-      </DailogViewsContext.Provider>
+      <>
+        <DailogViewsContext.Provider
+          value={{ taskIds, dialogType: dialogOpen, openDialog, closeDialog }}
+        >
+          {taskIds.length > 0 && dialogOpen && getDialogComponent()}
+          {children}
+        </DailogViewsContext.Provider>
+
+        {selectedTasks.length > 0 && <ActionBar openDialog={openDialog} />}
+      </>
     );
   },
 );

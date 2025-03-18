@@ -13,7 +13,9 @@ export const Updates = () => {
   };
 
   const subscribeToUpdateEvents = () => {
-    ipc.getAutoUpdates(updates);
+    if (ipc) {
+      ipc.getAutoUpdates(updates);
+    }
   };
 
   return <div className="fixed bottom-0 right-0 bg-background"></div>;

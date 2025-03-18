@@ -6,9 +6,10 @@ import { SyncModule } from 'modules/sync/sync.module';
 import SyncActionsService from 'modules/sync-actions/sync-actions.service';
 
 import ReplicationService from './replication.service';
+import { TasksHookModule } from 'modules/tasks-hook/tasks-hooks.module';
 
 @Module({
-  imports: [SyncModule, PagesModule],
+  imports: [SyncModule, PagesModule, TasksHookModule],
   controllers: [],
   providers: [ReplicationService, ConfigService, SyncActionsService],
   exports: [],

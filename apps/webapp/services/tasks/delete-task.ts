@@ -1,18 +1,13 @@
-import { createTask } from '@sigma/services';
+import { deleteTask } from '@sigma/services';
 import { useMutation } from 'react-query';
-
-import type { TaskType } from 'common/types';
-import type { CreateTaskDto } from '@sigma/types';
-import { EditorContext } from 'common/editor';
-import React from 'react';
 
 interface MutationParams {
   onMutate?: () => void;
-  onSuccess?: (data: TaskType | undefined) => void;
+  onSuccess?: () => void;
   onError?: (error: string) => void;
 }
 
-export function useCreateTaskMutation({
+export function useDeleteTaskMutation({
   onMutate,
   onSuccess,
   onError,
@@ -28,11 +23,11 @@ export function useCreateTaskMutation({
     onError && onError(errorText);
   };
 
-  const onMutationSuccess = (data: TaskType) => {
-    onSuccess && onSuccess(data);
+  const onMutationSuccess = () => {
+    onSuccess && onSuccess();
   };
 
-  return useMutation(createTask, {
+  return useMutation(deleteTask, {
     onError: onMutationError,
     onMutate: onMutationTriggered,
     onSuccess: onMutationSuccess,

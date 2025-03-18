@@ -1,5 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { Outlink, OutlinkType, Task, TaskHookContext } from '@sigma/types';
+import {
+  Outlink,
+  OutlinkType,
+  Task,
+  TaskHookAction,
+  TaskHookContext,
+} from '@sigma/types';
 import { tasks } from '@trigger.dev/sdk/v3';
 import { PrismaService } from 'nestjs-prisma';
 import { beautifyTask } from 'triggers/task/beautify-task';
@@ -43,6 +49,36 @@ export class TaskHooksService {
         // this.handleGenerateSummary(task, context),
       ]);
     }
+  }
+
+  async executeHookWithId(taskId: string, action: TaskHookAction) {
+    const task = await this.prisma.task.findUnique({
+      where: {
+        id: taskId,
+      },
+      include: {
+        workspace: true,
+      },
+    });
+
+    if (!task) {
+      return;
+    }
+
+    const context: TaskHookContext = {
+      userId: task.workspace.userId,
+      workspaceId: task.workspaceId,
+      action,
+    };
+
+    await this.handleBeautifyTask(task, context);
+    await Promise.all([
+      this.handleTitleChange(task, context),
+      this.handleDeleteTask(task, context),
+      this.handleScheduleTask(task, context),
+      // this.handleCalendarTask(task, context),
+      // this.handleGenerateSummary(task, context),
+    ]);
   }
 
   async handleDeleteTask(task: Task, context: TaskHookContext) {

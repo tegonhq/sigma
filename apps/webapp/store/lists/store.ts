@@ -55,6 +55,9 @@ export const ListsStore: IAnyStateTreeNode = types
     getListWithId(listsId: string) {
       return self.lists.find((list: ListType) => list.id === listsId);
     },
+    getListWithPageId(pageId: string) {
+      return self.lists.find((list: ListType) => list.pageId === pageId);
+    },
     getListWithIds(listsIds: string[]) {
       return self.lists.filter((list: ListType) => listsIds.includes(list.id));
     },
@@ -71,4 +74,5 @@ export interface ListsStoreType {
   getLists: ListType[];
   getListWithId: (listId: string) => ListType;
   getListWithIds: (listIds: string[]) => ListType[];
+  getListWithPageId: (pageId: string) => ListType;
 }

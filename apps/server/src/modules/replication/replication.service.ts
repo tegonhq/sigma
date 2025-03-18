@@ -19,6 +19,7 @@ import {
   tableHooks,
   tablesToSendMessagesFor,
 } from './replication.interface';
+import { TaskHooksService } from 'modules/tasks-hook/tasks-hook.service';
 
 const REPLICATION_SLOT_PLUGIN = 'wal2json';
 
@@ -35,6 +36,7 @@ export default class ReplicationService {
     private syncGateway: SyncGateway,
     private syncActionsService: SyncActionsService,
     private pagesService: PagesService,
+    private taskHooksService: TaskHooksService,
   ) {
     this.client = new Client({
       user: configService.get('POSTGRES_USER'),
@@ -231,9 +233,15 @@ export default class ReplicationService {
           }
 
           if (tableHooks.has(modelName)) {
-            const changedData = this.getChangedData(change);
+            if (ModelNameEnum.Page === modelName) {
+              const changedData = this.getChangedData(change);
 
-            this.pagesService.handleHooks({ pageId: modelId, changedData });
+              this.pagesService.handleHooks({ pageId: modelId, changedData });
+            }
+
+            if (ModelNameEnum.Task === modelName && change.kind === 'insert') {
+              this.taskHooksService.executeHookWithId(modelId, 'create');
+            }
           }
         });
       } else {

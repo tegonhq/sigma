@@ -54,16 +54,16 @@ export const SingleTaskWithoutLayout = observer(
     }
 
     return (
-      <ScrollArea className="w-full h-full flex justify-center p-4">
+      <ScrollArea className="w-full h-full flex justify-center">
         <div className="flex h-full justify-center w-full">
           <div className="grow flex flex-col gap-2 h-full max-w-[97ch]">
-            <div>
+            <div className="px-4 pt-4">
               <PageTitle value={page.title} onChange={onChange} />
             </div>
 
             <SingleTaskMetadata task={task} />
 
-            <div className="flex flex-col gap-0 pt-3">
+            <div className="flex flex-col gap-0 pt-3 px-4">
               <SingleTaskEditor page={page} task={task} />
             </div>
           </div>

@@ -13,6 +13,7 @@ export const TaskInfo = observer(
   ({
     task,
     taskOccurrenceId,
+    inEditor,
   }: {
     task: TaskType;
     taskOccurrenceId?: string;
@@ -38,11 +39,13 @@ export const TaskInfo = observer(
               {getIcon(list?.icon, 12)} {page?.title}
             </Badge>
           )}
-          <ScheduleDropdown
-            task={task}
-            variant={ScheduleDropdownVariant.SHORT}
-            taskOccurrenceId={taskOccurrenceId}
-          />
+          {!inEditor && (
+            <ScheduleDropdown
+              task={task}
+              variant={ScheduleDropdownVariant.SHORT}
+              taskOccurrenceId={taskOccurrenceId}
+            />
+          )}
           <DuedateDropdown task={task} variant={DuedateDropdownVariant.SHORT} />
         </div>
       </div>

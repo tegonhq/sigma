@@ -14,7 +14,6 @@ import React from 'react';
 import { Hydrate } from 'react-query';
 
 import { Provider } from 'modules/provider';
-import { AddTaskDialog } from 'modules/tasks/add-task';
 
 import { initSuperTokens } from 'common/init-config';
 import { Updates } from 'modules/updates/updates';
@@ -41,7 +40,6 @@ export const MyApp = ({
         >
           {getLayout(<Component {...pageProps} />)}
 
-          <AddTaskDialog />
           <Updates />
         </div>
       </Hydrate>

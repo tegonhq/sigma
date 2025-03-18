@@ -15,6 +15,9 @@ import {
   UpdatePageDto,
   enchancePrompt,
   JsonObject,
+  Task,
+  CreateTaskDto,
+  PageTypeEnum,
 } from '@sigma/types';
 import { parse } from 'date-fns';
 import { PrismaService } from 'nestjs-prisma';
@@ -497,8 +500,138 @@ export class PagesService {
     return { outlinks, allTaskIds };
   }
 
+  async createTask(
+    createTaskDto: CreateTaskDto,
+    workspaceId: string,
+  ): Promise<Task> {
+    const prismaClient = this.prisma;
+    const {
+      title,
+      metadata,
+      status: taskStatus,
+      source,
+      integrationAccountId,
+      listId,
+      pageDescription,
+      parentId,
+      ...otherTaskData
+    } = createTaskDto;
+
+    // For a page if there exisiting an already deleted task with the same title
+    // use that instead of creating a new one
+    const exisitingTask = await prismaClient.task.findMany({
+      where: {
+        deleted: { not: null },
+        page: {
+          title,
+        },
+      },
+    });
+
+    if (exisitingTask.length > 0 && exisitingTask[0]) {
+      const task = await prismaClient.task.update({
+        where: {
+          id: exisitingTask[0].id,
+        },
+        data: {
+          deleted: null,
+          source: source ? { ...source } : undefined,
+        },
+        include: {
+          page: true,
+        },
+      });
+
+      return task;
+    }
+
+    // Create the task first
+    const task = await prismaClient.task.create({
+      data: {
+        status: taskStatus || 'Todo',
+        metadata,
+        ...otherTaskData,
+        workspace: { connect: { id: workspaceId } },
+        ...(listId && {
+          list: { connect: { id: listId } },
+        }),
+        ...(parentId && { parent: { connect: { id: parentId } } }),
+        page: {
+          create: {
+            title,
+            sortOrder: '',
+            tags: [],
+            type: PageTypeEnum.Default,
+            workspace: { connect: { id: workspaceId } },
+          },
+        },
+        source: source ? { ...source } : undefined,
+      },
+      include: {
+        page: true,
+      },
+    });
+
+    return task;
+  }
+
+  async createTasks(pageId: string) {
+    const page = await this.prisma.page.findUnique({ where: { id: pageId } });
+    const tiptapJson = JSON.parse(page.description);
+    let tasksCreated = false;
+
+    const getTitle = (node: any) => {
+      try {
+        return node.content[0].content[0].text;
+      } catch (e) {
+        return '';
+      }
+    };
+
+    // Single-pass traversal to collect outlinks and all task IDs
+    const traverseDocument = async (node: any, path: number[] = []) => {
+      // If this is a task node without an ID, create a task
+      if (node.type === 'taskItem' && !node.attrs?.id) {
+        const title = getTitle(node);
+
+        if (title) {
+          const task = await this.createTask(
+            { title, status: 'Todo' },
+            page.workspaceId,
+          );
+          // Add the task ID to the node attributes
+          node.attrs = { ...node.attrs, id: task.id };
+          tasksCreated = true;
+        }
+      }
+
+      // Recursively process content
+      if (node.content && Array.isArray(node.content)) {
+        for (const child of node.content) {
+          await traverseDocument(child, [...path]);
+        }
+      }
+    };
+
+    // Process if content exists
+    if (tiptapJson.content) {
+      // Process nodes sequentially to maintain order
+      for (const node of tiptapJson.content) {
+        await traverseDocument(node);
+      }
+    }
+
+    // Update the page with the modified JSON that now includes task IDs
+    // Only update the page if we actually created new tasks
+    if (tasksCreated) {
+      await this.contentService.updateContentForDocument(pageId, tiptapJson);
+    }
+    return tiptapJson;
+  }
+
   async handleHooks(payload: { pageId: string; changedData: JsonObject }) {
     if (payload.changedData.description) {
+      await this.createTasks(payload.pageId);
       await this.storeOutlinks(payload.pageId);
     }
   }

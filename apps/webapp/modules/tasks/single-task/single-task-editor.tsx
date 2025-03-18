@@ -18,6 +18,7 @@ import type { PageType, TaskType } from 'common/types';
 import { useUpdateTaskMutation } from 'services/tasks';
 
 import { useContextStore } from 'store/global-context-provider';
+import { IndexeddbPersistence } from 'y-indexeddb';
 
 interface SingleTaskEditorProps {
   page: PageType;
@@ -58,6 +59,9 @@ export function SingleTaskEditor({
     // To refresh the editor with the new doc a hack
     await new Promise((resolve) => setTimeout(resolve, 100));
     const ydoc = new Y.Doc();
+
+    new IndexeddbPersistence(page.id, ydoc);
+
     const provider = new HocuspocusProvider({
       url: getSocketURL(),
       name: page.id,

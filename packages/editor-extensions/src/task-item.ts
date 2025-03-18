@@ -26,9 +26,7 @@ export const TaskExtension = Node.create({
       id: {
         default: undefined,
       },
-      number: {
-        default: undefined,
-      },
+      uuid: {},
     };
   },
 

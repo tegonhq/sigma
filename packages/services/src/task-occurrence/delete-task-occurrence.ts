@@ -5,7 +5,7 @@ export async function deleteTaskOccurrence({
   taskOccurrenceId,
 }: TaskOccurrenceDto) {
   const response = await axios.delete(
-    `/api/v1/task-occurrence/${taskOccurrenceId}`,
+    `/api/v1/task-occurrence?taskOccurrenceIds=${taskOccurrenceId}`,
   );
 
   return response.data;

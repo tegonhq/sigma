@@ -6,6 +6,7 @@ import {
   CommandItem,
   CommandList,
   Fire,
+  IssuesLine,
   Loader,
 } from '@tegonhq/ui';
 import { endOfDay, addDays, endOfWeek, formatISO } from 'date-fns';
@@ -15,6 +16,7 @@ import {
   useGetTaskScheduleMutation,
   useUpdateTaskMutation,
 } from 'services/tasks';
+import { useContextStore } from 'store/global-context-provider';
 
 interface DueDateDialogProps {
   taskIds?: string[];
@@ -84,6 +86,7 @@ const dueDateSamples: DueDateSample[] = [
 
 export const DueDateDialog = ({ onClose, taskIds }: DueDateDialogProps) => {
   const [value, setValue] = React.useState('');
+  const { tasksStore, pagesStore } = useContextStore();
 
   const now = new Date(); // Get current local time
   const localISOString = formatISO(now, { representation: 'complete' });
@@ -157,6 +160,37 @@ export const DueDateDialog = ({ onClose, taskIds }: DueDateDialogProps) => {
     dueDate.text.toLowerCase().includes(value.toLowerCase()),
   );
 
+  const getTasksComponent = () => {
+    if (taskIds.length === 0) {
+      return null;
+    }
+
+    if (taskIds.length > 1) {
+      return (
+        <div className="max-w-[400px] p-2 pb-0 flex gap-1">
+          <div className="flex gap-1 bg-grayAlpha-100 px-2 rounded items-center">
+            <IssuesLine size={16} className="shrink-0" />
+            <div className="truncate w-fit py-1">{taskIds.length} selected</div>
+          </div>
+        </div>
+      );
+    }
+
+    const taskId = taskIds[0].split('__')[0];
+
+    const task = tasksStore.getTaskWithId(taskId);
+    const page = pagesStore.getPageWithId(task?.pageId);
+
+    return (
+      <div className="max-w-[400px] p-2 pb-0 flex gap-1">
+        <div className="flex gap-1 bg-grayAlpha-100 px-2 rounded items-center">
+          <IssuesLine size={16} className="shrink-0" />
+          <div className="truncate w-fit py-1">{page?.title}</div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <CommandDialog
       open
@@ -170,13 +204,7 @@ export const DueDateDialog = ({ onClose, taskIds }: DueDateDialogProps) => {
         shouldFilter: false,
       }}
     >
-      <div className="p-2 flex justify-start w-full">
-        <div>
-          <div className="bg-accent rounded p-2 py-1 flex gap-2">
-            <div>{taskIds.length} tasks</div>
-          </div>
-        </div>
-      </div>
+      {getTasksComponent()}
       <CommandInput
         placeholder="Due by tomorrow"
         className="rounded-md h-10"

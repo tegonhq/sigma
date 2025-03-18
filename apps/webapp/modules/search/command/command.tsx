@@ -22,12 +22,10 @@ interface CommandComponentProps {
 export const CommandComponent = observer(
   ({ onClose }: CommandComponentProps) => {
     const { tasksStore, pagesStore } = useContextStore();
-    const { selectedTasks, hoverTask } = useApplication();
-    const finalSelectedTasks = [...selectedTasks, hoverTask];
+    const { selectedTasks } = useApplication();
+
     const [value, setValue] = React.useState('');
     const commands = useSearchCommands(value, onClose);
-    const task = tasksStore.getTaskWithId(finalSelectedTasks[0]);
-    const page = pagesStore.getPageWithId(task?.pageId);
 
     const defaultCommands = () => {
       const defaultCommands = commands['default'];
@@ -39,7 +37,7 @@ export const CommandComponent = observer(
               <CommandItem
                 onSelect={command.command}
                 key={`default__${index}`}
-                className="flex gap-1 items-center py-2"
+                className="flex gap-2 items-center py-2"
               >
                 <command.Icon size={16} />
                 {command.text}
@@ -77,16 +75,69 @@ export const CommandComponent = observer(
       );
     };
 
-    return (
-      <>
-        {page && (
+    const taskCommands = () => {
+      const taskCommands = commands['Task'];
+
+      if (!taskCommands) {
+        return null;
+      }
+
+      return (
+        <CommandGroup heading="Task">
+          {taskCommands.map((command, index: number) => {
+            return (
+              <CommandItem
+                onSelect={command.command}
+                key={`task__${index}`}
+                className="flex gap-1 items-center py-2"
+              >
+                <div className="inline-flex items-center gap-2 min-w-[0px]">
+                  <command.Icon size={16} className="shrink-0" />
+                  <div className="truncate"> {command.text}</div>
+                </div>
+              </CommandItem>
+            );
+          })}
+        </CommandGroup>
+      );
+    };
+
+    const getTasksComponent = () => {
+      if (selectedTasks.length === 0) {
+        return null;
+      }
+
+      if (selectedTasks.length > 1) {
+        return (
           <div className="max-w-[400px] p-2 pb-0 flex gap-1">
             <div className="flex gap-1 bg-grayAlpha-100 px-2 rounded items-center">
               <IssuesLine size={16} className="shrink-0" />
-              <div className="truncate w-fit py-1">{page?.title}</div>
+              <div className="truncate w-fit py-1">
+                {selectedTasks.length} selected
+              </div>
             </div>
           </div>
-        )}
+        );
+      }
+
+      const taskId = selectedTasks[0].split('__')[0];
+
+      const task = tasksStore.getTaskWithId(taskId);
+      const page = pagesStore.getPageWithId(task?.pageId);
+
+      return (
+        <div className="max-w-[400px] p-2 pb-0 flex gap-1">
+          <div className="flex gap-1 bg-grayAlpha-100 px-2 rounded items-center">
+            <IssuesLine size={16} className="shrink-0" />
+            <div className="truncate w-fit py-1">{page?.title}</div>
+          </div>
+        </div>
+      );
+    };
+
+    return (
+      <>
+        {getTasksComponent()}
         <CommandInput
           placeholder="Search/Ask anything..."
           className="rounded-md h-10"
@@ -97,6 +148,7 @@ export const CommandComponent = observer(
         <CommandList className="p-2 flex-1 max-h-[100%]">
           <CommandEmpty>No results found.</CommandEmpty>
           {defaultCommands()}
+          {taskCommands()}
 
           {pagesCommands()}
         </CommandList>

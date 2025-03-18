@@ -76,44 +76,25 @@ export class TasksService {
     if (tasksData.length > 100) {
       throw new BadRequestException('Too many tasks in bulk request');
     }
-    return await this.prisma
-      .$transaction(
-        async (tx: TransactionClient) => {
-          const createdTasks: Task[] = [];
+    return await this.prisma.$transaction(
+      async (tx: TransactionClient) => {
+        const createdTasks: Task[] = [];
 
-          for (const taskData of tasksData) {
-            const task =
-              taskData.source && taskData.integrationAccountId
-                ? await this.upsertTaskBySource(
-                    taskData,
-                    workspaceId,
-                    userId,
-                    tx,
-                  )
-                : await this.createTask(taskData, workspaceId, userId, tx);
+        for (const taskData of tasksData) {
+          const task =
+            taskData.source && taskData.integrationAccountId
+              ? await this.upsertTaskBySource(taskData, workspaceId, userId, tx)
+              : await this.createTask(taskData, workspaceId, tx);
 
-            createdTasks.push(task);
-          }
+          createdTasks.push(task);
+        }
 
-          return createdTasks;
-        },
-        {
-          timeout: 10000,
-        },
-      )
-      .then(async (sigmaTasks: Task[]) => {
-        await Promise.all(
-          sigmaTasks.map((task) =>
-            this.taskHooksService.executeHooks(task, {
-              workspaceId,
-              userId,
-              action: 'create',
-            }),
-          ),
-        );
-
-        return sigmaTasks;
-      });
+        return createdTasks;
+      },
+      {
+        timeout: 10000,
+      },
+    );
   }
 
   async upsertTaskBySource(
@@ -144,13 +125,12 @@ export class TasksService {
     }
 
     // If no existing task found, create a new one
-    return await this.createTask(createTaskDto, workspaceId, userId, tx);
+    return await this.createTask(createTaskDto, workspaceId, tx);
   }
 
   async createTask(
     createTaskDto: CreateTaskDto,
     workspaceId: string,
-    userId: string,
     tx?: TransactionClient,
   ): Promise<Task> {
     const prismaClient = tx || this.prisma;
@@ -191,15 +171,6 @@ export class TasksService {
         },
       });
 
-      await this.taskHooksService.executeHooks(
-        task,
-        {
-          workspaceId,
-          userId,
-          action: 'create',
-        },
-        tx,
-      );
       return task;
     }
 
@@ -250,16 +221,6 @@ export class TasksService {
         tx,
       );
     }
-
-    await this.taskHooksService.executeHooks(
-      task,
-      {
-        workspaceId,
-        userId,
-        action: 'create',
-      },
-      tx,
-    );
 
     return task;
   }

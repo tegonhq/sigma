@@ -7,7 +7,7 @@ import * as Y from 'yjs';
 
 import {
   Editor,
-  EditorContext,
+  EditorContextProvider,
   EditorExtensions,
   getSocketURL,
   suggestionItems,
@@ -18,6 +18,7 @@ import type { ListType, PageType } from 'common/types';
 import { useUpdateTaskMutation } from 'services/tasks';
 
 import { useContextStore } from 'store/global-context-provider';
+import { IndexeddbPersistence } from 'y-indexeddb';
 
 interface ListPageEditorProps {
   page: PageType;
@@ -58,6 +59,9 @@ export function ListPageEditor({
     // To refresh the editor with the new doc a hack
     await new Promise((resolve) => setTimeout(resolve, 100));
     const ydoc = new Y.Doc();
+
+    new IndexeddbPersistence(page.id, ydoc);
+
     const provider = new HocuspocusProvider({
       url: getSocketURL(),
       name: page.id,
@@ -87,9 +91,7 @@ export function ListPageEditor({
 
   return (
     <div className="flex flex-col min-h-[calc(100vh_-_30vh)]">
-      <EditorContext.Provider
-        value={{ source: { type: SourceType.LIST, id: list.id } }}
-      >
+      <EditorContextProvider source={{ type: SourceType.LIST, id: list.id }}>
         <Editor
           onChange={onDescriptionChange}
           extensions={[
@@ -107,7 +109,7 @@ export function ListPageEditor({
             suggestionItems={suggestionItems}
           ></EditorExtensions>
         </Editor>
-      </EditorContext.Provider>
+      </EditorContextProvider>
     </div>
   );
 }
