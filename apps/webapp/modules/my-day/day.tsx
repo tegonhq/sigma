@@ -1,4 +1,4 @@
-import { AI, ScrollArea } from '@tegonhq/ui';
+import { ScrollArea } from '@tegonhq/ui';
 import { format } from 'date-fns';
 import { observer } from 'mobx-react-lite';
 import React from 'react';

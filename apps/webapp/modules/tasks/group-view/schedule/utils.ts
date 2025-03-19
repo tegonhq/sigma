@@ -131,6 +131,7 @@ export const useTaskRows = (collapsedHeader: Record<string, boolean>) => {
         ])) {
           const taskOccurrenceId = (task as TaskTypeWithOccurrence)
             .taskOccurrenceId;
+
           rows.push({
             type: 'task',
             taskId: taskOccurrenceId

@@ -31,6 +31,7 @@ export function Google() {
 
         window.location.assign('/auth'); // redirect back to login page
       }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       if (err.isSuperTokensGeneralError === true) {
         // this may be a custom error message sent from the API by you.
@@ -49,6 +50,7 @@ export function Google() {
 
   React.useEffect(() => {
     handleGoogleCallback();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return <Loader text="Signing in..." />;

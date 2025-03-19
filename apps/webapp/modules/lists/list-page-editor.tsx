@@ -3,6 +3,7 @@ import { SourceType } from '@sigma/types';
 import Collaboration from '@tiptap/extension-collaboration';
 import React from 'react';
 import { useDebouncedCallback } from 'use-debounce';
+import { IndexeddbPersistence } from 'y-indexeddb';
 import * as Y from 'yjs';
 
 import {
@@ -18,7 +19,6 @@ import type { ListType, PageType } from 'common/types';
 import { useUpdateTaskMutation } from 'services/tasks';
 
 import { useContextStore } from 'store/global-context-provider';
-import { IndexeddbPersistence } from 'y-indexeddb';
 
 interface ListPageEditorProps {
   page: PageType;

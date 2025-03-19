@@ -510,8 +510,10 @@ export class PagesService {
       metadata,
       status: taskStatus,
       source,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       integrationAccountId,
       listId,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       pageDescription,
       parentId,
       ...otherTaskData
@@ -580,6 +582,7 @@ export class PagesService {
     const tiptapJson = JSON.parse(page.description);
     let tasksCreated = false;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const getTitle = (node: any) => {
       try {
         return node.content[0].content[0].text;
@@ -589,6 +592,7 @@ export class PagesService {
     };
 
     // Single-pass traversal to collect outlinks and all task IDs
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const traverseDocument = async (node: any, path: number[] = []) => {
       // If this is a task node without an ID, create a task
       if (node.type === 'taskItem' && !node.attrs?.id) {

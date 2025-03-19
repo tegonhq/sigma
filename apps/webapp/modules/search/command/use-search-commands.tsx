@@ -2,21 +2,21 @@ import {
   AI,
   CalendarLine,
   DeleteLine,
-  DocumentLine,
   Fire,
   IssuesLine,
   Project,
-  TodoLine,
 } from '@tegonhq/ui';
 import { parse } from 'date-fns';
+import { Check } from 'lucide-react';
 import React from 'react';
+
+import { DailogViewsContext, DialogType } from 'modules/dialog-views-provider';
 
 import { useApplication } from 'hooks/application';
 
 import { TabViewType } from 'store/application';
 import { useContextStore } from 'store/global-context-provider';
-import { DailogViewsContext, DialogType } from 'modules/dialog-views-provider';
-import { Check } from 'lucide-react';
+
 import { useTaskOperations } from './use-task-operations';
 
 interface CommandType {

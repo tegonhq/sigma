@@ -1,5 +1,5 @@
 module.exports = {
-  extends: ["prettier", "next/core-web-vitals", "turbo"],
+  extends: ["prettier", "next/core-web-vitals"],
   plugins: [
     "@typescript-eslint",
     "prettier",

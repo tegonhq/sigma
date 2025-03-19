@@ -1,15 +1,13 @@
-import { createTask } from '@sigma/services';
+import { updateSingleTaskOccurrence } from '@sigma/services';
 import { useMutation } from 'react-query';
-
-import type { TaskType } from 'common/types';
 
 interface MutationParams {
   onMutate?: () => void;
-  onSuccess?: (data: TaskType | undefined) => void;
+  onSuccess?: () => void;
   onError?: (error: string) => void;
 }
 
-export function useCreateTaskMutation({
+export function useUpdateSingleTaskOccurrenceMutation({
   onMutate,
   onSuccess,
   onError,
@@ -25,11 +23,11 @@ export function useCreateTaskMutation({
     onError && onError(errorText);
   };
 
-  const onMutationSuccess = (data: TaskType) => {
-    onSuccess && onSuccess(data);
+  const onMutationSuccess = () => {
+    onSuccess && onSuccess();
   };
 
-  return useMutation(createTask, {
+  return useMutation(updateSingleTaskOccurrence, {
     onError: onMutationError,
     onMutate: onMutationTriggered,
     onSuccess: onMutationSuccess,

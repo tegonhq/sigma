@@ -6,6 +6,7 @@ import {parse} from 'semver';
 import type {IpcMainEvent} from 'electron';
 import {ipcMain} from 'electron';
 import {appWindows} from '../windows';
+import {ensureSafeQuitAndInstall} from './utils';
 
 const {autoUpdater} = electronUpdater;
 
@@ -155,5 +156,10 @@ export const setupAutoUpdater = () => {
 
   ipcMain?.handle('check-for-update', (_event: IpcMainEvent) => {
     return checkForUpdate();
+  });
+
+  ipcMain?.handle('update-and-restart', (_event: IpcMainEvent) => {
+    ensureSafeQuitAndInstall();
+    autoUpdater.quitAndInstall(true, true);
   });
 };

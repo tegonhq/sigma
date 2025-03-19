@@ -12,6 +12,7 @@ import { LoggerService } from 'modules/logger/logger.service';
 import { PagesService } from 'modules/pages/pages.service';
 import { SyncGateway } from 'modules/sync/sync.gateway';
 import SyncActionsService from 'modules/sync-actions/sync-actions.service';
+import { TaskHooksService } from 'modules/tasks-hook/tasks-hook.service';
 
 import {
   logChangeType,
@@ -19,7 +20,6 @@ import {
   tableHooks,
   tablesToSendMessagesFor,
 } from './replication.interface';
-import { TaskHooksService } from 'modules/tasks-hook/tasks-hook.service';
 
 const REPLICATION_SLOT_PLUGIN = 'wal2json';
 

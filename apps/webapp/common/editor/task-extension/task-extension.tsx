@@ -4,11 +4,11 @@ import {
   Node,
   type KeyboardShortcutCommand,
 } from '@tiptap/core';
+import { TextSelection } from '@tiptap/pm/state';
 import {
   ReactNodeViewRenderer,
   type ReactNodeViewRendererOptions,
 } from '@tiptap/react';
-import { TextSelection } from '@tiptap/pm/state';
 
 import { TaskComponent } from './task-component';
 

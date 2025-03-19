@@ -3,7 +3,6 @@ module.exports = {
     "plugin:@typescript-eslint/recommended",
     "prettier",
     "plugin:prettier/recommended",
-    "turbo",
   ],
   plugins: [
     "@typescript-eslint",

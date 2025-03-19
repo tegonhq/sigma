@@ -1,12 +1,16 @@
+import { Checkbox } from '@tegonhq/ui';
+import { sort } from 'fast-sort';
 import { observer } from 'mobx-react-lite';
 
 import type { TaskType } from 'common/types';
 
+import { useUpdateSingleTaskOccurrenceMutation } from 'services/task-occurrence';
 import { useUpdateTaskMutation } from 'services/tasks';
 
-import { ScheduleDropdown, StatusDropdown } from '../metadata';
+import { useContextStore } from 'store/global-context-provider';
+
+import { ScheduleDropdown } from '../metadata';
 import { DuedateDropdown } from '../metadata/due-date';
-import { Checkbox, cn } from '@tegonhq/ui';
 
 interface SingleTaskMetadataProps {
   task: TaskType;
@@ -15,12 +19,46 @@ interface SingleTaskMetadataProps {
 export const SingleTaskMetadata = observer(
   ({ task }: SingleTaskMetadataProps) => {
     const { mutate: updateTask } = useUpdateTaskMutation({});
+    const { mutate: updateTaskOccurrence } =
+      useUpdateSingleTaskOccurrenceMutation({});
+    const { taskOccurrencesStore } = useContextStore();
+    const taskOccurrences = taskOccurrencesStore.getTaskOccurrencesForTask(
+      task.id,
+    );
+
+    // Get yesterday's end of day
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    yesterday.setHours(23, 59, 59, 999);
+
+    // Filter and sort occurrences after yesterday
+    const sortedOccurrences = sort(
+      taskOccurrences.filter((occ) => new Date(occ.startTime) > yesterday),
+    ).by([{ asc: (u) => u.startTime }]);
+
+    const recentTaskOccurrence = sortedOccurrences[0];
 
     const statusChange = (status: string) => {
+      if (recentTaskOccurrence) {
+        updateTaskOccurrence({
+          taskOccurrenceId: recentTaskOccurrence.id,
+          status,
+        });
+        return;
+      }
+
       updateTask({
         taskId: task.id,
         status,
       });
+    };
+
+    const getStatus = () => {
+      if (recentTaskOccurrence) {
+        return recentTaskOccurrence.status;
+      }
+
+      return task.status;
     };
 
     return (
@@ -28,12 +66,12 @@ export const SingleTaskMetadata = observer(
         <div className="p-1 bg-grayAlpha-100 rounded flex items-center gap-1 px-2">
           <Checkbox
             className="shrink-0 h-[18px] w-[18px]"
-            checked={task.status === 'Done'}
+            checked={getStatus() === 'Done'}
             onCheckedChange={(value: boolean) =>
               statusChange(value === true ? 'Done' : 'Todo')
             }
           />
-          {task.status}
+          {getStatus()}
         </div>
         <ScheduleDropdown task={task} />
         <DuedateDropdown task={task} />

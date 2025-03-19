@@ -17,7 +17,7 @@ export async function saveTaskOccurrencesData(
 
         startTime: record.data.startTime,
         endTime: record.data.endTime,
-        status: record.data.endTime,
+        status: record.data.status,
 
         workspaceId: record.data.workspaceId,
         taskId: record.data.taskId,

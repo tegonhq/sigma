@@ -1,11 +1,14 @@
 import { Button, Fire } from '@tegonhq/ui';
-import { Shortcut } from 'common/shortcut';
-import { useApplication } from 'hooks/application';
 import { Check, Clock } from 'lucide-react';
 import { observer } from 'mobx-react-lite';
+import React from 'react';
+
 import { DialogType } from 'modules/dialog-views-provider';
 import { useTaskOperations } from 'modules/search/command/use-task-operations';
-import React from 'react';
+
+import { Shortcut } from 'common/shortcut';
+
+import { useApplication } from 'hooks/application';
 
 interface ActionBarProps {
   openDialog: (dialogType: DialogType, taskIds: string[]) => void;

@@ -39,6 +39,9 @@ const electronHandler = {
     getAutoUpdates: (callback: (event: IpcRendererEvent, ...args: any[]) => void) => {
       ipcRenderer.on('auto-update', callback);
     },
+    restartAndInstall: () => {
+      ipcRenderer.invoke('update-and-restart');
+    },
   },
 };
 

@@ -2,6 +2,7 @@ import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 
+import { ActionBar } from 'modules/tasks/action-bar';
 import { ScheduleDialog } from 'modules/tasks/metadata';
 import { DueDateDialog } from 'modules/tasks/metadata/due-date';
 
@@ -10,7 +11,7 @@ import { SCOPES } from 'common/shortcut-scopes';
 import { useApplication } from 'hooks/application';
 
 import { TabViewType } from 'store/application';
-import { ActionBar } from 'modules/tasks/action-bar';
+
 import { DialogType } from './types';
 
 interface DialogViewsContextType {

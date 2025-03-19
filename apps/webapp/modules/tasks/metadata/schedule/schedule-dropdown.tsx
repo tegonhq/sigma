@@ -42,7 +42,7 @@ export const ScheduleDropdown = observer(
     // Filter and sort occurrences after yesterday
     const sortedOccurrences = sort(
       occurrences.filter((occ) => new Date(occ.startTime) > yesterday),
-    ).by([{ desc: (u) => u.startTime }]);
+    ).by([{ asc: (u) => u.startTime }]);
 
     const firstOccurrence = sortedOccurrences[0];
     const passedTaskOccurrence = taskOccurrenceId

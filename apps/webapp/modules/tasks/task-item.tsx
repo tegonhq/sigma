@@ -6,6 +6,7 @@ import { TaskViewContext } from 'layouts/side-task-view';
 
 import { useApplication } from 'hooks/application';
 
+import { useUpdateSingleTaskOccurrenceMutation } from 'services/task-occurrence';
 import { useUpdateTaskMutation } from 'services/tasks';
 
 import { useContextStore } from 'store/global-context-provider';
@@ -18,7 +19,7 @@ interface TaskListItemProps {
 
 export const TaskListItem = observer(
   ({ taskId: taskIdWithOccurrence }: TaskListItemProps) => {
-    const { tasksStore, pagesStore } = useContextStore();
+    const { tasksStore, pagesStore, taskOccurrencesStore } = useContextStore();
     const { openTask } = React.useContext(TaskViewContext);
     const {
       selectedTasks,
@@ -29,12 +30,26 @@ export const TaskListItem = observer(
     } = useApplication();
     const taskId = taskIdWithOccurrence.split('__')[0];
     const taskOccurrenceId = taskIdWithOccurrence.split('__')[1];
+    const taskOccurrence = taskOccurrencesStore.getTaskOccurrenceWithTaskAndId(
+      taskId,
+      taskOccurrenceId,
+    );
     const task = tasksStore.getTaskWithId(taskId);
     const page = pagesStore.getPageWithId(task?.pageId);
     const { mutate: updateTask } = useUpdateTaskMutation({});
     const taskSelected = selectedTasks.includes(taskIdWithOccurrence);
+    const { mutate: updateTaskOccurrence } =
+      useUpdateSingleTaskOccurrenceMutation({});
 
     const statusChange = (status: string) => {
+      if (taskOccurrenceId) {
+        updateTaskOccurrence({
+          taskOccurrenceId,
+          status,
+        });
+        return;
+      }
+
       updateTask({
         taskId: task.id,
         status,
@@ -43,6 +58,14 @@ export const TaskListItem = observer(
 
     const taskSelect = (taskId: string) => {
       openTask(taskId);
+    };
+
+    const getStatus = () => {
+      if (taskOccurrence) {
+        return taskOccurrence.status;
+      }
+
+      return task.status;
     };
 
     if (!task) {
@@ -106,7 +129,7 @@ export const TaskListItem = observer(
             >
               <Checkbox
                 className="shrink-0 relative top-0.5 h-[18px] w-[18px]"
-                checked={task.status === 'Done'}
+                checked={getStatus() === 'Done'}
                 onCheckedChange={(value: boolean) =>
                   statusChange(value === true ? 'Done' : 'Todo')
                 }
