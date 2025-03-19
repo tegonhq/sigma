@@ -41,7 +41,7 @@ export interface TaskHookContext {
   workspaceId: string;
   userId: string;
   action: TaskHookAction;
-  previousTask?: Task;
+  changeData: Record<string, any>;
 }
 
 export class Task {

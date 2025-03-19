@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ModelNameEnum } from '@sigma/types';
+import { ModelNameEnum, TaskHookAction } from '@sigma/types';
 import { Client } from 'pg';
 import {
   LogicalReplicationService,
@@ -233,14 +233,17 @@ export default class ReplicationService {
           }
 
           if (tableHooks.has(modelName)) {
+            const changedData = this.getChangedData(change);
             if (ModelNameEnum.Page === modelName) {
-              const changedData = this.getChangedData(change);
-
               this.pagesService.handleHooks({ pageId: modelId, changedData });
             }
 
-            if (ModelNameEnum.Task === modelName && change.kind === 'insert') {
-              this.taskHooksService.executeHookWithId(modelId, 'create');
+            if (ModelNameEnum.Task === modelName) {
+              this.taskHooksService.executeHookWithId(
+                modelId,
+                convertToActionType(isDeleted ? 'delete' : change.kind),
+                changedData,
+              );
             }
           }
         });
@@ -249,4 +252,17 @@ export default class ReplicationService {
       }
     });
   }
+}
+
+function convertToActionType(action: string): TaskHookAction {
+  switch (action.toLowerCase()) {
+    case 'insert':
+      return 'create';
+    case 'update':
+      return 'update';
+    case 'delete':
+      return 'delete';
+  }
+
+  return null;
 }

@@ -14,13 +14,11 @@ import { PagesService } from 'modules/pages/pages.service';
 import { TaskOccurenceService } from 'modules/task-occurrence/task-occurrence.service';
 
 import { handleCalendarTask, TransactionClient } from './tasks.utils';
-import { TaskHooksService } from '../tasks-hook/tasks-hook.service';
 
 @Injectable()
 export class TasksService {
   constructor(
     private prisma: PrismaService,
-    private taskHooksService: TaskHooksService,
     private taskOccurenceService: TaskOccurenceService,
     private integrationService: IntegrationsService,
     private pageService: PagesService,
@@ -66,7 +64,6 @@ export class TasksService {
   async createBulkTasks(
     tasksDto: CreateBulkTasksDto,
     workspaceId: string,
-    userId: string,
   ): Promise<Task[]> {
     const tasksData = tasksDto.tasks;
     if (!tasksData.length) {
@@ -83,7 +80,7 @@ export class TasksService {
         for (const taskData of tasksData) {
           const task =
             taskData.source && taskData.integrationAccountId
-              ? await this.upsertTaskBySource(taskData, workspaceId, userId, tx)
+              ? await this.upsertTaskBySource(taskData, workspaceId, tx)
               : await this.createTask(taskData, workspaceId, tx);
 
           createdTasks.push(task);
@@ -100,7 +97,6 @@ export class TasksService {
   async upsertTaskBySource(
     createTaskDto: CreateTaskDto,
     workspaceId: string,
-    userId: string,
     tx?: TransactionClient,
   ): Promise<Task> {
     const { source, integrationAccountId } = createTaskDto;
@@ -115,13 +111,7 @@ export class TasksService {
 
     // If we found a task, update it
     if (externalTask) {
-      return await this.updateTask(
-        externalTask.id,
-        createTaskDto,
-        workspaceId,
-        userId,
-        tx,
-      );
+      return await this.updateTask(externalTask.id, createTaskDto, tx);
     }
 
     // If no existing task found, create a new one
@@ -228,8 +218,6 @@ export class TasksService {
   async updateTask(
     taskId: string,
     updateTaskDto: UpdateTaskDto,
-    workspaceId: string,
-    userId: string,
     tx?: TransactionClient,
   ): Promise<Task> {
     const prismaClient = tx || this.prisma;
@@ -265,35 +253,18 @@ export class TasksService {
     };
 
     // Get existing task and update in a single transaction
-    const [existingTask, updatedTask] = [
-      await prismaClient.task.findUnique({
-        where: { id: taskId },
-        include: { page: true },
-      }),
-      await prismaClient.task.update({
-        where: { id: taskId },
-        data: updateData,
-        include: {
-          page: true,
-        },
-      }),
-    ];
-
-    await this.taskHooksService.executeHooks(
-      updatedTask,
-      {
-        workspaceId,
-        userId,
-        action: 'update',
-        previousTask: existingTask,
+    const updatedTask = await prismaClient.task.update({
+      where: { id: taskId },
+      data: updateData,
+      include: {
+        page: true,
       },
-      tx,
-    );
+    });
 
     return updatedTask;
   }
 
-  async deleteTask(taskId: string, workspaceId: string, userId: string) {
+  async deleteTask(taskId: string) {
     // Get task and update in a single transaction
     const task = await this.prisma.task.findUnique({
       where: { id: taskId },
@@ -304,15 +275,9 @@ export class TasksService {
       throw new Error('Task not found');
     }
 
-    // if (task.deleted) {
-    //   return task;
-    // }
-
-    await this.taskHooksService.executeHooks(task, {
-      workspaceId,
-      userId,
-      action: 'delete',
-    });
+    if (task.deleted) {
+      return task;
+    }
 
     // Soft delete the task
     return await this.prisma.task.update({

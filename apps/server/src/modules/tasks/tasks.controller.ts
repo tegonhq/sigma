@@ -49,54 +49,33 @@ export class TasksController {
   @UseGuards(AuthGuard)
   async upsertTaskBySource(
     @Workspace() workspaceId: string,
-    @UserId() userId: string,
     @Body() taskData: CreateTaskDto,
   ): Promise<Task> {
-    return await this.tasksService.upsertTaskBySource(
-      taskData,
-      workspaceId,
-      userId,
-    );
+    return await this.tasksService.upsertTaskBySource(taskData, workspaceId);
   }
 
   @Post('bulk')
   @UseGuards(AuthGuard)
   async createBulkTasks(
     @Body() tasksData: CreateBulkTasksDto,
-    @UserId() userId: string,
     @Workspace() workspaceId: string,
   ): Promise<Task[]> {
-    return await this.tasksService.createBulkTasks(
-      tasksData,
-      workspaceId,
-      userId,
-    );
+    return await this.tasksService.createBulkTasks(tasksData, workspaceId);
   }
 
   @Post(':taskId')
   @UseGuards(AuthGuard)
   async updateTask(
     @Param('taskId') taskId: string,
-    @UserId() userId: string,
-    @Workspace() workspaceId: string,
     @Body() taskData: Partial<CreateTaskDto>,
   ): Promise<Task> {
-    return await this.tasksService.updateTask(
-      taskId,
-      taskData,
-      workspaceId,
-      userId,
-    );
+    return await this.tasksService.updateTask(taskId, taskData);
   }
 
   @Delete(':taskId')
   @UseGuards(AuthGuard)
-  async deleteTask(
-    @Param('taskId') taskId: string,
-    @Workspace() workspaceId: string,
-    @UserId() userId: string,
-  ) {
-    return await this.tasksService.deleteTask(taskId, workspaceId, userId);
+  async deleteTask(@Param('taskId') taskId: string) {
+    return await this.tasksService.deleteTask(taskId);
   }
 
   @Delete('source/:sourceId')

@@ -100,11 +100,17 @@ export const beautifyTask = task({
             scheduleText: outputData.scheduleText,
           }),
 
-          // Page related updates
-          ...(outputData.title && { title: outputData.title }),
-
-          ...(outputData.listId && { listId: outputData.listId }),
+          ...(outputData.listId && {
+            list: { connect: { id: outputData.listId } },
+          }),
         };
+
+        await prisma.page.update({
+          where: { id: sigmaTask.pageId },
+          data: {
+            title: outputData.title,
+          },
+        });
 
         updatedTask = await prisma.task.update({
           where: { id: payload.taskId },

@@ -13,7 +13,6 @@ import { TasksAIController } from './tasks-ai.controller';
 import TasksAIService from './tasks-ai.service';
 import { TasksController } from './tasks.controller';
 import { TasksService } from './tasks.service';
-import { TaskHooksService } from '../tasks-hook/tasks-hook.service';
 
 @Module({
   imports: [PrismaModule, ConversationModule, ContentModule],
@@ -27,7 +26,6 @@ import { TaskHooksService } from '../tasks-hook/tasks-hook.service';
     AIRequestsService,
     IntegrationsService,
     PagesService,
-    TaskHooksService,
   ],
   exports: [TasksService],
 })

@@ -26,4 +26,7 @@ export const tablesToSendMessagesFor = new Map([
   [ModelNameEnum.Workspace, true],
 ]);
 
-export const tableHooks = new Map([[ModelNameEnum.Page, true]]);
+export const tableHooks = new Map([
+  [ModelNameEnum.Page, true],
+  [ModelNameEnum.Task, true],
+]);

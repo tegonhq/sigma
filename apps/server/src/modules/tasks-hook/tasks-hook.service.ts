@@ -17,11 +17,7 @@ import { getTaskItemContent } from 'modules/pages/pages.utils';
 import { TaskOccurenceService } from 'modules/task-occurrence/task-occurrence.service';
 import { UsersService } from 'modules/users/users.service';
 
-import {
-  getSummaryData,
-  handleCalendarTask,
-  TransactionClient,
-} from '../tasks/tasks.utils';
+import { getSummaryData, handleCalendarTask } from '../tasks/tasks.utils';
 
 @Injectable()
 export class TaskHooksService {
@@ -33,25 +29,12 @@ export class TaskHooksService {
     private integrationService: IntegrationsService,
   ) {}
 
-  async executeHooks(
-    task: Task,
-    context: TaskHookContext,
-    tx?: TransactionClient,
+  async executeHookWithId(
+    taskId: string,
+    action: TaskHookAction,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    changeData?: Record<string, any>,
   ) {
-    // Only trigger when task is CUD from the API without transaction
-    if (!tx) {
-      await this.handleBeautifyTask(task, context);
-      await Promise.all([
-        this.handleTitleChange(task, context),
-        this.handleDeleteTask(task, context),
-        this.handleScheduleTask(task, context),
-        // this.handleCalendarTask(task, context),
-        // this.handleGenerateSummary(task, context),
-      ]);
-    }
-  }
-
-  async executeHookWithId(taskId: string, action: TaskHookAction) {
     const task = await this.prisma.task.findUnique({
       where: {
         id: taskId,
@@ -69,6 +52,7 @@ export class TaskHooksService {
       userId: task.workspace.userId,
       workspaceId: task.workspaceId,
       action,
+      changeData,
     };
 
     await this.handleBeautifyTask(task, context);
@@ -120,8 +104,9 @@ export class TaskHooksService {
 
   async handleTitleChange(task: Task, context: TaskHookContext) {
     if (
-      context.previousTask &&
-      task.page.title !== context.previousTask.page.title
+      context.changeData &&
+      context.changeData.title &&
+      task.page.title !== context.changeData.title
     ) {
       const pagesWithTask = await this.prisma.page.findMany({
         where: {
@@ -185,10 +170,10 @@ export class TaskHooksService {
 
       case 'update':
         if (
-          JSON.stringify(context.previousTask.recurrence) !==
-            JSON.stringify(task.recurrence) ||
-          String(task.startTime) !== String(context.previousTask?.startTime) ||
-          String(task.endTime) !== String(context.previousTask?.endTime)
+          context.changeData &&
+          (context.changeData.recurrence ||
+            context.changeData.startTime ||
+            context.changeData.endTime)
         ) {
           await this.taskOccurenceService.updateTaskOccurenceByTask(task.id);
         }
@@ -220,10 +205,10 @@ export class TaskHooksService {
       case 'update':
         // Check if schedule related fields were updated
         if (
-          JSON.stringify(context.previousTask.recurrence) !==
-            JSON.stringify(task.recurrence) ||
-          String(task.startTime) !== String(context.previousTask?.startTime) ||
-          String(task.endTime) !== String(context.previousTask?.endTime)
+          context.changeData &&
+          (context.changeData.recurrence ||
+            context.changeData.startTime ||
+            context.changeData.endTime)
         ) {
           await handleCalendarTask(
             this.prisma,
