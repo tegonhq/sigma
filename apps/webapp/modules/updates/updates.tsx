@@ -18,8 +18,8 @@ export const Updates = () => {
     progress: 0,
   });
 
-  const updates = (event: string, value: any) => {
-    switch (event) {
+  const updates = (_event: string, value: any) => {
+    switch (value.type) {
       case 'available':
         setUpdateState((prev) => ({ ...prev, available: true }));
         break;
@@ -33,7 +33,10 @@ export const Updates = () => {
         break;
 
       case 'progress':
-        setUpdateState((prev) => ({ ...prev, progress: value }));
+        setUpdateState((prev) => ({
+          ...prev,
+          progress: Math.floor(value.payload.percent),
+        }));
         break;
 
       case 'downloaded':

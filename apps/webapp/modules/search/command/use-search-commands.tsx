@@ -1,7 +1,9 @@
+import { PageTypeEnum } from '@sigma/types';
 import {
   AI,
   CalendarLine,
   DeleteLine,
+  DocumentLine,
   Fire,
   IssuesLine,
   Project,
@@ -158,6 +160,7 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
           return {
             Icon: IssuesLine,
             text: page.title,
+            key: task.id,
             command: () => {
               updateTabType(0, TabViewType.MY_TASKS, {
                 entityId: task.id,
@@ -172,6 +175,7 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
           return {
             Icon: Project,
             text: page.title,
+            key: list.id,
             command: () => {
               updateTabType(0, TabViewType.LIST, {
                 entityId: list.id,
@@ -182,8 +186,22 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
           };
         }
 
+        if (page.type === PageTypeEnum.Daily) {
+          return {
+            Icon: CalendarLine,
+            text: page.title,
+            command: () => {
+              updateTabData(0, {
+                date: parse(page.title, 'dd-MM-yyyy', new Date()),
+              });
+
+              onClose();
+            },
+          };
+        }
+
         return {
-          Icon: CalendarLine,
+          Icon: DocumentLine,
           text: page.title,
           command: () => {
             updateTabData(0, {

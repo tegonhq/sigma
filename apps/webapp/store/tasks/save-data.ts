@@ -31,6 +31,7 @@ export async function saveTaskData(
         dueDate: record.data.dueDate,
         remindAt: record.data.remindAt,
         scheduleText: record.data.scheduleText,
+        parentId: record.data.parentId,
       };
 
       switch (record.action) {

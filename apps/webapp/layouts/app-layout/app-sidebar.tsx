@@ -3,13 +3,13 @@ import {
   Button,
   CalendarLine,
   cn,
+  IssuesLine,
   Sidebar,
   SidebarContent,
   SidebarGroup,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuItem,
-  SubIssue,
 } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
@@ -113,7 +113,7 @@ export const AppSidebar = observer(
                   isActive={firstTab.type === TabViewType.MY_TASKS}
                   onClick={() => navigate(TabViewType.MY_TASKS)}
                 >
-                  <SubIssue className="h-4 w-4" />
+                  <IssuesLine className="h-4 w-4" />
                   Tasks
                 </Button>
               </SidebarMenuItem>
@@ -134,32 +134,34 @@ export const AppSidebar = observer(
               </Button>
             </h3>
             <SidebarMenu className="gap-0.5">
-              {lists.map((list: ListTypeWithCount) => (
-                <SidebarMenuItem key={list.id}>
-                  <Button
-                    variant="secondary"
-                    className={cn(
-                      'flex gap-1 w-fit min-w-0 justify-start',
-                      list.name?.length > 10 && 'w-full',
-                    )}
-                    isActive={
-                      firstTab.type === TabViewType.LIST &&
-                      firstTab.entity_id === list.id
-                    }
-                    onClick={() => navigate(TabViewType.LIST, list.id)}
-                  >
-                    {getIcon(list?.icon, 14)}
-                    <div className="inline-flex items-center gap-1 shrink min-w-[0px]">
-                      <div className="truncate">
-                        {list.name ? list.name : 'Untitled'}
+              {lists.map((list: ListTypeWithCount) => {
+                return (
+                  <SidebarMenuItem key={list.id}>
+                    <Button
+                      variant="secondary"
+                      className={cn(
+                        'flex gap-1 w-fit min-w-0 justify-start',
+                        list.name?.length > 10 && 'w-full',
+                      )}
+                      isActive={
+                        firstTab.type === TabViewType.LIST &&
+                        firstTab.entity_id === list.id
+                      }
+                      onClick={() => navigate(TabViewType.LIST, list.id)}
+                    >
+                      {getIcon(list?.icon, 14)}
+                      <div className="inline-flex items-center gap-1 shrink min-w-[0px]">
+                        <div className="truncate">
+                          {list.name ? list.name : 'Untitled'}
+                        </div>
                       </div>
-                    </div>
-                    <span className="ml-0.5 text-muted-foreground">
-                      {list.count}
-                    </span>
-                  </Button>
-                </SidebarMenuItem>
-              ))}
+                      <span className="ml-0.5 text-muted-foreground">
+                        {list.count}
+                      </span>
+                    </Button>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroup>
         </SidebarContent>

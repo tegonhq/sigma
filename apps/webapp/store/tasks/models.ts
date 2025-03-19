@@ -14,6 +14,7 @@ export const Task = types.model({
   recurrence: types.array(types.string),
   scheduleText: types.union(types.string, types.null, types.undefined),
   dueDate: types.union(types.string, types.null, types.undefined),
+  parentId: types.union(types.string, types.null, types.undefined),
 
   pageId: types.union(types.null, types.string),
   workspaceId: types.string,

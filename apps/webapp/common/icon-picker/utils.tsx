@@ -15,12 +15,21 @@ export const getIcon = (icon: string, size: number) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const IconComponent = (LucideIcons as any)[iconData.icon];
 
-      return <IconComponent size={size} style={{ color: iconData.color }} />;
+      return (
+        <IconComponent
+          size={size}
+          style={{ color: iconData.color }}
+          className="shrink-0"
+        />
+      );
     }
 
     if (iconData.emoji) {
       return (
-        <div className="flex items-center" style={{ fontSize: size * 0.8 }}>
+        <div
+          className="flex items-center shrink-0"
+          style={{ fontSize: size * 0.8 }}
+        >
           {iconData.emoji}
         </div>
       );

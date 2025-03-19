@@ -106,7 +106,7 @@ export const RightSideLayout = observer(
           style={{
             overflow: 'hidden',
             height: 'calc(100vh - 1rem)',
-            width: open ? 'calc(100vw - 11rem)' : 'calc(100vw - 1rem)',
+            width: open ? 'calc(100vw - 10.5rem)' : 'calc(100vw - 1rem)',
           }}
         >
           <ResizablePanelGroup direction="horizontal">

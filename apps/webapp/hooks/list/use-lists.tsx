@@ -1,7 +1,7 @@
 import { sort } from 'fast-sort';
 
 import { groupBy } from 'common/lib';
-import type { ListType } from 'common/types';
+import type { ListType, TaskType } from 'common/types';
 
 import { useContextStore } from 'store/global-context-provider';
 
@@ -16,7 +16,10 @@ export const useLists = (): ListTypeWithCount[] => {
 
   const lists = listsStore.lists.map((list: ListType) => ({
     ...list,
-    count: groupedByList.get(list.id)?.length ?? 0,
+    count:
+      groupedByList
+        .get(list.id)
+        ?.filter((task: TaskType) => task.status === 'Todo').length ?? 0,
     name: pagesStore.getPageWithId(list.pageId)?.title,
   }));
 

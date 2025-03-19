@@ -1,7 +1,7 @@
 import { UpdateTaskDto } from '@sigma/types';
 import axios from 'axios';
 
-interface UpdateTaskDtoWithId extends UpdateTaskDto {
+export interface UpdateTaskDtoWithId extends UpdateTaskDto {
   taskId: string;
 }
 

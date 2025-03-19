@@ -1,13 +1,16 @@
-import { Badge } from '@tegonhq/ui';
+import { Badge, ParentIssueLine } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
+import React from 'react';
 
 import { getIcon } from 'common/icon-picker';
 import type { TaskType } from 'common/types';
+import { TaskViewContext } from 'layouts/side-task-view';
 
 import { useContextStore } from 'store/global-context-provider';
 
 import { ScheduleDropdown, ScheduleDropdownVariant } from './metadata';
 import { DuedateDropdown, DuedateDropdownVariant } from './metadata/due-date';
+import { SubTasks } from './metadata/sub-tasks';
 
 export const TaskInfo = observer(
   ({
@@ -19,9 +22,31 @@ export const TaskInfo = observer(
     taskOccurrenceId?: string;
     inEditor?: boolean;
   }) => {
-    const { listsStore, pagesStore } = useContextStore();
+    const { listsStore, pagesStore, tasksStore } = useContextStore();
     const list = listsStore.getListWithId(task.listId);
     const page = pagesStore.getPageWithId(list?.pageId);
+    const { openTask } = React.useContext(TaskViewContext);
+
+    const parentTask = () => {
+      const parent = tasksStore.getTaskWithId(task?.parentId);
+      const page = pagesStore.getPageWithId(parent?.pageId);
+
+      if (page) {
+        return (
+          <Badge
+            variant="secondary"
+            className="flex items-center gap-1 shrink min-w-[0px]"
+            onClick={() => openTask(parent.id)}
+          >
+            <ParentIssueLine size={12} />{' '}
+            <span className="text-muted-foreground">Parent</span>{' '}
+            <span className="max-w-[100px] truncate">{page?.title}</span>
+          </Badge>
+        );
+      }
+
+      return null;
+    };
 
     return (
       <div className="flex flex-col w-fit items-center">
@@ -47,6 +72,8 @@ export const TaskInfo = observer(
             />
           )}
           <DuedateDropdown task={task} variant={DuedateDropdownVariant.SHORT} />
+          <SubTasks taskId={task.id} />
+          {task.parentId && parentTask()}
         </div>
       </div>
     );

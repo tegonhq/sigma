@@ -130,8 +130,8 @@ export const TaskOccurrencesStore: IAnyStateTreeNode = types
     return { update, deleteById, load, setLoading };
   })
   .views((self) => ({
-    getTaskOccurrencesForTask(taskId: string) {
-      return self.taskOccurrences.get(taskId);
+    getTaskOccurrencesForTask(taskId: string): TaskOccurrenceType[] {
+      return self.taskOccurrences.get(taskId) ?? [];
     },
     getTaskOccurrenceWithTaskAndId(taskId: string, id: string) {
       const taskOccurrences = self.taskOccurrences.get(taskId);
@@ -144,8 +144,8 @@ export const TaskOccurrencesStore: IAnyStateTreeNode = types
 
       return undefined;
     },
-    getTaskOccurrencesForPage(pageId: string) {
-      return self.taskOccurrencesWithPages.get(pageId);
+    getTaskOccurrencesForPage(pageId: string): TaskOccurrenceType[] {
+      return self.taskOccurrencesWithPages.get(pageId) ?? [];
     },
   }));
 

@@ -142,15 +142,15 @@ export const TaskListItem = observer(
               )}
             >
               <div className="flex w-full justify-between gap-4 items-center">
-                <div className="flex gap-1 w-full items-center">
-                  <div className="text-muted-foreground font-mono min-w-[40px] pl-1 text-sm self-center">
+                <div className="flex gap-2 w-full items-center">
+                  <div className="text-muted-foreground font-mono min-w-[40px] pl-1 relative top-[1px] text-sm self-center">
                     T-{task.number}
                   </div>
                   <div className="inline-flex items-center justify-start shrink min-w-[0px] min-h-[24px]">
                     <div
                       className={cn(
                         'text-left truncate',
-                        task.status === 'Done' && 'line-through',
+                        getStatus() === 'Done' && 'line-through',
                       )}
                     >
                       {page?.title}

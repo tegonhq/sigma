@@ -6,6 +6,7 @@ import { ListPage } from 'modules/lists';
 import { MyDay } from 'modules/my-day';
 import { SearchDialog } from 'modules/search';
 import { Tasks } from 'modules/tasks';
+import { AddTaskDialog } from 'modules/tasks/add-task';
 
 import { SCOPES } from 'common/shortcut-scopes';
 import { AllProviders } from 'common/wrappers/all-providers';
@@ -51,6 +52,7 @@ export const Home = observer(() => {
     <div className="flex flex-col h-full">
       {getComponent(firstTab.type, { entity_id: firstTab.entity_id })}
       <SearchDialog />
+      <AddTaskDialog />
     </div>
   );
 });

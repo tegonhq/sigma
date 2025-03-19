@@ -75,6 +75,11 @@ export const TasksStore: IAnyStateTreeNode = types
         return isListTask;
       });
     },
+    getSubTasks(taskId: string) {
+      return self.tasks.filter((task) => {
+        return task.parentId === taskId;
+      });
+    },
     getCompletedTasksForDate(date: Date) {
       const tasks = self.tasks.filter((task) => {
         if (task.status === 'Done' || task.status === 'Canceled') {
@@ -143,4 +148,5 @@ export interface TasksStoreType {
   getCompletedTasksForDate: (date: Date) => TaskType[];
   getTasksForDate: (date: Date) => TaskType[];
   getTasksNotCompleted: () => TaskType[];
+  getSubTasks: (taskId: string) => TaskType[];
 }

@@ -1,5 +1,7 @@
+import { SourceType } from '@sigma/types';
 import { Checkbox, cn } from '@tegonhq/ui';
 import { NodeViewContent, NodeViewWrapper } from '@tiptap/react';
+import { isSameDay } from 'date-fns';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 
@@ -7,18 +9,38 @@ import { TaskInfo } from 'modules/tasks/task-info';
 
 import type { TaskType } from 'common/types';
 
+import { useUpdateSingleTaskOccurrenceMutation } from 'services/task-occurrence';
 import { useUpdateTaskMutation } from 'services/tasks';
 
 import { useContextStore } from 'store/global-context-provider';
 
 import { TaskMetadata } from './task-metadata';
+import { EditorContext } from '../editor-context';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const TaskComponent = observer((props: any) => {
   const taskId = props.node.attrs.id;
-
-  const { tasksStore } = useContextStore();
+  const { source, date } = React.useContext(EditorContext);
+  const { tasksStore, taskOccurrencesStore } = useContextStore();
   const task = tasksStore.getTaskWithId(taskId);
+  const { mutate: updateTaskOccurrence } =
+    useUpdateSingleTaskOccurrenceMutation({});
+
+  const getTaskOccurrence = () => {
+    const taskOccurrences =
+      taskOccurrencesStore.getTaskOccurrencesForTask(taskId);
+
+    return taskOccurrences.find((occurrence) => {
+      if (!occurrence.startTime) {
+        return false;
+      }
+
+      const occurrenceDate = new Date(occurrence.startTime);
+      return isSameDay(occurrenceDate, date);
+    });
+  };
+
+  const taskOccurrence = getTaskOccurrence();
 
   const { mutate: updateTask } = useUpdateTaskMutation({
     onSuccess: (data: TaskType) => {
@@ -29,10 +51,26 @@ export const TaskComponent = observer((props: any) => {
   });
 
   const statusChange = (status: string) => {
+    if (taskOccurrence) {
+      updateTaskOccurrence({
+        taskOccurrenceId: taskOccurrence.id,
+        status,
+      });
+      return;
+    }
+
     updateTask({
       taskId: task.id,
       status,
     });
+  };
+
+  const getStatus = () => {
+    if (taskOccurrence) {
+      return taskOccurrence?.status;
+    }
+
+    return task?.status;
   };
 
   return (
@@ -49,7 +87,7 @@ export const TaskComponent = observer((props: any) => {
         >
           <Checkbox
             className="shrink-0 relative top-[1px] h-[18px] w-[18px]"
-            checked={task?.status === 'Done'}
+            checked={getStatus() === 'Done'}
             contentEditable={false}
             onCheckedChange={(value) => {
               statusChange(value === true ? 'Done' : 'Todo');
@@ -61,7 +99,7 @@ export const TaskComponent = observer((props: any) => {
           as="p"
           className={cn(
             'relative top-[2px] min-w-[3px]',
-            task?.status === 'Done' &&
+            getStatus() === 'Done' &&
               'line-through opacity-60 decoration-[1px] decoration-transparent animate-multiline-strikethrough',
           )}
         />
@@ -71,7 +109,7 @@ export const TaskComponent = observer((props: any) => {
             contentEditable={false}
           >
             <TaskMetadata taskId={task.id} />
-            <TaskInfo task={task} inEditor />
+            <TaskInfo task={task} inEditor={source.type === SourceType.PAGE} />
           </div>
         )}
       </div>

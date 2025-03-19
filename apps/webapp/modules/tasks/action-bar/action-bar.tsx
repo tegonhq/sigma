@@ -1,12 +1,15 @@
-import { Button, Fire } from '@tegonhq/ui';
+import { Button, Close, DeleteLine, Fire, Separator } from '@tegonhq/ui';
 import { Check, Clock } from 'lucide-react';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
+import { useHotkeys } from 'react-hotkeys-hook';
+import { Key } from 'ts-key-enum';
 
 import { DialogType } from 'modules/dialog-views-provider';
 import { useTaskOperations } from 'modules/search/command/use-task-operations';
 
 import { Shortcut } from 'common/shortcut';
+import { SCOPES } from 'common/shortcut-scopes';
 
 import { useApplication } from 'hooks/application';
 
@@ -15,8 +18,30 @@ interface ActionBarProps {
 }
 
 export const ActionBar = observer(({ openDialog }: ActionBarProps) => {
-  const { selectedTasks } = useApplication();
-  const { markComplete } = useTaskOperations();
+  const { selectedTasks, clearSelectedTask } = useApplication();
+  const { markComplete, deleteTasks } = useTaskOperations();
+
+  useHotkeys(
+    ['x', 'c', Key.Escape],
+    (event) => {
+      switch (event.key) {
+        case 'x':
+          deleteTasks(selectedTasks);
+          break;
+        case 'c':
+          markComplete(selectedTasks);
+          break;
+        case Key.Escape:
+          clearSelectedTask();
+          break;
+      }
+    },
+    {
+      scopes: [SCOPES.Task],
+      enabled: selectedTasks.length > 0,
+      preventDefault: true,
+    },
+  );
 
   return (
     <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 shadow-1 rounded-lg bg-background p-2">
@@ -52,6 +77,28 @@ export const ActionBar = observer(({ openDialog }: ActionBarProps) => {
         >
           <Check size={16} />
           <Shortcut shortcut="C" className="ml-1" />
+        </Button>
+
+        <Button
+          variant="ghost"
+          className="gap-1"
+          onClick={() => {
+            markComplete(selectedTasks);
+          }}
+        >
+          <DeleteLine size={16} />
+          <Shortcut shortcut="X" className="ml-1" />
+        </Button>
+
+        <Separator orientation="vertical" className="h-7" />
+        <Button
+          variant="ghost"
+          className="gap-1"
+          onClick={() => {
+            clearSelectedTask();
+          }}
+        >
+          <Close size={16} />
         </Button>
       </div>
     </div>
