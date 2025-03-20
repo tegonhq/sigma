@@ -42,6 +42,7 @@ module.exports = {
     NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
   },
   output: 'export',
+  trailingSlash: true,
 };
 
 // Injected content via Sentry wizard below

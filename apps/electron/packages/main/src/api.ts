@@ -49,12 +49,16 @@ fastify.register(fastifyHttpProxy, {
 });
 
 if (isDev) {
-  fastify.register(fastifyHttpProxy, {
-    upstream: 'http://localhost:3000',
-    prefix: '/', // proxy all other requests
-    rewritePrefix: '/', // keep the original path
-    http2: false, // set to true if using HTTP/2
-    websocket: true,
+  // fastify.register(fastifyHttpProxy, {
+  //   upstream: 'http://localhost:3000',
+  //   prefix: '/', // proxy all other requests
+  //   rewritePrefix: '/', // keep the original path
+  //   http2: false, // set to true if using HTTP/2
+  //   websocket: true,
+  // });
+  fastify.register(fastifyStatic, {
+    root: path.join(app.getAppPath(), '../webapp/out/'),
+    prefix: '/',
   });
 } else {
   fastify.register(fastifyStatic, {

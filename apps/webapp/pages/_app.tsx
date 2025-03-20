@@ -14,7 +14,6 @@ import React from 'react';
 import { Hydrate } from 'react-query';
 
 import { Provider } from 'modules/provider';
-import { Updates } from 'modules/updates/updates';
 
 import { initSuperTokens } from 'common/init-config';
 

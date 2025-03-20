@@ -1,0 +1,83 @@
+name: Production Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-frontend-linux:
+    name: Build Frontend Linux
+    runs-on: ubicloud-standard-8
+    env:
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - uses: actions/cache@v4
+        with:
+          path: "./"
+          key: ${{ runner.os }}-modules-${{ hashFiles('./pnpm-lock.yaml') }}
+
+      - name: Install Dependencies
+        run: pnpm install
+        working-directory: .
+
+      - name: Create .env file
+        run: |
+          echo "${{ secrets.ENV }}" > .env
+        working-directory: apps/webapp
+
+      - name: Generate Frontend
+        run: pnpm build
+        working-directory: apps/webapp
+
+      - name: Save Artifacts
+        uses: actions/upload-artifact@master
+        with:
+          name: linux-latest-${{ github.sha }}
+          path: apps/webapp/out
+
+  release-linux:
+    name: Release Linux
+    needs:
+      - build-frontend-linux
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.REPO_TOKEN }}
+      ADBLOCK: true
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - uses: actions/cache@v4
+        with:
+          path: "./"
+          key: ${{ runner.os }}-modules-${{ hashFiles('./pnpm-lock.yaml') }}
+
+      - name: Install Dependencies
+        run: pnpm install
+        working-directory: .
+
+      - name: Download Frontend Artifacts
+        uses: actions/download-artifact@master
+        with:
+          name: linux-latest-${{ github.sha }}
+          path: apps/webapp/out
+
+      - name: Release
+        run: pnpm compile:publish
+        working-directory: apps/electron
