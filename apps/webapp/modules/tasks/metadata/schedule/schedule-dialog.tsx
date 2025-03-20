@@ -189,8 +189,8 @@ export const ScheduleDialog = ({ onClose, taskIds }: ScheduleDialogProps) => {
           });
         }
       });
-
       onClose();
+      return;
     }
 
     if (schedule.schedule) {

@@ -172,7 +172,7 @@ export const AppSidebar = observer(
           </SidebarGroup>
         </SidebarContent>
         <SidebarFooter>
-          <div className="text-sm text-muted-foreground flex items-center justify-center gap-2">
+          <div className="text-sm text-muted-foreground flex items-center justify-between gap-2">
             <Image
               src="/logo_light.svg"
               alt="logo"
@@ -180,7 +180,7 @@ export const AppSidebar = observer(
               width={20}
               height={20}
             />
-            {publicRuntimeConfig.NEXT_PUBLIC_VERSION}
+            v{publicRuntimeConfig.NEXT_PUBLIC_VERSION}
           </div>
           <Updates />
         </SidebarFooter>

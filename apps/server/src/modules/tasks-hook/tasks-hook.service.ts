@@ -174,7 +174,10 @@ export class TaskHooksService {
     switch (context.action) {
       case 'create':
         if (task.recurrence) {
-          await this.taskOccurenceService.createTaskOccurenceByTask(task.id);
+          await this.taskOccurenceService.createTaskOccurenceByTask(
+            task.id,
+            task.workspaceId,
+          );
         }
         return { message: 'Handled schedule create' };
 
@@ -185,13 +188,19 @@ export class TaskHooksService {
             context.changeData.startTime ||
             context.changeData.endTime)
         ) {
-          await this.taskOccurenceService.updateTaskOccurenceByTask(task.id);
+          await this.taskOccurenceService.updateTaskOccurenceByTask(
+            task.id,
+            task.workspaceId,
+          );
         }
         return { message: 'Handled schedule update' };
 
       case 'delete':
         if (task.recurrence || task.startTime || task.endTime) {
-          await this.taskOccurenceService.deleteTaskOccurenceByTask(task.id);
+          await this.taskOccurenceService.deleteTaskOccurenceByTask(
+            task.id,
+            task.workspaceId,
+          );
         }
         return { message: 'Handled schedule delete' };
     }

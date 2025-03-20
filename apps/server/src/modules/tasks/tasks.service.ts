@@ -303,7 +303,10 @@ export class TasksService {
       await Promise.all([
         // Delete task occurrences if it's recurring
         task.recurrence &&
-          this.taskOccurenceService.deleteTaskOccurenceByTask(task.id),
+          this.taskOccurenceService.deleteTaskOccurenceByTask(
+            task.id,
+            workspaceId,
+          ),
 
         // Update calendar if task has dates
         (task.startTime || task.endTime) &&

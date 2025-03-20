@@ -99,19 +99,37 @@ export class TaskOccurenceController {
 
   @Post('task')
   @UseGuards(AuthGuard)
-  async createTaskOccurenceByTask(@Body('taskId') taskId: string) {
-    return await this.taskOccurenceService.createTaskOccurenceByTask(taskId);
+  async createTaskOccurenceByTask(
+    @Body('taskId') taskId: string,
+    @Workspace() workspaceId: string,
+  ) {
+    return await this.taskOccurenceService.createTaskOccurenceByTask(
+      taskId,
+      workspaceId,
+    );
   }
 
   @Post('task/:taskId')
   @UseGuards(AuthGuard)
-  async updateTaskOccurenceByTask(@Param('taskId') taskId: string) {
-    return await this.taskOccurenceService.updateTaskOccurenceByTask(taskId);
+  async updateTaskOccurenceByTask(
+    @Param('taskId') taskId: string,
+    @Workspace() workspaceId: string,
+  ) {
+    return await this.taskOccurenceService.updateTaskOccurenceByTask(
+      taskId,
+      workspaceId,
+    );
   }
 
   @Delete('task/:taskId')
   @UseGuards(AuthGuard)
-  async deleteTaskOccurenceByTask(@Param('taskId') taskId: string) {
-    return await this.taskOccurenceService.deleteTaskOccurenceByTask(taskId);
+  async deleteTaskOccurenceByTask(
+    @Param('taskId') taskId: string,
+    @Workspace() workspaceId: string,
+  ) {
+    return await this.taskOccurenceService.deleteTaskOccurenceByTask(
+      taskId,
+      workspaceId,
+    );
   }
 }

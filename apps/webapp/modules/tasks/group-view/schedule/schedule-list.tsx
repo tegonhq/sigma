@@ -60,7 +60,7 @@ export const ScheduleList = observer(() => {
       <div className={cn('flex gap-1 items-end ml-4 my-1')}>
         <Button
           className={cn(
-            'flex items-center w-fit rounded-xl text-accent-foreground cursor-default group bg-grayAlpha-100 gap-0 px-3 py-4',
+            'flex items-center w-fit rounded-xl text-accent-foreground cursor-default group bg-grayAlpha-100 gap-0 px-4 py-4',
             index !== 0 && 'mt-4',
           )}
           variant="ghost"

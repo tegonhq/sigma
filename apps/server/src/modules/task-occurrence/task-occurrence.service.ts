@@ -9,8 +9,7 @@ import {
   TaskOccurrence,
   UpdateTaskOccurenceDTO,
 } from '@sigma/types';
-import { format } from 'date-fns/format';
-import zonedTimeToUtc from 'date-fns-tz/zonedTimeToUtc';
+import { formatInTimeZone } from 'date-fns-tz';
 import { PrismaService } from 'nestjs-prisma';
 import { RRule } from 'rrule';
 
@@ -107,8 +106,9 @@ export class TaskOccurenceService {
 
     let page: Page;
     if (!pageId || modifyPage) {
-      const formattedDate = format(
-        zonedTimeToUtc(new Date(startTime), timezone),
+      const formattedDate = formatInTimeZone(
+        new Date(startTime),
+        timezone,
         'dd-MM-yyyy',
       );
       page = await this.pagesService.getOrCreatePageByTitle(workspaceId, {
@@ -179,16 +179,21 @@ export class TaskOccurenceService {
       return null;
     }
 
+    const workspace = await this.prisma.workspace.findUnique({
+      where: { id: workspaceId },
+    });
+    const timezone = (workspace.preferences as Preferences).timezone;
+
     // Check if start date is changing
     const newStartTime = updateTaskOccurenceDto.startTime
       ? new Date(updateTaskOccurenceDto.startTime)
       : taskOccurrence.startTime;
 
     const oldStartDate = taskOccurrence.startTime
-      ? format(taskOccurrence.startTime, 'dd-MM-yyyy')
+      ? formatInTimeZone(taskOccurrence.startTime, timezone, 'dd-MM-yyyy')
       : null;
     const newStartDate = newStartTime
-      ? format(newStartTime, 'dd-MM-yyyy')
+      ? formatInTimeZone(newStartTime, timezone, 'dd-MM-yyyy')
       : null;
 
     // If date is changing, we need to move the task occurrence to a different page
@@ -221,15 +226,15 @@ export class TaskOccurenceService {
     taskOccurrenceIds: string[],
     modifyPage?: boolean,
   ): Promise<TaskOccurrence[]> {
-    const taskOccurences = await this.prisma.taskOccurrence.findMany({
-      where: { id: { in: taskOccurrenceIds } },
-      include: { page: true, task: true },
-    });
-
     // Mark all occurrences as deleted
     await this.prisma.taskOccurrence.updateMany({
       where: { id: { in: taskOccurrenceIds } },
       data: { deleted: new Date().toISOString() },
+    });
+
+    const taskOccurences = await this.prisma.taskOccurrence.findMany({
+      where: { id: { in: taskOccurrenceIds } },
+      include: { page: true, task: true },
     });
 
     // Remove tasks from their respective pages
@@ -258,7 +263,12 @@ export class TaskOccurenceService {
     return taskOccurences;
   }
 
-  async createTaskOccurenceByTask(taskId: string) {
+  async createTaskOccurenceByTask(taskId: string, workspaceId: string) {
+    const workspace = await this.prisma.workspace.findUnique({
+      where: { id: workspaceId },
+    });
+    const timezone = (workspace.preferences as Preferences).timezone;
+
     const task = await this.prisma.task.findUnique({ where: { id: taskId } });
     if (!task.recurrence.length && !task.startTime) {
       return null;
@@ -268,11 +278,11 @@ export class TaskOccurenceService {
 
     let futureOccurrences;
     if (task.recurrence.length) {
-      // Set up the date range for next 30 days
+      // Set up the date range for next 7 days
       const now = new Date();
       const startDate = new Date(now);
       const endDate = new Date(now);
-      endDate.setDate(endDate.getDate() + 30);
+      endDate.setDate(endDate.getDate() + 7);
 
       // Process all RRules and collect occurrences
       let allOccurrences: Date[] = [];
@@ -328,7 +338,7 @@ export class TaskOccurenceService {
     // Step 1: Create a map of formatted dates to their occurrences
     const dateOccurrenceMap = new Map<string, Date[]>();
     futureOccurrences.forEach((date) => {
-      const formattedDate = format(date, 'dd-MM-yyyy');
+      const formattedDate = formatInTimeZone(date, timezone, 'dd-MM-yyyy');
       if (!dateOccurrenceMap.has(formattedDate)) {
         dateOccurrenceMap.set(formattedDate, []);
       }
@@ -361,7 +371,7 @@ export class TaskOccurenceService {
     const taskOccurrenceData: any = [];
 
     futureOccurrences.forEach((date) => {
-      const formattedDate = format(date, 'dd-MM-yyyy');
+      const formattedDate = formatInTimeZone(date, timezone, 'dd-MM-yyyy');
       const pageId = pageMap.get(formattedDate);
 
       if (pageId) {
@@ -414,13 +424,18 @@ export class TaskOccurenceService {
     return await Promise.all(upsertOperations);
   }
 
-  async updateTaskOccurenceByTask(taskId: string) {
-    await this.deleteTaskOccurenceByTask(taskId);
+  async updateTaskOccurenceByTask(taskId: string, workspaceId: string) {
+    await this.deleteTaskOccurenceByTask(taskId, workspaceId);
 
-    return await this.createTaskOccurenceByTask(taskId);
+    return await this.createTaskOccurenceByTask(taskId, workspaceId);
   }
 
-  async deleteTaskOccurenceByTask(taskId: string) {
+  async deleteTaskOccurenceByTask(taskId: string, workspaceId: string) {
+    const workspace = await this.prisma.workspace.findUnique({
+      where: { id: workspaceId },
+    });
+    const timezone = (workspace.preferences as Preferences).timezone;
+
     // Mark occurrences as deleted
     await this.prisma.taskOccurrence.updateMany({
       where: {
@@ -449,7 +464,11 @@ export class TaskOccurenceService {
     // Remove task from each daily page
     await Promise.all(
       futureOccurrences.map(async (occurrence) => {
-        const formattedDate = format(occurrence.startTime, 'dd-MM-yyyy');
+        const formattedDate = formatInTimeZone(
+          occurrence.startTime,
+          timezone,
+          'dd-MM-yyyy',
+        );
         await this.pagesService.removeTaskFromPageByTitle(formattedDate, [
           taskId,
         ]);

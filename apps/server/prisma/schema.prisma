@@ -328,6 +328,7 @@ model Task {
   list   List?   @relation(fields: [listId], references: [id])
   listId String?
 
+  // Very big mistake 
   parent   Task?   @relation("SubIssue", fields: [parentId], references: [id])
   parentId String?
   subIssue Task[]  @relation("SubIssue")
