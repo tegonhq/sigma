@@ -6,9 +6,7 @@ on:
 jobs:
   build-frontend-linux:
     name: Build Frontend Linux
-    runs-on: ubicloud-standard-8
-    env:
-      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+    runs-on: ubuntu-latest
 
     steps:
       - name: Check out Git repository
@@ -18,7 +16,10 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
+
+      - name: Install pnpm
+        run: corepack enable && corepack prepare pnpm@latest --activate
 
       - uses: actions/cache@v4
         with:
@@ -32,11 +33,11 @@ jobs:
       - name: Create .env file
         run: |
           echo "${{ secrets.ENV }}" > .env
-        working-directory: apps/webapp
+        working-directory: .
 
       - name: Generate Frontend
-        run: pnpm build
-        working-directory: apps/webapp
+        run: pnpm build --filter=webapp
+        working-directory: .
 
       - name: Save Artifacts
         uses: actions/upload-artifact@master
@@ -51,7 +52,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GH_TOKEN: ${{ secrets.REPO_TOKEN }}
-      ADBLOCK: true
 
     steps:
       - name: Check out Git repository
@@ -61,7 +61,10 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
+
+      - name: Install pnpm
+        run: corepack enable && corepack prepare pnpm@latest --activate
 
       - uses: actions/cache@v4
         with:
@@ -77,6 +80,11 @@ jobs:
         with:
           name: linux-latest-${{ github.sha }}
           path: apps/webapp/out
+
+      - name: Create vendor cache
+        run: |
+          echo '{"chrome":"128","node":"20"}' > .electron-vendors.cache.json
+        working-directory: apps/electron
 
       - name: Release
         run: pnpm compile:publish
