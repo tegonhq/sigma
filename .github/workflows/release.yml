@@ -23,11 +23,6 @@ jobs:
       - name: Install pnpm
         run: corepack enable && corepack prepare pnpm@latest --activate
 
-      - uses: actions/cache@v4
-        with:
-          path: "./"
-          key: ${{ runner.os }}-modules-${{ hashFiles('./pnpm-lock.yaml') }}
-
       - name: Install Dependencies
         run: pnpm install
         working-directory: .
@@ -69,11 +64,6 @@ jobs:
 
       - name: Install pnpm
         run: corepack enable && corepack prepare pnpm@latest --activate
-
-      - uses: actions/cache@v4
-        with:
-          path: "./"
-          key: ${{ runner.os }}-modules-${{ hashFiles('./pnpm-lock.yaml') }}
 
       - name: Install Dependencies
         run: pnpm install
@@ -123,11 +113,6 @@ jobs:
 
       - name: Install setup-tools
         run: python3 -m pip install setuptools
-
-      - uses: actions/cache@v4
-        with:
-          path: "./"
-          key: ${{ runner.os }}-modules-${{ hashFiles('./pnpm-lock.yaml') }}
 
       - name: Install Dependencies
         run: pnpm install

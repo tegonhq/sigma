@@ -100,7 +100,7 @@ export const Updates = () => {
         <div className="flex flex-col gap-2">
           <p>Update ready to install</p>
           <Button variant="secondary" onClick={handleRestart}>
-            Restart and Install
+            Install
           </Button>
         </div>
       )}
