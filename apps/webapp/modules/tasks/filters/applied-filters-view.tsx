@@ -3,7 +3,7 @@ import * as React from 'react';
 
 import { useApplication } from 'hooks/application';
 
-import { StatusFilterDropdown } from '../metadata';
+import { ListFilterDropdown, StatusFilterDropdown } from '../metadata';
 import { FilterItemView } from './filter-item-view';
 import { isEmpty } from './filter-utils';
 
@@ -22,6 +22,12 @@ export const AppliedFiltersView = observer(() => {
             filterKey="status"
             filter={filters.status}
             Component={StatusFilterDropdown}
+          />
+          <FilterItemView
+            name="List"
+            filterKey="list"
+            filter={filters.list}
+            Component={ListFilterDropdown}
           />
         </div>
       )}

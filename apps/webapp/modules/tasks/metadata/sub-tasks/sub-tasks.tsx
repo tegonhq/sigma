@@ -50,14 +50,15 @@ export const SubTasks = observer(({ taskId }: SubTasksProps) => {
                 openTask(task.id);
               }}
             >
-              <div className="text-muted-foreground font-mono min-w-[40px] pl-1 relative top-[1px] text-sm self-center">
+              <div className="text-muted-foreground font-mono min-w-[40px] pl-1 text-xs self-center">
                 T-{task.number}
               </div>
               <div className="inline-flex items-center justify-start shrink min-w-[0px] min-h-[24px]">
                 <div
                   className={cn(
                     'text-left truncate',
-                    task.status === 'Done' && 'line-through',
+                    task.status === 'Done' &&
+                      'line-through opacity-60 decoration-[1px]',
                   )}
                 >
                   {page?.title}

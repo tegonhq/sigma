@@ -6,14 +6,19 @@ import {
   IssuesLine,
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuItem,
 } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
+import getConfig from 'next/config';
+import Image from 'next/image';
 import * as React from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
+
+import { Updates } from 'modules/updates/updates';
 
 import { getPlatformModifierKey } from 'common/common-utils';
 import { getIcon } from 'common/icon-picker';
@@ -28,6 +33,7 @@ import { useCreateListMutation } from 'services/lists';
 import { TabViewType } from 'store/application';
 
 import { WorkspaceDropdown } from './workspace-dropdown';
+const { publicRuntimeConfig } = getConfig();
 
 export const AppSidebar = observer(
   ({ ...props }: React.ComponentProps<typeof Sidebar>) => {
@@ -165,6 +171,19 @@ export const AppSidebar = observer(
             </SidebarMenu>
           </SidebarGroup>
         </SidebarContent>
+        <SidebarFooter>
+          <div className="text-sm text-muted-foreground flex items-center justify-center gap-2">
+            <Image
+              src="/logo_light.svg"
+              alt="logo"
+              key={1}
+              width={20}
+              height={20}
+            />
+            {publicRuntimeConfig.NEXT_PUBLIC_VERSION}
+          </div>
+          <Updates />
+        </SidebarFooter>
       </Sidebar>
     );
   },

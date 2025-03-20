@@ -147,7 +147,7 @@ export function getFilters(
   filters: FiltersModelType = {},
   displaySettings: DisplaySettingsModelType,
 ) {
-  const { status } = filters;
+  const { status, list } = filters;
   const { completedFilter } = displaySettings;
 
   const finalFilters: FilterType[] = [];
@@ -157,6 +157,14 @@ export function getFilters(
       key: 'status',
       filterType: status.filterType,
       value: status.value,
+    });
+  }
+
+  if (list) {
+    finalFilters.push({
+      key: 'listId',
+      filterType: list.filterType,
+      value: list.value,
     });
   }
 
@@ -283,7 +291,10 @@ export function filterTasksNoHook(
 
   const filteredTasks = filterTasks(tasks, computedFilters);
 
-  return sort(filteredTasks).by({ desc: (task: TaskType) => task.updatedAt });
+  return sort(filteredTasks).by([
+    { desc: (task: TaskType) => task.status === 'Todo' },
+    { desc: (task: TaskType) => task.number },
+  ]);
 }
 
 export const hasMoreInfo = (task: TaskType) => {

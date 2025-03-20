@@ -4,6 +4,7 @@ import {
   ChevronDown,
   ChevronRight,
   cn,
+  IssuesLine,
 } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
@@ -59,10 +60,9 @@ export const ScheduleList = observer(() => {
       <div className={cn('flex gap-1 items-end ml-4 my-1')}>
         <Button
           className={cn(
-            'flex items-center w-fit rounded-2xl text-accent-foreground cursor-default group bg-grayAlpha-100 gap-0',
+            'flex items-center w-fit rounded-xl text-accent-foreground cursor-default group bg-grayAlpha-100 gap-0 px-3 py-4',
             index !== 0 && 'mt-4',
           )}
-          size="lg"
           variant="ghost"
           onClick={() => toggleHeaderCollapse(row.key)}
         >
@@ -123,7 +123,12 @@ export const ScheduleList = observer(() => {
           listId="schedule-list"
           height={height}
           overscanRowCount={10}
-          noRowsRenderer={() => <>No scheduled tasks</>}
+          noRowsRenderer={() => (
+            <div className="p-4 h-full flex flex-col items-center justify-start gap-3 mt-4">
+              <IssuesLine size={30} />
+              No scheduled tasks
+            </div>
+          )}
           rowCount={rows.length + 2}
           rowHeight={rowHeight}
           deferredMeasurementCache={cache}

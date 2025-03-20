@@ -33,7 +33,7 @@ export const ListPage = observer(({ entity_id }: TabsProps) => {
 
   const onChange = (title: string) => {
     updatePage({
-      pageId: page.id,
+      pageId: page?.id,
       title,
     });
   };

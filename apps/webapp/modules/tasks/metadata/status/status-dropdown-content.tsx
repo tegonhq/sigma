@@ -3,7 +3,7 @@ import { Checkbox, CommandGroup } from '@tegonhq/ui';
 import { DropdownItem } from '../dropdown-item';
 import { getStatusColor, getStatusIcon } from './status-utils';
 
-interface IssueStatusDropdownContentProps {
+interface StatusDropdownContentProps {
   onChange?: (id: string | string[]) => void;
   onClose: () => void;
   multiple?: boolean;
@@ -17,7 +17,7 @@ export function StatusDropdownContent({
   onClose,
   multiple = false,
   value,
-}: IssueStatusDropdownContentProps) {
+}: StatusDropdownContentProps) {
   const onValueChange = (checked: boolean, id: string) => {
     if (checked && !value.includes(id)) {
       onChange && onChange([...value, id]);

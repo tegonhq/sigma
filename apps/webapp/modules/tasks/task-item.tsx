@@ -150,7 +150,8 @@ export const TaskListItem = observer(
                     <div
                       className={cn(
                         'text-left truncate',
-                        getStatus() === 'Done' && 'line-through',
+                        getStatus() === 'Done' &&
+                          'line-through opacity-60 decoration-[1px]',
                       )}
                     >
                       {page?.title}

@@ -18,12 +18,13 @@ import { useApplication } from 'hooks/application';
 import type { FilterTypeEnum } from 'store/application';
 
 import { AppliedFiltersView } from './applied-filters-view';
-import { StatusFilter } from '../metadata';
+import { ListFilter, StatusFilter } from '../metadata';
 import { DefaultFilterDropdown } from './default-filter-dropdown';
 import { ViewOptions } from './view-options';
 
 const ContentMap = {
   status: StatusFilter,
+  list: ListFilter,
 };
 
 export type KeyType = keyof typeof ContentMap;
@@ -74,7 +75,7 @@ export const Filters = observer(() => {
   return (
     <div className="flex justify-between px-4 pt-3">
       <Popover open={open} onOpenChange={onPopoverChange}>
-        <div className="flex flex-wrap gap-1">
+        <div className="flex flex-wrap gap-1 items-center">
           <AppliedFiltersView />
           <PopoverTrigger asChild>
             <Button

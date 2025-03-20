@@ -39,8 +39,6 @@ export const MyApp = ({
           )}
         >
           {getLayout(<Component {...pageProps} />)}
-
-          <Updates />
         </div>
       </Hydrate>
     </Provider>
