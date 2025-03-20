@@ -51,7 +51,7 @@ export const TaskComponent = observer((props: any) => {
   });
 
   const statusChange = (status: string) => {
-    if (task && task.recurrence.length > 0) {
+    if (task && task.recurrence.length > 0 && taskOccurrence) {
       updateTaskOccurrence({
         taskOccurrenceId: taskOccurrence.id,
         status,
@@ -66,7 +66,7 @@ export const TaskComponent = observer((props: any) => {
   };
 
   const getStatus = () => {
-    if (task && task.recurrence.length > 0) {
+    if (task && task.recurrence.length > 0 && taskOccurrence) {
       return taskOccurrence?.status;
     }
 

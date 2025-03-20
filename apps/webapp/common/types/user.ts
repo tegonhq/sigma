@@ -3,6 +3,9 @@ interface Workspace {
   slug: string;
   icon: string;
   id: string;
+  preferences?: {
+    timezone?: string;
+  };
 }
 
 export interface User {

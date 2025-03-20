@@ -21,6 +21,7 @@ import { fileExtension } from './file-extension';
 import { imageExtension } from './image-extension';
 import { LinkTaskExtension } from './link-task';
 import trailingNode from './trailing-node';
+import { GlobalDragHandle } from './drag-handler';
 
 // create a lowlight instance with all languages loaded
 const lowlight = createLowlight(all);
@@ -139,6 +140,9 @@ export const defaultExtensions = [
   fileExtension,
   imageExtension,
   HighlightExtension,
+  GlobalDragHandle.configure({
+    customNodes: ['taskItem'],
+  }),
   AutoJoiner,
   TaskList,
   datePageExtension,

@@ -8,6 +8,7 @@ import { GetUserQuery } from 'services/users';
 export interface CreateInitialResourcesDto {
   workspaceName: string;
   fullname: string;
+  timezone: string;
 }
 
 export function createInitialResources(

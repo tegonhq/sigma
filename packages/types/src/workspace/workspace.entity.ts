@@ -1,5 +1,9 @@
 import { Template } from '../template';
 
+export class Preferences {
+  timezone?: string;
+}
+
 export class Workspace {
   id: string;
   createdAt: Date;
@@ -10,4 +14,5 @@ export class Workspace {
   icon: string | null;
   userId?: string | null;
   template?: Template[];
+  preferences?: any;
 }

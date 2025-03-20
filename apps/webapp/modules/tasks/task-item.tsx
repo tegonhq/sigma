@@ -42,7 +42,7 @@ export const TaskListItem = observer(
       useUpdateSingleTaskOccurrenceMutation({});
 
     const statusChange = (status: string) => {
-      if (task && task.recurrence.length > 0) {
+      if (task && task.recurrence.length > 0 && taskOccurrenceId) {
         updateTaskOccurrence({
           taskOccurrenceId,
           status,
@@ -61,8 +61,8 @@ export const TaskListItem = observer(
     };
 
     const getStatus = () => {
-      if (task && task.recurrence.length > 0) {
-        return taskOccurrence.status;
+      if (task && task.recurrence.length > 0 && taskOccurrence) {
+        return taskOccurrence?.status;
       }
 
       return task.status;

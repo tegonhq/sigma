@@ -6,13 +6,15 @@ import type { WorkspaceType } from 'common/types';
 export interface UpdateWorkspaceParams {
   name: string;
   workspaceId: string;
+  timezone?: string;
 }
 
 export function updateWorkspace({
   workspaceId,
   name,
+  timezone,
 }: UpdateWorkspaceParams): Promise<WorkspaceType> {
-  return axios.post(`/api/v1/workspaces/${workspaceId}`, { name });
+  return axios.post(`/api/v1/workspaces/${workspaceId}`, { name, timezone });
 }
 
 export interface MutationParams {

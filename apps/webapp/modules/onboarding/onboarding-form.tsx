@@ -9,6 +9,11 @@ import {
   useToast,
   Input,
   Button,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@tegonhq/ui';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -20,6 +25,7 @@ import {
 
 export const OnboardingSchema = z.object({
   fullname: z.string().min(5),
+  timezone: z.string().min(5),
 });
 
 export function OnboardingForm() {
@@ -41,6 +47,7 @@ export function OnboardingForm() {
     resolver: zodResolver(OnboardingSchema),
     defaultValues: {
       fullname: '',
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     },
   });
 
@@ -48,6 +55,7 @@ export function OnboardingForm() {
     createInitialResources({
       fullname: values.fullname,
       workspaceName: values.fullname,
+      timezone: values.timezone,
     });
   };
 
@@ -67,6 +75,31 @@ export function OnboardingForm() {
                 <Input placeholder="Full name" className="h-9" {...field} />
               </FormControl>
 
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="timezone"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Timezone</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger showIcon={false}>
+                    <SelectValue placeholder="Select a timezone" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {Intl.supportedValuesOf('timeZone').map((timezone) => (
+                    <SelectItem key={timezone} value={timezone}>
+                      {timezone}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}

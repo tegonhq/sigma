@@ -5,10 +5,12 @@ import {
   GetTaskOccurrenceDTO,
   Page,
   PageTypeEnum,
+  Preferences,
   TaskOccurrence,
   UpdateTaskOccurenceDTO,
 } from '@sigma/types';
 import { format } from 'date-fns/format';
+import zonedTimeToUtc from 'date-fns-tz/zonedTimeToUtc';
 import { PrismaService } from 'nestjs-prisma';
 import { RRule } from 'rrule';
 
@@ -98,10 +100,17 @@ export class TaskOccurenceService {
   ): Promise<TaskOccurrence[]> {
     const { taskIds, startTime, endTime } = createTaskOccurenceData;
     let pageId = createTaskOccurenceData.pageId;
+    const workspace = await this.prisma.workspace.findUnique({
+      where: { id: workspaceId },
+    });
+    const timezone = (workspace.preferences as Preferences).timezone;
 
     let page: Page;
     if (!pageId || modifyPage) {
-      const formattedDate = format(new Date(startTime), 'dd-MM-yyyy');
+      const formattedDate = format(
+        zonedTimeToUtc(new Date(startTime), timezone),
+        'dd-MM-yyyy',
+      );
       page = await this.pagesService.getOrCreatePageByTitle(workspaceId, {
         title: formattedDate,
         type: PageTypeEnum.Daily,

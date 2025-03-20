@@ -8,11 +8,24 @@ import {
   FormLabel,
   FormMessage,
   Input,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  useToast,
 } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+
+import { useWorkspace } from 'hooks/workspace';
+
+import {
+  useUpdateWorkspaceMutation,
+  type UpdateWorkspaceParams,
+} from 'services/workspace';
 
 import { UserContext } from 'store/user-context';
 
@@ -25,18 +38,33 @@ export const OverviewSchema = z.object({
       message: 'Workspace name must be atleast 2 characters',
     })
     .max(50),
+  timezone: z.string(),
 });
 
 export const Workspace = observer(() => {
   const user = React.useContext(UserContext);
+  const workspace = useWorkspace();
+  const { toast } = useToast();
   const form = useForm<z.infer<typeof OverviewSchema>>({
     resolver: zodResolver(OverviewSchema),
     defaultValues: {
       name: user.workspace.name,
+      timezone: user.workspace.preferences?.timezone,
     },
   });
 
-  const onSubmit = () => {};
+  const { mutate: updateWorkspace } = useUpdateWorkspaceMutation({});
+
+  const onSubmit = (values: UpdateWorkspaceParams) => {
+    updateWorkspace(
+      { ...values, workspaceId: workspace.id },
+      {
+        onSuccess: () => {
+          toast({ title: 'Success', description: 'Workspace is updated' });
+        },
+      },
+    );
+  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -57,6 +85,34 @@ export const Workspace = observer(() => {
                       <Input placeholder="Tesla" {...field} />
                     </FormControl>
 
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="timezone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Timezone</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger showIcon={false}>
+                          <SelectValue placeholder="Select a timezone" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {Intl.supportedValuesOf('timeZone').map((timezone) => (
+                          <SelectItem key={timezone} value={timezone}>
+                            {timezone}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}

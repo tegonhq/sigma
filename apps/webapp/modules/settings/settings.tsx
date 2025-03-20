@@ -12,6 +12,7 @@ import {
   cn,
   BuildingLine,
   StackLine,
+  SidebarHeader,
 } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
@@ -45,6 +46,9 @@ export const Settings = observer(({ open, setOpen }: SettingsProps) => {
       <DialogContent className="max-w-[70vw] min-w-[50vw] max-h-[70vh] overflow-hidden p-0 bg-background">
         <SidebarProvider className="items-start">
           <Sidebar collapsible="none" className="hidden md:flex w-[180px]">
+            <SidebarHeader className="pb-0">
+              <h2 className="pt-3"> Settings </h2>
+            </SidebarHeader>
             <SidebarContent className="bg-background">
               <SidebarGroup>
                 <SidebarGroupContent>

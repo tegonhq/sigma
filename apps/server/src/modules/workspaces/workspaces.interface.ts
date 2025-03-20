@@ -18,6 +18,9 @@ export class CreateInitialResourcesDto {
 
   @IsString()
   fullname: string;
+
+  @IsString()
+  timezone: string;
 }
 
 export class UpdateWorkspaceInput {
@@ -28,6 +31,10 @@ export class UpdateWorkspaceInput {
   @IsOptional()
   @IsString()
   icon: string;
+
+  @IsOptional()
+  @IsString()
+  timezone?: string;
 }
 
 export class UserBody {

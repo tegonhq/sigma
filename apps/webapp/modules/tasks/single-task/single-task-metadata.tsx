@@ -54,8 +54,8 @@ export const SingleTaskMetadata = observer(
     };
 
     const getStatus = () => {
-      if (task && task.recurrence.length > 0) {
-        return recentTaskOccurrence.status;
+      if (task && task.recurrence.length > 0 && recentTaskOccurrence) {
+        return recentTaskOccurrence?.status;
       }
 
       return task.status;

@@ -49,6 +49,9 @@ export default class WorkspacesService {
           slug: workspaceData.workspaceName
             .toLowerCase()
             .replace(/[^a-z0-9]/g, ''),
+          preferences: {
+            timezone: workspaceData.timezone,
+          },
         },
       });
 
@@ -125,10 +128,15 @@ export default class WorkspacesService {
 
   async updateWorkspace(
     WorkspaceIdRequestBody: WorkspaceRequestParamsDto,
-    workspaceData: UpdateWorkspaceInput,
+    { timezone, ...updateWorkspaceData }: UpdateWorkspaceInput,
   ): Promise<Workspace> {
     return await this.prisma.workspace.update({
-      data: workspaceData,
+      data: {
+        ...updateWorkspaceData,
+        preferences: {
+          timezone,
+        },
+      },
       where: {
         id: WorkspaceIdRequestBody.workspaceId,
       },
