@@ -18,9 +18,10 @@ import {
   startOfDay,
 } from 'date-fns';
 import { sort } from 'fast-sort';
-import { useApplication } from 'hooks/application';
 import { Clock } from 'lucide-react';
 import React from 'react';
+
+import { useApplication } from 'hooks/application';
 
 import {
   useCreateTaskOccurrenceMutation,
@@ -150,20 +151,30 @@ export const ScheduleDialog = ({ onClose, taskIds }: ScheduleDialogProps) => {
     return { taskId, taskOccurrenceId };
   };
 
-  const updateTaskOccurrence = (taskIdWithOccurrence: string, date: string) => {
-    const { taskOccurrenceId, taskId } =
-      getTaskAndOccurrence(taskIdWithOccurrence);
-    if (taskOccurrenceId) {
+  const updateTaskOccurrence = (taskIds: string[], date: string) => {
+    const taskDetails = taskIds.map((taskId) => getTaskAndOccurrence(taskId));
+
+    const taskOccurrenceIds = taskDetails
+      .filter((detail) => detail.taskOccurrenceId)
+      .map((detail) => detail.taskOccurrenceId);
+
+    const taskIdsWithoutOccurrence = taskDetails
+      .filter((detail) => !detail.taskOccurrenceId)
+      .map((detail) => detail.taskId);
+
+    if (taskOccurrenceIds.length > 0) {
       updateTaskOccurrenceAPI({
-        taskOccurrenceIds: [taskOccurrenceId],
+        taskOccurrenceIds,
         startTime: startOfDay(date).toISOString(),
         endTime: endOfDay(date).toISOString(),
       });
-    } else {
+    }
+
+    if (taskIdsWithoutOccurrence.length > 0) {
       createTaskOccurrence({
         startTime: startOfDay(date).toISOString(),
         endTime: endOfDay(date).toISOString(),
-        taskIds: [taskId],
+        taskIds: taskIdsWithoutOccurrence,
       });
     }
   };
@@ -183,9 +194,8 @@ export const ScheduleDialog = ({ onClose, taskIds }: ScheduleDialogProps) => {
     }
 
     if (schedule.schedule) {
-      taskIds.forEach((taskIdWithOccurrence) => {
-        updateTaskOccurrence(taskIdWithOccurrence, schedule.schedule.plan);
-      });
+      updateTaskOccurrence(taskIds, schedule.schedule.plan);
+
       onClose();
     } else {
       getTaskSchedule(
@@ -200,12 +210,11 @@ export const ScheduleDialog = ({ onClose, taskIds }: ScheduleDialogProps) => {
             }
 
             if (data.startTime && !data.recurrenceRule[0]) {
-              taskIds.forEach((taskIdWithOccurrence) => {
-                updateTaskOccurrence(
-                  taskIdWithOccurrence,
-                  startOfDay(data.startTime).toISOString(),
-                );
-              });
+              updateTaskOccurrence(
+                taskIds,
+                startOfDay(data.startTime).toISOString(),
+              );
+
               onClose();
               return;
             }

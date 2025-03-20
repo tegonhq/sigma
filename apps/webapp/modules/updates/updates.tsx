@@ -18,6 +18,7 @@ export const Updates = () => {
     progress: 0,
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const updates = (_event: string, value: any) => {
     switch (value.type) {
       case 'available':
