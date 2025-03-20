@@ -103,7 +103,7 @@ export const DuedateDropdown = observer(
         <div
           onClick={(e) => {
             e.stopPropagation();
-            openDialog(DialogType.DUEDATE, [task.id]);
+            openDialog(DialogType.DUEDATE);
           }}
         >
           {dueDate}

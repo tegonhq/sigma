@@ -39,7 +39,7 @@ export const SingleTaskMetadata = observer(
     const recentTaskOccurrence = sortedOccurrences[0];
 
     const statusChange = (status: string) => {
-      if (recentTaskOccurrence) {
+      if (task && task.recurrence.length > 0) {
         updateTaskOccurrence({
           taskOccurrenceId: recentTaskOccurrence.id,
           status,
@@ -54,7 +54,7 @@ export const SingleTaskMetadata = observer(
     };
 
     const getStatus = () => {
-      if (recentTaskOccurrence) {
+      if (task && task.recurrence.length > 0) {
         return recentTaskOccurrence.status;
       }
 

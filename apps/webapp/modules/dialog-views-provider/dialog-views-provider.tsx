@@ -15,9 +15,8 @@ import { TabViewType } from 'store/application';
 import { DialogType } from './types';
 
 interface DialogViewsContextType {
-  taskIds?: string[];
   dialogType: DialogType | undefined;
-  openDialog: (dialogType: DialogType, taskIds: string[]) => void;
+  openDialog: (dialogType: DialogType) => void;
   closeDialog: () => void;
 }
 
@@ -34,26 +33,24 @@ export const DialogViewsProvider = observer(
     };
 
     const [dialogOpen, setDialogOpen] = React.useState<DialogType>(undefined);
-    const [taskIds, setTaskIds] = React.useState<string[]>([]);
+
     const { tabs, selectedTasks, hoverTask } = useApplication();
     const firstTab = tabs[0];
     const taskId =
       firstTab.type === TabViewType.MY_TASKS ? firstTab.entity_id : undefined;
 
-    const openDialog = (dialogType: DialogType, taskIds: string[]) => {
-      setTaskIds(taskIds);
+    const openDialog = (dialogType: DialogType) => {
       setDialogOpen(dialogType);
     };
 
     const closeDialog = () => {
       setDialogOpen(undefined);
-      setTaskIds([]);
     };
 
     const getDialogComponent = () => {
       const Component = ComponentType[dialogOpen];
 
-      return <Component taskIds={taskIds} onClose={closeDialog} />;
+      return <Component taskIds={getTasks()} onClose={closeDialog} />;
     };
 
     const getTasks = () => {
@@ -77,11 +74,9 @@ export const DialogViewsProvider = observer(
       (event) => {
         switch (event.key) {
           case 's':
-            setTaskIds(getTasks());
             setDialogOpen(DialogType.SCHEDULE);
             break;
           case 'd':
-            setTaskIds(getTasks());
             setDialogOpen(DialogType.DUEDATE);
             break;
         }
@@ -96,9 +91,9 @@ export const DialogViewsProvider = observer(
     return (
       <>
         <DailogViewsContext.Provider
-          value={{ taskIds, dialogType: dialogOpen, openDialog, closeDialog }}
+          value={{ dialogType: dialogOpen, openDialog, closeDialog }}
         >
-          {taskIds.length > 0 && dialogOpen && getDialogComponent()}
+          {getTasks().length > 0 && dialogOpen && getDialogComponent()}
           {children}
         </DailogViewsContext.Provider>
 

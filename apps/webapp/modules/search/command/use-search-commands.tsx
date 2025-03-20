@@ -119,7 +119,7 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
           text: 'Schedule',
           command: () => {
             onClose();
-            openDialog(DialogType.SCHEDULE, getTasks());
+            openDialog(DialogType.SCHEDULE);
           },
         },
         {
@@ -127,7 +127,7 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
           text: 'Set due date',
           command: () => {
             onClose();
-            openDialog(DialogType.DUEDATE, getTasks());
+            openDialog(DialogType.DUEDATE);
           },
         },
         {

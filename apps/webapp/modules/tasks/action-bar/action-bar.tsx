@@ -14,7 +14,7 @@ import { SCOPES } from 'common/shortcut-scopes';
 import { useApplication } from 'hooks/application';
 
 interface ActionBarProps {
-  openDialog: (dialogType: DialogType, taskIds: string[]) => void;
+  openDialog: (dialogType: DialogType) => void;
 }
 
 export const ActionBar = observer(({ openDialog }: ActionBarProps) => {
@@ -46,11 +46,14 @@ export const ActionBar = observer(({ openDialog }: ActionBarProps) => {
   return (
     <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 shadow-1 rounded-lg bg-background p-2">
       <div className="flex gap-2 items-center">
+        <div className="flex items-center">{selectedTasks.length} tasks</div>
+        <Separator orientation="vertical" className="h-7" />
+
         <Button
           variant="ghost"
           className="gap-1"
           onClick={() => {
-            openDialog(DialogType.SCHEDULE, selectedTasks);
+            openDialog(DialogType.SCHEDULE);
           }}
         >
           <Clock size={16} />
@@ -61,7 +64,7 @@ export const ActionBar = observer(({ openDialog }: ActionBarProps) => {
           variant="ghost"
           className="gap-1"
           onClick={() => {
-            openDialog(DialogType.DUEDATE, selectedTasks);
+            openDialog(DialogType.DUEDATE);
           }}
         >
           <Fire size={16} />

@@ -412,6 +412,17 @@ export class TaskOccurenceService {
   }
 
   async deleteTaskOccurenceByTask(taskId: string) {
+    // Mark occurrences as deleted
+    await this.prisma.taskOccurrence.updateMany({
+      where: {
+        taskId,
+        startTime: {
+          gte: new Date(),
+        },
+      },
+      data: { deleted: new Date().toISOString() },
+    });
+
     // First get all future occurrences to know which pages to update
     const futureOccurrences = await this.prisma.taskOccurrence.findMany({
       where: {
@@ -424,17 +435,6 @@ export class TaskOccurenceService {
         startTime: true,
         workspaceId: true,
       },
-    });
-
-    // Mark occurrences as deleted
-    await this.prisma.taskOccurrence.updateMany({
-      where: {
-        taskId,
-        startTime: {
-          gte: new Date(),
-        },
-      },
-      data: { deleted: new Date().toISOString() },
     });
 
     // Remove task from each daily page

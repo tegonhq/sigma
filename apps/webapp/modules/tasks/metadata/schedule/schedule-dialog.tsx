@@ -18,6 +18,7 @@ import {
   startOfDay,
 } from 'date-fns';
 import { sort } from 'fast-sort';
+import { useApplication } from 'hooks/application';
 import { Clock } from 'lucide-react';
 import React from 'react';
 
@@ -110,6 +111,7 @@ const scheduleSamples: ScheduleSample[] = [
 export const ScheduleDialog = ({ onClose, taskIds }: ScheduleDialogProps) => {
   const [value, setValue] = React.useState('');
   const { taskOccurrencesStore, tasksStore, pagesStore } = useContextStore();
+  const { clearSelectedTask } = useApplication();
 
   const now = new Date(); // Get current local time
   const localISOString = formatISO(now, { representation: 'complete' });
@@ -224,6 +226,8 @@ export const ScheduleDialog = ({ onClose, taskIds }: ScheduleDialogProps) => {
         },
       );
     }
+
+    clearSelectedTask();
   };
 
   const getIcon = (schedule: ScheduleSample) => {

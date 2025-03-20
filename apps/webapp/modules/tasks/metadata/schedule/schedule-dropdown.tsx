@@ -144,7 +144,7 @@ export const ScheduleDropdown = observer(
         <div
           onClick={(e) => {
             e.stopPropagation();
-            openDialog(DialogType.SCHEDULE, [task.id]);
+            openDialog(DialogType.SCHEDULE);
           }}
         >
           {passedTaskOccurrence
