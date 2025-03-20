@@ -78,7 +78,58 @@ jobs:
       - name: Download Frontend Artifacts
         uses: actions/download-artifact@master
         with:
-          name: linux-latest-${{ github.sha }}
+          name: frontend-latest-${{ github.sha }}
+          path: apps/webapp/out
+
+      - name: Create vendor cache
+        run: |
+          echo '{"chrome":"128","node":"20"}' > .electron-vendors.cache.json
+        working-directory: apps/electron
+
+      - name: Release
+        run: pnpm compile:publish
+        working-directory: apps/electron
+
+  release-macos-intel:
+    name: Release MacOS
+    needs:
+      - build-frontend
+    runs-on: macos-13
+    env:
+      GH_TOKEN: ${{ secrets.REPO_TOKEN }}
+      APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+      APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
+      APPLE_ID: ${{ secrets.APPLE_ID }}
+      TEAM_ID: ${{ secrets.TEAM_ID }}
+      CSC_LINK: ${{ secrets.CERTIFICATE }}
+      CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install pnpm
+        run: corepack enable && corepack prepare pnpm@latest --activate
+
+      - uses: actions/cache@v4
+        with:
+          path: "./"
+          key: ${{ runner.os }}-modules-${{ hashFiles('./pnpm-lock.yaml') }}
+
+      - name: Install Dependencies
+        run: pnpm install
+        working-directory: .
+
+      - name: Download Frontend Artifacts
+        uses: actions/download-artifact@master
+        with:
+          name: frontend-latest-${{ github.sha }}
           path: apps/webapp/out
 
       - name: Create vendor cache
