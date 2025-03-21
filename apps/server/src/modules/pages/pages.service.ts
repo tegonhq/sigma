@@ -429,29 +429,15 @@ export class PagesService {
         }
 
         if (removedTaskIds.length) {
-          const tasksToCheck = await this.prisma.task.findMany({
-            where: { id: { in: removedTaskIds } },
-            select: { id: true, source: true },
+          await this.prisma.task.updateMany({
+            where: {
+              id: { in: removedTaskIds },
+              deleted: null,
+            },
+            data: {
+              listId: null,
+            },
           });
-
-          // Filter tasks that need to be deleted
-          const tasksToDelete = tasksToCheck
-            .filter(
-              (task) =>
-                task.source &&
-                typeof task.source === 'object' &&
-                'id' in task.source &&
-                task.source.id === list.id,
-            )
-            .map((task) => task.id);
-
-          // Delete in a single batch operation
-          if (tasksToDelete.length) {
-            await this.prisma.task.updateMany({
-              where: { id: { in: tasksToDelete } },
-              data: { deleted: new Date().toISOString() },
-            });
-          }
         }
       } else if (page.type === 'Default') {
         const pageTask = await this.prisma.task.findFirst({
@@ -470,29 +456,15 @@ export class PagesService {
         }
 
         if (removedTaskIds.length) {
-          const tasksToCheck = await this.prisma.task.findMany({
-            where: { id: { in: removedTaskIds } },
-            select: { id: true, source: true },
+          await this.prisma.task.updateMany({
+            where: {
+              id: { in: removedTaskIds },
+              deleted: null,
+            },
+            data: {
+              parentId: null,
+            },
           });
-
-          // Filter tasks that need to be deleted
-          const tasksToDelete = tasksToCheck
-            .filter(
-              (task) =>
-                task.source &&
-                typeof task.source === 'object' &&
-                'id' in task.source &&
-                task.source.id === pageTask.id,
-            )
-            .map((task) => task.id);
-
-          // Delete in a single batch operation
-          if (tasksToDelete.length) {
-            await this.prisma.task.updateMany({
-              where: { id: { in: tasksToDelete } },
-              data: { deleted: new Date().toISOString() },
-            });
-          }
         }
       }
     }

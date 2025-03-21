@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import {
   Outlink,
   OutlinkType,
+  PageTypeEnum,
   Task,
   TaskHookAction,
   TaskHookContext,
@@ -41,6 +42,7 @@ export class TaskHooksService {
       },
       include: {
         workspace: true,
+        subIssue: true,
       },
     });
 
@@ -60,6 +62,7 @@ export class TaskHooksService {
       this.handleTitleChange(task, context),
       this.handleDeleteTask(task, context),
       this.handleScheduleTask(task, context),
+      this.handleListTask(task, context),
       // this.handleCalendarTask(task, context),
       // this.handleGenerateSummary(task, context),
     ]);
@@ -98,6 +101,13 @@ export class TaskHooksService {
             }),
           );
         }
+      }
+
+      if (task.subIssue.length > 0) {
+        await this.prisma.task.updateMany({
+          where: { id: { in: task.subIssue.map((subTask) => subTask.id) } },
+          data: { parentId: null },
+        });
       }
     }
   }
@@ -261,6 +271,64 @@ export class TaskHooksService {
         pat,
         userId: context.userId,
       });
+    }
+  }
+
+  async handleListTask(task: Task, context: TaskHookContext) {
+    const addTaskToListPage = async (task: Task) => {
+      const list = await this.prisma.list.findUnique({
+        where: {
+          id: task.listId,
+        },
+        include: {
+          page: true,
+        },
+      });
+
+      await this.pagesService.getOrCreatePageByTitle(list.page.title, {
+        title: list.page.title,
+        type: PageTypeEnum.List,
+        taskIds: [task.id],
+      });
+    };
+
+    const removeTaskInListPage = async (task: Task) => {
+      const list = await this.prisma.list.findUnique({
+        where: {
+          id: task.listId,
+        },
+        include: {
+          page: true,
+        },
+      });
+
+      await this.pagesService.removeTaskFromPageByTitle(list.page.title, [
+        task.id,
+      ]);
+    };
+
+    switch (context.action) {
+      case 'create':
+        if (task.listId) {
+          await addTaskToListPage(task);
+        }
+        return { message: 'Handled schedule create' };
+
+      case 'update':
+        // Check if schedule related fields were updated
+        if (context.changeData.listId) {
+          await removeTaskInListPage(task);
+        }
+        if (task.listId) {
+          await addTaskToListPage(task);
+        }
+        return { message: 'Handled schedule update' };
+
+      case 'delete':
+        if (task.listId) {
+          await removeTaskInListPage(task);
+        }
+        return { message: 'Handled schedule delete' };
     }
   }
 }

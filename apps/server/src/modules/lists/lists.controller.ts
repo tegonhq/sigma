@@ -1,4 +1,11 @@
-import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { List, UpdateListDto, ListIdDto } from '@sigma/types';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
@@ -26,5 +33,11 @@ export class ListsController {
     @Body() updateListDto: UpdateListDto,
   ): Promise<List> {
     return await this.lists.updateList(listIdDto.listId, updateListDto);
+  }
+
+  @Delete(':listId')
+  @UseGuards(AuthGuard)
+  async deleteList(@Param() listIdDto: ListIdDto): Promise<List> {
+    return await this.lists.deleteList(listIdDto.listId);
   }
 }

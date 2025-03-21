@@ -14,10 +14,10 @@ export const schedulePageTaskOccurence = schedules.task({
       select: { id: true },
     });
 
-    // Set up dates for the next 31st day
+    // Set up dates for the next 8th day
     const startDate = new Date();
     startDate.setHours(5, 0, 0, 0);
-    startDate.setDate(startDate.getDate() + 30);
+    startDate.setDate(startDate.getDate() + 7);
 
     const endDate = new Date(startDate);
     endDate.setDate(endDate.getDate() + 1);
