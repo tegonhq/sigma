@@ -14,7 +14,7 @@ import {
   ConversationParamsDto,
   CreateConversationHistoryDto,
   UpdateConversationHistoryDto,
-} from '@sigma/types';
+} from '@tegonhq/sigma-sdk';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
 

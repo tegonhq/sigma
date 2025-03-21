@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { convertTiptapJsonToHtml } from '@sigma/editor-extensions';
-import { IntegrationPayloadEventType, Task } from '@sigma/types';
+import { IntegrationPayloadEventType, Task } from '@tegonhq/sigma-sdk';
 
 import { IntegrationsService } from 'modules/integrations/integrations.service';
 

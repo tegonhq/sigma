@@ -1,5 +1,5 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
-import { CreateSuggestionDto, GenerateSummaryDto } from '@sigma/types';
+import { CreateSuggestionDto, GenerateSummaryDto } from '@tegonhq/sigma-sdk';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
 import { UserId } from 'modules/auth/session.decorator';

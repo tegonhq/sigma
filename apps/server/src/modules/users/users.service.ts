@@ -1,5 +1,5 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { CodeDto, User } from '@sigma/types';
+import { CodeDto, User } from '@tegonhq/sigma-sdk';
 import { PrismaService } from 'nestjs-prisma';
 
 import {

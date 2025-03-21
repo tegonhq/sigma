@@ -1,4 +1,4 @@
-import { Spec, WorkspaceRequestParamsDto } from '@sigma/types';
+import { Spec, WorkspaceRequestParamsDto } from '@tegonhq/sigma-sdk';
 import { IsObject, IsString } from 'class-validator';
 
 export class IntegrationDefinitionSpec {

@@ -15,7 +15,7 @@ import {
   Page,
   PageRequestParamsDto,
   UpdatePageDto,
-} from '@sigma/types';
+} from '@tegonhq/sigma-sdk';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
 import { Workspace } from 'modules/auth/session.decorator';
@@ -34,11 +34,11 @@ export class PagesController {
     return await this.pagesService.getPage(pageParams.pageId);
   }
 
-  @Get()
+  @Post('get-create')
   @UseGuards(AuthGuard)
   async getPageByTitle(
     @Workspace() workspaceId: string,
-    @Query() getPageByTitleDto: GetPageByTitleDto,
+    @Body() getPageByTitleDto: GetPageByTitleDto,
   ): Promise<Page> {
     return await this.pagesService.getOrCreatePageByTitle(
       workspaceId,

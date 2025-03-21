@@ -1,4 +1,4 @@
-import { Page, Task } from '@sigma/types';
+import { Page, Task } from '@tegonhq/sigma-sdk';
 
 import { getTaskItemContent } from 'modules/pages/pages.utils';
 

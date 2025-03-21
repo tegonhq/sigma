@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import {
   IntegrationDefinition,
   IntegrationDefinitionIdDto,
-} from '@sigma/types';
+} from '@tegonhq/sigma-sdk';
 import { PrismaService } from 'nestjs-prisma';
 
 import { fetcher } from 'common/remote-loader/load-remote-module';

@@ -8,7 +8,7 @@ import {
   Page,
   Task,
   UpdateConversationHistoryDto,
-} from '@sigma/types';
+} from '@tegonhq/sigma-sdk';
 import { generateHTML } from '@tiptap/html';
 import { PrismaService } from 'nestjs-prisma';
 

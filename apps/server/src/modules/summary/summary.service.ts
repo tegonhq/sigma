@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateSummaryDto, GenerateSummaryDto } from '@sigma/types';
+import { CreateSummaryDto, GenerateSummaryDto } from '@tegonhq/sigma-sdk';
 import { tasks } from '@trigger.dev/sdk/v3';
 import { PrismaService } from 'nestjs-prisma';
 import { generateSummaryTask } from 'triggers/task/generate-summary';

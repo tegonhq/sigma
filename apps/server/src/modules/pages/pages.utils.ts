@@ -1,4 +1,4 @@
-import { JsonValue, Page, Task } from '@sigma/types';
+import { JsonValue, Page, Task } from '@tegonhq/sigma-sdk';
 
 export function getTaskListsInPage(page: Page) {
   const description = page.description;

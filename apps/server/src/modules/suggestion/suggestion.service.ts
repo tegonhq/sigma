@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateSuggestionDto, GenerateSummaryDto } from '@sigma/types';
+import { CreateSuggestionDto, GenerateSummaryDto } from '@tegonhq/sigma-sdk';
 import { tasks } from '@trigger.dev/sdk/v3';
 import { PrismaService } from 'nestjs-prisma';
 import { getSuggestionTask } from 'triggers/task/get-suggestion';

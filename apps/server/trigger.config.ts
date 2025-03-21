@@ -30,7 +30,7 @@ export default defineConfig({
         BACKEND_URL: env.BACKEND_HOST,
       })),
       additionalPackages({
-        packages: ['@sigma/types'],
+        packages: ['@tegonhq/sigma-sdk'],
       }),
       prismaExtension({
         schema: 'prisma/schema.prisma',

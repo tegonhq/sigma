@@ -4,7 +4,7 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { AttachmentResponse, AttachmentStatusEnum } from '@sigma/types';
+import { AttachmentResponse, AttachmentStatusEnum } from '@tegonhq/sigma-sdk';
 import { PrismaService } from 'nestjs-prisma';
 
 import { AttachmentRequestParams, ExternalFile } from './attachments.interface';

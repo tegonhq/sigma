@@ -6,7 +6,7 @@ import {
   IntegrationAccountIdDto,
   IntegrationPayloadEventType,
   UpdateIntegrationAccountDto,
-} from '@sigma/types';
+} from '@tegonhq/sigma-sdk';
 import { PrismaService } from 'nestjs-prisma';
 
 import {

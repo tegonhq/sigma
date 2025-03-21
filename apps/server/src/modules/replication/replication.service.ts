@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ModelNameEnum, TaskHookAction } from '@sigma/types';
+import { ModelNameEnum, TaskHookAction } from '@tegonhq/sigma-sdk';
 import { Client } from 'pg';
 import {
   LogicalReplicationService,

@@ -1,5 +1,9 @@
 import { PrismaClient } from '@prisma/client';
-import { dailyBriefPrompt, LLMModelEnum, UserTypeEnum } from '@sigma/types';
+import {
+  dailyBriefPrompt,
+  LLMModelEnum,
+  UserTypeEnum,
+} from '@tegonhq/sigma-sdk';
 import { task } from '@trigger.dev/sdk/v3';
 import axios from 'axios';
 import { format } from 'date-fns';

@@ -7,7 +7,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { Prompt, PromptInput } from '@sigma/types';
+import { Prompt, PromptInput } from '@tegonhq/sigma-sdk';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
 import { Workspace } from 'modules/auth/session.decorator';

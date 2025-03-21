@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { LLMModelEnum, ReccurenceInput, recurrencePrompt } from '@sigma/types';
+import {
+  LLMModelEnum,
+  ReccurenceInput,
+  recurrencePrompt,
+} from '@tegonhq/sigma-sdk';
 
 import AIRequestsService from 'modules/ai-requests/ai-requests.services';
 import { LoggerService } from 'modules/logger/logger.service';

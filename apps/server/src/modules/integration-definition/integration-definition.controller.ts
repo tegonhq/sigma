@@ -1,5 +1,5 @@
 import { Controller, Get, Param, UseGuards } from '@nestjs/common';
-import { IntegrationDefinitionIdDto } from '@sigma/types';
+import { IntegrationDefinitionIdDto } from '@tegonhq/sigma-sdk';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
 import { Workspace } from 'modules/auth/session.decorator';

@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { IntegrationPayloadEventType, OAuth2Params } from '@sigma/types';
+import { IntegrationPayloadEventType, OAuth2Params } from '@tegonhq/sigma-sdk';
 import * as simpleOauth2 from 'simple-oauth2';
 
 import { IntegrationDefinitionService } from 'modules/integration-definition/integration-definition.service';

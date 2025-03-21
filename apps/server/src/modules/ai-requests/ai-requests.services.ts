@@ -9,7 +9,7 @@ import {
   LLMMappings,
   LLMModelEnum,
   OpenAIModels,
-} from '@sigma/types';
+} from '@tegonhq/sigma-sdk';
 import {
   CoreMessage,
   CoreUserMessage,

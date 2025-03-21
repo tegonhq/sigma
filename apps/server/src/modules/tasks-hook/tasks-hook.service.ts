@@ -6,7 +6,7 @@ import {
   Task,
   TaskHookAction,
   TaskHookContext,
-} from '@sigma/types';
+} from '@tegonhq/sigma-sdk';
 import { tasks } from '@trigger.dev/sdk/v3';
 import { PrismaService } from 'nestjs-prisma';
 import { beautifyTask } from 'triggers/task/beautify-task';

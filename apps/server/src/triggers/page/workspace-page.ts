@@ -1,8 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { PageTypeEnum } from '@sigma/types';
 import { task } from '@trigger.dev/sdk/v3';
-import axios from 'axios';
-import { format } from 'date-fns';
 
 import { processTaskOccurrences } from './task-occurrence';
 
@@ -28,35 +25,24 @@ export const processWorkspacePage = task({
     const pat = await prisma.personalAccessToken.findFirst({
       where: { userId: workspace.userId, name: 'default' },
     });
-    const startDate = new Date(payload.startDate);
-    const formattedDate = format(startDate, 'dd-MM-yyyy');
 
+    let result;
     // Handle empty tasks case
-    let taskIds: string[] = [];
     if (tasks.length) {
-      const result = await processTaskOccurrences.triggerAndWait({
+      result = await processTaskOccurrences.triggerAndWait({
         taskIds: tasks.map((t) => t.id),
         startDate: payload.startDate,
         endDate: payload.endDate,
+        pat: pat.token,
       });
 
       if (result.ok) {
-        taskIds = result.output.map((result) => result.taskId);
       }
     }
 
-    await axios.get(`${process.env.BACKEND_HOST}/v1/pages`, {
-      params: {
-        title: formattedDate,
-        type: PageTypeEnum.Daily,
-        taskIds,
-      },
-      headers: { Authorization: `Bearer ${pat.token}` },
-    });
-
     return {
       workspaceId: payload.workspaceId,
-      tasksProcessed: taskIds.length,
+      result,
     };
   },
 });

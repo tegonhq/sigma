@@ -4,7 +4,7 @@ import {
   beautifyPrompt,
   LLMModelEnum,
   ModelNameEnum,
-} from '@sigma/types';
+} from '@tegonhq/sigma-sdk';
 import { logger, task } from '@trigger.dev/sdk/v3';
 import axios from 'axios';
 

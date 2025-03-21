@@ -1,4 +1,4 @@
-import { ModelNameEnum } from '@sigma/types';
+import { ModelNameEnum } from '@tegonhq/sigma-sdk';
 
 export interface logChangeType {
   kind: string;

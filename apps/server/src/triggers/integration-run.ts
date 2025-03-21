@@ -1,7 +1,7 @@
 import createLoadRemoteModule, {
   createRequires,
 } from '@paciolan/remote-module-loader';
-import { IntegrationDefinition } from '@sigma/types';
+import { IntegrationDefinition } from '@tegonhq/sigma-sdk';
 import { task } from '@trigger.dev/sdk/v3';
 import axios from 'axios';
 

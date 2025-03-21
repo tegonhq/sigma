@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { LLMModelEnum, suggestionPrompt } from '@sigma/types';
+import { LLMModelEnum, suggestionPrompt } from '@tegonhq/sigma-sdk';
 import { task } from '@trigger.dev/sdk/v3';
 import axios from 'axios';
 

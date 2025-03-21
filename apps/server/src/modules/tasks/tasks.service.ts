@@ -6,7 +6,7 @@ import {
   PageTypeEnum,
   Task,
   UpdateTaskDto,
-} from '@sigma/types';
+} from '@tegonhq/sigma-sdk';
 import { PrismaService } from 'nestjs-prisma';
 
 import { IntegrationsService } from 'modules/integrations/integrations.service';

@@ -13,7 +13,7 @@ import {
   CreateTaskOccurrenceDTO,
   GetTaskOccurrenceDTO,
   UpdateTaskOccurenceDTO,
-} from '@sigma/types';
+} from '@tegonhq/sigma-sdk';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
 import { Workspace } from 'modules/auth/session.decorator';

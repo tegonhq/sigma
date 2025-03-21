@@ -1,5 +1,9 @@
 import { PrismaClient } from '@prisma/client';
-import { LLMModelEnum, summaryExamples, summaryPrompt } from '@sigma/types';
+import {
+  LLMModelEnum,
+  summaryExamples,
+  summaryPrompt,
+} from '@tegonhq/sigma-sdk';
 import { task } from '@trigger.dev/sdk/v3';
 import axios from 'axios';
 

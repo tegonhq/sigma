@@ -7,7 +7,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { CreateBulkTasksDto, CreateTaskDto, Task } from '@sigma/types';
+import { CreateBulkTasksDto, CreateTaskDto, Task } from '@tegonhq/sigma-sdk';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
 import { UserId, Workspace } from 'modules/auth/session.decorator';

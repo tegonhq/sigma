@@ -1,4 +1,4 @@
-import { User } from '@sigma/types';
+import { User } from '@tegonhq/sigma-sdk';
 import { IsArray, IsString } from 'class-validator';
 
 export class UserIdParams {

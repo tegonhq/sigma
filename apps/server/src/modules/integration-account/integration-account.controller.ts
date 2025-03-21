@@ -14,7 +14,7 @@ import {
   IntegrationAccountIdDto,
   IntegrationAccountWithToken,
   UpdateIntegrationAccountDto,
-} from '@sigma/types';
+} from '@tegonhq/sigma-sdk';
 import { SessionContainer } from 'supertokens-node/recipe/session';
 
 import { AuthGuard } from 'modules/auth/auth.guard';

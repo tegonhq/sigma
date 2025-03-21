@@ -8,7 +8,7 @@ import {
   Preferences,
   TaskOccurrence,
   UpdateTaskOccurenceDTO,
-} from '@sigma/types';
+} from '@tegonhq/sigma-sdk';
 import { formatInTimeZone } from 'date-fns-tz';
 import { PrismaService } from 'nestjs-prisma';
 import { RRule } from 'rrule';

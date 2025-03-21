@@ -1,5 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
-import { IntegrationDefinition, OAuth2Params } from '@sigma/types';
+import { IntegrationDefinition, OAuth2Params } from '@tegonhq/sigma-sdk';
 
 import {
   OAuthAuthorizationMethod,

@@ -18,7 +18,7 @@ import {
   Task,
   CreateTaskDto,
   PageTypeEnum,
-} from '@sigma/types';
+} from '@tegonhq/sigma-sdk';
 import { parse } from 'date-fns';
 import { PrismaService } from 'nestjs-prisma';
 

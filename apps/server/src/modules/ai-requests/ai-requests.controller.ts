@@ -1,5 +1,5 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
-import { AIStreamResponse, GetAIRequestDTO } from '@sigma/types';
+import { AIStreamResponse, GetAIRequestDTO } from '@tegonhq/sigma-sdk';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
 import { Workspace } from 'modules/auth/session.decorator';

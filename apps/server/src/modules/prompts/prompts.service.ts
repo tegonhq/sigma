@@ -1,4 +1,4 @@
-import { PromptInput } from '@sigma/types';
+import { PromptInput } from '@tegonhq/sigma-sdk';
 import { PrismaService } from 'nestjs-prisma';
 
 import { LoggerService } from 'modules/logger/logger.service';

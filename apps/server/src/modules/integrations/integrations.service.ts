@@ -1,7 +1,7 @@
 import type { integrationRun } from 'triggers/integration-run';
 
 import { Injectable } from '@nestjs/common';
-import { IntegrationDefinition } from '@sigma/types';
+import { IntegrationDefinition } from '@tegonhq/sigma-sdk';
 import { tasks } from '@trigger.dev/sdk/v3';
 
 import { LoggerService } from 'modules/logger/logger.service';

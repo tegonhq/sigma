@@ -3,7 +3,7 @@ import {
   PageTypeEnum,
   Workspace,
   WorkspaceRequestParamsDto,
-} from '@sigma/types';
+} from '@tegonhq/sigma-sdk';
 import { format } from 'date-fns';
 import { Request, Response } from 'express';
 import { PrismaService } from 'nestjs-prisma';

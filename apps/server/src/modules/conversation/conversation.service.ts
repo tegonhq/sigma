@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Conversation, CreateConversationDto } from '@sigma/types';
+import { Conversation, CreateConversationDto } from '@tegonhq/sigma-sdk';
 import { PrismaService } from 'nestjs-prisma';
 
 @Injectable()

@@ -102,7 +102,7 @@ export const DueDateDialog = ({ onClose, taskIds }: DueDateDialogProps) => {
     return { taskId, taskOccurrenceId };
   };
   const onCommand = (dueDate: DueDateSample) => {
-    if (dueDate.text === 'Remove schedule') {
+    if (dueDate.text === 'Remove due') {
       taskIds.forEach((taskIdWithOccurrence) => {
         const { taskId } = getTaskAndOccurrence(taskIdWithOccurrence);
         updateTask({
@@ -112,6 +112,7 @@ export const DueDateDialog = ({ onClose, taskIds }: DueDateDialogProps) => {
       });
 
       onClose();
+      return;
     }
 
     if (dueDate.schedule) {
@@ -139,6 +140,18 @@ export const DueDateDialog = ({ onClose, taskIds }: DueDateDialogProps) => {
                 updateTask({
                   taskId,
                   dueDate: data.dueDate,
+                });
+              });
+              onClose();
+            }
+
+            if (data.startTime) {
+              taskIds.forEach((taskIdWithOccurrence) => {
+                const { taskId } = getTaskAndOccurrence(taskIdWithOccurrence);
+
+                updateTask({
+                  taskId,
+                  dueDate: endOfDay(data.startTime),
                 });
               });
               onClose();
