@@ -305,8 +305,9 @@ export function DragHandlePlugin(
           );
 
           const notDragging = node?.closest('.not-draggable');
+
           const excludedTagList = options.excludedTags
-            .concat(['ol', 'ul', 'li[data-type=taskItem] > label'])
+            .concat(['ol', 'ul', 'li[data-type=taskItem] div'])
             .join(', ');
 
           if (
@@ -332,6 +333,15 @@ export function DragHandlePlugin(
           // Li markers
           if (node.matches('ul:not([data-type=taskList]) li, ol li')) {
             rect.left -= options.dragHandleWidth;
+          }
+
+          if (node.matches('li[data-type=taskItem] p')) {
+            rect.left -= options.dragHandleWidth + 10;
+          }
+
+          if (node.matches('li[data-type=taskItem]')) {
+            rect.left -= 3;
+            rect.top += 3;
           }
 
           rect.width = options.dragHandleWidth;
@@ -406,7 +416,7 @@ export function DragHandlePlugin(
 export const GlobalDragHandle = Extension.create({
   name: 'globalDragHandle',
 
-  addOptions() {
+  addOptions(): GlobalDragHandleOptions {
     return {
       dragHandleWidth: 20,
       scrollTreshold: 100,

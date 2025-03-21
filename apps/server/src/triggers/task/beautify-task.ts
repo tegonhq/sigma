@@ -46,7 +46,6 @@ export const beautifyTask = task({
           { headers: { Authorization: `Bearer ${payload.pat}` } },
         )
         .then((response) => response.data),
-
       axios
         .post(
           `${process.env.BACKEND_HOST}/v1/ai_requests`,

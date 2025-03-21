@@ -60,6 +60,7 @@ export const Updates = () => {
 
   React.useEffect(() => {
     subscribeToUpdateEvents();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const subscribeToUpdateEvents = () => {

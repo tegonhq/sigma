@@ -19,12 +19,6 @@ export const processWorkspacePage = task({
         recurrence: { isEmpty: false },
       },
     });
-    const workspace = await prisma.workspace.findUnique({
-      where: { id: payload.workspaceId },
-    });
-    const pat = await prisma.personalAccessToken.findFirst({
-      where: { userId: workspace.userId, name: 'default' },
-    });
 
     let result;
     // Handle empty tasks case
@@ -33,7 +27,7 @@ export const processWorkspacePage = task({
         taskIds: tasks.map((t) => t.id),
         startDate: payload.startDate,
         endDate: payload.endDate,
-        pat: pat.token,
+        workspaceId: payload.workspaceId,
       });
 
       if (result.ok) {

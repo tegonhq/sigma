@@ -81,14 +81,10 @@ export const TaskComponent = observer((props: any) => {
           props.selected && 'bg-grayAlpha-300',
         )}
       >
-        <label
-          className={cn('flex items-start shrink-0 gap-2 py-1')}
-          contentEditable={false}
-        >
+        <label className={cn('flex items-start shrink-0 gap-2 py-1')}>
           <Checkbox
             className="shrink-0 relative top-[1px] h-[18px] w-[18px]"
             checked={getStatus() === 'Done'}
-            contentEditable={false}
             onCheckedChange={(value) => {
               statusChange(value === true ? 'Done' : 'Todo');
             }}
@@ -104,10 +100,7 @@ export const TaskComponent = observer((props: any) => {
           )}
         />
         {task && (
-          <div
-            className={cn('flex items-start shrink-0 gap-2 pt-1 !text-sm')}
-            contentEditable={false}
-          >
+          <div className={cn('flex items-start shrink-0 gap-2 pt-1 !text-sm')}>
             <TaskMetadata taskId={task.id} />
             <TaskInfo task={task} inEditor={source.type === SourceType.PAGE} />
           </div>

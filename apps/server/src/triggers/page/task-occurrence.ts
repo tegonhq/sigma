@@ -4,19 +4,20 @@ import { getOrCreatePageByTitle } from '@tegonhq/sigma-sdk';
 import { task } from '@trigger.dev/sdk/v3';
 import { formatInTimeZone } from 'date-fns-tz';
 import { RRule } from 'rrule';
+import { init } from 'triggers/utils';
 
 const prisma = new PrismaClient();
 
 export const processTaskOccurrences = task({
+  init,
   id: 'process-task-occurrences',
   run: async (payload: {
     taskIds: string[]; // Changed from single taskId to array
     startDate: string;
     endDate: string;
-    pat: string;
+    workspaceId: string;
   }) => {
     const {
-      pat,
       taskIds,
       startDate: startDateString,
       endDate: endDateString,
