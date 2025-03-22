@@ -296,7 +296,7 @@ export class TaskHooksService {
 
       await this.pagesService.getOrCreatePageByTitle(list.page.title, {
         title: list.page.title,
-        type: PageTypeEnum.List,
+        type: list.page.type as PageTypeEnum,
         taskIds: [task.id],
       });
     };
@@ -325,10 +325,13 @@ export class TaskHooksService {
 
       case 'update':
         // Check if schedule related fields were updated
-        if (context.changeData.listId) {
+        if (
+          context.changeData.listId &&
+          context.changeData.listId !== task.listId
+        ) {
           await removeTaskInListPage(task);
         }
-        if (task.listId) {
+        if (task.listId && context.changeData.listId !== task.listId) {
           await addTaskToListPage(task);
         }
         return { message: 'Handled schedule update' };
