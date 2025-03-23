@@ -74,6 +74,7 @@
     "@types/turndown": "^5.0.5",
     "@xenova/transformers": "^2.16.1",
     "axios": "^1.6.7",
+    "ai": "3.4.33",
     "bcrypt": "5.1.1",
     "bullmq": "^5.34.0",
     "cache-manager": "^5.7.6",

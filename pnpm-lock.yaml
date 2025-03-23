@@ -201,6 +201,9 @@ importers:
       '@xenova/transformers':
         specifier: ^2.16.1
         version: 2.17.2
+      ai:
+        specifier: 3.4.33
+        version: 3.4.33(react@18.3.1)(sswr@2.2.0(svelte@5.23.0))(svelte@5.23.0)(vue@3.5.13(typescript@5.8.2))(zod@3.23.8)
       axios:
         specifier: ^1.6.7
         version: 1.8.3(debug@4.4.0)

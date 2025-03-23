@@ -3,7 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { PageTypeEnum, UpdateListDto } from '@sigma/types';
+import { PageTypeEnum, UpdateListDto } from '@tegonhq/sigma-sdk';
 import { PrismaService } from 'nestjs-prisma';
 
 @Injectable()
