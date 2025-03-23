@@ -25,9 +25,9 @@ export default defineConfig({
   instrumentations: [new PrismaInstrumentation()],
   build: {
     extensions: [
-      syncEnvVars(({ env }) => ({
-        DATABASE_URL: env.DATABASE_URL,
-        BACKEND_URL: env.BACKEND_HOST,
+      syncEnvVars(() => ({
+        DATABASE_URL: process.env.DATABASE_URL,
+        BACKEND_URL: process.env.BACKEND_HOST,
       })),
       additionalPackages({
         packages: ['@tegonhq/sigma-sdk'],
