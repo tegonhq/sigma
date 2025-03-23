@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import {
-  Outlink,
   OutlinkType,
   PageTypeEnum,
   Task,
@@ -14,7 +13,6 @@ import { generateSummaryTask } from 'triggers/task/generate-summary';
 
 import { IntegrationsService } from 'modules/integrations/integrations.service';
 import { PagesService } from 'modules/pages/pages.service';
-import { getTaskItemContent } from 'modules/pages/pages.utils';
 import { TaskOccurenceService } from 'modules/task-occurrence/task-occurrence.service';
 import { UsersService } from 'modules/users/users.service';
 
@@ -59,7 +57,6 @@ export class TaskHooksService {
 
     await this.handleBeautifyTask(task, context);
     await Promise.all([
-      this.handleTitleChange(task, context),
       this.handleDeleteTask(task, context),
       this.handleScheduleTask(task, context),
       this.handleListTask(task, context),
@@ -109,64 +106,6 @@ export class TaskHooksService {
           data: { parentId: null },
         });
       }
-    }
-  }
-
-  async handleTitleChange(task: Task, context: TaskHookContext) {
-    if (
-      context.changeData &&
-      context.changeData.title &&
-      task.page.title !== context.changeData.title
-    ) {
-      const pagesWithTask = await this.prisma.page.findMany({
-        where: {
-          outlinks: {
-            array_contains: [
-              {
-                type: OutlinkType.Task,
-                id: task.id,
-              },
-            ],
-          },
-        },
-        select: { id: true, description: true, outlinks: true },
-      });
-
-      await Promise.all(
-        pagesWithTask.map(async (page) => {
-          if (!page.description) {
-            return;
-          }
-
-          try {
-            const description = JSON.parse(page.description as string);
-            const taskOutlinks = (page.outlinks as unknown as Outlink[]).filter(
-              (o) => o.id === task.id && o.type === OutlinkType.Task,
-            );
-
-            let updated = false;
-            for (const outlink of taskOutlinks) {
-              let node = description;
-              for (const index of outlink.position.path) {
-                node = node.content[index];
-              }
-
-              node.content = getTaskItemContent(task.page.title);
-
-              updated = true;
-            }
-
-            if (updated) {
-              await this.pagesService.updatePage(
-                { description: JSON.stringify(description) },
-                page.id,
-              );
-            }
-          } catch (error) {
-            console.error(`Failed to update task in page ${page.id}:`, error);
-          }
-        }),
-      );
     }
   }
 

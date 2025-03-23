@@ -28,6 +28,7 @@ import { TransactionClient } from 'modules/tasks/tasks.utils';
 
 import {
   getOutlinksTaskId,
+  getTaskItemContent,
   getTaskListsInPage,
   removeTasksFromPage,
   updateTaskListsInPage,
@@ -605,10 +606,76 @@ export class PagesService {
     return tiptapJson;
   }
 
+  async handleTitleChange(pageId: string, changeData: JsonObject) {
+    const currentPage = await this.prisma.page.findUnique({
+      where: { id: pageId },
+      include: { task: true },
+    });
+    if (!currentPage.task.length) {
+      return;
+    }
+    const taskId = currentPage.task[0].id;
+    if (changeData && changeData.title) {
+      const pagesWithTask = await this.prisma.page.findMany({
+        where: {
+          outlinks: {
+            array_contains: [
+              {
+                type: OutlinkType.Task,
+                id: taskId,
+              },
+            ],
+          },
+        },
+        select: { id: true, description: true, outlinks: true },
+      });
+
+      await Promise.all(
+        pagesWithTask.map(async (page) => {
+          if (!page.description) {
+            return;
+          }
+
+          try {
+            const description = JSON.parse(page.description as string);
+            const taskOutlinks = (page.outlinks as unknown as Outlink[]).filter(
+              (o) => o.id === taskId && o.type === OutlinkType.Task,
+            );
+
+            let updated = false;
+            for (const outlink of taskOutlinks) {
+              let node = description;
+              for (const index of outlink.position.path) {
+                node = node.content[index];
+              }
+
+              node.content = getTaskItemContent(currentPage.title);
+
+              updated = true;
+            }
+
+            if (updated) {
+              await this.updatePage(
+                { description: JSON.stringify(description) },
+                page.id,
+              );
+            }
+          } catch (error) {
+            console.error(`Failed to update task in page ${page.id}:`, error);
+          }
+        }),
+      );
+    }
+  }
+
   async handleHooks(payload: { pageId: string; changedData: JsonObject }) {
     if (payload.changedData.description) {
       await this.createTasks(payload.pageId);
       await this.storeOutlinks(payload.pageId);
+    }
+
+    if (payload.changedData.title) {
+      await this.handleTitleChange(payload.pageId, payload.changedData);
     }
   }
 }
