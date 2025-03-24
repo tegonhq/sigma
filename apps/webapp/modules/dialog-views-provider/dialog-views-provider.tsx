@@ -88,7 +88,7 @@ export const DialogViewsProvider = observer(
         }
       },
       {
-        scopes: [SCOPES.Task],
+        scopes: [SCOPES.Tasks, SCOPES.Task],
         enabled: getTasks().length > 0,
         preventDefault: true,
       },

@@ -20,7 +20,7 @@ interface TabsProps {
 }
 
 export const Tasks = observer(({ entity_id }: TabsProps) => {
-  useScope(SCOPES.Task);
+  useScope(SCOPES.Tasks);
 
   const { clearSelectedTask, displaySettings } = useApplication();
 

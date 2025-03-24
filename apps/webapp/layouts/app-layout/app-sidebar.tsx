@@ -149,7 +149,7 @@ export const AppSidebar = observer(
                     <Button
                       variant="secondary"
                       className={cn(
-                        'flex gap-1 w-fit min-w-0 justify-start',
+                        'flex gap-2 w-fit min-w-0 justify-start',
                         list.name?.length > 10 && 'w-full',
                       )}
                       isActive={isActive}
@@ -157,7 +157,7 @@ export const AppSidebar = observer(
                     >
                       {getIcon(
                         list?.icon,
-                        14,
+                        15,
                         isActive && 'text-accent-foreground',
                       )}
                       <div className="inline-flex items-center gap-1 shrink min-w-[0px]">

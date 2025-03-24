@@ -29,6 +29,7 @@ interface SingleTaskProps {
 export const SingleTaskWithoutLayout = observer(
   ({ taskId, sideView = false }: SingleTaskProps) => {
     useScope(SCOPES.Task);
+
     const { tasksStore, pagesStore, taskOccurrencesStore } = useContextStore();
     const task = tasksStore.getTaskWithId(taskId);
     const page = pagesStore.getPageWithId(task?.pageId);
@@ -92,7 +93,7 @@ export const SingleTaskWithoutLayout = observer(
                 onChange={onChange}
                 className={cn(
                   getStatus() === 'Done' &&
-                    'line-through opacity-60 decoration-[1px]',
+                    'line-through opacity-60 decoration-[2px] decoration-primary',
                 )}
               />
             </div>

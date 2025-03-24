@@ -3,6 +3,7 @@ export enum SCOPES {
   Day = 'day',
   Search = 'search',
   Task = 'task',
+  Tasks = 'tasks',
 
   // view
   SIDE_VIEW = 'SIDE_VIEW',

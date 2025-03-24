@@ -58,7 +58,7 @@ export const SubTasks = observer(({ taskId }: SubTasksProps) => {
                   className={cn(
                     'text-left truncate',
                     task.status === 'Done' &&
-                      'line-through opacity-60 decoration-[1px]',
+                      'line-through opacity-60 decoration-[2px] decoration-primary',
                   )}
                 >
                   {page?.title}

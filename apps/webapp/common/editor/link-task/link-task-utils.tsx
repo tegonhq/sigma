@@ -114,7 +114,7 @@ export const TasksCommand = React.forwardRef(
               key={index}
               onClick={() => onCommandSelect(index)}
             >
-              <span className="text-muted-foreground font-mono shrink-0">
+              <span className="text-muted-foreground font-mono shrink-0 min-w-[50px]">
                 T-{item.number}
               </span>
               {item.title}

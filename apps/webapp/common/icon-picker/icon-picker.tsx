@@ -113,14 +113,21 @@ export function IconPicker({
                   return (
                     <Button
                       key={iconName}
-                      className="flex items-center justify-center p-1"
+                      className="flex items-center justify-center p-1 text-foreground"
                       size="sm"
                       variant="ghost"
                       onClick={() =>
                         onSelectIcon && onSelectIcon(iconName, selectedColor)
                       }
                     >
-                      <IconComponent color={selectedColor} />
+                      <IconComponent
+                        style={
+                          selectedColor !== '#000'
+                            ? { color: selectedColor }
+                            : {}
+                        }
+                        className={cn('text-foreground')}
+                      />
                     </Button>
                   );
                 })}
