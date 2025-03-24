@@ -53,6 +53,7 @@ export default class ReplicationService {
     await this.deleteOrphanedSlots();
     await this.createReplicationSlot();
     await this.setupReplication();
+    await this.setupReplicationIdentity();
   }
 
   async deleteOrphanedSlots() {
@@ -139,8 +140,6 @@ export default class ReplicationService {
         where: `ReplicationService.createReplicationSlot`,
         error,
       });
-    } finally {
-      await this.client.end();
     }
   }
 
@@ -251,6 +250,25 @@ export default class ReplicationService {
         this.logger.info({ message: 'No change data in log' });
       }
     });
+  }
+
+  async setupReplicationIdentity() {
+    try {
+      for (const [tableName] of tableHooks) {
+        const query = `ALTER TABLE sigma."${tableName}" REPLICA IDENTITY FULL;`;
+        await this.client.query(query);
+        this.logger.info({
+          message: `Set REPLICA IDENTITY FULL for table ${tableName}`,
+          where: 'ReplicationService.setupReplicationIdentity',
+        });
+      }
+    } catch (error) {
+      this.logger.error({
+        message: 'Error setting REPLICA IDENTITY',
+        where: 'ReplicationService.setupReplicationIdentity',
+        error,
+      });
+    }
   }
 }
 
