@@ -31,19 +31,19 @@ export const AdjustableTextArea = ({
     }
   };
 
-  // Update div content when state changes (sets the value)
-  useEffect(() => {
-    if (divRef.current && divRef.current.textContent !== value) {
-      divRef.current.textContent = value;
-    }
-  }, [value]);
-
   // Set focus on the div when autoFocus is true
   useEffect(() => {
     if (autoFocus && divRef.current) {
       divRef.current.focus();
     }
   }, [autoFocus]);
+
+  // Update div content when state changes (sets the value)
+  useEffect(() => {
+    if (divRef.current && divRef.current.textContent !== value) {
+      divRef.current.textContent = value;
+    }
+  }, [value]);
 
   return (
     <div className="relative w-full">

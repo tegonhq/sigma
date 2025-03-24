@@ -20,6 +20,7 @@ import { TabViewType } from 'store/application';
 import { useContextStore } from 'store/global-context-provider';
 
 import { useTaskOperations } from './use-task-operations';
+import { AddTaskDialogContext } from 'modules/tasks/add-task';
 
 interface CommandType {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -52,6 +53,7 @@ function isValidDateFormat(dateString: string) {
 
 export const useSearchCommands = (value: string, onClose: () => void) => {
   const { tasksStore, pagesStore, listsStore } = useContextStore();
+  const { setDialogOpen } = React.useContext(AddTaskDialogContext);
   const { updateTabData, tabs, updateTabType, selectedTasks } =
     useApplication();
   const firstTab = tabs[0];
@@ -76,6 +78,13 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
         command: () => {
           updateTabType(1, TabViewType.AI, {});
           onClose();
+        },
+      },
+      {
+        Icon: IssuesLine,
+        text: 'Create task',
+        command: () => {
+          setDialogOpen(true);
         },
       },
       {

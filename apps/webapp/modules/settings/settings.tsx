@@ -13,11 +13,13 @@ import {
   BuildingLine,
   StackLine,
   SidebarHeader,
+  SettingsLine,
 } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 
 import { Integrations } from './integrations';
+import { Preferences } from './preferences';
 import { Workspace } from './workspace';
 
 interface SettingsProps {
@@ -28,6 +30,7 @@ interface SettingsProps {
 const COMPONENTS_MAP = {
   Workspace,
   Integrations,
+  Preferences,
 };
 
 export const Settings = observer(({ open, setOpen }: SettingsProps) => {
@@ -35,6 +38,7 @@ export const Settings = observer(({ open, setOpen }: SettingsProps) => {
   const data = {
     nav: [
       { name: 'Workspace', icon: BuildingLine },
+      { name: 'Preferences', icon: SettingsLine },
       { name: 'Integrations', icon: StackLine },
     ],
   };

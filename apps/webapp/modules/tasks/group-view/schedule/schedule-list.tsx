@@ -66,17 +66,17 @@ export const ScheduleList = observer(() => {
           variant="ghost"
           onClick={() => toggleHeaderCollapse(row.key)}
         >
-          <div className="h-5 w-5 group-hover:hidden flex items-center">
+          <div className="h-5 w-5 group-hover:hidden flex items-center text-foreground">
             <CalendarLine size={18} />
           </div>
-          <div className="hidden group-hover:block">
+          <div className="hidden group-hover:block text-foreground">
             {!collapsedHeaders[row.key] ? (
               <ChevronDown size={20} />
             ) : (
               <ChevronRight size={20} />
             )}
           </div>
-          <h3 className="pl-2">{row.key}</h3>
+          <h3 className="pl-2 text-foreground">{row.key}</h3>
         </Button>
         <div className="rounded-2xl bg-grayAlpha-100 p-1.5 px-2 font-mono">
           {row.count}

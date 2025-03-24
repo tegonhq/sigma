@@ -1,4 +1,4 @@
-import { Project } from '@tegonhq/ui';
+import { cn, Project } from '@tegonhq/ui';
 import * as LucideIcons from 'lucide-react';
 
 import { emojiData } from './emoji-data';
@@ -7,7 +7,7 @@ export function getEmojiFromId(id: number) {
   return emojiData.find((em) => em.id === id);
 }
 
-export const getIcon = (icon: string, size: number) => {
+export const getIcon = (icon: string, size: number, className?: string) => {
   if (icon) {
     const iconData = JSON.parse(icon);
 
@@ -18,8 +18,8 @@ export const getIcon = (icon: string, size: number) => {
       return (
         <IconComponent
           size={size}
-          style={{ color: iconData.color }}
-          className="shrink-0"
+          style={iconData?.color !== '#000' ? { color: iconData.color } : {}}
+          className={cn('shrink-0 text-foreground', className)}
         />
       );
     }

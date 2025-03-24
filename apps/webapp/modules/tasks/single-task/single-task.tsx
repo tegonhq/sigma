@@ -1,4 +1,4 @@
-import { ScrollArea } from '@tegonhq/ui';
+import { cn, ScrollArea } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import { useRouter } from 'next/router';
 import React from 'react';
@@ -16,6 +16,9 @@ import { SingleTaskEditor } from './single-task-editor';
 import { SingleTaskMetadata } from './single-task-metadata';
 import { PageTitle } from './single-task-title';
 import { Header } from '../header';
+import { SingleTaskStatus } from './single-task-status';
+import { useScope } from 'hooks/use-scope';
+import { sort } from 'fast-sort';
 
 interface SingleTaskProps {
   index?: number;
@@ -25,7 +28,8 @@ interface SingleTaskProps {
 
 export const SingleTaskWithoutLayout = observer(
   ({ taskId, sideView = false }: SingleTaskProps) => {
-    const { tasksStore, pagesStore } = useContextStore();
+    useScope(SCOPES.Task);
+    const { tasksStore, pagesStore, taskOccurrencesStore } = useContextStore();
     const task = tasksStore.getTaskWithId(taskId);
     const page = pagesStore.getPageWithId(task?.pageId);
     const { back } = useRouter();
@@ -49,6 +53,30 @@ export const SingleTaskWithoutLayout = observer(
       });
     };
 
+    const getStatus = () => {
+      // Get yesterday's end of day
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      yesterday.setHours(23, 59, 59, 999);
+
+      const taskOccurrences = taskOccurrencesStore.getTaskOccurrencesForTask(
+        task.id,
+      );
+
+      // Filter and sort occurrences after yesterday
+      const sortedOccurrences = sort(
+        taskOccurrences.filter((occ) => new Date(occ.startTime) > yesterday),
+      ).by([{ asc: (u) => u.startTime }]);
+
+      const recentTaskOccurrence = sortedOccurrences[0];
+
+      if (task && task.recurrence.length > 0 && recentTaskOccurrence) {
+        return recentTaskOccurrence?.status;
+      }
+
+      return task.status;
+    };
+
     if (!task || !page) {
       return null;
     }
@@ -57,8 +85,16 @@ export const SingleTaskWithoutLayout = observer(
       <ScrollArea className="w-full h-full flex justify-center">
         <div className="flex h-full justify-center w-full">
           <div className="grow flex flex-col gap-2 h-full max-w-[97ch]">
-            <div className="px-4 pt-4">
-              <PageTitle value={page.title} onChange={onChange} />
+            <div className="px-4 pt-4 flex gap-2 items-start">
+              <SingleTaskStatus task={task} />
+              <PageTitle
+                value={page.title}
+                onChange={onChange}
+                className={cn(
+                  getStatus() === 'Done' &&
+                    'line-through opacity-60 decoration-[1px]',
+                )}
+              />
             </div>
 
             <SingleTaskMetadata task={task} />

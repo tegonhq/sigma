@@ -233,7 +233,7 @@ export class TaskHooksService {
         },
       });
 
-      await this.pagesService.getOrCreatePageByTitle(list.page.title, {
+      await this.pagesService.getOrCreatePageByTitle(task.workspaceId, {
         title: list.page.title,
         type: list.page.type as PageTypeEnum,
         taskIds: [task.id],

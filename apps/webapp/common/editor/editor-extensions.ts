@@ -61,7 +61,7 @@ const starterKit = StarterKit.configure({
   history: false,
   bulletList: {
     HTMLAttributes: {
-      class: cx('list-disc list-outside [&_ul]:pl-4 leading-1 my-1'),
+      class: cx('list-disc list-outside pl-4 leading-1 my-1 mb-1.5'),
     },
   },
   orderedList: {

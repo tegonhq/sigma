@@ -77,7 +77,7 @@ export const TaskComponent = observer((props: any) => {
     <NodeViewWrapper className="task-item-component" as="div">
       <div
         className={cn(
-          'items-center inline-flex gap-2 pb-0.5 items-start px-2 -ml-2 hover:bg-grayAlpha-100 rounded w-fit',
+          'items-center inline-flex gap-2 pb-0.5 mb-1 items-start px-2 -ml-2 hover:bg-grayAlpha-100 rounded w-fit',
           props.selected && 'bg-grayAlpha-300',
         )}
       >

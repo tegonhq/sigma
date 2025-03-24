@@ -141,6 +141,9 @@ export const AppSidebar = observer(
             </h3>
             <SidebarMenu className="gap-0.5">
               {lists.map((list: ListTypeWithCount) => {
+                const isActive =
+                  firstTab.type === TabViewType.LIST &&
+                  firstTab.entity_id === list.id;
                 return (
                   <SidebarMenuItem key={list.id}>
                     <Button
@@ -149,19 +152,25 @@ export const AppSidebar = observer(
                         'flex gap-1 w-fit min-w-0 justify-start',
                         list.name?.length > 10 && 'w-full',
                       )}
-                      isActive={
-                        firstTab.type === TabViewType.LIST &&
-                        firstTab.entity_id === list.id
-                      }
+                      isActive={isActive}
                       onClick={() => navigate(TabViewType.LIST, list.id)}
                     >
-                      {getIcon(list?.icon, 14)}
+                      {getIcon(
+                        list?.icon,
+                        14,
+                        isActive && 'text-accent-foreground',
+                      )}
                       <div className="inline-flex items-center gap-1 shrink min-w-[0px]">
                         <div className="truncate">
                           {list.name ? list.name : 'Untitled'}
                         </div>
                       </div>
-                      <span className="ml-0.5 text-muted-foreground">
+                      <span
+                        className={cn(
+                          'ml-0.5 text-muted-foreground',
+                          isActive && 'text-accent-foreground',
+                        )}
+                      >
                         {list.count}
                       </span>
                     </Button>

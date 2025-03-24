@@ -13,6 +13,7 @@ import { useApplication } from 'hooks/application';
 import { TabViewType } from 'store/application';
 
 import { DialogType } from './types';
+import { TaskViewContext } from 'layouts/side-task-view';
 
 interface DialogViewsContextType {
   dialogType: DialogType | undefined;
@@ -35,6 +36,7 @@ export const DialogViewsProvider = observer(
     const [dialogOpen, setDialogOpen] = React.useState<DialogType>(undefined);
 
     const { tabs, selectedTasks, hoverTask } = useApplication();
+    const { taskId: viewTaskId } = React.useContext(TaskViewContext);
     const firstTab = tabs[0];
     const taskId =
       firstTab.type === TabViewType.MY_TASKS ? firstTab.entity_id : undefined;
@@ -56,6 +58,10 @@ export const DialogViewsProvider = observer(
     const getTasks = () => {
       if (taskId) {
         return [taskId];
+      }
+
+      if (viewTaskId) {
+        return [viewTaskId];
       }
 
       if (selectedTasks.length > 0) {
