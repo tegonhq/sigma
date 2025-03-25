@@ -15,4 +15,5 @@ export interface TaskType {
   pageId: string;
   listId?: string;
   parentId?: string;
+  integrationAccountId?: string;
 }

@@ -23,6 +23,10 @@ export class Source {
   @IsOptional()
   @IsEnum(SourceType)
   type?: SourceType;
+
+  @IsOptional()
+  @IsString()
+  url?: string;
 }
 
 export enum TaskType {

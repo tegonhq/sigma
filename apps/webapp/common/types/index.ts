@@ -10,3 +10,4 @@ export * from './task';
 export * from './conversation';
 export * from './list';
 export * from './task-occurrence';
+export * from './tasl-external-link';

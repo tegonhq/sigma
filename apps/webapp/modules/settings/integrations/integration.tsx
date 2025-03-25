@@ -27,7 +27,7 @@ export function Integration({
 
   return (
     <>
-      {!isLoading && (
+      {!isLoading && integrationDefinition && (
         <SettingSection
           title={
             <Breadcrumb className="text-base">

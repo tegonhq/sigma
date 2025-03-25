@@ -96,7 +96,7 @@ export const TaskComponent = observer((props: any) => {
           className={cn(
             'relative top-[2px] min-w-[3px]',
             getStatus() === 'Done' &&
-              'line-through opacity-60 decoration-[2px] decoration-primary',
+              'line-through opacity-60 decoration-[1px] decoration-muted-foreground',
           )}
         />
         {task && (

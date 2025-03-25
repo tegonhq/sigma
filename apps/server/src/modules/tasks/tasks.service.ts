@@ -73,6 +73,7 @@ export class TasksService {
     if (tasksData.length > 100) {
       throw new BadRequestException('Too many tasks in bulk request');
     }
+
     return await this.prisma.$transaction(
       async (tx: TransactionClient) => {
         const createdTasks: Task[] = [];
@@ -126,7 +127,6 @@ export class TasksService {
     const prismaClient = tx || this.prisma;
     const {
       title,
-      metadata,
       status: taskStatus,
       source,
       integrationAccountId,
@@ -168,7 +168,6 @@ export class TasksService {
     const task = await prismaClient.task.create({
       data: {
         status: taskStatus || 'Todo',
-        metadata,
         ...otherTaskData,
         workspace: { connect: { id: workspaceId } },
         ...(listId && {
@@ -196,9 +195,8 @@ export class TasksService {
       await prismaClient.taskExternalLink.create({
         data: {
           sourceId: source.id,
-          url: createTaskDto.url || '',
+          url: source.url || '',
           integrationAccount: { connect: { id: integrationAccountId } },
-          metadata: metadata || {},
           task: { connect: { id: task.id } },
         },
       });

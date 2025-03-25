@@ -1,4 +1,4 @@
-import { Badge, ParentIssueLine } from '@tegonhq/ui';
+import { Badge, cn, ParentIssueLine } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 
@@ -10,7 +10,8 @@ import { useContextStore } from 'store/global-context-provider';
 
 import { ScheduleDropdown, ScheduleDropdownVariant } from './metadata';
 import { DuedateDropdown, DuedateDropdownVariant } from './metadata/due-date';
-import { SubTasks } from './metadata/sub-tasks';
+import { SubTasks, SubTaskVariant } from './metadata/sub-tasks';
+import { TaskExternalInfo, TaskExternalVariant } from './task-external-info';
 
 export const TaskInfo = observer(
   ({
@@ -72,8 +73,11 @@ export const TaskInfo = observer(
             />
           )}
           <DuedateDropdown task={task} variant={DuedateDropdownVariant.SHORT} />
-          <SubTasks taskId={task.id} />
+          <SubTasks taskId={task.id} variant={SubTaskVariant.SHORT} />
           {task.parentId && parentTask()}
+          <div className={cn(inEditor && 'relative')}>
+            <TaskExternalInfo task={task} variant={TaskExternalVariant.SHORT} />
+          </div>
         </div>
       </div>
     );

@@ -22,6 +22,7 @@ export const tablesToSendMessagesFor = new Map([
   [ModelNameEnum.List, true],
   [ModelNameEnum.Page, true],
   [ModelNameEnum.Task, true],
+  [ModelNameEnum.TaskExternalLink, true],
   [ModelNameEnum.TaskOccurrence, true],
   [ModelNameEnum.Workspace, true],
 ]);

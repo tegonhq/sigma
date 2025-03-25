@@ -19,7 +19,12 @@ interface TaskListItemProps {
 
 export const TaskListItem = observer(
   ({ taskId: taskIdWithOccurrence }: TaskListItemProps) => {
-    const { tasksStore, pagesStore, taskOccurrencesStore } = useContextStore();
+    const {
+      tasksStore,
+      pagesStore,
+      taskOccurrencesStore,
+      taskExternalLinksStore,
+    } = useContextStore();
     const { openTask } = React.useContext(TaskViewContext);
     const {
       selectedTasks,
@@ -40,6 +45,9 @@ export const TaskListItem = observer(
     const taskSelected = selectedTasks.includes(taskIdWithOccurrence);
     const { mutate: updateTaskOccurrence } =
       useUpdateSingleTaskOccurrenceMutation({});
+    const taskExternalLinks = taskExternalLinksStore.getExternalLinksForTask({
+      taskId: task.id,
+    });
 
     const statusChange = (status: string) => {
       if (task && task.recurrence.length > 0 && taskOccurrenceId) {
@@ -143,7 +151,7 @@ export const TaskListItem = observer(
             >
               <div className="flex w-full justify-between gap-4 items-center">
                 <div className="flex gap-2 w-full items-center">
-                  <div className="text-muted-foreground font-mono min-w-[40px] pl-1 relative top-[1px] text-sm self-center">
+                  <div className="text-muted-foreground font-mono min-w-[40px] pl-1 relative top-[1px] text-sm self-center shrink-0">
                     T-{task.number}
                   </div>
                   <div className="inline-flex items-center justify-start shrink min-w-[0px] min-h-[24px]">
@@ -151,7 +159,7 @@ export const TaskListItem = observer(
                       className={cn(
                         'text-left truncate',
                         getStatus() === 'Done' &&
-                          'line-through opacity-60 decoration-[2px] decoration-primary',
+                          'line-through opacity-60 decoration-[1px] decoration-muted-foreground',
                       )}
                     >
                       {page?.title}

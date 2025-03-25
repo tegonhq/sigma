@@ -55,10 +55,10 @@ export default class WorkspacesService {
         },
       });
 
-      // Create daily pages for next 30 days
+      // Create daily pages for next 7 days
       const today = new Date();
       await Promise.all(
-        Array.from({ length: 30 }).map(async (_, i) => {
+        Array.from({ length: 7 }).map(async (_, i) => {
           const date = new Date(today);
           date.setDate(today.getDate() + i);
           const formattedDate = format(date, 'dd-MM-yyyy');

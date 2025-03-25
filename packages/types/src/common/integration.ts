@@ -4,8 +4,6 @@ export enum IntegrationPayloadEventType {
    */
   GET_CONNECTED_ACCOUNT_ID = 'get_connected_account_id',
 
-  SPEC = 'spec',
-
   /**
    * This is used to create/delete a integration account from the
    * user input
@@ -22,13 +20,11 @@ export enum IntegrationPayloadEventType {
   // Valid and return the response for webhooks
   WEBHOOK_RESPONSE = 'webhook_response',
 
-  // Valid and return the response for webhooks
-  IS_ACTION_SUPPORTED_EVENT = 'is_action_supported_event',
-
   SCHEDULED_TASK = 'scheduled_task',
 
   SYNC_INITIAL_TASK = 'sync_initial_task',
 
+  // Model changes
   TASK = 'task',
   ACTIVITY = 'activity',
   PAGE = 'page',

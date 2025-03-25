@@ -1,7 +1,9 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { IntegrationPayloadEventType, OAuth2Params } from '@tegonhq/sigma-sdk';
+import { tasks } from '@trigger.dev/sdk/v3';
 import * as simpleOauth2 from 'simple-oauth2';
+import { scheduler } from 'triggers/integrations/scheduler';
 
 import { IntegrationDefinitionService } from 'modules/integration-definition/integration-definition.service';
 import { IntegrationsService } from 'modules/integrations/integrations.service';
@@ -232,6 +234,10 @@ export class OAuthCallbackService {
         sessionRecord.userId,
         sessionRecord.workspaceId,
       );
+
+      await tasks.trigger<typeof scheduler>('scheduler', {
+        integrationAccountId: integrationAccount.id,
+      });
 
       res.redirect(
         `${sessionRecord.redirectURL}?success=true&integrationName=${integrationDefinition.name}${accountIdentifier}${integrationKeys}`,

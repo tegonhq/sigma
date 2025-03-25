@@ -41,6 +41,15 @@ export async function getWorkspaceId(
       });
       return task.workspaceId;
 
+    case ModelName.TaskExternalLink:
+      const taskExternalLink = await prisma.taskExternalLink.findUnique({
+        where: { id: modelId },
+        include: {
+          task: true,
+        },
+      });
+      return taskExternalLink.task.workspaceId;
+
     case ModelName.TaskOccurrence:
       const taskOccurrence = await prisma.taskOccurrence.findUnique({
         where: { id: modelId },
@@ -108,6 +117,7 @@ export async function getModelData(
     Template: prisma.template,
     Page: prisma.page,
     Task: prisma.task,
+    TaskExternalLink: prisma.taskExternalLink,
     TaskOccurrence: prisma.taskOccurrence,
     Conversation: prisma.conversation,
     ConversationHistory: prisma.conversationHistory,

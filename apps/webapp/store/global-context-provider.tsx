@@ -26,6 +26,10 @@ import {
 import { ListsStore, type ListsStoreType } from './lists';
 import { PagesStore, type PagesStoreType } from './pages';
 import {
+  TaskExternalLinksStore,
+  type TaskExternalLinksStoreType,
+} from './task-external-links';
+import {
   TaskOccurrencesStore,
   type TaskOccurrencesStoreType,
 } from './task-occurrences';
@@ -44,6 +48,7 @@ const StoreContextModel = types.model({
   tasksStore: TasksStore,
   listsStore: ListsStore,
   taskOccurrencesStore: TaskOccurrencesStore,
+  taskExternalLinksStore: TaskExternalLinksStore,
 });
 
 export const storeContextStore = StoreContextModel.create({
@@ -81,6 +86,9 @@ export const storeContextStore = StoreContextModel.create({
     lists: [],
   },
   commonStore: defaultCommonStoreValue,
+  taskExternalLinksStore: {
+    taskExternalLinks: {},
+  },
 });
 
 export interface StoreContextInstanceType {
@@ -94,6 +102,7 @@ export interface StoreContextInstanceType {
   commonStore: CommonStoreType;
   listsStore: ListsStoreType;
   taskOccurrencesStore: TaskOccurrencesStoreType;
+  taskExternalLinksStore: TaskExternalLinksStoreType;
 }
 export const StoreContext =
   React.createContext<null | StoreContextInstanceType>(null);

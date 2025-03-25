@@ -93,7 +93,7 @@ export const SingleTaskWithoutLayout = observer(
                 onChange={onChange}
                 className={cn(
                   getStatus() === 'Done' &&
-                    'line-through opacity-60 decoration-[2px] decoration-primary',
+                    'line-through opacity-60 decoration-[1px] decoration-muted-foreground',
                 )}
               />
             </div>

@@ -5,19 +5,11 @@ import { Source } from './task.entity';
 export class CreateTaskDto {
   @IsString()
   @IsOptional()
-  url?: string;
-
-  @IsString()
-  @IsOptional()
   status: string;
 
   @IsString()
   @IsOptional()
   title: string;
-
-  @IsObject()
-  @IsOptional()
-  metadata?: Record<string, any>;
 
   @IsObject()
   @IsOptional()

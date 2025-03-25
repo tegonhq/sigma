@@ -1,4 +1,4 @@
-import type { integrationRun } from 'triggers/integration-run';
+import type { integrationRun } from 'triggers/integrations/integration-run';
 
 import { Injectable } from '@nestjs/common';
 import { IntegrationDefinition } from '@tegonhq/sigma-sdk';
@@ -63,6 +63,7 @@ export class IntegrationsService {
       userId,
       workspaceId,
     );
+
     const response = await tasks.triggerAndPoll<typeof integrationRun>(
       'integration-run',
       {

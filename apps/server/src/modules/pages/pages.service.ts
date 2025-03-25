@@ -480,7 +480,6 @@ export class PagesService {
     const prismaClient = this.prisma;
     const {
       title,
-      metadata,
       status: taskStatus,
       source,
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -524,7 +523,6 @@ export class PagesService {
     const task = await prismaClient.task.create({
       data: {
         status: taskStatus || 'Todo',
-        metadata,
         ...otherTaskData,
         workspace: { connect: { id: workspaceId } },
         ...(listId && {

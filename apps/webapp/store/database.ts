@@ -9,6 +9,7 @@ import type {
   ListType,
   PageType,
   StatusType,
+  TaskExternalLinkType,
   TaskOccurrenceType,
   TaskType,
 } from 'common/types';
@@ -27,11 +28,12 @@ export class SigmaDatabase extends Dexie {
   conversationHistory: Dexie.Table<ConversationHistoryType, string>;
   lists: Dexie.Table<ListType, string>;
   taskOccurrences: Dexie.Table<TaskOccurrenceType, string>;
+  taskExternalLinks: Dexie.Table<TaskExternalLinkType, string>;
 
   constructor(databaseName: string) {
     super(databaseName);
 
-    this.version(26).stores({
+    this.version(28).stores({
       [MODELS.Workspace]: 'id,createdAt,updatedAt,name,slug,userId',
       [MODELS.IntegrationAccount]:
         'id,createdAt,updatedAt,accountId,settings,integratedById,integrationDefinitionId,workspaceId',
@@ -41,6 +43,8 @@ export class SigmaDatabase extends Dexie {
         'id,createdAt,updatedAt,sourceId,url,status,metadata,workspaceId,pageId,integrationAccountId,startTime,endTime,recurrence,number,completedAt,listId,dueDate,remindAt,scheduleText,parentId',
       [MODELS.TaskOccurrence]:
         'id,createdAt,updatedAt,workspaceId,pageId,taskId,startTime,endTime,status',
+      [MODELS.TaskExternalLink]:
+        'id,createdAt,updatedAt,taskId,integrationAccountId,url,sourceId',
 
       [MODELS.Conversation]: 'id,createdAt,updatedAt,title,userId,workspaceId',
       [MODELS.ConversationHistory]:
@@ -58,6 +62,7 @@ export class SigmaDatabase extends Dexie {
     this.conversationHistory = this.table(MODELS.ConversationHistory);
     this.lists = this.table(MODELS.List);
     this.taskOccurrences = this.table(MODELS.TaskOccurrence);
+    this.taskExternalLinks = this.table(MODELS.TaskExternalLink);
     this.application = this.table('Application');
   }
 }

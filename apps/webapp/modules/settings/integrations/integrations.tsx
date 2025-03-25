@@ -34,7 +34,7 @@ function IntegrationCard({
         </div>
         <div className="grow">
           <div className="font-medium"> {name} </div>
-          <div className="text-muted-foreground">{description}</div>
+          <div className="text-muted-foreground text-sm">{description}</div>
         </div>
         <div>
           <Button variant="secondary" onClick={onView}>
