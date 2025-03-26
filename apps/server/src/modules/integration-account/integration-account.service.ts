@@ -9,14 +9,7 @@ import {
 } from '@tegonhq/sigma-sdk';
 import { PrismaService } from 'nestjs-prisma';
 
-import {
-  createAxiosInstance,
-  getRequires,
-  loadRemoteModule,
-} from 'common/remote-loader';
-
 import { IntegrationsService } from 'modules/integrations/integrations.service';
-import { UsersService } from 'modules/users/users.service';
 
 import {
   IntegrationAccountSelect,
@@ -27,7 +20,6 @@ import {
 export class IntegrationAccountService {
   constructor(
     private prisma: PrismaService,
-    private usersService: UsersService,
     private integrationService: IntegrationsService,
   ) {}
 
@@ -85,7 +77,7 @@ export class IntegrationAccountService {
       await this.integrationService.runIntegrationTrigger(
         integrationDefinition,
         {
-          event: IntegrationPayloadEventType.CREATE,
+          event: IntegrationPayloadEventType.INTEGRATION_ACCOUNT_CREATED,
           userId,
           workspaceId,
           eventBody: {
@@ -100,7 +92,7 @@ export class IntegrationAccountService {
     await this.integrationService.runIntegrationTriggerAsync(
       integrationDefinition,
       {
-        event: IntegrationPayloadEventType.SYNC_INITIAL_TASK,
+        event: IntegrationPayloadEventType.INITIAL_TASK_SYNC,
         userId,
         workspaceId,
         eventBody: {
@@ -160,7 +152,6 @@ export class IntegrationAccountService {
   async getIntegrationAccountWithToken(
     integrationAccountId: string,
     workspaceId: string,
-    token: string,
   ) {
     const integrationAccount =
       await this.prisma.integrationAccount.findUniqueOrThrow({
@@ -173,20 +164,18 @@ export class IntegrationAccountService {
         },
       });
 
-    const integrationFunction = await loadRemoteModule(
-      getRequires(createAxiosInstance(token)),
-    );
-    const integration = await integrationFunction(
-      `${integrationAccount.integrationDefinition.url}/backend/index.js`,
-    );
-
-    const accessToken = await integration.run({
-      event: IntegrationPayloadEventType.GET_TOKEN,
-      workspaceId,
-      eventBody: {
-        integrationAccount,
+    const accessToken = await this.integrationService.runIntegrationTrigger(
+      integrationAccount.integrationDefinition,
+      {
+        event: IntegrationPayloadEventType.REFRESH_ACCESS_TOKEN,
+        workspaceId,
+        eventBody: {
+          integrationAccount,
+        },
       },
-    });
+      integrationAccount.integratedById,
+      workspaceId,
+    );
 
     return {
       ...integrationAccount,
@@ -236,7 +225,6 @@ export class IntegrationAccountService {
   async getIntegrationAccountsByName(
     integrations: string,
     workspaceId: string,
-    userId: string,
   ) {
     const accounts = await this.prisma.integrationAccount.findMany({
       where: {
@@ -251,13 +239,11 @@ export class IntegrationAccountService {
       select: IntegrationAccountSelectByNames,
     });
 
-    const pat = await this.usersService.getOrCreatePat(userId, workspaceId);
     const accountsWithTokens = await Promise.all(
       accounts.map(async (account: IntegrationAccount) => {
         const accountWithToken = await this.getIntegrationAccountWithToken(
           account.id,
           account.workspaceId,
-          pat,
         );
         return {
           ...account,

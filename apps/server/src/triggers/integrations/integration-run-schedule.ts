@@ -29,7 +29,7 @@ export const integrationRunSchedule = schedules.task({
     });
 
     return await tasks.trigger<typeof integrationRun>('integration-run', {
-      event: IntegrationPayloadEventType.SCHEDULED_TASK,
+      event: IntegrationPayloadEventType.SCHEDULED_SYNC,
       pat: pat.token,
       integrationDefinition: integrationAccount.integrationDefinition,
     });

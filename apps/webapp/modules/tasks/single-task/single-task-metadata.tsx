@@ -10,6 +10,10 @@ import { useContextStore } from 'store/global-context-provider';
 import React from 'react';
 import { TaskViewContext } from 'layouts/side-task-view';
 import { TaskExternalInfo } from '../task-external-info';
+import {
+  TaskIntegrationMetadataWrapper,
+  TaskIntegrationViewType,
+} from '../task-integration-metadata';
 
 interface SingleTaskMetadataProps {
   task: TaskType;
@@ -42,13 +46,20 @@ export const SingleTaskMetadata = observer(
     };
 
     return (
-      <div className="p-2 mx-2 flex gap-2 rounded bg-grayAlpha-50 items-center">
-        <ScheduleDropdown task={task} />
-        <DuedateDropdown task={task} />
-        <SubTasks taskId={task.id} />
-        {task.parentId && parentTask()}
-        <TaskExternalInfo task={task} />
-      </div>
+      <>
+        <div className="p-2 mx-2 flex gap-2 rounded bg-grayAlpha-50 items-center">
+          <ScheduleDropdown task={task} />
+          <DuedateDropdown task={task} />
+          <SubTasks taskId={task.id} />
+          {task.parentId && parentTask()}
+          <TaskExternalInfo task={task} />
+        </div>
+
+        <TaskIntegrationMetadataWrapper
+          task={task}
+          view={TaskIntegrationViewType.SINGLE_TASK}
+        />
+      </>
     );
   },
 );

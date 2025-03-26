@@ -46,8 +46,8 @@ app
   .then(() => {
     registerStore();
     restoreOrCreateWindow();
-    // registerShortcut();
     listeners();
+    // registerShortcut();
   })
   .catch(e => log.error('Failed create window:', e));
 

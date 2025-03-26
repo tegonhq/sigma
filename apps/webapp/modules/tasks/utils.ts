@@ -46,6 +46,14 @@ export const getIntegrationURL = async (
   return url;
 };
 
+export const initIntegrations = async (ipc: IPCRenderer) => {
+  if (!ipc) {
+    return;
+  }
+
+  ipc.initIntegrations();
+};
+
 export type IssueRow =
   | { type: 'header'; key: string; count: number }
   | { type: 'task'; taskId: string; forHeader: string };

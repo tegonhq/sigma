@@ -207,7 +207,7 @@ export class OAuthCallbackService {
         await this.integrationService.runIntegrationTrigger(
           integrationDefinition,
           {
-            event: IntegrationPayloadEventType.CREATE,
+            event: IntegrationPayloadEventType.INTEGRATION_ACCOUNT_CREATED,
             userId: sessionRecord.userId,
             workspaceId: sessionRecord.workspaceId,
             eventBody: {
@@ -223,7 +223,7 @@ export class OAuthCallbackService {
       await this.integrationService.runIntegrationTriggerAsync(
         integrationDefinition,
         {
-          event: IntegrationPayloadEventType.SYNC_INITIAL_TASK,
+          event: IntegrationPayloadEventType.INITIAL_TASK_SYNC,
           userId: sessionRecord.userId,
           workspaceId: sessionRecord.workspaceId,
           eventBody: {

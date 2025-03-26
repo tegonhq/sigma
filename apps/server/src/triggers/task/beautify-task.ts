@@ -15,8 +15,13 @@ export const beautifyTask = task({
   run: async (payload: { taskId: string; pat: string }) => {
     const sigmaTask = await prisma.task.findUnique({
       where: { id: payload.taskId },
-      include: { page: true },
+      include: { page: true, taskExternalLink: true },
     });
+
+    if (sigmaTask.taskExternalLink.length > 0) {
+      return "Beautify doesn't run for tasks created with integrations";
+    }
+
     const agentWorklog = await prisma.agentWorklog.create({
       data: {
         modelId: payload.taskId,

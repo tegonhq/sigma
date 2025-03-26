@@ -32,10 +32,11 @@ export async function handleCalendarTask(
     return undefined;
   }
 
+  // TODO: edit this to right event
   return await integrationsService.runIntegrationTrigger(
     integrationAccount.integrationDefinition,
     {
-      event: IntegrationPayloadEventType.TASK,
+      event: IntegrationPayloadEventType.INTEGRATION_TASK_UPDATED,
       eventBody: {
         integrationAccount,
         type,

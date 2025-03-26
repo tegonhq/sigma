@@ -2,6 +2,7 @@ import { Badge, cn } from '@tegonhq/ui';
 
 import { getIcon, type IconType } from 'common/icon-utils';
 import type { TaskType } from 'common/types';
+
 import { useIPC } from 'hooks/ipc';
 
 import { useGetIntegrationDefinitions } from 'services/integration-definition';

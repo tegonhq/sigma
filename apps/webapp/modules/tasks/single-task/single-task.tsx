@@ -100,7 +100,7 @@ export const SingleTaskWithoutLayout = observer(
 
             <SingleTaskMetadata task={task} />
 
-            <div className="flex flex-col gap-0 pt-3 px-4">
+            <div className="flex flex-col gap-0 pt-1 px-4">
               <SingleTaskEditor page={page} task={task} />
             </div>
           </div>

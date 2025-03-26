@@ -84,6 +84,8 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
         Icon: IssuesLine,
         text: 'Create task',
         command: () => {
+          onClose();
+
           setDialogOpen(true);
         },
       },
@@ -96,6 +98,15 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
               date: new Date(),
             },
           });
+
+          onClose();
+        },
+      },
+      {
+        Icon: IssuesLine,
+        text: 'Go to tasks',
+        command: () => {
+          updateTabType(0, TabViewType.MY_TASKS, {});
 
           onClose();
         },

@@ -44,7 +44,7 @@ export default class WebhookService {
         (await this.integrationService.runIntegrationTrigger(
           integrationDefinition,
           {
-            event: IntegrationPayloadEventType.GET_CONNECTED_ACCOUNT_ID,
+            event: IntegrationPayloadEventType.IDENTIFY_WEBHOOK_ACCOUNT,
             eventBody,
           },
           // Fix this to right type
@@ -74,7 +74,7 @@ export default class WebhookService {
       await this.integrationService.runIntegrationTrigger(
         integrationAccount.integrationDefinition,
         {
-          event: IntegrationPayloadEventType.SOURCE_WEBHOOK,
+          event: IntegrationPayloadEventType.INTEGRATION_DATA_RECEIVED,
           eventBody: {
             integrationAccount,
             eventData: { eventBody, eventHeaders },

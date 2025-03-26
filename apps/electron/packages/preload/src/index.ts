@@ -33,6 +33,7 @@ const electronHandler = {
     openUrl: (url: string) => {
       ipcRenderer.send('open-url', url);
     },
+    initIntegrations: () => ipcRenderer.send('integrations-init'),
     getIntegrationsFolder: () => ipcRenderer.invoke('get-integrations-folder'),
     getSources: () => ipcRenderer.invoke('get-sources'),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -12,6 +12,10 @@ import { useUpdateTaskMutation } from 'services/tasks';
 import { useContextStore } from 'store/global-context-provider';
 
 import { TaskInfo } from './task-info';
+import {
+  TaskIntegrationMetadataWrapper,
+  TaskIntegrationViewType,
+} from './task-integration-metadata';
 
 interface TaskListItemProps {
   taskId: string;
@@ -19,12 +23,7 @@ interface TaskListItemProps {
 
 export const TaskListItem = observer(
   ({ taskId: taskIdWithOccurrence }: TaskListItemProps) => {
-    const {
-      tasksStore,
-      pagesStore,
-      taskOccurrencesStore,
-      taskExternalLinksStore,
-    } = useContextStore();
+    const { tasksStore, pagesStore, taskOccurrencesStore } = useContextStore();
     const { openTask } = React.useContext(TaskViewContext);
     const {
       selectedTasks,
@@ -45,9 +44,6 @@ export const TaskListItem = observer(
     const taskSelected = selectedTasks.includes(taskIdWithOccurrence);
     const { mutate: updateTaskOccurrence } =
       useUpdateSingleTaskOccurrenceMutation({});
-    const taskExternalLinks = taskExternalLinksStore.getExternalLinksForTask({
-      taskId: task.id,
-    });
 
     const statusChange = (status: string) => {
       if (task && task.recurrence.length > 0 && taskOccurrenceId) {
@@ -125,7 +121,7 @@ export const TaskListItem = observer(
           </div>
           <div
             className={cn(
-              'flex w-full items-start gap-2 pl-2 ml-1 pr-2 group-hover:bg-grayAlpha-100 rounded-xl shrink min-w-[0px]',
+              'flex grow items-start gap-2 pl-2 ml-1 pr-2 group-hover:bg-grayAlpha-100 rounded-xl shrink min-w-[0px]',
               taskSelected && 'bg-primary/10',
             )}
           >
@@ -150,7 +146,7 @@ export const TaskListItem = observer(
               )}
             >
               <div className="flex w-full justify-between gap-4 items-center">
-                <div className="flex gap-2 w-full items-center">
+                <div className="flex gap-2 w-full items-center min-w-[0px] shrink">
                   <div className="text-muted-foreground font-mono min-w-[40px] pl-1 relative top-[1px] text-sm self-center shrink-0">
                     T-{task.number}
                   </div>
@@ -173,7 +169,12 @@ export const TaskListItem = observer(
                   />
                 </div>
 
-                <div className="flex items-center gap-2 flex-wrap pr-1 shrink-0"></div>
+                <div className="flex items-center gap-2 flex-wrap pr-1 shrink-0">
+                  <TaskIntegrationMetadataWrapper
+                    task={task}
+                    view={TaskIntegrationViewType.TASK_LIST_ITEM}
+                  />
+                </div>
               </div>
             </div>
           </div>

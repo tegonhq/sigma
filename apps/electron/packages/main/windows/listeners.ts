@@ -1,6 +1,7 @@
 import {app, desktopCapturer, ipcMain, shell} from 'electron';
 import path from 'node:path';
 import log from 'electron-log';
+import {integrationsInit} from '../src/integrations-init';
 
 export function listeners() {
   // Listen for URL open requests
@@ -9,9 +10,9 @@ export function listeners() {
     shell.openExternal(url);
   });
 
-  // ipcMain.on('integrations-init', async () => {
-  //   await integrationsInit();
-  // });
+  ipcMain.on('integrations-init', async () => {
+    await integrationsInit();
+  });
 
   ipcMain.handle('get-integrations-folder', () => {
     return path.join(app.getPath('userData'), 'integrations');

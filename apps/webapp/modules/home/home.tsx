@@ -16,6 +16,9 @@ import { useApplication } from 'hooks/application';
 import { useScope } from 'hooks/use-scope';
 
 import { TabViewType } from 'store/application';
+import React from 'react';
+import { useIPC } from 'hooks/ipc';
+import { initIntegrations } from 'modules/tasks/utils';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getComponent(componentType: string, props: any) {
@@ -47,6 +50,14 @@ export const Home = observer(() => {
   const { tabs } = useApplication();
 
   const firstTab = tabs[0];
+  const ipc = useIPC();
+
+  // Init integrations here will download the latest integration definitions
+  // in the cache
+  React.useEffect(() => {
+    initIntegrations(ipc);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <AddTaskDialogProvider>
