@@ -16,6 +16,7 @@ import {
   TimeBasedFilterEnum,
   GroupingEnum,
 } from './types';
+import { historyLoad } from 'store/history';
 
 const initialId = uuidv4();
 
@@ -160,6 +161,7 @@ const ApplicationStore = types
       if (data[0] && data[0].id !== self.id) {
         try {
           applySnapshot(self, data[0]);
+          historyLoad(data[0]);
         } catch (e) {}
       }
     });
@@ -169,8 +171,6 @@ const ApplicationStore = types
       } else {
         self.selectedTasks.push(taskId);
       }
-
-      self.hoverTask = undefined;
     };
     const removeSelectedTask = (taskId: string) => {
       if (self.selectedTasks.length === 1) {
@@ -181,7 +181,6 @@ const ApplicationStore = types
       }
     };
     const clearSelectedTask = () => {
-      self.hoverTask = undefined;
       self.selectedTasks.replace([]);
     };
     const setHoverTask = (taskId: string) => {

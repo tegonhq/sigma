@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { cn } from '@tegonhq/ui';
+import { Checkbox, cn } from '@tegonhq/ui';
 import { Editor, ReactRenderer } from '@tiptap/react';
+import { sort } from 'fast-sort';
 import React, { useImperativeHandle } from 'react';
 import tippy from 'tippy.js';
 
@@ -14,7 +15,8 @@ export const TasksCommand = React.forwardRef(
     });
 
     const getItems = React.useCallback(() => {
-      return tasksWithTitle
+      return sort(tasksWithTitle)
+        .by([{ desc: (task) => task.status === 'Todo' }])
         .filter((task) => {
           const searchQuery = query.toLowerCase();
           const taskNumber = `T-${task.number}`.toLowerCase();
@@ -114,7 +116,11 @@ export const TasksCommand = React.forwardRef(
               key={index}
               onClick={() => onCommandSelect(index)}
             >
-              <span className="text-muted-foreground font-mono shrink-0 min-w-[50px]">
+              <Checkbox
+                className="shrink-0 h-[16px] w-[16px] ml-1"
+                checked={item.status === 'Done'}
+              />
+              <span className="text-muted-foreground font-mono shrink-0 min-w-[40px]">
                 T-{item.number}
               </span>
               {item.title}

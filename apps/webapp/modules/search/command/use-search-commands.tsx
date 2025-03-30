@@ -26,6 +26,7 @@ interface CommandType {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Icon: any;
   text: string;
+  shortcut?: string;
   command: () => void;
 }
 
@@ -83,6 +84,7 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
       {
         Icon: IssuesLine,
         text: 'Create task',
+        shortcut: '⌘ + n',
         command: () => {
           onClose();
 
@@ -92,6 +94,7 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
       {
         Icon: CalendarLine,
         text: 'Go to today',
+        shortcut: '⌘ + 1',
         command: () => {
           updateTabType(0, TabViewType.MY_DAY, {
             data: {
@@ -105,6 +108,7 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
       {
         Icon: IssuesLine,
         text: 'Go to tasks',
+        shortcut: '⌘ + 2',
         command: () => {
           updateTabType(0, TabViewType.MY_TASKS, {});
 
@@ -137,6 +141,7 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
         {
           Icon: CalendarLine,
           text: 'Schedule',
+          shortcut: 's',
           command: () => {
             onClose();
             openDialog(DialogType.SCHEDULE);
@@ -145,6 +150,7 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
         {
           Icon: Fire,
           text: 'Set due date',
+          shortcut: 'd',
           command: () => {
             onClose();
             openDialog(DialogType.DUEDATE);
@@ -153,6 +159,7 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
         {
           Icon: Check,
           text: 'Mark completed',
+          shortcut: 'c',
           command: () => {
             onClose();
             markComplete(getTasks());
@@ -161,6 +168,7 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
         {
           Icon: DeleteLine,
           text: 'Delete task',
+          shortcut: '⌘ + ⌫',
           command: () => {
             onClose();
             deleteTasks(getTasks());

@@ -22,11 +22,13 @@ export const ActionBar = observer(({ openDialog }: ActionBarProps) => {
   const { markComplete, deleteTasks } = useTaskOperations();
 
   useHotkeys(
-    ['x', 'c', Key.Escape],
+    [`${Key.Meta}+${Key.Backspace}`, 'c', Key.Escape],
     (event) => {
       switch (event.key) {
-        case 'x':
-          deleteTasks(selectedTasks);
+        case Key.Backspace:
+          if (event.metaKey) {
+            deleteTasks(selectedTasks);
+          }
           break;
         case 'c':
           markComplete(selectedTasks);
@@ -37,7 +39,7 @@ export const ActionBar = observer(({ openDialog }: ActionBarProps) => {
       }
     },
     {
-      scopes: [SCOPES.Task],
+      scopes: [SCOPES.Tasks],
       enabled: selectedTasks.length > 0,
       preventDefault: true,
     },
@@ -46,7 +48,9 @@ export const ActionBar = observer(({ openDialog }: ActionBarProps) => {
   return (
     <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 shadow-1 rounded-lg bg-background p-2">
       <div className="flex gap-2 items-center">
-        <div className="flex items-center">{selectedTasks.length} tasks</div>
+        <div className="flex items-center ml-2">
+          {selectedTasks.length} tasks
+        </div>
         <Separator orientation="vertical" className="h-7" />
 
         <Button
@@ -90,7 +94,7 @@ export const ActionBar = observer(({ openDialog }: ActionBarProps) => {
           }}
         >
           <DeleteLine size={16} />
-          <Shortcut shortcut="X" className="ml-1" />
+          <Shortcut shortcut="⌘+⌫" className="ml-1" />
         </Button>
 
         <Separator orientation="vertical" className="h-7" />

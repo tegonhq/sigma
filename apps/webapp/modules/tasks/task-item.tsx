@@ -16,6 +16,9 @@ import {
   TaskIntegrationMetadataWrapper,
   TaskIntegrationViewType,
 } from './task-integration-metadata';
+import { useHotkeys } from 'react-hotkeys-hook';
+import { SCOPES } from 'common/shortcut-scopes';
+import { TooltipWrapper } from 'common/tooltip';
 
 interface TaskListItemProps {
   taskId: string;
@@ -72,6 +75,24 @@ export const TaskListItem = observer(
       return task.status;
     };
 
+    useHotkeys(
+      ['x'],
+      () => {
+        if (hoverTask === taskIdWithOccurrence) {
+          if (!taskSelected) {
+            addToSelectedTask(taskIdWithOccurrence, false);
+          } else {
+            removeSelectedTask(taskIdWithOccurrence);
+          }
+        }
+      },
+      {
+        scopes: [SCOPES.Tasks],
+        preventDefault: true,
+      },
+      [hoverTask, selectedTasks, taskSelected, taskIdWithOccurrence],
+    );
+
     if (!task) {
       return null;
     }
@@ -83,10 +104,7 @@ export const TaskListItem = observer(
           taskSelect(taskId);
         }}
         onMouseOver={() => {
-          if (
-            selectedTasks.length === 0 &&
-            taskIdWithOccurrence !== hoverTask
-          ) {
+          if (taskIdWithOccurrence !== hoverTask) {
             setHoverTask(taskIdWithOccurrence);
           }
         }}
@@ -103,20 +121,22 @@ export const TaskListItem = observer(
                 e.stopPropagation();
               }}
             >
-              <Checkbox
-                className={cn(
-                  'hidden group-hover:block',
-                  taskSelected && 'block',
-                )}
-                onCheckedChange={(checked) => {
-                  if (checked) {
-                    addToSelectedTask(taskIdWithOccurrence, false);
-                  } else {
-                    removeSelectedTask(taskIdWithOccurrence);
-                  }
-                }}
-                checked={taskSelected}
-              />
+              <TooltipWrapper tooltip="">
+                <Checkbox
+                  className={cn(
+                    'hidden group-hover:block',
+                    taskSelected && 'block',
+                  )}
+                  onCheckedChange={(checked) => {
+                    if (checked) {
+                      addToSelectedTask(taskIdWithOccurrence, false);
+                    } else {
+                      removeSelectedTask(taskIdWithOccurrence);
+                    }
+                  }}
+                  checked={taskSelected}
+                />
+              </TooltipWrapper>
             </div>
           </div>
           <div
@@ -132,7 +152,7 @@ export const TaskListItem = observer(
               }}
             >
               <Checkbox
-                className="shrink-0 relative top-0.5 h-[18px] w-[18px]"
+                className="shrink-0 relative top-1 h-[18px] w-[18px]"
                 checked={getStatus() === 'Done'}
                 onCheckedChange={(value: boolean) =>
                   statusChange(value === true ? 'Done' : 'Todo')

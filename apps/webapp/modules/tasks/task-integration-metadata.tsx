@@ -82,25 +82,21 @@ export const TaskIntegrationMetadataWrapper = observer(
       taskId: task.id,
     });
 
-    // Early return if no external links or still loading
-    if (!taskExternalLinks[0] || isLoading) {
-      return null;
-    }
-
     // Get integration account and definition
     const integrationAccount = integrationAccountsStore.getAccountWithId(
-      taskExternalLinks[0].integrationAccountId,
+      taskExternalLinks[0]?.integrationAccountId,
     );
 
     React.useEffect(() => {
-      if (!integrationDefinitions) {
+      if (!integrationDefinitions || !integrationAccount) {
         return;
       }
 
       const definition = integrationDefinitions.find(
-        (def) => integrationAccount.integrationDefinitionId === def.id,
+        (def) => integrationAccount?.integrationDefinitionId === def.id,
       );
       setIntegrationDefinition(definition);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [integrationDefinitions, integrationAccount?.integrationDefinitionId]);
 
     // Fetch URL when definition changes
@@ -117,6 +113,11 @@ export const TaskIntegrationMetadataWrapper = observer(
       fetchUrl();
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [integrationDefinition]);
+
+    // Early return if no external links or still loading
+    if (!taskExternalLinks[0] || isLoading) {
+      return null;
+    }
 
     if (!integrationDefinition || !url) {
       return null;

@@ -9,6 +9,8 @@ import {
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 
+import { Shortcut } from 'common/shortcut';
+
 import { useApplication } from 'hooks/application';
 
 import { useContextStore } from 'store/global-context-provider';
@@ -40,7 +42,8 @@ export const CommandComponent = observer(
                 className="flex gap-2 items-center py-2"
               >
                 <command.Icon size={16} />
-                {command.text}
+                <div className="grow">{command.text}</div>
+                {command.shortcut && <Shortcut shortcut={command.shortcut} />}
               </CommandItem>
             );
           })}
@@ -91,10 +94,9 @@ export const CommandComponent = observer(
                 key={`task__${index}`}
                 className="flex gap-1 items-center py-2"
               >
-                <div className="inline-flex items-center gap-2 min-w-[0px]">
-                  <command.Icon size={16} className="shrink-0" />
-                  <div className="truncate"> {command.text}</div>
-                </div>
+                <command.Icon size={16} className="shrink-0" />
+                <div className="grow"> {command.text}</div>
+                {command.shortcut && <Shortcut shortcut={command.shortcut} />}
               </CommandItem>
             );
           })}

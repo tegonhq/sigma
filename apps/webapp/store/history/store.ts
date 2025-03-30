@@ -13,8 +13,10 @@ const HistoryManagerModel = types
     // Push the current snapshot into the history
     pushSnapshot(store: any) {
       const snapshot = getSnapshot(store);
-      self.history.slice(0, self.currentIndex + 1); // Remove forward states
+
+      self.history = [...self.history.slice(0, self.currentIndex + 1)] as any; // Remove forward states
       self.history.push(snapshot);
+
       self.currentIndex++;
 
       (self as any).saveCurrentStateToIndexedDB(snapshot);
@@ -65,7 +67,12 @@ const HistoryManagerModel = types
   }));
 
 // Create an instance of the HistoryManager model
-export const historyManager = HistoryManagerModel.create({
-  history: [],
-  currentIndex: -1,
-});
+export let historyManager: any;
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const historyLoad = (startHistory: any) => {
+  historyManager = HistoryManagerModel.create({
+    history: [startHistory],
+    currentIndex: 0,
+  });
+};

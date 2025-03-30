@@ -24,7 +24,6 @@ export const TaskExtension = ({
   Node.create({
     name: INLINE_TASK_CONTENT_NAME,
     selectable: true, // Allows the whole node to be selectable
-    isolating: true, // Ensures that selecting part of the text doesn't include the node itself
 
     content() {
       return this.options.nested ? 'paragraph block*' : 'paragraph';
