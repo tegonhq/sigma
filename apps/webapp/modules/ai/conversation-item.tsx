@@ -12,6 +12,10 @@ import { UserAvatar } from 'common/user-avatar';
 import { useRunTasksMutation } from 'services/conversations';
 
 import { UserContext } from 'store/user-context';
+import { TaskExtension } from 'common/editor/task-extension';
+import { useContextStore } from 'store/global-context-provider';
+import { useUpdateTaskMutation } from 'services/tasks';
+import { useDebouncedCallback } from 'use-debounce';
 
 interface AIConversationItemProps {
   conversationHistory: ConversationHistoryType;
@@ -21,10 +25,35 @@ const { publicRuntimeConfig } = getConfig();
 
 export const ConversationItem = observer(
   ({ conversationHistory }: AIConversationItemProps) => {
+    const { tasksStore } = useContextStore();
+    const { mutate: updateTask } = useUpdateTaskMutation({});
     const user = React.useContext(UserContext);
     const id = `a${conversationHistory.id.replace(/-/g, '')}`;
     const editorRef = useRef<Editor | null>(null);
     const { mutate: runTasks } = useRunTasksMutation({});
+
+    const debounceUpdateTask = useDebouncedCallback(
+      async ({ title, taskId }: { title: string; taskId: string }) => {
+        updateTask({
+          title,
+          taskId,
+        });
+      },
+      500,
+    );
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const onTaskExtensionUpdate = ({ newNode }: any) => {
+      const task = tasksStore.getTaskWithId(newNode.attrs.id);
+      if (task) {
+        debounceUpdateTask({
+          title: newNode.textContent,
+          taskId: task.id,
+        });
+      }
+
+      return true;
+    };
 
     useEffect(() => {
       const element = document.getElementById(id);
@@ -33,7 +62,10 @@ export const ConversationItem = observer(
       if (element) {
         editor = new Editor({
           element,
-          extensions: defaultExtensions,
+          extensions: [
+            ...defaultExtensions,
+            TaskExtension({ update: onTaskExtensionUpdate }),
+          ],
           editable: false,
           content: conversationHistory.message.replaceAll('\\n', '<br/ >'),
         });

@@ -1,5 +1,6 @@
 import {
   Button,
+  IssuesLine,
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
@@ -14,6 +15,7 @@ import { Key } from 'ts-key-enum';
 import { AI } from 'modules/ai';
 import { SingleTaskWithoutLayout } from 'modules/tasks/single-task';
 
+import { Shortcut } from 'common/shortcut';
 import { SCOPES } from 'common/shortcut-scopes';
 import { useLocalCommonState } from 'common/use-local-state';
 import { TaskViewContext } from 'layouts/side-task-view';
@@ -32,8 +34,7 @@ interface RightSideLayoutProps {
 export const RightSideLayout = observer(
   ({ children, header }: RightSideLayoutProps) => {
     const [size, setSize] = useLocalCommonState('panelSize', 15);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [aiCollapsed, _setAICollapsed] = React.useState(true);
+    const [aiCollapsed, setAICollapsed] = React.useState(true);
     const [rightSideCollapsed, setRightSideCollapsed] = React.useState(true);
     const { open } = useSidebar();
     const { taskId, closeTaskView } = React.useContext(TaskViewContext);
@@ -42,17 +43,26 @@ export const RightSideLayout = observer(
     const firstTab = tabs[0];
 
     useHotkeys(
-      [`${Key.Meta}+.`],
+      [`${Key.Meta}+l`, 'c', 't'],
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (event) => {
         switch (event.key) {
-          case '.':
-            if (rightSideCollapsed) {
-              setRightSideCollapsed(false);
-            } else {
-              onClose();
+          case 'l':
+            if (event.metaKey) {
+              if (rightSideCollapsed) {
+                setRightSideCollapsed(false);
+              } else {
+                onClose();
+              }
             }
-
+            break;
+          case 'c':
+            if (aiCollapsed) {
+              event.preventDefault();
+              setAICollapsed(false);
+            }
+            break;
+          case 't':
             break;
           default:
             break;
@@ -89,6 +99,13 @@ export const RightSideLayout = observer(
           <Button variant="secondary" className="flex gap-1">
             <AIIcon size={14} />
             Start AI chat
+            <Shortcut shortcut="C" className="font-mono text-base" />
+          </Button>
+
+          <Button variant="secondary" className="flex gap-1 items-center">
+            <IssuesLine size={14} />
+            Open task
+            <Shortcut shortcut="T" className="font-mono text-base" />
           </Button>
         </div>
       );
@@ -96,6 +113,7 @@ export const RightSideLayout = observer(
 
     const onClose = () => {
       setRightSideCollapsed(true);
+      setAICollapsed(true);
       closeTaskView();
     };
 

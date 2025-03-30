@@ -34,9 +34,7 @@ export const Conversation = observer(() => {
     mutate: streamConversation,
     isLoading,
     thoughts,
-  } = useStreamConversationMutation({
-    baseHost: publicRuntimeConfig.NEXT_PUBLIC_AI_HOST,
-  });
+  } = useStreamConversationMutation();
   const { mutate: createConversationHistory } =
     useCreateConversationHistoryMutation({});
   const { mutate: createConversation } = useCreateConversationMutation({});
@@ -63,6 +61,8 @@ export const Conversation = observer(() => {
               conversationId: commonStore.currentConversationId,
               conversationHistoryId: data.id,
               workspaceId: user.workspace.id,
+              userId: user.id,
+              autoMode: true,
             });
           },
         },
@@ -80,6 +80,8 @@ export const Conversation = observer(() => {
               conversationId: data.id,
               conversationHistoryId: data.ConversationHistory[0].id,
               workspaceId: user.workspace.id,
+              userId: user.id,
+              autoMode: true,
             });
           },
         },

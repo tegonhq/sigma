@@ -3,11 +3,7 @@ import { useMutation } from 'react-query';
 
 import { useContextStore } from 'store/global-context-provider';
 
-export function useStreamConversationMutation({
-  baseHost,
-}: {
-  baseHost: string;
-}) {
+export function useStreamConversationMutation() {
   const [responses, setResponses] = useState([]);
   const [thoughts, setThoughts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -18,14 +14,18 @@ export function useStreamConversationMutation({
       conversationId,
       conversationHistoryId,
       workspaceId,
+      userId,
+      autoMode,
     }: {
       conversationId: string;
       conversationHistoryId: string;
       workspaceId: string;
+      userId: string;
+      autoMode: boolean;
     }) => {
       setResponses([]);
 
-      const response = await fetch(`${baseHost}/chat`, {
+      const response = await fetch(`/ai/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -34,9 +34,10 @@ export function useStreamConversationMutation({
         body: JSON.stringify({
           conversation_id: conversationId,
           conversation_history_id: conversationHistoryId,
-          integration_names: ['tegon'],
           workspace_id: workspaceId,
+          user_id: userId,
           stream: true,
+          auto_mode: autoMode,
         }),
       });
 

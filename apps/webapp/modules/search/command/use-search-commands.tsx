@@ -84,7 +84,7 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
       {
         Icon: IssuesLine,
         text: 'Create task',
-        shortcut: '⌘ + n',
+        shortcut: 'cmd + n',
         command: () => {
           onClose();
 
@@ -94,7 +94,7 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
       {
         Icon: CalendarLine,
         text: 'Go to today',
-        shortcut: '⌘ + 1',
+        shortcut: 'cmd + 1',
         command: () => {
           updateTabType(0, TabViewType.MY_DAY, {
             data: {
@@ -108,7 +108,7 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
       {
         Icon: IssuesLine,
         text: 'Go to tasks',
-        shortcut: '⌘ + 2',
+        shortcut: 'cmd + 2',
         command: () => {
           updateTabType(0, TabViewType.MY_TASKS, {});
 
@@ -168,7 +168,7 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
         {
           Icon: DeleteLine,
           text: 'Delete task',
-          shortcut: '⌘ + ⌫',
+          shortcut: 'cmd + ⌫',
           command: () => {
             onClose();
             deleteTasks(getTasks());

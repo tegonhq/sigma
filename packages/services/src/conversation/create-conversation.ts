@@ -5,7 +5,7 @@ export async function createConversation(
   createComversationDto: CreateConversationDto,
 ) {
   const response = await axios.post(
-    `/api/v1/conversations`,
+    `/api/v1/conversation`,
     createComversationDto,
   );
 

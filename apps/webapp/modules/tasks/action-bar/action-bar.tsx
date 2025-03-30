@@ -61,7 +61,7 @@ export const ActionBar = observer(({ openDialog }: ActionBarProps) => {
           }}
         >
           <Clock size={16} />
-          <Shortcut shortcut="S" className="ml-1" />
+          <Shortcut shortcut="S" className="font-mono ml-1" />
         </Button>
 
         <Button
@@ -72,7 +72,7 @@ export const ActionBar = observer(({ openDialog }: ActionBarProps) => {
           }}
         >
           <Fire size={16} />
-          <Shortcut shortcut="D" className="ml-1" />
+          <Shortcut shortcut="D" className="font-mono ml-1" />
         </Button>
 
         <Button
@@ -83,7 +83,7 @@ export const ActionBar = observer(({ openDialog }: ActionBarProps) => {
           }}
         >
           <Check size={16} />
-          <Shortcut shortcut="C" className="ml-1" />
+          <Shortcut shortcut="C" className="font-mono ml-1" />
         </Button>
 
         <Button
