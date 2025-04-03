@@ -4,17 +4,14 @@ import { type ImageUploadOptions } from 'novel/plugins';
 
 const onUploadFile = async (file: File) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const workspaceId = (window as any).workspaceId;
+
   const formData = new FormData();
 
   formData.append('files', file);
-  const response = await fetch(
-    `/api/v1/attachment/upload?workspaceId=${workspaceId}`,
-    {
-      method: 'POST',
-      body: formData,
-    },
-  );
+  const response = await fetch(`/api/v1/attachment/upload`, {
+    method: 'POST',
+    body: formData,
+  });
 
   const responseJSON = await response.json();
 
@@ -40,7 +37,7 @@ export const createImageUpload =
         .chain()
         .insertContentAt(pos, [
           {
-            type: 'imageExtension',
+            type: 'img',
             attrs: {
               src: response.publicURL,
               alt: response.originalName,
@@ -76,13 +73,13 @@ export const handleMarkAndImagePaste = (
   uploadFn: UploadFileFn,
 ) => {
   if (event.clipboardData?.files.length) {
-    return handleImagePaste(editor, event, uploadFn);
+    return handleFilePage(editor, event, uploadFn);
   }
 
   return false;
 };
 
-export const handleImagePaste = (
+export const handleFilePage = (
   editor: Editor,
   event: ClipboardEvent,
   uploadFn: UploadFileFn,
@@ -92,7 +89,11 @@ export const handleImagePaste = (
   const pos = editor.view.state.selection.from;
 
   if (file) {
-    uploadFn(file, editor, pos);
+    if (file.type.startsWith('image/')) {
+      uploadFn(file, editor, pos);
+    } else {
+      uploadFileFn(file, editor, pos);
+    }
   }
 
   return true;
@@ -118,7 +119,7 @@ export const createFileUpload =
         .chain()
         .insertContentAt(pos, [
           {
-            type: 'fileExtension',
+            type: 'file',
             attrs: {
               src: response.publicURL,
               alt: response.originalName,

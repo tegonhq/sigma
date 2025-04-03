@@ -124,6 +124,8 @@ export class TasksService {
     workspaceId: string,
     tx?: TransactionClient,
   ): Promise<Task> {
+    console.log(createTaskDto);
+
     const prismaClient = tx || this.prisma;
     const {
       title,
@@ -160,6 +162,14 @@ export class TasksService {
           page: true,
         },
       });
+
+      if (pageDescription) {
+        await this.pageService.updatePage(
+          { htmlDescription: pageDescription },
+          task.pageId,
+          tx,
+        );
+      }
 
       return task;
     }
@@ -224,6 +234,7 @@ export class TasksService {
       status: taskStatus,
       source,
       listId,
+      pageDescription,
       ...otherTaskData
     } = updateTaskDto;
 
@@ -258,6 +269,14 @@ export class TasksService {
         page: true,
       },
     });
+
+    if (pageDescription) {
+      await this.pageService.updatePage(
+        { htmlDescription: pageDescription },
+        updatedTask.pageId,
+        tx,
+      );
+    }
 
     return updatedTask;
   }

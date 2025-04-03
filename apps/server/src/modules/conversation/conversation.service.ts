@@ -11,15 +11,19 @@ export class ConversationService {
     userId: string,
     conversationData: CreateConversationDto,
   ): Promise<Conversation> {
+    const { pageId, taskId, ...otherData } = conversationData;
+
     return this.prisma.conversation.create({
       data: {
         workspaceId,
         userId,
+        pageId,
+        taskId,
         title: conversationData.message.substring(0, 100),
         ConversationHistory: {
           create: {
             userId,
-            ...conversationData,
+            ...otherData,
           },
         },
       },

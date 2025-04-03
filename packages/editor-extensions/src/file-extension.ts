@@ -1,7 +1,7 @@
 import { mergeAttributes, Node } from '@tiptap/core';
 
 export const fileExtension = Node.create({
-  name: 'fileExtension',
+  name: 'file',
   group: 'block',
   atom: true,
 

@@ -332,7 +332,7 @@ export function DragHandlePlugin(
           rect.top += paddingTop;
           // Li markers
           if (node.matches('ul:not([data-type=taskList]) li, ol li')) {
-            rect.left -= options.dragHandleWidth;
+            rect.left -= 15;
           }
 
           if (node.matches('li[data-type=taskItem] p')) {
@@ -340,7 +340,7 @@ export function DragHandlePlugin(
           }
 
           if (node.matches('li[data-type=taskItem]')) {
-            rect.left -= 3;
+            rect.left -= 5;
             rect.top += 3;
           }
 

@@ -48,6 +48,7 @@ export class AttachmentService {
       const blob = bucket.file(
         `${workspaceId}/${attachment.id}.${attachment.fileExt}`,
       );
+
       await blob.save(file.buffer, {
         resumable: false,
         validation: false,

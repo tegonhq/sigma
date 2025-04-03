@@ -13,6 +13,8 @@ import { SCOPES } from 'common/shortcut-scopes';
 
 import { useApplication } from 'hooks/application';
 
+import { DeleteTaskAlert } from './delete-task-alert';
+
 interface ActionBarProps {
   openDialog: (dialogType: DialogType) => void;
 }
@@ -20,6 +22,7 @@ interface ActionBarProps {
 export const ActionBar = observer(({ openDialog }: ActionBarProps) => {
   const { selectedTasks, clearSelectedTask } = useApplication();
   const { markComplete, deleteTasks } = useTaskOperations();
+  const [deleteTaskAlert, setDeleteTaskAlert] = React.useState(false);
 
   useHotkeys(
     [`${Key.Meta}+${Key.Backspace}`, 'c', Key.Escape],
@@ -27,7 +30,7 @@ export const ActionBar = observer(({ openDialog }: ActionBarProps) => {
       switch (event.key) {
         case Key.Backspace:
           if (event.metaKey) {
-            deleteTasks(selectedTasks);
+            setDeleteTaskAlert(true);
           }
           break;
         case 'c':
@@ -108,6 +111,12 @@ export const ActionBar = observer(({ openDialog }: ActionBarProps) => {
           <Close size={16} />
         </Button>
       </div>
+
+      <DeleteTaskAlert
+        deleteTask={() => deleteTasks(selectedTasks)}
+        open={deleteTaskAlert}
+        setOpen={setDeleteTaskAlert}
+      />
     </div>
   );
 });

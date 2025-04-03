@@ -205,9 +205,11 @@ export class PagesService {
     if (finalDescription) {
       await this.contentService.updateContentForDocument(
         pageId,
-        JSON.parse(description),
+        JSON.parse(finalDescription),
       );
     }
+
+    console.log('came here');
 
     return prismaClient.page.update({
       where: { id: pageId },

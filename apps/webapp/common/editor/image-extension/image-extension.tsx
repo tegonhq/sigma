@@ -4,7 +4,7 @@ import { ReactNodeViewRenderer } from '@tiptap/react';
 import { ImageComponent } from './image-component';
 
 export const imageExtension = Node.create({
-  name: 'imageExtension',
+  name: 'img',
   group: 'block',
   atom: true,
 
@@ -28,13 +28,13 @@ export const imageExtension = Node.create({
   parseHTML() {
     return [
       {
-        tag: 'image-extension',
+        tag: 'img',
       },
     ];
   },
 
   renderHTML({ HTMLAttributes }) {
-    return ['image-extension', mergeAttributes(HTMLAttributes)];
+    return ['img', mergeAttributes(HTMLAttributes)];
   },
 
   addNodeView() {

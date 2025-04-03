@@ -1,36 +1,34 @@
 import { UserTypeEnum } from '@sigma/types';
-import { AI, Button } from '@tegonhq/ui';
+import { AI } from '@tegonhq/ui';
 import { Editor } from '@tiptap/core';
 import { observer } from 'mobx-react-lite';
-import getConfig from 'next/config';
 import React, { useEffect, useRef } from 'react';
-
-import { defaultExtensions } from 'common/editor';
-import type { ConversationHistoryType } from 'common/types';
-import { UserAvatar } from 'common/user-avatar';
-
-import { useRunTasksMutation } from 'services/conversations';
-
-import { UserContext } from 'store/user-context';
-import { TaskExtension } from 'common/editor/task-extension';
-import { useContextStore } from 'store/global-context-provider';
-import { useUpdateTaskMutation } from 'services/tasks';
 import { useDebouncedCallback } from 'use-debounce';
 
+import { defaultExtensions } from 'common/editor';
+import { TaskExtension } from 'common/editor/task-extension';
+import { UserAvatar } from 'common/user-avatar';
+
+import { useUpdateTaskMutation } from 'services/tasks';
+
+import { useContextStore } from 'store/global-context-provider';
+import { UserContext } from 'store/user-context';
+
 interface AIConversationItemProps {
-  conversationHistory: ConversationHistoryType;
+  conversationHistoryId: string;
 }
 
-const { publicRuntimeConfig } = getConfig();
-
 export const ConversationItem = observer(
-  ({ conversationHistory }: AIConversationItemProps) => {
-    const { tasksStore } = useContextStore();
+  ({ conversationHistoryId }: AIConversationItemProps) => {
+    const { tasksStore, conversationHistoryStore } = useContextStore();
+    const conversationHistory =
+      conversationHistoryStore.getConversationHistoryForId(
+        conversationHistoryId,
+      );
     const { mutate: updateTask } = useUpdateTaskMutation({});
     const user = React.useContext(UserContext);
     const id = `a${conversationHistory.id.replace(/-/g, '')}`;
-    const editorRef = useRef<Editor | null>(null);
-    const { mutate: runTasks } = useRunTasksMutation({});
+    const [editor, setEditor] = React.useState(undefined);
 
     const debounceUpdateTask = useDebouncedCallback(
       async ({ title, taskId }: { title: string; taskId: string }) => {
@@ -57,29 +55,28 @@ export const ConversationItem = observer(
 
     useEffect(() => {
       const element = document.getElementById(id);
-      let editor: Editor;
+      element.replaceChildren();
 
       if (element) {
-        editor = new Editor({
-          element,
-          extensions: [
-            ...defaultExtensions,
-            TaskExtension({ update: onTaskExtensionUpdate }),
-          ],
-          editable: false,
-          content: conversationHistory.message.replaceAll('\\n', '<br/ >'),
-        });
-        editorRef.current = editor;
+        setEditor(
+          new Editor({
+            element,
+            extensions: [
+              ...defaultExtensions,
+              TaskExtension({ update: onTaskExtensionUpdate }),
+            ],
+            editable: false,
+            content: conversationHistory.message,
+          }),
+        );
       }
+
       // Clean up on unmount
       return () => {
         editor && editor.destroy();
       };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id, conversationHistory.message]);
-
-    const thoughts = JSON.parse(conversationHistory.thoughts);
-
-    const pendingTasks = thoughts ?? thoughts?.pendingTasks ?? [];
 
     const getIcon = () => {
       if (conversationHistory.userType === UserTypeEnum.User) {
@@ -95,24 +92,6 @@ export const ConversationItem = observer(
 
         <div className="flex flex-col">
           <div id={id}></div>
-          {pendingTasks && pendingTasks.length > 0 && (
-            <div className="flex justify-end">
-              <Button
-                variant="secondary"
-                onClick={() => {
-                  runTasks({
-                    baseHost: publicRuntimeConfig.NEXT_PUBLIC_AI_HOST,
-                    conversationId: conversationHistory.conversationId,
-                    conversationHistoryId: conversationHistory.id,
-                    workspaceId: user.workspace.id,
-                    taskIds: [],
-                  });
-                }}
-              >
-                Execute all
-              </Button>
-            </div>
-          )}
         </div>
       </div>
     );

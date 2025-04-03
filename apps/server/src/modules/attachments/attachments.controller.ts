@@ -12,13 +12,9 @@ import {
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
-import { SessionContainer } from 'supertokens-node/recipe/session';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
-import {
-  Session as SessionDecorator,
-  Workspace,
-} from 'modules/auth/session.decorator';
+import { UserId, Workspace } from 'modules/auth/session.decorator';
 
 import {
   AttachmentRequestParams,
@@ -37,13 +33,11 @@ export class AttachmentController {
   @UseInterceptors(FilesInterceptor('files'))
   @UseGuards(AuthGuard)
   async uploadFiles(
-    @SessionDecorator() session: SessionContainer,
+    @UserId() userId: string,
     @Workspace() workspaceId: string,
     @UploadedFiles() files: Express.Multer.File[],
     @Body() attachmentBody: AttachmentBody,
   ) {
-    const userId = session.getUserId();
-
     const sourceMetadata = attachmentBody.sourceMetadata
       ? JSON.parse(attachmentBody.sourceMetadata)
       : null;

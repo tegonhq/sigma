@@ -15,19 +15,22 @@ interface PageTitleProps {
 export const PageTitle = React.forwardRef(
   ({ value, onChange, autoFocus, className }: PageTitleProps) => {
     const [inputValue, setInputValue] = React.useState(value);
+    const [updatedFromComponent, setUpdatedFromComponent] =
+      React.useState(false);
 
     React.useEffect(() => {
-      if (value !== inputValue) {
+      if (value !== inputValue && !updatedFromComponent) {
         setInputValue(value);
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [value]);
+    }, [value, updatedFromComponent]);
 
     const debouncedUpdates = useDebouncedCallback(async (title: string) => {
       onChange && onChange(title);
     }, 500);
 
     const onInputChange = (title: string) => {
+      setUpdatedFromComponent(true);
       setInputValue(title);
       debouncedUpdates(title);
     };

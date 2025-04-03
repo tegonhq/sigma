@@ -73,7 +73,7 @@ export const ListPage = observer(({ entity_id }: TabsProps) => {
 
   return (
     <RightSideLayout header={<ListPageHeader list={list} />}>
-      <ScrollArea className="w-full h-full flex justify-center p-4">
+      <ScrollArea className="w-full h-full flex justify-center p-4 px-6 h-[calc(100vh_-_54px)]">
         <div className="flex h-full justify-center w-full">
           <div className="grow flex flex-col gap-2 h-full max-w-[97ch]">
             <div className="flex gap-2 items-center">

@@ -145,7 +145,7 @@ export const RightSideLayout = observer(
             </ResizablePanel>
             {!rightSideCollapsed && (
               <>
-                <ResizableHandle className="w-3" />
+                <ResizableHandle className="w-2.5" />
 
                 <ResizablePanel
                   className="bg-background-2 rounded-md"

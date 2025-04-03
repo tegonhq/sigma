@@ -1,4 +1,5 @@
 import { cn, ScrollArea } from '@tegonhq/ui';
+import { sort } from 'fast-sort';
 import { observer } from 'mobx-react-lite';
 import { useRouter } from 'next/router';
 import React from 'react';
@@ -7,6 +8,8 @@ import { Key } from 'ts-key-enum';
 
 import { SCOPES } from 'common/shortcut-scopes';
 import { RightSideLayout } from 'layouts/right-side-layout';
+
+import { useScope } from 'hooks/use-scope';
 
 import { useUpdateTaskMutation } from 'services/tasks';
 
@@ -17,8 +20,6 @@ import { SingleTaskMetadata } from './single-task-metadata';
 import { PageTitle } from './single-task-title';
 import { Header } from '../header';
 import { SingleTaskStatus } from './single-task-status';
-import { useScope } from 'hooks/use-scope';
-import { sort } from 'fast-sort';
 
 interface SingleTaskProps {
   index?: number;
@@ -83,10 +84,10 @@ export const SingleTaskWithoutLayout = observer(
     }
 
     return (
-      <ScrollArea className="w-full h-full flex justify-center">
+      <ScrollArea className="w-full h-full flex justify-center p-4 h-[calc(100vh_-_54px)]">
         <div className="flex h-full justify-center w-full">
           <div className="grow flex flex-col gap-2 h-full max-w-[97ch]">
-            <div className="px-4 pt-4 flex gap-2 items-start">
+            <div className="px-4 flex gap-2 items-start">
               <SingleTaskStatus task={task} />
               <PageTitle
                 value={page.title}

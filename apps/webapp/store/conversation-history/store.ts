@@ -54,4 +54,9 @@ export const ConversationHistoryStore: IAnyStateTreeNode = types
         (ch: ConversationHistoryType) => ch.conversationId === id,
       );
     },
+    getConversationHistoryForId(id: string) {
+      return self.conversationHistory.find(
+        (ch: ConversationHistoryType) => ch.id === id,
+      );
+    },
   }));

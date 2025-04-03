@@ -8,8 +8,6 @@ import type { ConversationHistoryType } from 'common/types';
 
 import { useConversationHistory } from 'hooks/conversations';
 
-const { publicRuntimeConfig } = getConfig();
-
 import {
   useCreateConversationHistoryMutation,
   useCreateConversationMutation,
@@ -21,6 +19,7 @@ import { UserContext } from 'store/user-context';
 
 import { ConversationItem } from './conversation-item';
 import { ConversationTextarea } from './conversation-textarea';
+import { useConversationContext } from './use-conversation-context';
 
 export const Conversation = observer(() => {
   const { commonStore } = useContextStore();
@@ -39,6 +38,9 @@ export const Conversation = observer(() => {
     useCreateConversationHistoryMutation({});
   const { mutate: createConversation } = useCreateConversationMutation({});
   const scrollRef = React.useRef(null);
+  const pageId = useConversationContext();
+
+  console.log(pageId);
 
   React.useEffect(() => {
     if (scrollRef.current) {
@@ -72,6 +74,7 @@ export const Conversation = observer(() => {
         {
           message: text,
           userType: UserTypeEnum.User,
+          pageId,
         },
         {
           onSuccess: (data) => {
@@ -98,7 +101,7 @@ export const Conversation = observer(() => {
           (conversationHistory: ConversationHistoryType, index: number) => (
             <ConversationItem
               key={index}
-              conversationHistory={conversationHistory}
+              conversationHistoryId={conversationHistory.id}
             />
           ),
         )}

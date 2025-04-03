@@ -19,6 +19,7 @@ export interface ConversationHistoryStoreType {
   getConversationHistoryForConversation: (
     id: string,
   ) => ConversationHistoryType[];
+  getConversationHistoryForId: (id: string) => ConversationHistoryType;
   update: (
     conversation: Partial<ConversationHistoryType>,
     id: string,

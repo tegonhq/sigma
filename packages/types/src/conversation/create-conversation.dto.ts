@@ -16,4 +16,12 @@ export class CreateConversationDto {
   @IsObject()
   @IsOptional()
   thoughts?: Record<string, any>;
+
+  @IsString()
+  @IsOptional()
+  pageId?: string;
+
+  @IsString()
+  @IsOptional()
+  taskId?: string;
 }

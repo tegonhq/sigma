@@ -38,14 +38,32 @@ export function ListPageEditor({
   const { tasksStore } = useContextStore();
   const { mutate: updateTask } = useUpdateTaskMutation({});
 
-  const debounceUpdateTask = useDebouncedCallback(
-    async ({ title, taskId }: { title: string; taskId: string }) => {
-      updateTask({
-        title,
-        taskId,
-      });
+  // Store a map of taskId -> debounced update functions
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  const debouncedTaskUpdatesRef = React.useRef<Record<string, Function>>({});
+
+  // Create a function to update a specific task with debouncing
+  const updateTaskWithDebounce = React.useCallback(
+    (taskId: string, title: string) => {
+      // If we don't have a debounced function for this task yet, create one
+      if (!debouncedTaskUpdatesRef.current[taskId]) {
+        // We'll manually implement debouncing since we can't use the hook in a callback
+        let timeoutId: NodeJS.Timeout;
+        debouncedTaskUpdatesRef.current[taskId] = (newTitle: string) => {
+          clearTimeout(timeoutId);
+          timeoutId = setTimeout(() => {
+            updateTask({
+              title: newTitle,
+              taskId,
+            });
+          }, 500);
+        };
+      }
+
+      // Call the debounced function
+      debouncedTaskUpdatesRef.current[taskId](title);
     },
-    500,
+    [updateTask],
   );
 
   React.useEffect(() => {
@@ -79,11 +97,9 @@ export function ListPageEditor({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onTaskExtensionUpdate = ({ newNode }: any) => {
     const task = tasksStore.getTaskWithId(newNode.attrs.id);
+
     if (task) {
-      debounceUpdateTask({
-        title: newNode.textContent,
-        taskId: task.id,
-      });
+      updateTaskWithDebounce(task.id, newNode.textContent);
     }
 
     return true;

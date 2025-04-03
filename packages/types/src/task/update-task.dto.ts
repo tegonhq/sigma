@@ -50,4 +50,8 @@ export class UpdateTaskDto {
   @IsString()
   @IsOptional()
   parentId?: string;
+
+  @IsString()
+  @IsOptional()
+  pageDescription?: string;
 }

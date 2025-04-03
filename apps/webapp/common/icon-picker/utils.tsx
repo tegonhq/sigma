@@ -36,5 +36,5 @@ export const getIcon = (icon: string, size: number, className?: string) => {
     }
   }
 
-  return <Project size={size} />;
+  return <Project size={size} className={cn('shrink-0', className)} />;
 };

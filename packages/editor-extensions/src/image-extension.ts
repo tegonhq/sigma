@@ -1,7 +1,7 @@
 import { mergeAttributes, Node } from '@tiptap/core';
 
 export const imageExtension = Node.create({
-  name: 'imageExtension',
+  name: 'img',
   group: 'block',
   atom: true,
 

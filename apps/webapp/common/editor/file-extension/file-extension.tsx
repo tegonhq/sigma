@@ -4,7 +4,7 @@ import { ReactNodeViewRenderer } from '@tiptap/react';
 import { FileComponent } from './file-component';
 
 export const fileExtension = Node.create({
-  name: 'fileExtension',
+  name: 'file',
   group: 'block',
   atom: true,
 

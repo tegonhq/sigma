@@ -86,6 +86,7 @@ export class ConversationHistoryService {
     const conversationHistory =
       await this.prisma.conversationHistory.findUnique({
         where: { id: conversationHistoryId },
+        include: { conversation: true },
       });
 
     if (!conversationHistory) {
@@ -93,11 +94,31 @@ export class ConversationHistoryService {
     }
     const context =
       (conversationHistory.context as ConversationContextData) || {};
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { pages, tasks, ...otherContextData } = context;
+
+    // Add page/task from conversation if they exist
+    if (conversationHistory.conversation.pageId) {
+      if (!context.pages) {
+        context.pages = [];
+      }
+      if (!context.pages.includes(conversationHistory.conversation.pageId)) {
+        context.pages.push(conversationHistory.conversation.pageId);
+      }
+    }
+
+    if (conversationHistory.conversation.taskId) {
+      if (!context.tasks) {
+        context.tasks = [];
+      }
+      if (!context.tasks.includes(conversationHistory.conversation.taskId)) {
+        context.tasks.push(conversationHistory.conversation.taskId);
+      }
+    }
 
     // Get pages data if pageIds exist
     let page: Array<Partial<Page>> = [];
-    if (pages?.length) {
+    if (context.pages?.length) {
       page = await Promise.all(
         context.pages.map(async (pageId: string) => {
           const page = await this.prisma.page.findUnique({
@@ -109,10 +130,9 @@ export class ConversationHistoryService {
           return {
             title: page.title,
             id: page.id,
-            descrition: generateHTML(
-              JSON.parse(page.description),
-              defaultExtensions,
-            ),
+            descrition: page.description
+              ? generateHTML(JSON.parse(page.description), defaultExtensions)
+              : undefined,
           };
         }),
       );
@@ -120,7 +140,7 @@ export class ConversationHistoryService {
 
     // Get pages data if pageIds exist
     let task: Array<Partial<Task>> = [];
-    if (tasks?.length) {
+    if (context.tasks?.length) {
       task = await Promise.all(
         context.tasks.map(async (taskId: string) => {
           const task = await this.prisma.task.findUnique({

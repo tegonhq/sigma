@@ -10,7 +10,7 @@ import { LoggerService } from 'modules/logger/logger.service';
 import { isValidAuthentication } from 'modules/sync/sync.utils';
 @Injectable()
 export class ContentService implements OnModuleInit {
-  private readonly logger: LoggerService = new LoggerService('ContentGateway');
+  private readonly logger: LoggerService = new LoggerService('ContentService');
   private server: Hocuspocus;
 
   constructor(private prisma: PrismaService) {}
@@ -70,10 +70,12 @@ export class ContentService implements OnModuleInit {
       documentName,
       {},
     );
+    console.log(documentName, json);
 
     await docConnection.transact((doc) => {
       const editorState = doc.getXmlFragment('default');
 
+      console.log(documentName, json, editorState);
       try {
         prosemirrorJSONToYXmlFragment(getSchema(), json, editorState);
       } catch (e) {

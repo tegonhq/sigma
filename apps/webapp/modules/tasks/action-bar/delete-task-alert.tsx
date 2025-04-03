@@ -9,17 +9,17 @@ import {
   AlertDialogFooter,
 } from '@tegonhq/ui';
 
-interface DeleteListAlertProps {
+interface DeleteTaskAlertProps {
   open: boolean;
   setOpen: (value: boolean) => void;
-  deleteList: () => void;
+  deleteTask: () => void;
 }
 
-export function DeleteListAlert({
+export function DeleteTaskAlert({
   open,
   setOpen,
-  deleteList,
-}: DeleteListAlertProps) {
+  deleteTask,
+}: DeleteTaskAlertProps) {
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogContent className="p-3 text-left">
@@ -27,12 +27,12 @@ export function DeleteListAlert({
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
             This action cannot be undone. This will permanently remove this
-            list.
+            task.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="flex">
           <AlertDialogCancel className="mt-0">Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={() => deleteList()}>
+          <AlertDialogAction onClick={() => deleteTask()}>
             Continue
           </AlertDialogAction>
         </AlertDialogFooter>
