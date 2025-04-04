@@ -44,6 +44,15 @@ fastify.register(fastifyHttpProxy, {
   preHandler: (request, _reply, done) => {
     // Modify headers before the proxy forwards the request
     request.headers['origin'] = 'https://app.mysigma.ai';
+
+    // Special handling for file upload endpoints
+    if (request.url.includes('/upload') && request.method === 'POST') {
+      // Log upload actions or add special headers if needed
+      console.log('File upload detected');
+      // You could add special headers for upload requests if needed
+      // request.headers['x-file-upload'] = 'true';
+    }
+
     done();
   },
 });
@@ -57,6 +66,7 @@ fastify.register(fastifyHttpProxy, {
   preHandler: (request, _reply, done) => {
     // Modify headers before the proxy forwards the request
     request.headers['origin'] = 'https://app.mysigma.ai';
+
     done();
   },
 });

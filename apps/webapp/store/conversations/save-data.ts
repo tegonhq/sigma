@@ -17,6 +17,8 @@ export async function saveConversationData(
         title: record.data.title,
         userId: record.data.userId,
         workspaceId: record.data.workspaceId,
+        pageId: record.data.pageId,
+        taskId: record.data.taskId,
       };
 
       switch (record.action) {

@@ -9,6 +9,8 @@ export const Conversation = types.model({
   title: types.union(types.null, types.string),
   userId: types.string,
   workspaceId: types.string,
+  pageId: types.union(types.null, types.string, types.undefined),
+  taskId: types.union(types.null, types.string, types.undefined),
 });
 
 export interface ConversationStoreType {

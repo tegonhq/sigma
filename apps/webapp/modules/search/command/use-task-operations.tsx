@@ -35,17 +35,12 @@ export const useTaskOperations = () => {
 
   const deleteTasks = (taskIds: string[]) => {
     taskIds.forEach((taskWithOccurrence: string) => {
-      const { taskId, taskOccurrenceId } =
-        getTaskAndOccurrence(taskWithOccurrence);
-      if (taskOccurrenceId) {
-        deleteTaskOccurrence({
-          taskOccurrenceId,
-        });
-      } else {
-        deleteTask({
-          taskId,
-        });
-      }
+      // TODO: instead of deleting the task we need to delete the taskOccurrence
+      const { taskId } = getTaskAndOccurrence(taskWithOccurrence);
+
+      deleteTask({
+        taskId,
+      });
     });
 
     clearSelectedTask();

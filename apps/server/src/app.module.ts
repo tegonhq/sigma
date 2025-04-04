@@ -37,6 +37,7 @@ import { WorkspacesModule } from 'modules/workspaces/workspaces.module';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AttachmentModule } from 'modules/attachments/attachments.module';
 
 @Module({
   imports: [
@@ -84,6 +85,7 @@ import { AppService } from './app.service';
     EventEmitterModule.forRoot(),
 
     ALSModule,
+    AttachmentModule,
     ReplicationModule,
     SyncActionsModule,
 

@@ -2,9 +2,6 @@ import { IsOptional, IsString } from 'class-validator';
 
 export class AttachmentRequestParams {
   @IsString()
-  workspaceId: string;
-
-  @IsString()
   attachmentId: string;
 }
 
@@ -24,4 +21,12 @@ export class AttachmentBody {
   @IsOptional()
   @IsString()
   sourceMetadata: string;
+}
+
+export class SignedURLBody {
+  fileName: string;
+  originalName: string;
+  contentType: string;
+  size: number;
+  mimetype: string;
 }

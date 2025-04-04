@@ -30,17 +30,17 @@ export const TaskViewProvider = observer(
     );
 
     const openTask = (taskId: string, override: boolean = false) => {
-      if (override) {
-        updateTabType(0, TabViewType.MY_TASKS, { entityId: taskId });
+      updateTabType(0, TabViewType.MY_TASKS, { entityId: taskId });
+      return override;
+      // if (override) {
 
-        return;
-      }
+      // }
 
-      if (viewType === 'side_view') {
-        setTaskId(taskId);
-      } else {
-        updateTabType(0, TabViewType.MY_TASKS, { entityId: taskId });
-      }
+      // if (viewType === 'side_view') {
+      //   setTaskId(taskId);
+      // } else {
+      //   updateTabType(0, TabViewType.MY_TASKS, { entityId: taskId });
+      // }
     };
 
     const closeTaskView = () => {

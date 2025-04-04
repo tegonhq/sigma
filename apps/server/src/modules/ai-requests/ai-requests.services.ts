@@ -18,8 +18,6 @@ import {
   streamText,
 } from 'ai';
 import { PrismaService } from 'nestjs-prisma';
-import { Ollama } from 'ollama';
-import { ollama } from 'ollama-ai-provider';
 
 import { LoggerService } from 'modules/logger/logger.service';
 
@@ -29,15 +27,7 @@ export default class AIRequestsService {
   constructor(
     private prisma: PrismaService,
     private configService: ConfigService,
-  ) {
-    if (
-      !configService.get('OPENAI_API_KEY') &&
-      !configService.get('ANTHROPIC_API_KEY')
-    ) {
-      const ollama = new Ollama({ host: process.env['OLLAMA_HOST'] });
-      ollama.pull({ model: process.env['LOCAL_MODEL'] });
-    }
-  }
+  ) {}
 
   async getLLMRequest(
     reqBody: GetAIRequestDTO,
@@ -140,12 +130,10 @@ export default class AIRequestsService {
         break;
 
       default:
-        finalModel = process.env.LOCAL_MODEL;
-        this.logger.info({
-          message: `Sending request to ollama with model: ${model}`,
+        this.logger.error({
+          message: `No model choosen`,
           where: `AIRequestsService.makeModelCall`,
         });
-        modelInstance = ollama(finalModel);
     }
 
     if (stream) {

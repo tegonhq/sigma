@@ -4,6 +4,7 @@ export enum SCOPES {
   Search = 'search',
   Task = 'task',
   Tasks = 'tasks',
+  AI = 'ai',
 
   // view
   SIDE_VIEW = 'SIDE_VIEW',

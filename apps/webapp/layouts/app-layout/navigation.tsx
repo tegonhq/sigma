@@ -58,7 +58,7 @@ export const Navigation = observer(() => {
         size="xs"
         variant="ghost"
         onClick={back}
-        disabled={!historyManager.canGoBack}
+        disabled={!historyManager?.canGoBack}
       >
         <ArrowLeft size={14} />
       </Button>
@@ -66,7 +66,7 @@ export const Navigation = observer(() => {
         size="xs"
         variant="ghost"
         onClick={forward}
-        disabled={!historyManager.canGoForward}
+        disabled={!historyManager?.canGoForward}
       >
         <ArrowRight size={14} />
       </Button>

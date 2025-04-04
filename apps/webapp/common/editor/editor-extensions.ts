@@ -49,7 +49,7 @@ const heading = Heading.extend({
     return [
       `h${level}`,
       mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
-        class: `h${node.attrs.level}-style ${levelMap[level]} pt-2`,
+        class: `h${node.attrs.level}-style ${levelMap[level]} pt-[1rem]`,
       }),
       0,
     ];

@@ -54,7 +54,7 @@ export function IconPicker({
         iconName !== 'createLucideIcon' &&
         iconName.toLowerCase().includes(iconSearch.toLowerCase()),
     )
-    .slice(0, 300); // Limit to 120 icons for performance
+    .slice(0, 100); // Limit to 120 icons for performance
 
   // Filter emojis based on search
   const filteredEmojis = emojiSearch

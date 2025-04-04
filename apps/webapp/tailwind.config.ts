@@ -24,8 +24,8 @@ const config = {
       base: '14px',
       md: '15px',
       lg: '16px',
-      xl: '22px',
-      '2xl': '26px',
+      xl: '20px',
+      '2xl': '24px',
     },
     borderWidth: {
       '0': '0',

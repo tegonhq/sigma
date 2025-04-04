@@ -70,9 +70,9 @@ const HistoryManagerModel = types
 export let historyManager: any;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const historyLoad = (startHistory: any) => {
+export const historyLoad = (startHistory?: any) => {
   historyManager = HistoryManagerModel.create({
-    history: [startHistory],
+    history: startHistory ? [startHistory] : [],
     currentIndex: 0,
   });
 };

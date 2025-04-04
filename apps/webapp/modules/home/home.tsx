@@ -1,24 +1,24 @@
 import { observer } from 'mobx-react-lite';
+import React from 'react';
 
-import { AI } from 'modules/ai';
+import { Conversation } from 'modules/conversation';
 import { Instructions } from 'modules/instructions';
 import { ListPage } from 'modules/lists';
 import { MyDay } from 'modules/my-day';
 import { SearchDialog } from 'modules/search';
 import { Tasks } from 'modules/tasks';
 import { AddTaskDialogProvider } from 'modules/tasks/add-task';
+import { initIntegrations } from 'modules/tasks/utils';
 
 import { SCOPES } from 'common/shortcut-scopes';
 import { AllProviders } from 'common/wrappers/all-providers';
 import { AppLayout } from 'layouts/app-layout';
 
 import { useApplication } from 'hooks/application';
+import { useIPC } from 'hooks/ipc';
 import { useScope } from 'hooks/use-scope';
 
 import { TabViewType } from 'store/application';
-import React from 'react';
-import { useIPC } from 'hooks/ipc';
-import { initIntegrations } from 'modules/tasks/utils';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getComponent(componentType: string, props: any) {
@@ -39,7 +39,7 @@ function getComponent(componentType: string, props: any) {
   }
 
   if (componentType === TabViewType.AI) {
-    return <AI {...props} />;
+    return <Conversation {...props} />;
   }
 
   return <MyDay />;

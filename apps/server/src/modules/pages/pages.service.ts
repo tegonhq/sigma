@@ -209,8 +209,6 @@ export class PagesService {
       );
     }
 
-    console.log('came here');
-
     return prismaClient.page.update({
       where: { id: pageId },
       data: {

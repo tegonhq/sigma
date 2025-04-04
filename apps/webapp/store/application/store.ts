@@ -163,6 +163,8 @@ const ApplicationStore = types
           applySnapshot(self, data[0]);
           historyLoad(data[0]);
         } catch (e) {}
+      } else {
+        historyLoad();
       }
     });
     const addToSelectedTask = (taskId: string, reset: boolean) => {

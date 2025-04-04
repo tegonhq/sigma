@@ -56,7 +56,7 @@ export const Settings = observer(({ open, setOpen }: SettingsProps) => {
             <SidebarContent className="bg-background">
               <SidebarGroup>
                 <SidebarGroupContent>
-                  <SidebarMenu>
+                  <SidebarMenu className="gap-0.5">
                     {data.nav.map((item) => (
                       <SidebarMenuItem key={item.name}>
                         <SidebarMenuButton

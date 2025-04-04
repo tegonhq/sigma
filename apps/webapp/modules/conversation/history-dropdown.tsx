@@ -18,16 +18,24 @@ import type { ConversationType } from 'common/types';
 
 import { useContextStore } from 'store/global-context-provider';
 
+import { useConversationContext } from './use-conversation-context';
+
 export const AIHistoryDropdown = observer(() => {
   const [open, setOpen] = React.useState(false);
   const { conversationsStore, commonStore } = useContextStore();
 
+  const pageId = useConversationContext();
+
   const conversations = React.useMemo(() => {
-    return sort(conversationsStore.conversations).desc(
+    return sort(
+      conversationsStore.conversations.filter(
+        (conversation) => conversation.pageId === pageId,
+      ),
+    ).desc(
       (conversation: ConversationType) => new Date(conversation.createdAt),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [conversationsStore.conversations.length]);
+  }, [conversationsStore.conversations.length, pageId]);
 
   return (
     <div
@@ -38,7 +46,7 @@ export const AIHistoryDropdown = observer(() => {
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button variant="ghost">
-            <HistoryIcon size={16} />
+            <HistoryIcon size={14} />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-72 p-0" align="end">

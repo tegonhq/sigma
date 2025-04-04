@@ -124,8 +124,6 @@ export class TasksService {
     workspaceId: string,
     tx?: TransactionClient,
   ): Promise<Task> {
-    console.log(createTaskDto);
-
     const prismaClient = tx || this.prisma;
     const {
       title,

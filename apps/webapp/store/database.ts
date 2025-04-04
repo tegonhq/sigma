@@ -33,7 +33,7 @@ export class SigmaDatabase extends Dexie {
   constructor(databaseName: string) {
     super(databaseName);
 
-    this.version(28).stores({
+    this.version(29).stores({
       [MODELS.Workspace]: 'id,createdAt,updatedAt,name,slug,userId',
       [MODELS.IntegrationAccount]:
         'id,createdAt,updatedAt,accountId,settings,integratedById,integrationDefinitionId,workspaceId',
@@ -46,7 +46,8 @@ export class SigmaDatabase extends Dexie {
       [MODELS.TaskExternalLink]:
         'id,createdAt,updatedAt,taskId,integrationAccountId,url,sourceId',
 
-      [MODELS.Conversation]: 'id,createdAt,updatedAt,title,userId,workspaceId',
+      [MODELS.Conversation]:
+        'id,createdAt,updatedAt,title,userId,workspaceId,pageId,taskId',
       [MODELS.ConversationHistory]:
         'id,createdAt,updatedAt,message,userType,context,thoughts,userId,conversationId',
       [MODELS.List]: 'id,createdAt,updatedAt,pageId,icon',

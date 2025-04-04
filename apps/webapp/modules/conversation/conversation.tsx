@@ -1,10 +1,10 @@
 import { UserTypeEnum } from '@sigma/types';
-import { cn, ScrollArea } from '@tegonhq/ui';
+import { cn } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
-import getConfig from 'next/config';
 import React from 'react';
 
 import type { ConversationHistoryType } from 'common/types';
+import { ScrollAreaWithAutoScroll } from 'common/use-auto-scroll';
 
 import { useConversationHistory } from 'hooks/conversations';
 
@@ -37,16 +37,8 @@ export const Conversation = observer(() => {
   const { mutate: createConversationHistory } =
     useCreateConversationHistoryMutation({});
   const { mutate: createConversation } = useCreateConversationMutation({});
-  const scrollRef = React.useRef(null);
+
   const pageId = useConversationContext();
-
-  console.log(pageId);
-
-  React.useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [conversationHistory.length]);
 
   const onSend = (text: string) => {
     if (commonStore.currentConversationId) {
@@ -95,31 +87,37 @@ export const Conversation = observer(() => {
   const lastThought = thoughts[thoughts.length - 1];
 
   return (
-    <div className="flex flex-col h-full justify-end overflow-hidden">
-      <ScrollArea ref={scrollRef}>
-        {conversationHistory.map(
-          (conversationHistory: ConversationHistoryType, index: number) => (
-            <ConversationItem
-              key={index}
-              conversationHistoryId={conversationHistory.id}
-            />
-          ),
-        )}
-        {isLoading && lastThought && (
-          <div className="flex flex-wrap p-3 gap-1">
-            <div
-              className={cn('px-4 py-2 w-full flex flex-col items-start gap-1')}
-            >
-              AI is thinking...
-              <p
-                className="text-sm text-muted-foreground flex flex-wrap"
-                dangerouslySetInnerHTML={{ __html: lastThought.message }}
-              />
+    <div className="flex flex-col h-[calc(100vh_-_3.5rem)]">
+      <div className="grow overflow-hidden">
+        <div className="flex flex-col h-full justify-end overflow-hidden">
+          <ScrollAreaWithAutoScroll>
+            {conversationHistory.map(
+              (conversationHistory: ConversationHistoryType, index: number) => (
+                <ConversationItem
+                  key={index}
+                  conversationHistoryId={conversationHistory.id}
+                />
+              ),
+            )}
+          </ScrollAreaWithAutoScroll>
+          {isLoading && lastThought && (
+            <div className="flex flex-wrap p-3 gap-1">
+              <div
+                className={cn(
+                  'px-4 py-2 w-full flex flex-col items-start gap-1',
+                )}
+              >
+                AI is thinking...
+                <p
+                  className="text-sm text-muted-foreground flex flex-wrap"
+                  dangerouslySetInnerHTML={{ __html: lastThought.message }}
+                />
+              </div>
             </div>
-          </div>
-        )}
-      </ScrollArea>
-      <ConversationTextarea onSend={onSend} />
+          )}
+          <ConversationTextarea onSend={onSend} />
+        </div>
+      </div>
     </div>
   );
 });

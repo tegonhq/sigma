@@ -2,7 +2,7 @@ import { UserTypeEnum } from '@sigma/types';
 import { AI } from '@tegonhq/ui';
 import { Editor } from '@tiptap/core';
 import { observer } from 'mobx-react-lite';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { defaultExtensions } from 'common/editor';
@@ -88,7 +88,7 @@ export const ConversationItem = observer(
 
     return (
       <div className="flex gap-2 border-b border-border py-4 px-5">
-        <div className="shrink-0">{getIcon()}</div>
+        <div className="shrink-0 relative top-[3px]">{getIcon()}</div>
 
         <div className="flex flex-col">
           <div id={id}></div>

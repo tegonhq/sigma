@@ -1,4 +1,5 @@
 // @hidden
+
 import { useCallback, useEffect, useRef, useState } from 'react';
 import React from 'react';
 
@@ -20,7 +21,7 @@ export function useAutoScroll(options: UseAutoScrollOptions = {}) {
   const userHasScrolled = useRef(false);
 
   const [scrollState, setScrollState] = useState<ScrollState>({
-    isAtBottom: true,
+    isAtBottom: false,
     autoScrollEnabled: true,
   });
 
@@ -138,3 +139,20 @@ export function useAutoScroll(options: UseAutoScrollOptions = {}) {
     disableAutoScroll,
   };
 }
+
+export const ScrollAreaWithAutoScroll = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  const { scrollRef } = useAutoScroll({
+    smooth: true,
+    content: children,
+  });
+
+  return (
+    <div ref={scrollRef} className="overflow-y-auto">
+      {children}
+    </div>
+  );
+};
