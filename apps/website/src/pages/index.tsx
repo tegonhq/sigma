@@ -1,12 +1,15 @@
 import {
   AI,
-  Badge,
   Button,
+  buttonVariants,
   CalendarLine,
+  cn,
   IssuesLine,
   Project,
 } from '@tegonhq/ui';
 import Image from 'next/image';
+import { Feature } from 'src/components';
+import { RiDiscordFill, RiGithubFill } from '@remixicon/react';
 
 export default function Index() {
   return (
@@ -27,8 +30,8 @@ export default function Index() {
       <div className="max-w-[800px] mt-8 space-y-6 text-left px-4 leading-[40px] mb-10 lowercase">
         <p className="text-xl text-foreground/80">
           the way we work is transforming. no more fragmented workflows, no more
-          scattered focus. the future of development is here—where everything
-          just works, together.
+          scattered focus. task management is changing, bringing a future where
+          everything flows seamlessly.
         </p>
 
         <p className="text-xl text-foreground/80">
@@ -38,43 +41,22 @@ export default function Index() {
 
         <p className="text-xl text-foreground/80">
           with
-          <Badge
-            className="inline-flex h-8 items-center p-1.5 gap-1.5 relative top-0.5 mx-1.5 text-xl border-1 border-border rounded-md transition-transform hover:rotate-3"
-            variant="secondary"
-          >
-            <IssuesLine size={20} /> task
-          </Badge>
-          , work is automatically tracked and generated, ensuring nothing slips
-          through.
-          <Badge
-            className="inline-flex h-8 items-center p-2 gap-1.5 relative top-0.5 mx-1.5 text-xl border-1 border-border rounded-md transition-transform hover:rotate-3"
-            variant="secondary"
-          >
-            <CalendarLine size={20} /> my day
-          </Badge>
+          <Feature Icon={<IssuesLine size={20} />} text="task" />, work is
+          automatically tracked and generated, ensuring nothing slips through.
+          <Feature Icon={<CalendarLine size={20} />} text="daily planner" />
           aligns your day to your energy, optimizing focus and flow.
-          <Badge
-            className="inline-flex h-8 items-center p-2 gap-1.5 relative top-0.5 mx-1.5 text-xl border-1 border-border rounded-md transition-transform hover:rotate-3"
-            variant="secondary"
-          >
-            <Project size={20} /> lists
-          </Badge>
+          <Feature Icon={<Project size={20} />} text="lists" />
           blend checklists, notes, and code snippets effortlessly, keeping
           everything within reach. and with
-          <Badge
-            className="inline-flex h-8 items-center p-2 gap-1.5 relative top-0.5 mx-1.5 text-xl border-1 border-border rounded-md transition-transform hover:rotate-3"
-            variant="secondary"
-          >
-            <AI size={20} /> agents
-          </Badge>
-          —including a coding agent, browser agent, and more to come—you have an
+          <Feature Icon={<AI size={20} />} text="agents" />
+          —including a coding assitant, browser assistant, and more—you have an
           always-on assistant for research, automation, and execution.
         </p>
 
         <p className="text-xl text-foreground/80">
-          but sigma is more than a productivity tool—it&apos;s your developer
-          control center. as it evolves, it will anticipate your needs, automate
-          workflows, and help you stay in the zone.
+          but <b>sigma</b> is more than a productivity tool—it&apos;s your
+          developer control center. as it evolves, it will anticipate your
+          needs, automate workflows, and help you stay in the zone.
         </p>
 
         <p className="text-xl text-foreground/80">
@@ -83,7 +65,30 @@ export default function Index() {
 
         <p className="text-xl text-foreground/80"> -- the sigma team </p>
 
-        <div className="flex justify-center w-full p-2">
+        <div className="flex justify-center w-full p-2 gap-2">
+          <a
+            href="https://discord.gg/dVTC3BmgEq"
+            target="_blank"
+            className={cn(
+              buttonVariants({ size: 'xl', variant: 'secondary' }),
+              'gap-2 text-lg px-3',
+            )}
+          >
+            <RiDiscordFill size={20} />
+            discord
+          </a>
+          <a
+            href="https://github.com/tegonhq/sigma"
+            target="_blank"
+            className={cn(
+              buttonVariants({ size: 'xl', variant: 'secondary' }),
+              'gap-2 text-lg px-3',
+            )}
+          >
+            <RiGithubFill size={20} />
+            github
+          </a>
+
           <Button variant="secondary" size="xl" className="gap-2 text-lg px-3">
             <Image
               src="/logo_light.svg"
@@ -91,7 +96,7 @@ export default function Index() {
               key={1}
               width={20}
               height={20}
-            />{' '}
+            />
             join waitlist
           </Button>
         </div>

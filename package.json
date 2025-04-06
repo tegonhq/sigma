@@ -4,7 +4,8 @@
   "scripts": {
     "build": "dotenv -- turbo build",
     "compile": "dotenv -- turbo run compile --filter=electron",
-    "dev": "dotenv -- turbo run dev --parallel",
+    "dev": "dotenv -- turbo run dev --parallel --filter=!website",
+    "dev:website": "dotenv -- turbo run dev --parallel --filter=website",
     "lint": "turbo run lint",
     "generate": "dotenv -- turbo run generate",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
