@@ -48,7 +48,7 @@ jobs:
         run: pnpm install
 
       - name: Build website
-        run: pnpm turbo build --filter=website...
+        run: pnpm build --filter=website...
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
