@@ -57,7 +57,7 @@ export const RightSideLayout = observer(
       (event) => {
         switch (event.key) {
           case 'l':
-            if (event.metaKey && firstTab.type !== TabViewType.MY_TASKS) {
+            if (event.metaKey) {
               if (rightSideCollapsed) {
                 setRightSideCollapsed(false);
                 if (aiCollapsed) {

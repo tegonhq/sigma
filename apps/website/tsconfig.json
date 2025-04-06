@@ -1,0 +1,23 @@
+{
+  "extends": "@sigma/typescript-config/next.json",
+  "compilerOptions": {
+    "baseUrl": "./",
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
+  },
+  "include": [
+    "next-env.d.ts",
+    "next.d.ts",
+    "electron.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "build/types/**/*.ts",
+    "remote-component.config.js",
+    "next.config.js"
+  ],
+  "exclude": ["node_modules", "src/pages/api/**.js"]
+}

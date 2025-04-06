@@ -39,7 +39,7 @@ export const ImageComponent = (props: any) => {
   return (
     <NodeViewWrapper className="react-component-with-content">
       <div className="content">
-        <div className="relative flex w-fit items-center p-3 bg-grayAlpha-100 rounded-lg gap-2 my-1 overflow-hidden">
+        <div className="relative flex w-fit items-center p-1.5 bg-grayAlpha-100 rounded-lg gap-2 my-1 overflow-hidden">
           <img
             src={props.node.attrs.src}
             alt={props.node.attrs.alt}
@@ -53,7 +53,7 @@ export const ImageComponent = (props: any) => {
           )}
 
           {!props.node.attrs.uploading && (
-            <div className="flex bg-background-3 rounded absolute right-4 top-4 p-1">
+            <div className="flex bg-background-3 rounded absolute right-4 top-4 p-0.5">
               <Button
                 variant="ghost"
                 onClick={() => {

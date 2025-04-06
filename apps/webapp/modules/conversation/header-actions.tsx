@@ -7,9 +7,11 @@ import { SCOPES } from 'common/shortcut-scopes';
 import { useContextStore } from 'store/global-context-provider';
 
 import { AIHistoryDropdown } from './history-dropdown';
+import { useConversationContext } from './use-conversation-context';
 
 export const ConversationHeaderActions = () => {
   const { commonStore } = useContextStore();
+  const pageId = useConversationContext();
 
   useHotkeys(
     [`${Key.Meta}+${Key.Shift}+n`],
@@ -33,7 +35,7 @@ export const ConversationHeaderActions = () => {
       >
         <AddLine size={14} />
       </Button>
-      <AIHistoryDropdown />
+      {pageId && <AIHistoryDropdown />}
     </div>
   );
 };

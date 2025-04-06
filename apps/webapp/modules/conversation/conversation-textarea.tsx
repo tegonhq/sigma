@@ -11,7 +11,7 @@ export function ConversationTextarea({ onSend }: ConversationTextareaProps) {
   const [text, setText] = useState('');
 
   return (
-    <div className="p-4">
+    <div className="p-2">
       <div className="flex flex-col rounded pt-2 bg-grayAlpha-100">
         <AdjustableTextArea
           className="bg-transparent max-h-[500px] overflow-auto px-3"
