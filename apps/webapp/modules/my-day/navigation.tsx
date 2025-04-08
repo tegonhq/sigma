@@ -80,7 +80,7 @@ export const Navigation = observer(() => {
           tooltip={
             <div className="flex items-center gap-1">
               Previous day
-              <Shortcut shortcut="Cmd + [" />
+              <Shortcut shortcut="cmd + shift + [" />
             </div>
           }
         >
@@ -92,7 +92,7 @@ export const Navigation = observer(() => {
         <TooltipWrapper
           tooltip={
             <div className="flex items-center gap-1">
-              Next day <Shortcut shortcut="Cmd + ]" />
+              Next day <Shortcut shortcut="cmd + shift + ]" />
             </div>
           }
         >

@@ -1,3 +1,4 @@
+import { RiDiscordFill, RiGithubFill } from '@remixicon/react';
 import {
   AI,
   Button,
@@ -9,7 +10,6 @@ import {
 } from '@tegonhq/ui';
 import Image from 'next/image';
 import { Feature } from 'src/components';
-import { RiDiscordFill, RiGithubFill } from '@remixicon/react';
 
 export default function Index() {
   return (

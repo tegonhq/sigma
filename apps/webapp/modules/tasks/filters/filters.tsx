@@ -67,7 +67,7 @@ export const Filters = observer(() => {
       setOpen(true);
     },
     {
-      scopes: [SCOPES.Task],
+      scopes: [SCOPES.Tasks],
       preventDefault: true,
     },
   );

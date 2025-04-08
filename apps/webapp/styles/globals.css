@@ -102,7 +102,8 @@ strong {
 }
 
 .prosemirror-dropcursor-block {
-  @apply !bg-primary;
+  @apply !bg-primary/50;
+  height: 2px !important;
 }
 
 .drag-handle {

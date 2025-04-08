@@ -3,6 +3,7 @@ import {
   PopoverContent,
   PopoverTrigger,
   ScrollArea,
+  Separator,
 } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 
@@ -59,7 +60,9 @@ export const ListPage = observer(({ entity_id }: TabsProps) => {
   const getIconComponent = () => {
     return (
       <Popover>
-        <PopoverTrigger>{getIcon(list?.icon, 20)}</PopoverTrigger>
+        <PopoverTrigger>
+          <div className="relative top-2">{getIcon(list?.icon, 28)}</div>
+        </PopoverTrigger>
         <PopoverContent className="p-2">
           <IconPicker
             onSelectIcon={(icon, color) => saveIcon({ color, icon })}
@@ -76,7 +79,7 @@ export const ListPage = observer(({ entity_id }: TabsProps) => {
       <ScrollArea className="w-full h-full flex justify-center p-4 px-6 h-[calc(100vh_-_54px)]">
         <div className="flex h-full justify-center w-full">
           <div className="grow flex flex-col gap-2 h-full max-w-[97ch]">
-            <div className="flex gap-2 items-center">
+            <div className="flex gap-2 items-start">
               {getIconComponent()}
               <PageTitle value={page?.title} onChange={onChange} />
             </div>

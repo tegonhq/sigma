@@ -155,10 +155,12 @@ export class ConversationHistoryService {
           return {
             title: task.page.title,
             id: task.id,
-            descrition: generateHTML(
-              JSON.parse(task.page.description),
-              defaultExtensions,
-            ),
+            descrition: task.page.description
+              ? generateHTML(
+                  JSON.parse(task.page.description),
+                  defaultExtensions,
+                )
+              : undefined,
           };
         }),
       );

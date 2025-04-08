@@ -40,7 +40,7 @@ export const PageTitle = React.forwardRef(
         value={inputValue}
         autoFocus={autoFocus}
         className={cn(
-          'border-0 px-0 py-0 font-medium resize-none bg-transparent no-scrollbar overflow-hidden outline-none focus-visible:ring-0 text-xl',
+          'border-0 px-0 py-0 font-medium resize-none bg-transparent no-scrollbar overflow-hidden outline-none focus-visible:ring-0 text-[28px]',
           className,
         )}
         placeholderClassName="text-xl"

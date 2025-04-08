@@ -24,7 +24,7 @@ import { useConversationContext } from './use-conversation-context';
 export const Conversation = observer(() => {
   const { commonStore } = useContextStore();
 
-  const conversationHistory = useConversationHistory(
+  const { conversationHistory, conversation } = useConversationHistory(
     commonStore.currentConversationId,
   );
 
@@ -39,6 +39,13 @@ export const Conversation = observer(() => {
   const { mutate: createConversation } = useCreateConversationMutation({});
 
   const pageId = useConversationContext();
+
+  React.useEffect(() => {
+    if (conversation?.pageId && conversation.pageId !== pageId) {
+      commonStore.update({ currentConversationId: undefined });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [conversation?.id, pageId]);
 
   const onSend = (text: string) => {
     if (commonStore.currentConversationId) {

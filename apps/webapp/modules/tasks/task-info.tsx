@@ -60,9 +60,12 @@ export const TaskInfo = observer(
           {list && (
             <Badge
               variant="secondary"
-              className="flex items-center gap-1 shrink min-w-[0px]"
+              className="flex items-center gap-1 shrink max-w-[300px]"
             >
-              {getIcon(list?.icon, 12)} {page?.title}
+              {getIcon(list?.icon, 12)}
+              <span className="shrink  min-w-[0px] truncate">
+                {page?.title}
+              </span>
             </Badge>
           )}
           {!inEditor && (

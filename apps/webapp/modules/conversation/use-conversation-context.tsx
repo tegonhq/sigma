@@ -32,5 +32,5 @@ export const useConversationContext = () => {
   return React.useMemo(() => {
     return getPageId();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [firstTab]);
+  }, [firstTab.entity_id, firstTab.type]);
 };

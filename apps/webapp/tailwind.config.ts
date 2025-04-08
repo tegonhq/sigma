@@ -19,7 +19,7 @@ const config = {
       },
     },
     fontSize: {
-      xs: '13px',
+      xs: '12px',
       sm: '13px',
       base: '14px',
       md: '15px',

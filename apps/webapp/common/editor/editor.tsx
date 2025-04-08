@@ -12,6 +12,7 @@ import * as React from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { defaultExtensions, getPlaceholder } from './editor-extensions';
+import { GenerativeMenuSwitch } from './generative';
 import { LinkSelector, NodeSelector, TextButtons } from './selectors';
 import { slashCommand } from './slash-command';
 import { handleMarkAndImagePaste, uploadFn } from './utils';
@@ -33,6 +34,7 @@ export const EditorExtensions = ({
 }: EditorExtensionsProps) => {
   const [openNode, setOpenNode] = React.useState(false);
   const [openLink, setOpenLink] = React.useState(false);
+  const [openAI, setOpenAI] = React.useState(false);
 
   return (
     <>
@@ -62,12 +64,15 @@ export const EditorExtensions = ({
         ))}
       </EditorCommand>
 
-      <EditorBubble className="flex w-fit items-center max-w-[90vw] overflow-hidden rounded bg-background-2 shadow-1 border-[#ffffff38] p-1">
+      <GenerativeMenuSwitch open={openAI} onOpenChange={setOpenAI}>
         <Separator orientation="vertical" />
         <NodeSelector open={openNode} onOpenChange={setOpenNode} />
         <Separator orientation="vertical" />
         <LinkSelector open={openLink} onOpenChange={setOpenLink} />
+        {/* <Separator orientation="vertical" />
+        <ColorSelector open={openColor} onOpenChange={setOpenColor} /> */}
         <Separator orientation="vertical" />
+
         <TextButtons />
         {children && (
           <>
@@ -75,7 +80,7 @@ export const EditorExtensions = ({
             {children}
           </>
         )}
-      </EditorBubble>
+      </GenerativeMenuSwitch>
     </>
   );
 };

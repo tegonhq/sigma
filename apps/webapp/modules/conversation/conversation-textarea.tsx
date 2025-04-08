@@ -1,7 +1,10 @@
 import { Button, SendLine } from '@tegonhq/ui';
 import { useState } from 'react';
+import { useHotkeys } from 'react-hotkeys-hook';
+import { Key } from 'ts-key-enum';
 
 import { AdjustableTextArea } from 'common/adjustable-textarea';
+import { SCOPES } from 'common/shortcut-scopes';
 
 interface ConversationTextareaProps {
   onSend: (value: string) => void;
@@ -9,6 +12,19 @@ interface ConversationTextareaProps {
 
 export function ConversationTextarea({ onSend }: ConversationTextareaProps) {
   const [text, setText] = useState('');
+
+  useHotkeys(
+    [`${Key.Enter}`],
+    () => {
+      onSend(text);
+      setText('');
+    },
+    {
+      scopes: [SCOPES.AI],
+      enableOnFormTags: true,
+      enableOnContentEditable: true,
+    },
+  );
 
   return (
     <div className="p-2">

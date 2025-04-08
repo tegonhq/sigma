@@ -69,7 +69,11 @@ const starterKit = StarterKit.configure({
       class: cx('list-decimal list-outside pl-4 leading-1 my-1'),
     },
   },
-  listItem: {},
+  listItem: {
+    HTMLAttributes: {
+      class: cx('mt-1.5'),
+    },
+  },
   blockquote: {
     HTMLAttributes: {
       class: cx('border-l-4 border-gray-400 dark:border-gray-500'),
