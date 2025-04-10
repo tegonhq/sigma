@@ -1,0 +1,98 @@
+import { AI } from '@tegonhq/ui';
+import Link from 'next/link';
+import { RiArrowLeftLine } from '@remixicon/react';
+
+export default function AgentsFeature() {
+  return (
+    <div className="h-[100vh] w-[100vw] bg-background flex flex-col items-center overflow-auto">
+      {/* Navigation Bar */}
+      <div className="fixed top-0 left-0 right-0 bg-background/80 backdrop-blur-sm border-b border-border z-10">
+        <div className="max-w-6xl mx-auto px-4 h-14 flex items-center">
+          <Link 
+            href="/" 
+            className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <RiArrowLeftLine size={20} />
+            <span>back to home</span>
+          </Link>
+        </div>
+      </div>
+
+      {/* Header Section */}
+      <div className="p-2 w-full flex gap-2 flex-col items-center pt-24">
+        <div className="flex items-center gap-2">
+          <AI size={24} className="text-foreground" />
+          <h1 className="text-2xl font-semibold">agents</h1>
+        </div>
+        <div className="max-w-[800px] mt-8 px-4">
+          <h2 className="text-[40px] font-mono text-left">
+            because your brain deserves a junior dev..
+          </h2>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="max-w-[800px] mt-8 space-y-8 text-left px-4 leading-[32px] mb-10">
+        <p className="text-xl text-foreground/80">
+          sigma isn&apos;t just a task manager—it&apos;s your ai command center. assign agents to automate 
+          the grind so you can focus on the fun stuff (like coding).
+        </p>
+
+        <h3 className="text-2xl font-semibold mt-12">meet the squad</h3>
+
+        <div className="bg-card rounded-lg p-6 border border-border">
+          <h3 className="text-xl font-semibold mb-4">task agent</h3>
+          <p className="text-lg text-foreground/80 mb-4">
+            chat with sigma like a teammate:
+          </p>
+          <div className="space-y-2 text-lg text-foreground/80">
+            <p>&quot;add a pr review for #187 tomorrow at 2pm&quot; → done.</p>
+            <p>&quot;create a vietnam trip list with flights, visas, and pho spots&quot; → booms a prepped list.</p>
+            <p>&quot;what&apos;s blocking t-42?&quot; → instantly surfaces notes, subtasks, or slack threads.</p>
+          </div>
+        </div>
+
+        <div className="bg-card rounded-lg p-6 border border-border">
+          <h3 className="text-xl font-semibold mb-4">coding agent</h3>
+          <p className="text-lg text-foreground/80 mb-4">
+            tired of boilerplate fixes? assign bugs like:
+          </p>
+          <div className="space-y-2 text-lg text-foreground/80">
+            <p>&quot;update deprecated api calls in auth-service.js&quot; → agent writes the pr, you review.</p>
+            <p>&quot;fix typo in docs&quot; → agent commits the change. no context switching.</p>
+          </div>
+        </div>
+
+        <div className="bg-card rounded-lg p-6 border border-border">
+          <h3 className="text-xl font-semibold mb-4">browser agent</h3>
+          <p className="text-lg text-foreground/80 mb-4">
+            let sigma handle life&apos;s busywork:
+          </p>
+          <div className="space-y-2 text-lg text-foreground/80">
+            <p>&quot;find cheap flights to hanoi in december&quot; → agent scours the web, dumps options into your task.</p>
+            <p>&quot;book the 2pm flight from sf&quot; → agent fills your deets, clicks &quot;buy.&quot; trust optional (we get it).</p>
+          </div>
+        </div>
+
+        <div className="bg-primary/10 rounded-lg p-6 border border-primary/20">
+          <h3 className="text-xl font-semibold mb-4 text-primary">pro tip</h3>
+          <p className="text-lg text-foreground/80">
+            stuck in a sprint crunch? assign the coding agent to auto-fix lint errors or update dependencies. 
+            ship faster, stress less.
+          </p>
+        </div>
+
+        {/* Call to Action */}
+        <div className="text-center mt-12 pt-8 border-t border-border">
+          <h2 className="text-2xl font-semibold mb-4">ready to meet your ai team?</h2>
+          <p className="text-muted-foreground mb-8">
+            join sigma today and experience the future of ai-assisted productivity.
+          </p>
+          <button className="bg-primary text-primary-foreground px-8 py-4 rounded-md hover:bg-primary/90 text-lg font-medium">
+            get started
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+} 

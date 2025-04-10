@@ -39,19 +39,19 @@ export default function Index() {
           can <b>aggregate</b>, <b>plan</b>, and <b>execute</b> seamlessly.
         </p>
 
-        <p className="text-xl text-foreground/80">
+        <span className="text-xl text-foreground/80 block">
           with
-          <Feature Icon={<IssuesLine size={20} />} text="task" />, work is
+          <Feature Icon={<IssuesLine size={20} />} text="task" href="/features/task" />, work is
           automatically tracked and generated, ensuring nothing slips through.
-          <Feature Icon={<CalendarLine size={20} />} text="daily planner" />
+          <Feature Icon={<CalendarLine size={20} />} text="daily planner" href="/features/daily-planner" />
           aligns your day to your energy, optimizing focus and flow.
-          <Feature Icon={<Project size={20} />} text="lists" />
+          <Feature Icon={<Project size={20} />} text="lists" href="/features/lists" />
           blend checklists, notes, and code snippets effortlessly, keeping
           everything within reach. and with
-          <Feature Icon={<AI size={20} />} text="agents" />
+          <Feature Icon={<AI size={20} />} text="agents" href="/features/agents" />
           —including a coding assitant, browser assistant, and more—you have an
           always-on assistant for research, automation, and execution.
-        </p>
+        </span>
 
         <p className="text-xl text-foreground/80">
           but <b>sigma</b> is more than a productivity tool—it&apos;s your
