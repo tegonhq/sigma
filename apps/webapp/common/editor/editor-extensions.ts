@@ -13,6 +13,10 @@ import {
   TaskList,
   CustomKeymap,
 } from 'novel/extensions';
+import Table from '@tiptap/extension-table';
+import TableCell from '@tiptap/extension-table-cell';
+import TableHeader from '@tiptap/extension-table-header';
+import TableRow from '@tiptap/extension-table-row';
 import AutoJoiner from 'tiptap-extension-auto-joiner'; // optional
 // import GlobalDragHandle from 'tiptap-extension-global-drag-handle';
 
@@ -49,7 +53,7 @@ const heading = Heading.extend({
     return [
       `h${level}`,
       mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
-        class: `h${node.attrs.level}-style ${levelMap[level]} pt-[1rem]`,
+        class: `heading-node h${node.attrs.level}-style ${levelMap[level]} mt-[1rem] font-medium`,
       }),
       0,
     ];
@@ -81,7 +85,7 @@ const starterKit = StarterKit.configure({
   },
   paragraph: {
     HTMLAttributes: {
-      class: cx('leading-[24px]'),
+      class: cx('leading-[24px] text-md mt-[1rem] paragraph-node'),
     },
   },
   codeBlock: false,
@@ -156,4 +160,10 @@ export const defaultExtensions = [
   CodeBlockLowlight.configure({
     lowlight,
   }),
+  Table.configure({
+    resizable: true,
+  }),
+  TableRow,
+  TableHeader,
+  TableCell,
 ];

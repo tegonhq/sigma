@@ -149,7 +149,7 @@ export const AppSidebar = observer(
                     <Button
                       variant="secondary"
                       className={cn(
-                        'flex gap-2 w-fit min-w-0 justify-start',
+                        'flex gap-1 w-fit min-w-0 justify-start',
                         list.name?.length > 10 && 'w-full',
                       )}
                       isActive={isActive}

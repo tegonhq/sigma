@@ -15,7 +15,6 @@ export function Preferences() {
 
   return (
     <div className="flex flex-col gap-2">
-      <h2 className="text-xl"> Preferences </h2>
       <SettingSection
         title="Theme"
         description="Choose a preferred theme for the app."

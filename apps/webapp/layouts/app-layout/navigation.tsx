@@ -50,25 +50,25 @@ export const Navigation = observer(() => {
   );
 
   return (
-    <div className="flex gap-1 items-center">
+    <div className="flex items-center">
       <Button size="sm" variant="ghost" onClick={toggleSidebar}>
         <SidebarLine size={16} />
       </Button>
       <Button
-        size="xs"
+        size="sm"
         variant="ghost"
         onClick={back}
         disabled={!historyManager?.canGoBack}
       >
-        <ArrowLeft size={14} />
+        <ArrowLeft size={16} />
       </Button>
       <Button
-        size="xs"
+        size="sm"
         variant="ghost"
         onClick={forward}
         disabled={!historyManager?.canGoForward}
       >
-        <ArrowRight size={14} />
+        <ArrowRight size={16} />
       </Button>
     </div>
   );

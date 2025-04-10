@@ -33,7 +33,7 @@ export const ConversationHeaderActions = () => {
           commonStore.update({ currentConversationId: undefined });
         }}
       >
-        <AddLine size={14} />
+        <AddLine size={16} />
       </Button>
       {pageId && <AIHistoryDropdown />}
     </div>

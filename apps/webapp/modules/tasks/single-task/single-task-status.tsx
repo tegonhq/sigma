@@ -58,7 +58,7 @@ export const SingleTaskStatus = ({ task }: SingleTaskStatusProps) => {
 
   return (
     <Checkbox
-      className="shrink-0 h-[24px] w-[24px] relative top-[9px] text-xl [&_svg]:w-5 [&_svg]:h-5"
+      className="shrink-0 h-[24px] w-[24px] relative top-[5px] [&_svg]:w-5 [&_svg]:h-5"
       checked={getStatus() === 'Done'}
       onCheckedChange={(value: boolean) =>
         statusChange(value === true ? 'Done' : 'Todo')

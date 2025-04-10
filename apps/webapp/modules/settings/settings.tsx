@@ -14,6 +14,7 @@ import {
   StackLine,
   SidebarHeader,
   SettingsLine,
+  Button,
 } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
@@ -59,19 +60,17 @@ export const Settings = observer(({ open, setOpen }: SettingsProps) => {
                   <SidebarMenu className="gap-0.5">
                     {data.nav.map((item) => (
                       <SidebarMenuItem key={item.name}>
-                        <SidebarMenuButton
-                          asChild
+                        <Button
+                          variant="secondary"
                           isActive={item.name === settingsView}
                           onClick={() => setSettingsView(item.name)}
                           className={cn(
-                            'h-7 rounded px-2 py-1 flex items-center gap-1 justify-between text-foreground bg-grayAlpha-100 w-fit',
+                            'flex gap-1 w-fit min-w-0 justify-start',
                           )}
                         >
-                          <a href="#">
-                            <item.icon className="h-4 w-4" />
-                            <span>{item.name}</span>
-                          </a>
-                        </SidebarMenuButton>
+                          <item.icon size={18} />
+                          <span>{item.name}</span>
+                        </Button>
                       </SidebarMenuItem>
                     ))}
                   </SidebarMenu>
