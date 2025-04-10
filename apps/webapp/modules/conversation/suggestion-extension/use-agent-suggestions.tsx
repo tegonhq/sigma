@@ -1,0 +1,93 @@
+import { Editor } from '@tiptap/core';
+import { ReactRenderer } from '@tiptap/react';
+import tippy, { type Instance as TippyInstance } from 'tippy.js';
+
+import { MentionList } from './mention-list';
+
+interface SuggestionProps {
+  editor: Editor;
+  range: { from: number; to: number };
+  query: string;
+  items: string[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  clientRect?: any;
+}
+
+export const agents = [{ name: 'Hevy', key: 'hevy' }];
+
+export const useMentionSuggestions = ({
+  onAgentMention,
+}: {
+  onAgentMention: (agent: string) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+}): any => {
+  return {
+    items: ({ query }: { query: string }) => {
+      return agents
+        .filter((item) =>
+          item.name.toLowerCase().startsWith(query.toLowerCase()),
+        )
+        .slice(0, 5);
+    },
+    render: () => {
+      let reactRenderer: ReactRenderer | null = null;
+      let popup: TippyInstance[] | null = null;
+
+      return {
+        onStart: (props: SuggestionProps) => {
+          if (!props.clientRect) {
+            return;
+          }
+
+          reactRenderer = new ReactRenderer(MentionList, {
+            props: { ...props, onAgentMention },
+            editor: props.editor,
+          });
+
+          popup = tippy('body', {
+            getReferenceClientRect: props.clientRect,
+            appendTo: () => document.body,
+            content: reactRenderer.element,
+            showOnCreate: true,
+            interactive: true,
+            trigger: 'manual',
+            placement: 'bottom-start',
+          });
+        },
+
+        onUpdate: (props: SuggestionProps) => {
+          if (reactRenderer) {
+            reactRenderer.updateProps(props);
+          }
+
+          if (props.clientRect && popup) {
+            popup[0].setProps({
+              getReferenceClientRect: props.clientRect,
+            });
+          }
+        },
+
+        onKeyDown: (props: {
+          event: KeyboardEvent;
+          range: { from: number; to: number };
+          query: string;
+        }) => {
+          if (props.event.key === 'Escape') {
+            popup?.[0]?.hide();
+            return true;
+          }
+
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          return (reactRenderer?.ref as any).onKeyDown(props) ?? false;
+        },
+
+        onExit: () => {
+          popup?.[0]?.destroy();
+          popup = null;
+          reactRenderer?.destroy();
+          reactRenderer = null;
+        },
+      };
+    },
+  };
+};

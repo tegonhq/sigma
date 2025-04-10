@@ -123,7 +123,18 @@ export const TasksCommand = React.forwardRef(
               <span className="text-muted-foreground font-mono shrink-0 min-w-[40px]">
                 T-{item.number}
               </span>
-              {item.title}
+
+              <div className="inline-flex items-center justify-start shrink min-w-[0px] min-h-[24px]">
+                <div
+                  className={cn(
+                    'text-left truncate',
+                    item.status === 'Done' &&
+                      'line-through opacity-60 decoration-[1px] decoration-muted-foreground',
+                  )}
+                >
+                  {item.title}
+                </div>
+              </div>
             </button>
           ))
         ) : (

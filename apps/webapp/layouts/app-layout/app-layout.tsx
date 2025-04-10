@@ -13,8 +13,8 @@ export function AppLayout({ children }: AppLayoutProps) {
     <SidebarProvider
       className={cn('!bg-transparent', GeistSans.variable, GeistMono.variable)}
       style={{
-        '--sidebar-width': '10rem',
-        '--sidebar-width-mobile': '10rem',
+        '--sidebar-width': '13rem',
+        '--sidebar-width-mobile': '13rem',
       }}
     >
       <AppSidebar />

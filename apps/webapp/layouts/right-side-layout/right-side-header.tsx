@@ -22,7 +22,7 @@ export const RightSideHeader = observer(({ onClose }: RightSideHeaderProps) => {
       <div className="flex items-center justify-between gap-2 px-2 w-full">
         <div className="flex gap-1 items-center">
           <Button size="sm" variant="ghost" onClick={onClose}>
-            <Close size={14} />
+            <Close size={16} />
           </Button>
 
           <div className="flex gap-2 items-center">Sigma AI</div>

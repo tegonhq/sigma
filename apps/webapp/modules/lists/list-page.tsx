@@ -61,7 +61,7 @@ export const ListPage = observer(({ entity_id }: TabsProps) => {
     return (
       <Popover>
         <PopoverTrigger>
-          <div className="relative top-2">{getIcon(list?.icon, 28)}</div>
+          <div className="relative top-1.5">{getIcon(list?.icon, 24)}</div>
         </PopoverTrigger>
         <PopoverContent className="p-2">
           <IconPicker

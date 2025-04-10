@@ -1,12 +1,17 @@
 import {
   Badge,
   Button,
+  Checkbox,
   cn,
+  Command,
+  CommandInput,
   Popover,
   PopoverContent,
   PopoverTrigger,
   ScrollArea,
+  CommandGroup,
   SubIssue,
+  CommandItem,
 } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
@@ -52,37 +57,46 @@ export const SubTasks = observer(
             </span>
           </Badge>
         </PopoverTrigger>
-        <PopoverContent className="p-1">
-          <ScrollArea className="h-52">
-            {subTasks.map((task) => {
-              const page = pagesStore.getPageWithId(task?.pageId);
-              return (
-                <Button
-                  variant="ghost"
-                  className="flex gap-1 w-full justify-start"
-                  key={task.id}
-                  onClick={() => {
-                    openTask(task.id);
-                  }}
-                >
-                  <div className="text-muted-foreground font-mono min-w-[40px] pl-1 text-xs self-center">
-                    T-{task.number}
-                  </div>
-                  <div className="inline-flex items-center justify-start shrink min-w-[0px] min-h-[24px]">
-                    <div
-                      className={cn(
-                        'text-left truncate',
-                        task.status === 'Done' &&
-                          'line-through opacity-60 decoration-[1px] decoration-muted-foreground',
-                      )}
+        <PopoverContent className="p-0">
+          <Command>
+            <CommandInput placeholder="Search sub tasks..." autoFocus />
+            <ScrollArea className="max-h-52 overflow-auto">
+              <CommandGroup>
+                {subTasks.map((task) => {
+                  const page = pagesStore.getPageWithId(task?.pageId);
+                  return (
+                    <CommandItem
+                      className="flex gap-1 w-full items-center py-3 h-8"
+                      key={task.id}
+                      value={page?.title}
+                      onSelect={() => {
+                        openTask(task.id);
+                      }}
                     >
-                      {page?.title}
-                    </div>
-                  </div>
-                </Button>
-              );
-            })}
-          </ScrollArea>
+                      <Checkbox
+                        className="shrink-0 h-[16px] w-[16px] ml-1"
+                        checked={task.status === 'Done'}
+                      />
+                      <div className="text-muted-foreground font-mono min-w-[40px] pl-1 text-xs self-center">
+                        T-{task.number}
+                      </div>
+                      <div className="inline-flex ml-1 items-center justify-start shrink min-w-[0px] min-h-[24px]">
+                        <div
+                          className={cn(
+                            'text-left truncate',
+                            task.status === 'Done' &&
+                              'line-through opacity-60 decoration-[1px] decoration-muted-foreground',
+                          )}
+                        >
+                          {page?.title}
+                        </div>
+                      </div>
+                    </CommandItem>
+                  );
+                })}
+              </CommandGroup>
+            </ScrollArea>
+          </Command>
         </PopoverContent>
       </Popover>
     );

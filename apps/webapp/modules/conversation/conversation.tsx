@@ -1,5 +1,5 @@
 import { UserTypeEnum } from '@sigma/types';
-import { cn } from '@tegonhq/ui';
+import { cn, LoaderLine } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 
@@ -47,7 +47,7 @@ export const Conversation = observer(() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversation?.id, pageId]);
 
-  const onSend = (text: string) => {
+  const onSend = (text: string, agents: string[]) => {
     if (commonStore.currentConversationId) {
       createConversationHistory(
         {
@@ -55,6 +55,7 @@ export const Conversation = observer(() => {
           userType: UserTypeEnum.User,
           userId: user.id,
           conversationId: commonStore.currentConversationId,
+          context: { agents },
         },
         {
           onSuccess: (data) => {
@@ -74,6 +75,7 @@ export const Conversation = observer(() => {
           message: text,
           userType: UserTypeEnum.User,
           pageId,
+          context: { agents },
         },
         {
           onSuccess: (data) => {
@@ -107,21 +109,32 @@ export const Conversation = observer(() => {
               ),
             )}
           </ScrollAreaWithAutoScroll>
-          {isLoading && lastThought && (
+
+          {isLoading && (
             <div className="flex flex-wrap p-3 gap-1">
               <div
                 className={cn(
-                  'px-4 py-2 w-full flex flex-col items-start gap-1',
+                  'px-2 py-2 w-full flex flex-col items-start gap-1',
                 )}
               >
-                AI is thinking...
-                <p
-                  className="text-sm text-muted-foreground flex flex-wrap"
-                  dangerouslySetInnerHTML={{ __html: lastThought.message }}
-                />
+                <div
+                  className={cn(
+                    'w-full flex items-start gap-1 rounded-md text-sm',
+                  )}
+                >
+                  <LoaderLine size={18} className="animate-spin" />
+                  <p className="text-sm text-muted-foreground">Thinking</p>
+                </div>
+                {lastThought && (
+                  <p
+                    className="text-sm text-muted-foreground flex flex-wrap"
+                    dangerouslySetInnerHTML={{ __html: lastThought.message }}
+                  />
+                )}
               </div>
             </div>
           )}
+
           <ConversationTextarea onSend={onSend} />
         </div>
       </div>

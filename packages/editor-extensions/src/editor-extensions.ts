@@ -10,6 +10,10 @@ import ListKeymap from '@tiptap/extension-list-keymap';
 import { getSchema as fetchSchema } from '@tiptap/core';
 import TaskList from '@tiptap/extension-task-list';
 import AutoJoiner from 'tiptap-extension-auto-joiner'; // optional
+import Table from '@tiptap/extension-table';
+import TableCell from '@tiptap/extension-table-cell';
+import TableHeader from '@tiptap/extension-table-header';
+import TableRow from '@tiptap/extension-table-row';
 
 export const defaultExtensions = [
   fileExtension,
@@ -27,6 +31,12 @@ export const defaultExtensions = [
   TaskList,
   ListKeymap,
   AutoJoiner,
+  Table.configure({
+    resizable: true,
+  }),
+  TableRow,
+  TableHeader,
+  TableCell,
 ];
 
 export const getSchema = () => fetchSchema(defaultExtensions);

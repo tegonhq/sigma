@@ -140,7 +140,10 @@ export const TaskExtension = ({
             return false;
           }
 
-          if (blockRange.start + 1 !== selection.from) {
+          if (
+            blockRange.start + 1 !== selection.from ||
+            blockRange.start === 0
+          ) {
             return false;
           }
 
