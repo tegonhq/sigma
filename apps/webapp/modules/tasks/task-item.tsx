@@ -1,7 +1,10 @@
 import { Checkbox, cn } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
+import { useHotkeys } from 'react-hotkeys-hook';
 
+import { SCOPES } from 'common/shortcut-scopes';
+import { TooltipWrapper } from 'common/tooltip';
 import { TaskViewContext } from 'layouts/side-task-view';
 
 import { useApplication } from 'hooks/application';
@@ -16,9 +19,6 @@ import {
   TaskIntegrationMetadataWrapper,
   TaskIntegrationViewType,
 } from './task-integration-metadata';
-import { useHotkeys } from 'react-hotkeys-hook';
-import { SCOPES } from 'common/shortcut-scopes';
-import { TooltipWrapper } from 'common/tooltip';
 
 interface TaskListItemProps {
   taskId: string;

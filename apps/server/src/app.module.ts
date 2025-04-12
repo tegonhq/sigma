@@ -12,6 +12,7 @@ import { loggingMiddleware } from 'common/middleware/logging.middleware';
 
 import { AIRequestsModule } from 'modules/ai-requests/ai-requests.module';
 import { ALSModule } from 'modules/als/als.module';
+import { AttachmentModule } from 'modules/attachments/attachments.module';
 import { AuthModule } from 'modules/auth/auth.module';
 import { ContentModule } from 'modules/content/content.module';
 import { ConversationModule } from 'modules/conversation/conversation.module';
@@ -37,7 +38,6 @@ import { WorkspacesModule } from 'modules/workspaces/workspaces.module';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AttachmentModule } from 'modules/attachments/attachments.module';
 
 @Module({
   imports: [

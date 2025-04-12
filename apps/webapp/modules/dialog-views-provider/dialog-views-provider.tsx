@@ -7,13 +7,13 @@ import { ScheduleDialog } from 'modules/tasks/metadata';
 import { DueDateDialog } from 'modules/tasks/metadata/due-date';
 
 import { SCOPES } from 'common/shortcut-scopes';
+import { TaskViewContext } from 'layouts/side-task-view';
 
 import { useApplication } from 'hooks/application';
 
 import { TabViewType } from 'store/application';
 
 import { DialogType } from './types';
-import { TaskViewContext } from 'layouts/side-task-view';
 
 interface DialogViewsContextType {
   dialogType: DialogType | undefined;

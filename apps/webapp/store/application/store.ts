@@ -2,6 +2,7 @@ import { applySnapshot, flow, types, type Instance } from 'mobx-state-tree';
 import { v4 as uuidv4 } from 'uuid'; // Make sure to install and import uuid
 
 import { sigmaDatabase } from 'store/database';
+import { historyLoad } from 'store/history';
 
 import {
   type ApplicationStoreType,
@@ -16,7 +17,6 @@ import {
   TimeBasedFilterEnum,
   GroupingEnum,
 } from './types';
-import { historyLoad } from 'store/history';
 
 const initialId = uuidv4();
 

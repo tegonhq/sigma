@@ -2,7 +2,6 @@ import { HocuspocusProvider } from '@hocuspocus/provider';
 import { SourceType } from '@sigma/types';
 import Collaboration from '@tiptap/extension-collaboration';
 import React from 'react';
-import { useDebouncedCallback } from 'use-debounce';
 import { IndexeddbPersistence } from 'y-indexeddb';
 import * as Y from 'yjs';
 
