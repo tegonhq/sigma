@@ -3,7 +3,6 @@ import {
   PopoverContent,
   PopoverTrigger,
   ScrollArea,
-  Separator,
 } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 

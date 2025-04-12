@@ -9,6 +9,7 @@ import {
   Project,
 } from '@tegonhq/ui';
 import Image from 'next/image';
+
 import { Feature } from 'src/components';
 
 export default function Index() {

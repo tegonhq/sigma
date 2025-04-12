@@ -1,12 +1,4 @@
-import {
-  AI,
-  Button,
-  Close,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@tegonhq/ui';
+import { Button, Close } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 

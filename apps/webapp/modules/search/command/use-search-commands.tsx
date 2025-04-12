@@ -13,6 +13,7 @@ import { Check } from 'lucide-react';
 import React from 'react';
 
 import { DailogViewsContext, DialogType } from 'modules/dialog-views-provider';
+import { AddTaskDialogContext } from 'modules/tasks/add-task';
 
 import { useApplication } from 'hooks/application';
 
@@ -20,7 +21,6 @@ import { TabViewType } from 'store/application';
 import { useContextStore } from 'store/global-context-provider';
 
 import { useTaskOperations } from './use-task-operations';
-import { AddTaskDialogContext } from 'modules/tasks/add-task';
 
 interface CommandType {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

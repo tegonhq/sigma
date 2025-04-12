@@ -1,14 +1,15 @@
+import { Badge, ParentIssueLine } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
+import React from 'react';
 
 import type { TaskType } from 'common/types';
+import { TaskViewContext } from 'layouts/side-task-view';
+
+import { useContextStore } from 'store/global-context-provider';
 
 import { ScheduleDropdown } from '../metadata';
 import { DuedateDropdown } from '../metadata/due-date';
 import { SubTasks } from '../metadata/sub-tasks';
-import { Badge, ParentIssueLine } from '@tegonhq/ui';
-import { useContextStore } from 'store/global-context-provider';
-import React from 'react';
-import { TaskViewContext } from 'layouts/side-task-view';
 import { TaskExternalInfo } from '../task-external-info';
 import {
   TaskIntegrationMetadataWrapper,

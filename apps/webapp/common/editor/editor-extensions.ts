@@ -1,6 +1,10 @@
 import { Extension, mergeAttributes } from '@tiptap/core';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import Heading from '@tiptap/extension-heading';
+import Table from '@tiptap/extension-table';
+import TableCell from '@tiptap/extension-table-cell';
+import TableHeader from '@tiptap/extension-table-header';
+import TableRow from '@tiptap/extension-table-row';
 import { cx } from 'class-variance-authority';
 import { all, createLowlight } from 'lowlight';
 import {
@@ -13,10 +17,6 @@ import {
   TaskList,
   CustomKeymap,
 } from 'novel/extensions';
-import Table from '@tiptap/extension-table';
-import TableCell from '@tiptap/extension-table-cell';
-import TableHeader from '@tiptap/extension-table-header';
-import TableRow from '@tiptap/extension-table-row';
 import AutoJoiner from 'tiptap-extension-auto-joiner'; // optional
 // import GlobalDragHandle from 'tiptap-extension-global-drag-handle';
 
