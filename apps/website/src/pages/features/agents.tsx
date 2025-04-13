@@ -5,28 +5,23 @@ import { RiArrowLeftLine } from '@remixicon/react';
 export default function AgentsFeature() {
   return (
     <div className="h-[100vh] w-[100vw] bg-background flex flex-col items-center overflow-auto">
-      {/* Navigation Bar */}
-      <div className="fixed top-0 left-0 right-0 bg-background/80 backdrop-blur-sm border-b border-border z-10">
-        <div className="max-w-6xl mx-auto px-4 h-14 flex items-center">
-          <Link 
-            href="/" 
-            className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <RiArrowLeftLine size={20} />
-            <span>back to home</span>
-          </Link>
-        </div>
-      </div>
-
       {/* Header Section */}
-      <div className="p-2 w-full flex gap-2 flex-col items-center pt-24">
-        <div className="flex items-center gap-2">
-          <AI size={24} className="text-foreground" />
-          <h1 className="text-2xl font-semibold">agents</h1>
-        </div>
-        <div className="max-w-[800px] mt-8 px-4">
+      <div className="p-2 w-full flex flex-col pt-24">
+        <div className="max-w-[800px] mx-auto w-full px-4">
+          <div className="flex items-center mb-8 gap-6">
+            <Link 
+              href="/" 
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <RiArrowLeftLine size={24} />
+            </Link>
+            <div className="flex items-center gap-1">
+              <AI size={24} className="text-foreground" />
+              <h1 className="text-2xl font-semibold">agents</h1>
+            </div>
+          </div>
           <h2 className="text-[40px] font-mono text-left">
-            because your brain deserves a junior dev..
+            because your brain deserves an assistant
           </h2>
         </div>
       </div>
