@@ -32,7 +32,7 @@ export class TaskHooksService {
     taskId: string,
     action: TaskHookAction,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    changeData?: Record<string, any>,
+    changeData?: Record<string, { oldValue: any; newValue: any }>,
   ) {
     const task = await this.prisma.task.findUnique({
       where: {
@@ -60,6 +60,7 @@ export class TaskHooksService {
       this.handleDeleteTask(task, context),
       this.handleScheduleTask(task, context),
       this.handleListTask(task, context),
+      this.handleParentPageTask(task, context),
       // this.handleCalendarTask(task, context),
       // this.handleGenerateSummary(task, context),
     ]);
@@ -123,9 +124,9 @@ export class TaskHooksService {
       case 'update':
         if (
           context.changeData &&
-          (context.changeData.recurrence ||
-            context.changeData.startTime ||
-            context.changeData.endTime)
+          (context.changeData.recurrence?.newValue ||
+            context.changeData.startTime?.newValue ||
+            context.changeData.endTime?.newValue)
         ) {
           await this.taskOccurenceService.updateTaskOccurenceByTask(
             task.id,
@@ -164,9 +165,9 @@ export class TaskHooksService {
         // Check if schedule related fields were updated
         if (
           context.changeData &&
-          (context.changeData.recurrence ||
-            context.changeData.startTime ||
-            context.changeData.endTime)
+          (context.changeData.recurrence?.newValue ||
+            context.changeData.startTime?.newValue ||
+            context.changeData.endTime?.newValue)
         ) {
           await handleCalendarTask(
             this.prisma,
@@ -263,16 +264,20 @@ export class TaskHooksService {
         return { message: 'Handled schedule create' };
 
       case 'update':
-        // Check if schedule related fields were updated
-        if (
-          context.changeData.listId &&
-          context.changeData.listId !== task.listId
-        ) {
-          await removeTaskInListPage(task);
+        // Check if list ID was updated
+        if (context.changeData.listId?.oldValue !== undefined) {
+          // We need to temporarily modify the task to point to the old list
+          const oldTask = {
+            ...task,
+            listId: context.changeData.listId.oldValue,
+          };
+          await removeTaskInListPage(oldTask);
         }
-        if (task.listId && context.changeData.listId !== task.listId) {
+
+        if (context.changeData.listId?.newValue !== undefined) {
           await addTaskToListPage(task);
         }
+
         return { message: 'Handled schedule update' };
 
       case 'delete':
@@ -280,6 +285,79 @@ export class TaskHooksService {
           await removeTaskInListPage(task);
         }
         return { message: 'Handled schedule delete' };
+    }
+  }
+
+  async handleParentPageTask(task: Task, context: TaskHookContext) {
+    const addTaskToParentPage = async (task: Task, parentId: string) => {
+      const parentTask = await this.prisma.task.findUnique({
+        where: {
+          id: parentId,
+        },
+        include: {
+          page: true,
+        },
+      });
+
+      if (parentTask && parentTask.page) {
+        await this.pagesService.getOrCreatePageByTitle(task.workspaceId, {
+          title: parentTask.page.title,
+          type: parentTask.page.type as PageTypeEnum,
+          taskIds: [task.id],
+        });
+      }
+    };
+
+    const removeTaskFromParentPage = async (task: Task, parentId: string) => {
+      const parentTask = await this.prisma.task.findUnique({
+        where: {
+          id: parentId,
+        },
+        include: {
+          page: true,
+        },
+      });
+
+      if (parentTask && parentTask.page) {
+        await this.pagesService.removeTaskFromPageByTitle(
+          parentTask.page.title,
+          [task.id],
+        );
+      }
+    };
+
+    switch (context.action) {
+      case 'create':
+        if (task.parentId) {
+          await addTaskToParentPage(task, task.parentId);
+        }
+        return { message: 'Handled parent page task create' };
+
+      case 'update':
+        // Check if parent ID was updated
+        if (context.changeData.parentId?.oldValue !== undefined) {
+          // We need to temporarily modify the task to point to the old parent
+          const oldTask = {
+            ...task,
+            parentId: context.changeData.parentId.oldValue,
+          };
+          await removeTaskFromParentPage(
+            oldTask,
+            context.changeData.parentId.oldValue,
+          );
+        }
+
+        if (context.changeData.parentId?.newValue !== undefined) {
+          await addTaskToParentPage(task, context.changeData.parentId.newValue);
+        }
+        return { message: 'Handled parent page task update' };
+
+      case 'delete':
+        if (task.parentId) {
+          await removeTaskFromParentPage(task, task.parentId);
+        }
+
+        return { message: 'Handled parent page task delete' };
     }
   }
 }

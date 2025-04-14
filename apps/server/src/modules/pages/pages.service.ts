@@ -434,6 +434,7 @@ export class PagesService {
             where: {
               id: { in: removedTaskIds },
               deleted: null,
+              listId: list.id,
             },
             data: {
               listId: null,
@@ -461,6 +462,7 @@ export class PagesService {
             where: {
               id: { in: removedTaskIds },
               deleted: null,
+              parentId: pageTask.id,
             },
             data: {
               parentId: null,

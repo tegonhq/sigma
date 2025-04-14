@@ -145,7 +145,7 @@ export default class ReplicationService {
 
   getChangedData(change: logChangeType) {
     // eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style, @typescript-eslint/no-explicit-any
-    const changedData: { [key: string]: any } = {};
+    const changedData: { [key: string]: { oldValue: any; newValue: any } } = {};
     const keyNames = change.oldkeys?.keynames || [];
     const oldValues = change.oldkeys?.keyvalues || [];
     const columnNames = change.columnnames || [];
@@ -169,7 +169,10 @@ export default class ReplicationService {
         oldValue !== 'undefined' &&
         newValue !== null
       ) {
-        changedData[columnName] = newValue;
+        changedData[columnName] = {
+          oldValue,
+          newValue,
+        };
       }
     });
 
