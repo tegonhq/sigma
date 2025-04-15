@@ -22,48 +22,45 @@ export default function Index() {
           width={50}
           height={50}
         />
-        <h2 className="text-[40px] font-mono mt-4 text-center text-bold">
-          a new way to work
-        </h2>
+        <div className="max-w-[800px] w-full px-4">
+          <h2 className="text-[40px] font-mono mt-4 text-center text-bold">
+            the to-do list that works as your assistant
+          </h2>
+          <p className="text-xl text-foreground/80 mt-4 text-center italic">
+            from &apos;fix bugs&apos; to &apos;buy groceries&apos;—ai plans and gets it done
+          </p>
+        </div>
       </div>
 
       <div className="max-w-[800px] mt-8 space-y-6 text-left px-4 leading-[40px] mb-10 lowercase">
         <p className="text-xl text-foreground/80">
-          the way we work is transforming. no more fragmented workflows, no more
-          scattered focus. task management is changing, bringing a future where
-          everything flows seamlessly.
+          the way we work is changing—no more starting from scratch on mundane tasks. with intelligent agents transforming our workflows, 
+          automations are taking over, and how we plan our days is getting a major upgrade.
         </p>
 
         <p className="text-xl text-foreground/80">
-          sigma is your intelligent workspace, built for this new era—where you
-          can <b>aggregate</b>, <b>plan</b>, and <b>execute</b> seamlessly.
-        </p>
-
-        <span className="text-xl text-foreground/80 block">
-          with
-          <Feature Icon={<IssuesLine size={20} />} text="task" href="/features/task" />, work is
-          automatically tracked and generated, ensuring nothing slips through.
-          <Feature Icon={<CalendarLine size={20} />} text="daily planner" href="/features/daily-planner" />
-          aligns your day to your energy, optimizing focus and flow.
-          <Feature Icon={<Project size={20} />} text="lists" href="/features/lists" />
-          blend checklists, notes, and code snippets effortlessly, keeping
-          everything within reach. and with
-          <Feature Icon={<AI size={20} />} text="agents" href="/features/agents" />
-          —including a coding assitant, browser assistant, and more—you have an
-          always-on assistant for research, automation, and execution.
-        </span>
-
-        <p className="text-xl text-foreground/80">
-          but <b>sigma</b> is more than a productivity tool—it&apos;s your
-          developer control center. as it evolves, it will anticipate your
-          needs, automate workflows, and help you stay in the zone.
+          imagine a todo app that doesn&apos;t just track your tasks, but actually gets things done for you. sigma is that all-in-one 
+          workspace for notes, tasks, and projects, built for the modern era. it pulls in <Feature Icon={<IssuesLine size={20} />} text="tasks" href="/features/task" /> automatically 
+          from all your favorite tools like github, slack, and jira, so nothing ever slips through the cracks. think of its <Feature Icon={<CalendarLine size={20} />} text="daily planner" href="/features/daily-planner" /> 
+          as a standup meeting for your brain—helping you carve out the perfect day with optimized focus and flow.
         </p>
 
         <p className="text-xl text-foreground/80">
-          the next generation of work is here. join us in shaping it.
+          and when it comes to organizing, sigma&apos;s <Feature Icon={<Project size={20} />} text="lists" href="/features/lists" /> feature is like a swiss army knife—whether you&apos;re managing tasks, 
+          jotting down notes, or stashing code snippets, it&apos;s got you covered. plus, with built-in <Feature Icon={<AI size={20} />} text="agents" href="/features/agents" /> like a coding assistant 
+          and a browser helper, you have a 24/7 sidekick for research, automation, and execution.
         </p>
 
-        <p className="text-xl text-foreground/80"> -- the sigma team </p>
+        <p className="text-xl text-foreground/80">
+          but sigma isn&apos;t just another productivity tool—it&apos;s your control center. as it grows, it&apos;ll anticipate your needs, 
+          streamline your workflows, and keep you in your creative zone.
+        </p>
+
+        <p className="text-xl text-foreground/80">
+          welcome to the next generation of todo lists. come join us and shape the future of work.
+        </p>
+
+        <p className="text-xl text-foreground/80"> – the sigma team </p>
 
         <div className="flex justify-center w-full p-2 gap-2">
           <a
