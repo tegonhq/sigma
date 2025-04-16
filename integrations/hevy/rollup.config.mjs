@@ -26,7 +26,7 @@ export default [
         include: /\/node_modules\//,
       }),
       typescript({
-        tsconfig: 'tsconfig.backend.json',
+        tsconfig: 'tsconfig.json',
       }),
       terser(),
     ],

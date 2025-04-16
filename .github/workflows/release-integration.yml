@@ -26,6 +26,35 @@ jobs:
           echo "integration=$INTEGRATION" >> $GITHUB_OUTPUT
           echo "Integration to build: $INTEGRATION"
 
+      - name: Add reaction to comment
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.PUSH_TOKEN }}
+          script: |
+            github.rest.reactions.createForIssueComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: context.payload.comment.id,
+              content: 'eyes'
+            });
+
+            // Add a reply by updating the triggering comment
+            const commentId = context.payload.comment.id;
+            const existingComment = await github.rest.issues.getComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: commentId
+            });
+
+            const updatedBody = existingComment.data.body + '\n\n👀 Seen! Integration deployment has started for `${{ steps.extract.outputs.integration }}`';
+
+            await github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: commentId,
+              body: updatedBody
+            });
+
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -60,12 +89,15 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Integration version: $VERSION"
 
-      - name: Setup Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v1
+      - name: Setup Google Authentication
+        uses: google-github-actions/auth@v2
         with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-          export_default_credentials: true
+          credentials_json: "${{ secrets.GCP_SA_KEY }}"
+
+      - name: "Set up Cloud SDK"
+        uses: "google-github-actions/setup-gcloud@v2"
+        with:
+          version: ">= 363.0.0"
 
       - name: Check if version already exists
         id: check_version
@@ -73,39 +105,56 @@ jobs:
         with:
           github-token: ${{ secrets.PUSH_TOKEN }}
           script: |
-            const { exec } = require('child_process');
             const integration = '${{ steps.extract.outputs.integration }}';
             const version = '${{ steps.version.outputs.version }}';
             const octokit = github.rest;
+            const { execSync } = require('child_process');
+
+            const commentId = context.payload.comment.id;
+            const existingComment = await github.rest.issues.getComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: commentId
+            });
 
             return new Promise((resolve) => {
-              exec(`gsutil ls gs://integrations/${integration}/${version}`, (err, stdout) => {
-                if (!err && stdout.trim()) {
+              try {
+                const stdout = execSync(`gsutil ls gs://integrations/${integration}/${version}`).toString();
+                if (stdout.trim()) {
                   core.setFailed('Version already exists in bucket');
-                  octokit.issues.createComment({
+                  
+                  // Update the triggering comment with failure message
+                  const updatedBody = existingComment.data.body + `\n\n⚠️ Build failed: Version ${version} of ${integration} integration already exists in bucket`;
+                  github.rest.issues.updateComment({
                     owner: context.repo.owner,
                     repo: context.repo.repo,
-                    issue_number: context.issue.number,
-                    body: `⚠️ Build failed: Version ${version} of ${integration} integration already exists in bucket`
+                    comment_id: commentId,
+                    body: updatedBody
                   });
+                  
                   resolve('exists');
-                } else {
-                  octokit.issues.createComment({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    issue_number: context.issue.number,
-                    body: `✅ Version ${version} of ${integration} integration doesn't exist yet. Proceeding with build and upload.`
-                  });
-                  resolve('not_exists');
                 }
-              });
+              } catch (err) {
+                // Version doesn't exist, which is what we want
+                // Update the triggering comment with success message
+                const updatedBody = existingComment.data.body + `\n\n✅ Version ${version} of ${integration} integration doesn't exist yet. Proceeding with build and upload.`;
+                github.rest.issues.updateComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: commentId,
+                  body: updatedBody
+                });
+                
+                resolve('not_exists');
+              }
             });
 
       - name: Install dependencies
         if: steps.check_version.outputs.result != 'exists'
         run: |
           cd integrations/${{ steps.extract.outputs.integration }}
-          pnpm install --ignore-workspace
+          pnpm install --ignore-workspace --no-frozen-lockfile
+          npm i -g @vercel/ncc
           if [ $? -ne 0 ]; then
             echo "Error: Dependencies installation failed"
             exit 1
@@ -133,14 +182,11 @@ jobs:
             exit 1
           fi
 
-          # Verify gsutil has proper authentication
-          gsutil ls gs://integrations/ || { echo "Error: Cannot access GCP bucket. Check permissions."; exit 1; }
-
           # Upload files
-          gsutil -m cp -r "$DIST_DIR"/* gs://integrations/$INTEGRATION/$VERSION/
+          gsutil -m cp -r "$DIST_DIR"/* gs://sigma-integrations/$INTEGRATION/$VERSION/
 
           # Verify upload was successful
-          gsutil ls gs://integrations/$INTEGRATION/$VERSION/ || { echo "Error: Upload verification failed"; exit 1; }
+          gsutil ls gs://sigma-integrations/$INTEGRATION/$VERSION/ || { echo "Error: Upload verification failed"; exit 1; }
 
       - name: Comment on PR
         if: steps.check_version.outputs.result != 'exists'
@@ -151,9 +197,26 @@ jobs:
             const integration = '${{ steps.extract.outputs.integration }}';
             const version = '${{ steps.version.outputs.version }}';
 
-            github.rest.issues.createComment({
+            const commentId = context.payload.comment.id;
+            const existingComment = await github.rest.issues.getComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body: `✅ Successfully built and uploaded ${integration} integration v${version} to GCP bucket`
+              comment_id: commentId
+            });
+
+            const updatedBody = existingComment.data.body + `\n\n✅ Successfully built and uploaded ${integration} integration v${version} to GCP bucket`;
+
+            await github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: commentId,
+              body: updatedBody
+            });
+
+            // Add a tick reaction to the comment
+            await github.rest.reactions.createForIssueComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: commentId,
+              content: '+1'
             });
