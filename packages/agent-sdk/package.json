@@ -1,6 +1,6 @@
 {
   "name": "@tegonhq/agent-sdk",
-  "version": "0.1.0",
+  "version": "0.1.7",
   "description": "Sigma Agent SDK",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -25,21 +25,26 @@
   "scripts": {
     "clean": "rimraf dist",
     "build": "npm run clean && npm run build:tsup",
+    "build:watch": "npm run clean && tsup --watch",
     "build:tsup": "tsup --dts-resolve",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --fix"
   },
   "dependencies": {
-    "openai": "^4.0.0",
-    "react-query": "^3.39.3",
+    "@anthropic-ai/sdk": "^0.18.0",
+    "@google/generative-ai": "^0.24.0",
     "commander": "^13.1.0",
-    "@anthropic-ai/sdk": "^0.18.0"
+    "openai": "^4.0.0",
+    "openapi3-ts": "^4.4.0",
+    "pino": "9.6.0",
+    "pino-pretty": "13.0.0",
+    "react-query": "^3.39.3"
   },
   "devDependencies": {
+    "@sigma/eslint-config": "workspace:*",
     "@sigma/services": "workspace:*",
     "@sigma/types": "workspace:*",
     "@sigma/typescript-config": "workspace:*",
-    "@sigma/eslint-config": "workspace:*",
     "@types/configstore": "^6.0.2",
     "@types/debug": "^4.1.7",
     "@types/node": "18",

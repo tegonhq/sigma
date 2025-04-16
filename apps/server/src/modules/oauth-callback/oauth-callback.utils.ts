@@ -35,7 +35,7 @@ export function getSimpleOAuth2ClientConfig(
   const authorizeUrl = new URL(
     interpolateString(template.authorization_url, connectionConfig),
   );
-  const headers = { 'User-Agent': 'Poozle' };
+  const headers = { 'User-Agent': 'Tegon' };
 
   const authConfig = template as ProviderTemplateOAuth2;
 

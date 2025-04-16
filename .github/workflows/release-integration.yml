@@ -1,0 +1,157 @@
+name: Integration Build and Release
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  process-comment:
+    if: contains(github.event.comment.body, '/build integration=')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write # Added permission for commenting on issues
+
+    steps:
+      - name: Extract integration name
+        id: extract
+        run: |
+          COMMENT="${{ github.event.comment.body }}"
+          INTEGRATION=$(echo "$COMMENT" | grep -oP '/build integration=\K[^\s]+')
+          if [ -z "$INTEGRATION" ]; then
+            echo "Error: Could not extract integration name from comment"
+            exit 1
+          fi
+          echo "integration=$INTEGRATION" >> $GITHUB_OUTPUT
+          echo "Integration to build: $INTEGRATION"
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "pnpm" # Added cache for faster builds
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 10.3.0
+          run_install: false # We'll run install separately
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile # Added --frozen-lockfile for deterministic installs
+
+      - name: Validate integration directory
+        run: |
+          INTEGRATION_DIR="integrations/${{ steps.extract.outputs.integration }}"
+          if [ ! -d "$INTEGRATION_DIR" ]; then
+            echo "Error: Integration directory $INTEGRATION_DIR does not exist"
+            exit 1
+          fi
+
+      - name: Get integration version
+        id: version
+        run: |
+          INTEGRATION_DIR="integrations/${{ steps.extract.outputs.integration }}"
+          if [ ! -f "$INTEGRATION_DIR/package.json" ]; then
+            echo "Error: package.json not found in $INTEGRATION_DIR"
+            exit 1
+          fi
+          VERSION=$(node -p "require('./$INTEGRATION_DIR/package.json').version")
+          if [ -z "$VERSION" ]; then
+            echo "Error: Could not extract version from package.json"
+            exit 1
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Integration version: $VERSION"
+
+      - name: Setup Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+
+      - name: Check if version already exists
+        id: check_version
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { exec } = require('child_process');
+            const integration = '${{ steps.extract.outputs.integration }}';
+            const version = '${{ steps.version.outputs.version }}';
+            const octokit = github.rest;
+
+            return new Promise((resolve) => {
+              exec(`gsutil ls gs://integrations/${integration}/${version}`, (err, stdout) => {
+                if (!err && stdout.trim()) {
+                  core.setFailed('Version already exists in bucket');
+                  octokit.issues.createComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: context.issue.number,
+                    body: `⚠️ Build failed: Version ${version} of ${integration} integration already exists in bucket`
+                  });
+                  resolve('exists');
+                } else {
+                  octokit.issues.createComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: context.issue.number,
+                    body: `✅ Version ${version} of ${integration} integration doesn't exist yet. Proceeding with build and upload.`
+                  });
+                  resolve('not_exists');
+                }
+              });
+            });
+
+      - name: Build integration
+        if: steps.check_version.outputs.result != 'exists'
+        run: |
+          cd integrations/${{ steps.extract.outputs.integration }}
+          pnpm build
+          if [ $? -ne 0 ]; then
+            echo "Error: Build failed"
+            exit 1
+          fi
+
+      - name: Upload to GCP bucket
+        if: steps.check_version.outputs.result != 'exists'
+        run: |
+          INTEGRATION="${{ steps.extract.outputs.integration }}"
+          VERSION="${{ steps.version.outputs.version }}"
+          DIST_DIR="integrations/$INTEGRATION/dist"
+
+          if [ ! -d "$DIST_DIR" ]; then
+            echo "Error: Dist directory $DIST_DIR does not exist after build"
+            exit 1
+          fi
+
+          # Verify gsutil has proper authentication
+          gsutil ls gs://integrations/ || { echo "Error: Cannot access GCP bucket. Check permissions."; exit 1; }
+
+          # Upload files
+          gsutil -m cp -r "$DIST_DIR"/* gs://integrations/$INTEGRATION/$VERSION/
+
+          # Verify upload was successful
+          gsutil ls gs://integrations/$INTEGRATION/$VERSION/ || { echo "Error: Upload verification failed"; exit 1; }
+
+      - name: Comment on PR
+        if: steps.check_version.outputs.result != 'exists'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const integration = '${{ steps.extract.outputs.integration }}';
+            const version = '${{ steps.version.outputs.version }}';
+
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `✅ Successfully built and uploaded ${integration} integration v${version} to GCP bucket`
+            });

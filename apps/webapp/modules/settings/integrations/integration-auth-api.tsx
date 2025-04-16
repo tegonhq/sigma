@@ -30,7 +30,7 @@ export const IntegrationAuthAPI = observer(
         {
           integrationDefinitionId: integrationDefinition.id,
           config: {
-            api_key: value,
+            apiKey: value,
           },
         },
         {

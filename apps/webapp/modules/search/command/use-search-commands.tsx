@@ -117,12 +117,14 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
       },
     ];
 
+    console.log(value, isValidDateFormat(value));
     if (isValidDateFormat(value)) {
       commands['default'] = [
         ...commands['default'],
         {
           Icon: CalendarLine,
           text: `Go to date: ${value}`,
+          shortcut: '',
           command: () => {
             updateTabData(0, {
               date: parse(value, 'dd-MM-yyyy', new Date()),
@@ -132,6 +134,8 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
         },
       ];
     }
+
+    console.log(commands);
 
     if (
       firstTab.type === TabViewType.MY_TASKS &&

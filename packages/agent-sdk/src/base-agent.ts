@@ -2,16 +2,37 @@ import fs from 'fs';
 import path from 'path';
 
 import { Command } from 'commander';
+import pino, { Logger } from 'pino';
 
-import { AgentMessage } from './message';
+import { AgentMessage, AgentMessageType } from './message';
 
 // Abstract class for BaseAgent
 export abstract class BaseAgent {
   protected program: Command;
+  logger: Logger;
 
   constructor() {
     this.program = new Command();
     this.registerCommands();
+
+    const transport = this.program.opts().pretty
+      ? {
+          target: 'pino-pretty',
+          options: {
+            colorize: true,
+            translateTime: 'SYS:standard',
+            ignore: 'pid,hostname',
+          },
+        }
+      : undefined;
+
+    this.logger = pino(
+      {
+        level: this.program.opts().logLevel || 'info',
+        transport,
+      },
+      process.stderr,
+    );
   }
 
   /**
@@ -21,43 +42,62 @@ export abstract class BaseAgent {
     this.program
       .name('agent')
       .description('CLI for Sigma Agent')
-      .version(this.version(), '-v, --version', 'Display the version number');
+      .version(this.version(), '-v, --version', 'Display the version number')
+      .option('--log-level <level>', 'Set logging level', 'info')
+      .option('--pretty', 'Enable pretty printing of logs', false);
 
     this.program
-      .command('get-tools')
-      .description('Get available tools/capabilities from tools.json')
+      .command('skills')
+      .description('What this agent can do (its capabilities/tools)')
       .action(() => {
-        console.log(this.getTools());
+        console.log(this.skills());
       });
 
     this.program
-      .command('get-jargon')
-      .description('Get domain-specific terminology from jargon.md')
+      .command('about')
+      .description('What this agent does')
       .action(() => {
-        console.log(this.getJargon());
+        console.log(this.about());
+      });
+
+    this.program
+      .command('terms')
+      .description('Domain-specific terms or concepts it understands')
+      .action(() => {
+        console.log(this.terms());
       });
 
     this.program
       .command('run')
       .description('Run the agent with a message and stream JSON responses')
       .argument('<message>', 'Message to send to the agent')
-      .argument('<context>', 'Context to send to the agent')
-      .argument('<auth>', 'Authentication dictionary')
+      .argument(
+        '<auth>',
+        'Authentication details for API integration (JSON string)',
+      )
+      .argument(
+        '[context]',
+        'Context to send to the agent (JSON string or path to .json file)',
+        'context.json',
+      )
       .option('--auto-mode', 'Enable automatic mode', false)
       .action(async (message, context, auth, options) => {
         try {
           const autoMode = options.autoMode || false;
-          const responses = this.run(message, context, auth, autoMode);
+          const responses = this.ask(message, context, auth, autoMode);
 
           for await (const response of responses) {
-            // Ensure response is serializable and output it
-            const jsonResponse = JSON.stringify(response);
-            console.log(jsonResponse);
+            console.log(JSON.stringify(response));
           }
         } catch (e) {
           // Handle errors by outputting as JSON
           const errorResponse = JSON.stringify({ error: (e as Error).message });
-          console.error(errorResponse);
+          console.log(
+            JSON.stringify({
+              message: errorResponse,
+              type: AgentMessageType.ERROR,
+            }),
+          );
         }
       });
   }
@@ -80,14 +120,21 @@ export abstract class BaseAgent {
    * Get tools information
    */
   // eslint-disable-next-line @typescript-eslint/array-type
-  getTools(): Array<any> {
+  skills(): Array<any> {
     return [];
   }
 
   /**
    * Abstract method to get jargon information
    */
-  getJargon(): string {
+  terms(): string {
+    return '';
+  }
+
+  /**
+   * Abstract method to get jargon information
+   */
+  about(): string {
     return '';
   }
 
@@ -105,7 +152,7 @@ export abstract class BaseAgent {
    * @param auth Authentication dictionary
    * @param autoMode Enable automatic mode
    */
-  abstract run(
+  abstract ask(
     message: string,
     context: string,
     auth: string,

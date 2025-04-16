@@ -1,0 +1,9 @@
+{
+  "name": "Hevy extension",
+  "key": "hevy",
+  "description": "Hevy is a workout tracking app that allows users to log and track their fitness activities. The API provides access to workouts, exercises, and training data with detailed information on sets, reps, weights, and progress metrics. Workouts include structured data with exercise sequences, set details (including weight, reps, duration, and distance), and timing information. Each exercise is categorized by type (strength, cardio, stretching) and equipment (bodyweight, machine, free weight, cable), allowing for comprehensive fitness tracking and analysis. The system supports creating custom routines, tracking personal records, and analyzing performance trends over time.",
+  "icon": "Hevy",
+  "auth": {
+    "ApiKey": { }
+  }
+}

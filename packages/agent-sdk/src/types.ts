@@ -6,8 +6,8 @@ export interface PassedContext {
 
 export interface HistoryStep {
   thought?: string;
-  finalAnswer?: string;
-  question?: string;
+
+  isQuestion?: boolean;
   action?: string;
   actionInput?: string;
   observation?: string;
@@ -25,5 +25,3 @@ export interface ExecutionState {
   autoMode: boolean;
   finalAnswer?: string;
 }
-
-export interface NextAction extends HistoryStep {}

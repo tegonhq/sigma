@@ -42,15 +42,18 @@ export async function handleSchedule(eventBody: any) {
     }
     page++;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const filteredNotifications = notifications.filter((notification: any) =>
       allowedReasons.includes(notification.reason),
     );
 
     notificationCount += filteredNotifications?.length || 0;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const tasks: any = [];
 
     await Promise.all(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       filteredNotifications.map(async (notification: any) => {
         const { reason, subject } = notification;
 
@@ -60,6 +63,7 @@ export async function handleSchedule(eventBody: any) {
         let status = 'Todo';
         let title: string = '';
         let subjectType: string = '';
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let githubData: Record<string, any> = {};
         switch (reason) {
           // case 'mention':

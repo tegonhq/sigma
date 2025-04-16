@@ -1,4 +1,4 @@
-export const JARGON = `
+export const TERMS = `
 # Hevy Terminology
 
 ## Core Concepts

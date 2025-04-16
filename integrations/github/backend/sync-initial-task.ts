@@ -2,6 +2,7 @@ import axios from 'axios';
 
 import { createTasks, getGithubData } from './utils';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function syncInitialTasks(eventBody: any) {
   const { integrationAccount } = eventBody;
   const integrationConfiguration = integrationAccount.integrationConfiguration;
@@ -13,6 +14,7 @@ export async function syncInitialTasks(eventBody: any) {
     `author:${settings.login}+type:pr+is:open`,
   ];
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const tasks: any = [];
 
   await Promise.all(
@@ -31,6 +33,7 @@ export async function syncInitialTasks(eventBody: any) {
           break;
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         data.items.map((item: any) => {
           const url = item.url;
           const sourceId = item.id.toString();

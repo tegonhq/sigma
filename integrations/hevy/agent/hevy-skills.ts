@@ -1,11 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { BaseTools } from '@tegonhq/agent-sdk';
+import { APIBaseSkills } from '@tegonhq/agent-sdk';
 import axios from 'axios';
 
-export class GithubTools extends BaseTools {
-  private apiURL = 'https://api.hevyapp.com';
-
-  getTools(): Record<string, any> {
+export class HevySkills extends APIBaseSkills {
+  skills(): Record<string, any> {
     return {
       get_workout: {
         description:
@@ -222,20 +220,21 @@ export class GithubTools extends BaseTools {
   }
 
   async getWorkout(workoutId: string): Promise<string> {
-    const response = await axios.get(`${this.apiURL}/v1/workouts/${workoutId}`, {
+    const response = await axios.get(`${this.baseURL}/v1/workouts/${workoutId}`, {
       headers: this.headers,
     });
     const workout = response.data;
     return `I've fetched the workout with id '${workout.id}', title '${workout.title}', status '${workout.status}', with ${workout.exercises.length} exercises`;
   }
 
-  async listWorkouts(params: any): Promise<string> {
-    const { page = 1, pageSize } = params;
-    const query = Object.entries(params).map(([name, value]) => ({ name, value }));
+  getBaseURL(): string {
+    return 'https://api.hevyapp.com';
+  }
 
-    const response = await axios.get(`${this.apiURL}/v1/workouts`, {
+  async listWorkouts(params: any): Promise<string> {
+    const response = await axios.get(`${this.baseURL}/v1/workouts`, {
       headers: this.headers,
-      params: { query, page, pageSize },
+      params,
     });
 
     const { workouts = [], page: currentPage, page_count } = response.data;
@@ -274,11 +273,9 @@ export class GithubTools extends BaseTools {
   }
 
   async listRoutines(params: any): Promise<string> {
-    const query = Object.entries(params).map(([name, value]) => ({ name, value }));
-
-    const response = await axios.get(`${this.apiURL}/v1/routines`, {
+    const response = await axios.get(`${this.baseURL}/v1/routines`, {
       headers: this.headers,
-      params: { query },
+      params,
     });
 
     const { routines = [], page, page_count } = response.data;
@@ -304,7 +301,7 @@ export class GithubTools extends BaseTools {
       ],
     };
 
-    const response = await axios.post(`${this.apiURL}/v1/routines`, data, {
+    const response = await axios.post(`${this.baseURL}/v1/routines`, data, {
       headers: this.headers,
     });
 
@@ -313,18 +310,17 @@ export class GithubTools extends BaseTools {
   }
 
   async deleteRoutine(routineId: string): Promise<string> {
-    await axios.delete(`${this.apiURL}/v1/routines/${routineId}`, {
+    await axios.delete(`${this.baseURL}/v1/routines/${routineId}`, {
       headers: this.headers,
     });
     return `Routine with ID '${routineId}' has been successfully deleted.`;
   }
 
   async listExerciseTemplates(params: any): Promise<string> {
-    const query = Object.entries(params).map(([name, value]) => ({ name, value }));
-
-    const response = await axios.get(`${this.apiURL}/v1/exercise_templates`, {
+    console.log(params);
+    const response = await axios.get(`${this.baseURL}/v1/exercise_templates`, {
       headers: this.headers,
-      params: { query },
+      params,
     });
 
     const { exercise_templates: templates = [], page, page_count } = response.data;
@@ -342,7 +338,7 @@ export class GithubTools extends BaseTools {
   }
 
   async getExerciseTemplate(templateId: string): Promise<string> {
-    const response = await axios.get(`${this.apiURL}/v1/exercise_templates/${templateId}`, {
+    const response = await axios.get(`${this.baseURL}/v1/exercise_templates/${templateId}`, {
       headers: this.headers,
     });
 
@@ -380,7 +376,7 @@ export class GithubTools extends BaseTools {
     get_exercise_template: (params) => this.getExerciseTemplate(params.exercise_template_id),
   };
 
-  async runAction(actionName: string, parameters: any): Promise<string> {
+  async runSkill(actionName: string, parameters: any): Promise<string> {
     const func = this.functionMap[actionName];
     if (!func) {
       return `Unknown action: ${actionName} no action found`;

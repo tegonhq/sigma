@@ -1,19 +1,16 @@
 {
-  "name": "@sigma/github",
+  "name": "@sigma/sigma",
   "version": "0.1.1",
-  "description": "github extension for Sigma",
+  "description": "sigma extension for Sigma",
   "files": [
-    "github"
+    "dist"
   ],
   "scripts": {
-    "build": "rimraf dist && npm run build:js && pnpm run build:agent && npm run copy:spec",
+    "build": "rimraf dist && pnpm run build:agent",
     "build:agent": "ncc build agent/index.ts -o dist/agent",
     "dev:agent": "ncc build agent/index.ts -o dist/agent --watch",
-    "build:watch": "rimraf dist && rollup -c --watch",
-    "build:js": "rollup -c",
     "lint": "eslint --ext js,ts,tsx backend/ frontend/ --fix",
-    "prettier": "prettier --config .prettierrc --write .",
-    "copy:spec": "cp spec.json dist/"
+    "prettier": "prettier --config .prettierrc --write ."
   },
   "peerDependencies": {
     "@tegonhq/ui": "^0.2.21",

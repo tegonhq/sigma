@@ -1,5 +1,3 @@
-/** Copyright (c) 2022, Poozle, all rights reserved. **/
-
 import { babel } from '@rollup/plugin-babel';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
@@ -27,7 +25,6 @@ const frontendPlugins = [
   terser(),
 ];
 
-// eslint-disable-next-line import/no-anonymous-default-export
 export default [
   {
     input: 'frontend/index.tsx',

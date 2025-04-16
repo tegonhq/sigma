@@ -26,7 +26,7 @@
     "noFallthroughCasesInSwitch": true,
     "useUnknownInCatchVariables": false
   },
-  "include": ["frontend/**/*"],
+  "include": ["backend/**/*", "agent/**/*"],
   "exclude": ["node_modules", "build", "dist", "scripts", "acceptance-tests", "webpack", "jest"],
   "types": ["typePatches"]
 }
