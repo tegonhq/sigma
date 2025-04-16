@@ -1,6 +1,6 @@
 {
   "name": "@sigma/sigma",
-  "version": "0.1.1",
+  "version": "0.1.0",
   "description": "sigma extension for Sigma",
   "files": [
     "dist"
@@ -13,17 +13,8 @@
     "prettier": "prettier --config .prettierrc --write ."
   },
   "peerDependencies": {
-    "@tegonhq/ui": "^0.2.21",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.26.0",
-    "@babel/plugin-transform-runtime": "^7.25.9",
-    "@babel/preset-env": "^7.26.0",
-    "@babel/preset-react": "^7.26.3",
-    "@babel/preset-typescript": "^7.26.0",
-    "@rollup/plugin-babel": "6.0.4",
     "@rollup/plugin-commonjs": "^28.0.1",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^15.3.0",
@@ -72,7 +63,6 @@
     "@tegonhq/agent-sdk": "0.1.7",
     "@tegonhq/sigma-sdk": "0.1.13",
     "axios": "^1.7.9",
-    "openai": "^4.0.0",
-    "react-query": "^3.39.3"
+    "openai": "^4.0.0"
   }
 }

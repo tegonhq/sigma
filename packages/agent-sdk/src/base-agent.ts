@@ -106,13 +106,29 @@ export abstract class BaseAgent {
    * Show version information
    */
   version(): string {
+    // Define a version constant that will be replaced during build
+    // This approach doesn't rely on accessing package.json at runtime
+    const VERSION = '0.1.0'; // This will be updated by build tools
+
     try {
-      // Read package.json to get version
-      const packageJsonPath = path.resolve(__dirname, '../../package.json');
-      const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
-      return packageJson.version;
+      // First try to get version from environment if available
+      if (process.env.AGENT_SDK_VERSION) {
+        return process.env.AGENT_SDK_VERSION;
+      }
+
+      // If running in development with package.json available
+      try {
+        const packageJsonPath = path.resolve(__dirname, '../../package.json');
+        const packageJson = JSON.parse(
+          fs.readFileSync(packageJsonPath, 'utf8'),
+        );
+        return packageJson.version;
+      } catch {
+        // Fallback to the version constant
+        return VERSION;
+      }
     } catch (error) {
-      return '0.1.0';
+      return VERSION;
     }
   }
 

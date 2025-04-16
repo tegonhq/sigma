@@ -1,4 +1,4 @@
-export const JARGON = `
+export const TERMS = `
 # Sigma Domain Knowledge
 
 ## Key Entities
