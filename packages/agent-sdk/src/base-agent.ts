@@ -48,28 +48,30 @@ export abstract class BaseAgent {
 
     this.program
       .command('skills')
-      .description('What this agent can do (its capabilities/tools)')
+      .description('Lists agent capabilities and available skills')
       .action(() => {
         console.log(this.skills());
       });
 
     this.program
       .command('about')
-      .description('What this agent does')
+      .description('Provides information about what the agent does')
       .action(() => {
         console.log(this.about());
       });
 
     this.program
       .command('terms')
-      .description('Domain-specific terms or concepts it understands')
+      .description('Shows domain-specific terminology the agent understands')
       .action(() => {
         console.log(this.terms());
       });
 
     this.program
-      .command('run')
-      .description('Run the agent with a message and stream JSON responses')
+      .command('ask')
+      .description(
+        'Executes the agent with a user message and streams responses',
+      )
       .argument('<message>', 'Message to send to the agent')
       .argument(
         '<auth>',

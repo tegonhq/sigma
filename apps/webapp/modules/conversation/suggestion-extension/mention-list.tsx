@@ -15,7 +15,6 @@ export interface Agent {
 
 interface MentionListProps {
   items: Agent[];
-  onAgentMention: (agent: string) => void;
   command: (args: { id: string }) => void;
 }
 
@@ -28,8 +27,7 @@ export const MentionList = forwardRef(
       const item = props.items[index];
 
       if (item) {
-        props.onAgentMention(item.key);
-        props.command({ id: item.name });
+        props.command({ id: item.key });
       }
     };
 

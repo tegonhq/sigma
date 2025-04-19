@@ -317,7 +317,6 @@ export class HevySkills extends APIBaseSkills {
   }
 
   async listExerciseTemplates(params: any): Promise<string> {
-    console.log(params);
     const response = await axios.get(`${this.baseURL}/v1/exercise_templates`, {
       headers: this.headers,
       params,

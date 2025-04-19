@@ -117,7 +117,6 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
       },
     ];
 
-    console.log(value, isValidDateFormat(value));
     if (isValidDateFormat(value)) {
       commands['default'] = [
         ...commands['default'],
@@ -134,8 +133,6 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
         },
       ];
     }
-
-    console.log(commands);
 
     if (
       firstTab.type === TabViewType.MY_TASKS &&

@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -15,6 +16,7 @@ import {
   CreateConversationHistoryDto,
   UpdateConversationHistoryDto,
 } from '@tegonhq/sigma-sdk';
+import { Response } from 'express';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
 
@@ -34,6 +36,18 @@ export class ConversationHistoryController {
   ): Promise<ConversationHistory> {
     return await this.conversationHistoryService.createConversationHistory(
       conversationHistoryData,
+    );
+  }
+
+  @Get(':conversationHistoryId/stream')
+  @UseGuards(AuthGuard)
+  async streamConversationHistory(
+    @Param() params: ConversationHistoryParamsDto,
+    @Res() response: Response,
+  ) {
+    return this.conversationHistoryService.streamConversation(
+      params.conversationHistoryId,
+      response,
     );
   }
 

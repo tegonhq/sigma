@@ -174,6 +174,25 @@ export const suggestionItems = createSuggestionItems([
       });
     },
   },
+  {
+    title: 'skill',
+    description: 'Add date to page',
+    searchTerms: ['date'],
+    icon: <CalendarLine size={20} />,
+    command: ({ editor, range }) => {
+      editor.commands.command(({ tr, state }) => {
+        const node = state.schema.nodes['skill'].create({
+          name: 'sample',
+          id: 'smaple',
+          agent: 'sample',
+        });
+
+        tr.replaceWith(range.from, range.to, node);
+
+        return true;
+      });
+    },
+  },
 ]);
 
 export const slashCommand = Command.configure({

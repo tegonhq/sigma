@@ -1,4 +1,4 @@
-import {app, BrowserWindow, ipcMain} from 'electron';
+import {app, BrowserWindow, ipcMain, screen} from 'electron';
 import path, {dirname, join} from 'node:path';
 
 import {fileURLToPath} from 'node:url';
@@ -8,12 +8,18 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 export async function createQuickWindow(show = true) {
+  const primaryDisplay = screen.getPrimaryDisplay();
+  const {width} = primaryDisplay.workArea;
+  const {bounds} = primaryDisplay; // workArea excludes the macOS menu bar
+
   const smallerWindow = new BrowserWindow({
     show: false, // Use the 'ready-to-show' event to show the instantiated BrowserWindow.
-    width: 600, // Set minimum width
-    height: 400, // Set minimum height
+    width: 500, // Set minimum width
+    height: 500, // Set minimum height
     icon: path.join(__dirname, '/../../../buildResources/icon.png'),
     resizable: false,
+    x: width - 500 - 20,
+    y: bounds.y + 60,
     movable: true,
     minimizable: false,
     maximizable: false,
@@ -23,10 +29,10 @@ export async function createQuickWindow(show = true) {
     transparent: true,
     useContentSize: true,
     skipTaskbar: true,
-    hasShadow: true,
+    hasShadow: false,
     type: process.platform === 'darwin' ? 'panel' : 'toolbar',
     alwaysOnTop: true,
-    center: true,
+    center: false,
     webPreferences: {
       nodeIntegration: true,
       preload: join(app.getAppPath(), 'packages/preload/dist/index.mjs'),
@@ -59,7 +65,7 @@ export async function createQuickWindow(show = true) {
   /**
    * Load the main page of the main window.
    */
-  smallerWindow.loadURL('http://localhost:8000/search');
+  smallerWindow.loadURL('http://localhost:53081/search');
 
   return smallerWindow;
 }
@@ -70,7 +76,7 @@ export function registerQuickStates(window: BrowserWindow) {
   });
 
   // Listen for events from the renderer process
-  ipcMain.on('frontend', () => {
+  ipcMain.on('quick-window-close', () => {
     window.hide();
   });
 }

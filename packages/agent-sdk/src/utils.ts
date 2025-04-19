@@ -3,8 +3,11 @@ import { MessageParam } from '@anthropic-ai/sdk/resources';
 import { Content, GoogleGenerativeAI } from '@google/generative-ai';
 import OpenAI from 'openai';
 
+import { TokenCount } from './types';
+
 export async function* generate(
   messages: MessageParam[],
+  tokenCountState?: TokenCount,
 ): AsyncGenerator<string> {
   // Check for API keys
   const openaiKey = process.env.OPENAI_API_KEY;
@@ -48,13 +51,24 @@ export async function* generate(
     const stream = anthropic.messages.stream({
       messages,
       model,
-      max_tokens: 1024,
+      max_tokens: 5000,
     });
+
+    tokenCountState.inputTokens = Math.ceil(
+      messages.reduce((acc, msg) => acc + (msg.content?.length || 0) / 4, 0),
+    );
+
+    let outputTokenCount = 0;
 
     for await (const chunk of stream) {
       if (chunk.type === 'content_block_delta') {
         const content = chunk.delta?.text || '';
         if (content) {
+          if (tokenCountState) {
+            // Increment output token count for each chunk
+            outputTokenCount += 1; // This is an approximation
+            tokenCountState.outputToken = outputTokenCount;
+          }
           yield content;
         }
       } else if (
@@ -218,4 +232,23 @@ export const formatToolForPrompt = (tools: any, toolName: string) => {
   const tool = tools.find((tl: any) => tl.name === toolName);
 
   return formatTool(tool);
+};
+
+/**
+ * Generates a random ID of 6 characters
+ * @returns A random string of 6 characters
+ */
+export const generateRandomId = (): string => {
+  // Define characters that can be used in the ID
+  const characters =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+
+  // Generate 6 random characters
+  for (let i = 0; i < 6; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    result += characters.charAt(randomIndex);
+  }
+
+  return result.toLowerCase();
 };
