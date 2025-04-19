@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@tegonhq/agent-sdk':
-        specifier: 0.1.12
-        version: 0.1.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 0.1.14
+        version: 0.1.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tegonhq/sigma-sdk':
         specifier: 0.1.13
         version: 0.1.13
@@ -1173,8 +1173,8 @@ packages:
   '@rushstack/eslint-patch@1.11.0':
     resolution: {integrity: sha512-zxnHvoMQVqewTJr/W4pKjF0bMGiKJv1WX7bSrkl46Hg0QjESbzBROWK0Wg4RphzSOS5Jiy7eFimmM3UgMrMZbQ==}
 
-  '@tegonhq/agent-sdk@0.1.12':
-    resolution: {integrity: sha512-z+KtNiFoG6ZQyWEOZa9eI0OnAfB7mETpgfK2raBOxjfxmXg/JaPSM1iG8TSw1Z7v9aUyZXKmRkyl1j09UZ/NWg==}
+  '@tegonhq/agent-sdk@0.1.14':
+    resolution: {integrity: sha512-Q3SybfQDLRzP2idxb0fHH02j2zl47RVHzNbug+UjpRzuc4saEu5zWi9OikSJXwcqv4sTHwySrAcizSFFxEzVkw==}
     engines: {node: '>=18.0.0'}
 
   '@tegonhq/sigma-sdk@0.1.13':
@@ -4758,7 +4758,7 @@ snapshots:
 
   '@rushstack/eslint-patch@1.11.0': {}
 
-  '@tegonhq/agent-sdk@0.1.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@tegonhq/agent-sdk@0.1.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@anthropic-ai/sdk': 0.18.0
       '@google/generative-ai': 0.24.0
