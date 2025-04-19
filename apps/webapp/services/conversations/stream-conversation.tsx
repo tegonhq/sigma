@@ -11,35 +11,22 @@ export function useStreamConversationMutation() {
 
   const { mutate, isLoading: apiloading } = useMutation({
     mutationFn: async ({
-      conversationId,
       conversationHistoryId,
-      workspaceId,
-      userId,
-      autoMode,
     }: {
-      conversationId: string;
       conversationHistoryId: string;
-      workspaceId: string;
-      userId: string;
-      autoMode: boolean;
     }) => {
       setResponses([]);
 
-      const response = await fetch(`/ai/chat`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `/api/v1/conversation_history/${conversationHistoryId}/stream`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
         },
-        credentials: 'include',
-        body: JSON.stringify({
-          conversation_id: conversationId,
-          conversation_history_id: conversationHistoryId,
-          workspace_id: workspaceId,
-          user_id: userId,
-          stream: true,
-          auto_mode: autoMode,
-        }),
-      });
+      );
 
       if (!response.body) {
         throw new Error('ReadableStream not supported in this browser.');
@@ -73,11 +60,13 @@ export function useStreamConversationMutation() {
         chunk.split('\n\n').forEach((ch) => {
           if (ch) {
             const message = JSON.parse(ch.replace('data: ', ''));
-            if (message.status === 'summary') {
-              responses.push(message);
+            if (message.type.includes('MESSAGE')) {
+              responses.push(message.message);
             }
 
-            thoughts.push(message);
+            if (message.type.includes('THOUGHT')) {
+              responses.push(message.message);
+            }
           }
 
           return undefined;

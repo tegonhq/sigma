@@ -1,11 +1,11 @@
 import { UserTypeEnum } from '@sigma/types';
 import { AI } from '@tegonhq/ui';
-import { Editor } from '@tiptap/core';
+import { EditorContent, useEditor } from '@tiptap/react';
 import { observer } from 'mobx-react-lite';
 import React, { useEffect } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
-import { defaultExtensions } from 'common/editor';
+import { extensionsForConversation } from 'common/editor';
 import { TaskExtension } from 'common/editor/task-extension';
 import { UserAvatar } from 'common/user-avatar';
 
@@ -14,6 +14,8 @@ import { useUpdateTaskMutation } from 'services/tasks';
 import { useContextStore } from 'store/global-context-provider';
 import { UserContext } from 'store/user-context';
 
+import { skillExtension } from './skill-extension';
+
 interface AIConversationItemProps {
   conversationHistoryId: string;
 }
@@ -21,24 +23,6 @@ interface AIConversationItemProps {
 export const ConversationItem = observer(
   ({ conversationHistoryId }: AIConversationItemProps) => {
     const { tasksStore, conversationHistoryStore } = useContextStore();
-    const conversationHistory =
-      conversationHistoryStore.getConversationHistoryForId(
-        conversationHistoryId,
-      );
-    const { mutate: updateTask } = useUpdateTaskMutation({});
-    const user = React.useContext(UserContext);
-    const id = `a${conversationHistory.id.replace(/-/g, '')}`;
-    const [editor, setEditor] = React.useState(undefined);
-
-    const debounceUpdateTask = useDebouncedCallback(
-      async ({ title, taskId }: { title: string; taskId: string }) => {
-        updateTask({
-          title,
-          taskId,
-        });
-      },
-      500,
-    );
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const onTaskExtensionUpdate = ({ newNode }: any) => {
@@ -53,28 +37,37 @@ export const ConversationItem = observer(
       return true;
     };
 
+    const conversationHistory =
+      conversationHistoryStore.getConversationHistoryForId(
+        conversationHistoryId,
+      );
+    const { mutate: updateTask } = useUpdateTaskMutation({});
+    const user = React.useContext(UserContext);
+    const id = `a${conversationHistory.id.replace(/-/g, '')}`;
+
+    const editor = useEditor({
+      extensions: [
+        ...extensionsForConversation,
+        TaskExtension({ update: onTaskExtensionUpdate }),
+        skillExtension,
+      ],
+      editable: false,
+      content: conversationHistory.message,
+    });
+
+    const debounceUpdateTask = useDebouncedCallback(
+      async ({ title, taskId }: { title: string; taskId: string }) => {
+        updateTask({
+          title,
+          taskId,
+        });
+      },
+      500,
+    );
+
     useEffect(() => {
-      const element = document.getElementById(id);
-      element.replaceChildren();
+      editor?.commands.setContent(conversationHistory.message);
 
-      if (element) {
-        setEditor(
-          new Editor({
-            element,
-            extensions: [
-              ...defaultExtensions,
-              TaskExtension({ update: onTaskExtensionUpdate }),
-            ],
-            editable: false,
-            content: conversationHistory.message,
-          }),
-        );
-      }
-
-      // Clean up on unmount
-      return () => {
-        editor && editor.destroy();
-      };
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id, conversationHistory.message]);
 
@@ -91,7 +84,7 @@ export const ConversationItem = observer(
         <div className="shrink-0 relative top-[3px]">{getIcon()}</div>
 
         <div className="flex flex-col">
-          <div id={id}></div>
+          <EditorContent editor={editor} />
         </div>
       </div>
     );

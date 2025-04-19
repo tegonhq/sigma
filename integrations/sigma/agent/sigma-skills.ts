@@ -134,7 +134,7 @@ export class SigmaSkills extends APIBaseSkills {
   }
 
   getBaseURL(): string {
-    return 'https://app.mysigma.ai';
+    return 'https://app.mysigma.ai/api';
   }
 
   private async getPage(params: any): Promise<string> {

@@ -14,7 +14,7 @@ The BaseAgent class is the foundation of the agent architecture, providing a CLI
   - `skills`: Lists agent capabilities and available skills
   - `about`: Provides information about what the agent does
   - `terms`: Shows domain-specific terminology the agent understands
-  - `run`: Executes the agent with a user message and streams responses
+  - `ask`: Executes the agent with a user message and streams responses
 - Logging system using Pino
 - Version tracking from package.json
 - Context management for maintaining state between invocations

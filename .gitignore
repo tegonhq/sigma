@@ -36,3 +36,7 @@ yarn-error.log*
 
 certificate.*
 .vscode
+
+
+# Agent things 
+context.json

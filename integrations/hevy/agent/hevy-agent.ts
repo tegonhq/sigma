@@ -11,6 +11,10 @@ export class HevyAgent extends ReactBaseAgent {
     return Object.keys(skills).map((key) => ({ ...skills[key], name: key }));
   }
 
+  version(): string {
+    return '0.1.0';
+  }
+
   terms(): string {
     return TERMS;
   }

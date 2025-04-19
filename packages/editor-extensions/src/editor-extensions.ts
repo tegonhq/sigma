@@ -14,6 +14,7 @@ import Table from '@tiptap/extension-table';
 import TableCell from '@tiptap/extension-table-cell';
 import TableHeader from '@tiptap/extension-table-header';
 import TableRow from '@tiptap/extension-table-row';
+import { skillExtension } from './skill-extension';
 
 export const defaultExtensions = [
   fileExtension,
@@ -37,6 +38,7 @@ export const defaultExtensions = [
   TableRow,
   TableHeader,
   TableCell,
+  skillExtension,
 ];
 
 export const getSchema = () => fetchSchema(defaultExtensions);

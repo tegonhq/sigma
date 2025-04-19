@@ -4,7 +4,10 @@ import React from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
 
+import { AddTaskDialogProvider } from 'modules/tasks/add-task';
+
 import { SCOPES } from 'common/shortcut-scopes';
+import { AllProviders } from 'common/wrappers/all-providers';
 
 import { useIPC } from 'hooks/ipc';
 import { useScope } from 'hooks/use-scope';
@@ -18,7 +21,7 @@ export const Search = () => {
   useHotkeys(
     Key.Escape,
     () => {
-      ipc.sendMessage('frontend');
+      ipc.sendMessage('quick-window-close');
     },
     {
       scopes: [SCOPES.Search],
@@ -27,9 +30,15 @@ export const Search = () => {
   );
 
   return (
-    <Command className="h-[600px] border border-border shadow">
-      <CommandComponent />
-    </Command>
+    <AllProviders>
+      <AddTaskDialogProvider>
+        <Command className="h-[600px] border border-border shadow">
+          <CommandComponent fromQuickWindow />
+
+          <div className="border-border border-t-1"></div>
+        </Command>
+      </AddTaskDialogProvider>
+    </AllProviders>
   );
 };
 

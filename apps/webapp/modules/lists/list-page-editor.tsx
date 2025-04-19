@@ -118,7 +118,6 @@ export function ListPageEditor({
           placeholder="Write about the list..."
           autoFocus={autoFocus}
           className="min-h-[calc(100vh_-_30vh)]"
-          hasTaskExtension={false}
         >
           <EditorExtensions
             suggestionItems={suggestionItems}

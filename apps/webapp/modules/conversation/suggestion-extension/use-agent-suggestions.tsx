@@ -15,12 +15,8 @@ interface SuggestionProps {
 
 export const agents = [{ name: 'Hevy', key: 'hevy' }];
 
-export const useMentionSuggestions = ({
-  onAgentMention,
-}: {
-  onAgentMention: (agent: string) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-}): any => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const useMentionSuggestions = (): any => {
   return {
     items: ({ query }: { query: string }) => {
       return agents
@@ -40,7 +36,7 @@ export const useMentionSuggestions = ({
           }
 
           reactRenderer = new ReactRenderer(MentionList, {
-            props: { ...props, onAgentMention },
+            props,
             editor: props.editor,
           });
 

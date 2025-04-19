@@ -6,11 +6,12 @@
     "dist"
   ],
   "scripts": {
-    "build": "rimraf dist && pnpm run build:agent",
+    "build": "rimraf dist && pnpm run build:agent && npm run copy:spec",
     "build:agent": "ncc build agent/index.ts -o dist/agent",
     "dev:agent": "ncc build agent/index.ts -o dist/agent --watch",
     "lint": "eslint --ext js,ts,tsx backend/ frontend/ --fix",
-    "prettier": "prettier --config .prettierrc --write ."
+    "prettier": "prettier --config .prettierrc --write .",
+    "copy:spec": "cp spec.json dist/"
   },
   "peerDependencies": {
   },
@@ -60,7 +61,7 @@
     ]
   },
   "dependencies": {
-    "@tegonhq/agent-sdk": "0.1.7",
+    "@tegonhq/agent-sdk": "0.1.12",
     "@tegonhq/sigma-sdk": "0.1.13",
     "axios": "^1.7.9",
     "openai": "^4.0.0"

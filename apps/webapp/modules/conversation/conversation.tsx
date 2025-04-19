@@ -60,11 +60,7 @@ export const Conversation = observer(() => {
         {
           onSuccess: (data) => {
             streamConversation({
-              conversationId: commonStore.currentConversationId,
               conversationHistoryId: data.id,
-              workspaceId: user.workspace.id,
-              userId: user.id,
-              autoMode: true,
             });
           },
         },
@@ -81,11 +77,7 @@ export const Conversation = observer(() => {
           onSuccess: (data) => {
             commonStore.update({ currentConversationId: data.id });
             streamConversation({
-              conversationId: data.id,
               conversationHistoryId: data.ConversationHistory[0].id,
-              workspaceId: user.workspace.id,
-              userId: user.id,
-              autoMode: true,
             });
           },
         },

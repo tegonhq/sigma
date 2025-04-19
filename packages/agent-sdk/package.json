@@ -1,6 +1,6 @@
 {
   "name": "@tegonhq/agent-sdk",
-  "version": "0.1.7",
+  "version": "0.1.13",
   "description": "Sigma Agent SDK",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

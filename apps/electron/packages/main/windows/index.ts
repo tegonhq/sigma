@@ -1,6 +1,6 @@
-import {globalShortcut, nativeImage, Tray, type BrowserWindow, screen} from 'electron';
+import {globalShortcut, Menu, nativeImage, Tray, type BrowserWindow} from 'electron';
 import {createMainWindow} from './main';
-import {createQuickWindow, recalculatePositionToDisplay, registerQuickStates} from './quick';
+import {createQuickWindow, registerQuickStates} from './quick';
 
 import path, {dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
@@ -67,24 +67,6 @@ export async function restoreOrCreateQuickWindow() {
     registerQuickStates(appWindows.quick);
   }
 
-  const focusScreen = screen.getDisplayNearestPoint(screen.getCursorScreenPoint());
-
-  const winBounds = appWindows.quick.getBounds();
-
-  const originalScreen = screen.getDisplayNearestPoint({
-    x: winBounds.x,
-    y: winBounds.y,
-  });
-
-  if (focusScreen.id !== originalScreen.id) {
-    const newPosition = recalculatePositionToDisplay(
-      {x: winBounds.x, y: winBounds.y},
-      originalScreen,
-      focusScreen,
-    );
-    appWindows.quick.setPosition(newPosition.x, newPosition.y);
-  }
-
   if (!appWindows.quick.isVisible()) {
     appWindows.quick.show();
     appWindows.quick.focus();
@@ -101,9 +83,9 @@ export async function setTray() {
   );
   appWindows.tray = new Tray(icon);
 
-  appWindows.tray.on('click', async () => {
-    await restoreOrCreateQuickWindow();
-  });
+  const contextMenu = Menu.buildFromTemplate([{role: 'quit'}]);
+
+  appWindows.tray.setContextMenu(contextMenu);
 
   return appWindows.tray;
 }

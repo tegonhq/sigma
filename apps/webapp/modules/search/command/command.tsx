@@ -19,10 +19,11 @@ import { useSearchCommands } from './use-search-commands';
 
 interface CommandComponentProps {
   onClose?: () => void;
+  fromQuickWindow?: boolean;
 }
 
 export const CommandComponent = observer(
-  ({ onClose }: CommandComponentProps) => {
+  ({ onClose, fromQuickWindow = false }: CommandComponentProps) => {
     const { tasksStore, pagesStore } = useContextStore();
     const { selectedTasks } = useApplication();
 
@@ -43,7 +44,7 @@ export const CommandComponent = observer(
               >
                 <command.Icon size={16} />
                 <div className="grow">{command.text}</div>
-                {command.shortcut && (
+                {!fromQuickWindow && command.shortcut && (
                   <Shortcut shortcut={command.shortcut} className="font-mono" />
                 )}
               </CommandItem>
@@ -98,7 +99,7 @@ export const CommandComponent = observer(
               >
                 <command.Icon size={16} className="shrink-0" />
                 <div className="grow"> {command.text}</div>
-                {command.shortcut && (
+                {!fromQuickWindow && command.shortcut && (
                   <Shortcut shortcut={command.shortcut} className="font-mono" />
                 )}
               </CommandItem>

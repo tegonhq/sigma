@@ -101,7 +101,6 @@ interface EditorProps {
 
   readonly children: React.ReactNode;
   extensions?: Array<Mark<any, any> | Node<any, any> | Extension<any, any>>;
-  hasTaskExtension?: boolean;
 }
 
 export const Editor = ({

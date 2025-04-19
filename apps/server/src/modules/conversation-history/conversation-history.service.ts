@@ -10,6 +10,8 @@ import {
   UpdateConversationHistoryDto,
 } from '@tegonhq/sigma-sdk';
 import { generateHTML } from '@tiptap/html';
+import { runs, tasks } from '@trigger.dev/sdk/v3';
+import { Response } from 'express';
 import { PrismaService } from 'nestjs-prisma';
 
 @Injectable()
@@ -189,5 +191,84 @@ export class ConversationHistoryService {
       previousHistory,
       ...otherContextData,
     };
+  }
+
+  async streamConversation(conversationHistoryId: string, response: Response) {
+    const conversationHistory =
+      await this.prisma.conversationHistory.findUnique({
+        where: {
+          id: conversationHistoryId,
+        },
+        include: {
+          conversation: true,
+        },
+      });
+
+    if (!conversationHistory) {
+      response.status(404).send('Conversation history not found');
+      return;
+    }
+
+    // Set up proper headers for streaming
+    response.setHeader('Content-Type', 'text/event-stream');
+    response.setHeader('Cache-Control', 'no-cache');
+    response.setHeader('Connection', 'keep-alive');
+
+    // Pass the task type to `trigger()` as a generic argument, giving you full type checking
+    const { id } = await tasks.trigger(
+      'chat',
+      {
+        conversationHistoryId,
+        conversationId: conversationHistory.conversation.id,
+        autoMode: true,
+      },
+      { tags: [conversationHistoryId] },
+    );
+
+    try {
+      // Use a for-await loop to subscribe to the stream
+      for await (const part of runs.subscribeToRun(id).withStreams()) {
+        // Check for terminal run statuses to end the stream appropriately
+        if (
+          [
+            'COMPLETED',
+            'CANCELED',
+            'FAILED',
+            'CRASHED',
+            'INTERRUPTED',
+            'SYSTEM_FAILURE',
+            'EXPIRED',
+            'TIMED_OUT',
+          ].includes(part.run.status)
+        ) {
+          // Send final data if it's a completion
+          if (part.run.status === 'COMPLETED' && part.type === 'run') {
+          } else if (part.run.status !== 'COMPLETED') {
+          }
+          break;
+        }
+
+        // Process stream data
+        if (
+          part.type &&
+          (part.type.includes('agent__') || part.type === 'cot')
+        ) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          response.write(`data: ${JSON.stringify((part as any).chunk)}\n\n`);
+        }
+      }
+    } catch (e) {
+      // Send error information when an exception occurs
+      response.write(
+        `data: ${JSON.stringify({
+          status: 'error',
+          error: e instanceof Error ? e.message : 'Unknown error',
+        })}\n\n`,
+      );
+      response.end();
+      return;
+    }
+
+    response.end();
   }
 }
