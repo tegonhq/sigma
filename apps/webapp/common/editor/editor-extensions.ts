@@ -26,7 +26,6 @@ import { fileExtension } from './file-extension';
 import { imageExtension } from './image-extension';
 import { LinkTaskExtension } from './link-task';
 import trailingNode from './trailing-node';
-import { skillExtension } from 'modules/conversation/skill-extension';
 
 // create a lowlight instance with all languages loaded
 const lowlight = createLowlight(all);

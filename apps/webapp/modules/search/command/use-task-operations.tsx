@@ -1,11 +1,11 @@
 import { useApplication } from 'hooks/application';
 
-import { useDeleteTaskOccurrenceMutation } from 'services/task-occurrence';
+// import { useDeleteTaskOccurrenceMutation } from 'services/task-occurrence';
 import { useDeleteTaskMutation, useUpdateTaskMutation } from 'services/tasks';
 
 export const useTaskOperations = () => {
   const { mutate: deleteTask } = useDeleteTaskMutation({});
-  const { mutate: deleteTaskOccurrence } = useDeleteTaskOccurrenceMutation({});
+  // const { mutate: deleteTaskOccurrence } = useDeleteTaskOccurrenceMutation({});
 
   const { mutate: updateTask } = useUpdateTaskMutation({});
   const { clearSelectedTask } = useApplication();
