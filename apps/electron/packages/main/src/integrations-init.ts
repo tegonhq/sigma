@@ -67,8 +67,12 @@ export async function downloadContentToSystem(items: Item[]) {
 
       // Define file URLs to download
       const filesToDownload = [
-        {url: `${item.url}/frontend/index.js`, subFolder: 'frontend', fileName: 'index.js'},
-        {url: `${item.url}/spec.json`, subFolder: null, fileName: 'spec.json'},
+        {
+          url: `${item.url}/${item.version}/frontend/index.js`,
+          subFolder: 'frontend',
+          fileName: 'index.js',
+        },
+        {url: `${item.url}/${item.version}/spec.json`, subFolder: null, fileName: 'spec.json'},
       ];
 
       for (const {url, subFolder, fileName} of filesToDownload) {
