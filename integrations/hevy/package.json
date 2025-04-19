@@ -1,6 +1,6 @@
 {
   "name": "@sigma/hevy",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "hevy extension for Sigma",
   "files": [
     "dist"
@@ -59,7 +59,7 @@
     ]
   },
   "dependencies": {
-    "@tegonhq/agent-sdk": "0.1.12",
+    "@tegonhq/agent-sdk": "0.1.14",
     "@tegonhq/sigma-sdk": "0.1.13",
     "axios": "^1.7.9",
     "openai": "^4.0.0"
