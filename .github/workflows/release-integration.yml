@@ -70,16 +70,14 @@ jobs:
               pull_number: issue_number
             });
 
-            return {
-              head_ref: pr.data.head.ref,
-              head_repo: pr.data.head.repo.full_name
-            }
+            const branch = pr.data.head.ref;
+            console.log(`PR branch: ${branch}`);
+            return branch;
 
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: ${{ fromJSON(steps.pr_details.outputs.result).head_ref }}
-          repository: ${{ fromJSON(steps.pr_details.outputs.result).head_repo }}
+          ref: ${{ steps.pr_details.outputs.result }}
           fetch-depth: 0
 
       - uses: actions/setup-node@v4
