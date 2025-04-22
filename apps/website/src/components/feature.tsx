@@ -18,11 +18,7 @@ export const Feature = ({ Icon, text, href }: FeatureProps) => {
   );
 
   if (href) {
-    return (
-      <Link href={href}>
-        {BadgeContent}
-      </Link>
-    );
+    return <Link href={href}>{BadgeContent}</Link>;
   }
 
   return BadgeContent;
