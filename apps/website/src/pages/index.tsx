@@ -1,7 +1,6 @@
 import { RiDiscordFill, RiGithubFill } from '@remixicon/react';
 import {
   AI,
-  Button,
   buttonVariants,
   CalendarLine,
   cn,
@@ -9,6 +8,7 @@ import {
   Project,
 } from '@tegonhq/ui';
 import Image from 'next/image';
+
 import { Feature } from 'src/components';
 
 export default function Index() {
