@@ -426,6 +426,7 @@ model User {
 
   image       String?
   preferences Json?
+  mcp         Json?
 
   template            Template[]
   integrationAccount  IntegrationAccount[]

@@ -14,11 +14,13 @@ import {
   SidebarHeader,
   SettingsLine,
   Button,
+  AI,
 } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 
 import { Integrations } from './integrations';
+import { MCP } from './mcp';
 import { Preferences } from './preferences';
 import { Workspace } from './workspace';
 
@@ -31,6 +33,7 @@ const COMPONENTS_MAP = {
   Workspace,
   Integrations,
   Preferences,
+  MCP,
 };
 
 export const Settings = observer(({ open, setOpen }: SettingsProps) => {
@@ -40,6 +43,7 @@ export const Settings = observer(({ open, setOpen }: SettingsProps) => {
       { name: 'Workspace', icon: BuildingLine },
       { name: 'Preferences', icon: SettingsLine },
       { name: 'Integrations', icon: StackLine },
+      { name: 'MCP', icon: AI },
     ],
   };
 

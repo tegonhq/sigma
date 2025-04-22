@@ -6,6 +6,7 @@ import { syncInitialTasks } from './sync-initial-task';
 
 export interface IntegrationEventPayload {
   event: IntegrationPayloadEventType;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [x: string]: any;
 }
 

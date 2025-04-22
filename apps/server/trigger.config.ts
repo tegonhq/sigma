@@ -1,4 +1,5 @@
 import { PrismaInstrumentation } from '@prisma/instrumentation';
+import { BuildExtension, BuildContext } from '@trigger.dev/build';
 import {
   additionalPackages,
   syncEnvVars,
@@ -32,9 +33,35 @@ export default defineConfig({
       additionalPackages({
         packages: ['@tegonhq/sigma-sdk'],
       }),
+      installUVX(),
       prismaExtension({
         schema: 'prisma/schema.prisma',
       }),
     ],
   },
 });
+
+// This is a custom build extension to install Playwright and Chromium
+export function installUVX(): BuildExtension {
+  return {
+    name: 'InstallUVX',
+    onBuildComplete(context: BuildContext) {
+      const instructions = [
+        // Install curl and uvx
+        `RUN apt-get update && apt-get install -y curl && \
+    curl -LsSf https://astral.sh/uv/install.sh | sh && \
+    cp ~/.local/bin/uvx /usr/local/bin/ && \
+    cp ~/.local/bin/uv /usr/local/bin/`,
+      ];
+
+      context.addLayer({
+        id: 'uvx',
+        image: { instructions },
+        deploy: {
+          env: {},
+          override: true,
+        },
+      });
+    },
+  };
+}

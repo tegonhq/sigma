@@ -117,6 +117,20 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
       },
     ];
 
+    if (value) {
+      commands['default'] = [
+        ...commands['default'],
+        {
+          Icon: AI,
+          text: `${value} ... ask sigma`,
+          command: () => {
+            updateTabType(1, TabViewType.AI, {});
+            onClose();
+          },
+        },
+      ];
+    }
+
     if (isValidDateFormat(value)) {
       commands['default'] = [
         ...commands['default'],
