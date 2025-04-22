@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from 'react-query';
 
 import type { User } from 'common/types';
+
 import { GetUserQuery } from './get-user';
 
 export interface UpdateUserParams {
