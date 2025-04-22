@@ -1,6 +1,6 @@
 {
   "name": "sigma",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "scripts": {
     "build": "dotenv -- turbo build",
     "compile": "dotenv -- turbo run compile --filter=electron",

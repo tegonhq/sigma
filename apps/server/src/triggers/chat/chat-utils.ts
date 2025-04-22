@@ -1,3 +1,4 @@
+import { logger } from '@trigger.dev/sdk/v3';
 import Handlebars from 'handlebars';
 
 import { MCP } from './mcp';
@@ -12,7 +13,6 @@ import {
   TokenCount,
 } from './types';
 import { generateRandomId } from './utils';
-import { logger } from '@trigger.dev/sdk/v3';
 
 interface LLMCountResponse {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

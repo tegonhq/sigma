@@ -77,7 +77,8 @@ export function JSONEditor(opts: JSONEditorProps) {
     onUpdate,
   };
   const { setContainer, view } = useCodeMirror(settings);
-  const [copied, setCopied] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (editor.current) {
@@ -105,6 +106,7 @@ export function JSONEditor(opts: JSONEditorProps) {
       changes: { from: 0, to: view.state.doc.length, insert: undefined },
     });
     onChange?.('');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [view]);
 
   const copy = useCallback(() => {
