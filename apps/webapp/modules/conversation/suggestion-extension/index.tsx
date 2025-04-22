@@ -12,10 +12,13 @@ import { observer } from 'mobx-react-lite';
 
 import { getIcon, type IconType } from 'common/icon-utils';
 
-import { useMentionSuggestions, agents } from './use-agent-suggestions';
+import { useMentionSuggestions } from './use-agent-suggestions';
+import { useMCPServers } from './use-mcp';
 
 export const MentionComponent = observer((props: NodeViewProps) => {
-  const agent = agents.find((ag) => ag.key === props.node.attrs.id);
+  const mcpServers = useMCPServers();
+
+  const agent = mcpServers.find((ag) => ag.key === props.node.attrs.id);
   const Icon = getIcon(agent.key as IconType);
 
   return (
@@ -52,5 +55,5 @@ export const CustomMention = Mention.extend({
   },
 });
 
-export { useMentionSuggestions, agents };
+export { useMentionSuggestions };
 export type { Agent };

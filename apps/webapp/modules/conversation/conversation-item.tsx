@@ -15,6 +15,7 @@ import { useContextStore } from 'store/global-context-provider';
 import { UserContext } from 'store/user-context';
 
 import { skillExtension } from './skill-extension';
+import { CustomMention } from './suggestion-extension';
 
 interface AIConversationItemProps {
   conversationHistoryId: string;
@@ -50,6 +51,7 @@ export const ConversationItem = observer(
         ...extensionsForConversation,
         TaskExtension({ update: onTaskExtensionUpdate }),
         skillExtension,
+        CustomMention,
       ],
       editable: false,
       content: conversationHistory.message,

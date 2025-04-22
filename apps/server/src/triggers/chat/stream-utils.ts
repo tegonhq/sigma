@@ -1,5 +1,8 @@
-import { AgentMessageType, Message } from './types';
+import Anthropic from '@anthropic-ai/sdk';
+import { MessageParam } from '@anthropic-ai/sdk/resources';
 
+import { AgentMessageType, Message } from './types';
+import { TokenCount } from './types';
 interface State {
   inTag: boolean;
   messageEnded: boolean;
@@ -33,13 +36,17 @@ export async function* processTag(
         // Send MESSAGE_START when we first enter the tag
         yield Message('', states.start as AgentMessageType, extraParams);
         const chunkToSend = totalMessage.slice(startIndex + startTag.length);
-        state.message += chunkToSend.trim();
+        state.message += chunkToSend;
         comingFromStart = true;
       }
     }
 
     if (state.inTag) {
-      if (chunk.includes('</') ? chunk.includes(endTag) : true) {
+      if (
+        chunk.includes('</') && !chunk.includes(startTag)
+          ? chunk.includes(endTag)
+          : true
+      ) {
         let currentMessage = comingFromStart
           ? state.message
           : state.message + chunk;
@@ -62,6 +69,8 @@ export async function* processTag(
           }
           // Send MESSAGE_END when we reach the end tag
           yield Message('', states.end as AgentMessageType, extraParams);
+
+          state.message = currentMessage;
           state.messageEnded = true;
         } else {
           // For chunks in between start and end
@@ -77,9 +86,65 @@ export async function* processTag(
         }
 
         state.message = currentMessage;
+        state.lastSent = state.message;
       } else {
         state.message += chunk;
       }
     }
   }
+}
+
+export async function* generate(
+  messages: MessageParam[],
+  tokenCountState?: TokenCount,
+): AsyncGenerator<string> {
+  // Check for API keys
+
+  const anthropicKey = process.env.ANTHROPIC_API_KEY;
+  const model = process.env.MODEL;
+
+  if (!anthropicKey || !model) {
+    throw new Error('No LLM API key found. Set either ANTHROPIC_API_KEY');
+  }
+
+  // Try Anthropic next if key exists
+  if (anthropicKey) {
+    const anthropic = new Anthropic({
+      apiKey: anthropicKey,
+    });
+
+    const stream = anthropic.messages.stream({
+      messages,
+      model,
+      max_tokens: 5000,
+    });
+
+    tokenCountState.inputTokens = Math.ceil(
+      messages.reduce((acc, msg) => acc + (msg.content?.length || 0) / 4, 0),
+    );
+
+    let outputTokenCount = 0;
+
+    for await (const chunk of stream) {
+      if (chunk.type === 'content_block_delta') {
+        const content = chunk.delta?.text || '';
+        if (content) {
+          if (tokenCountState) {
+            // Increment output token count for each chunk
+            outputTokenCount += 1; // This is an approximation
+            tokenCountState.outputToken = outputTokenCount;
+          }
+          yield content;
+        }
+      } else if (
+        chunk.type === 'content_block_start' &&
+        chunk.content_block?.text
+      ) {
+        yield chunk.content_block.text;
+      }
+    }
+    return;
+  }
+
+  throw new Error('No valid LLM configuration found');
 }

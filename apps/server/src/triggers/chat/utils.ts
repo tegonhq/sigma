@@ -1,5 +1,3 @@
-import Anthropic from '@anthropic-ai/sdk';
-import { MessageParam } from '@anthropic-ai/sdk/resources';
 import {
   Conversation,
   ConversationHistory,
@@ -8,7 +6,7 @@ import {
 } from '@prisma/client';
 import axios from 'axios';
 
-import { HistoryStep, TokenCount } from './types';
+import { HistoryStep } from './types';
 
 const prisma = new PrismaClient();
 
@@ -24,61 +22,6 @@ export interface RunChatPayload {
   autoMode: string;
   conversation: Conversation;
   conversationHistory: ConversationHistory;
-}
-
-export async function* generate(
-  messages: MessageParam[],
-  tokenCountState?: TokenCount,
-): AsyncGenerator<string> {
-  // Check for API keys
-
-  const anthropicKey = process.env.ANTHROPIC_API_KEY;
-  const model = process.env.MODEL;
-
-  if (!anthropicKey || !model) {
-    throw new Error('No LLM API key found. Set either ANTHROPIC_API_KEY');
-  }
-
-  // Try Anthropic next if key exists
-  if (anthropicKey) {
-    const anthropic = new Anthropic({
-      apiKey: anthropicKey,
-    });
-
-    const stream = anthropic.messages.stream({
-      messages,
-      model,
-      max_tokens: 5000,
-    });
-
-    tokenCountState.inputTokens = Math.ceil(
-      messages.reduce((acc, msg) => acc + (msg.content?.length || 0) / 4, 0),
-    );
-
-    let outputTokenCount = 0;
-
-    for await (const chunk of stream) {
-      if (chunk.type === 'content_block_delta') {
-        const content = chunk.delta?.text || '';
-        if (content) {
-          if (tokenCountState) {
-            // Increment output token count for each chunk
-            outputTokenCount += 1; // This is an approximation
-            tokenCountState.outputToken = outputTokenCount;
-          }
-          yield content;
-        }
-      } else if (
-        chunk.type === 'content_block_start' &&
-        chunk.content_block?.text
-      ) {
-        yield chunk.content_block.text;
-      }
-    }
-    return;
-  }
-
-  throw new Error('No valid LLM configuration found');
 }
 
 export const init = async (payload: InitChatPayload) => {
@@ -101,6 +44,10 @@ export const init = async (payload: InitChatPayload) => {
     where: { userId: workspace.userId as string, name: 'default' },
   });
 
+  const user = await prisma.user.findFirst({
+    where: { id: workspace.userId as string },
+  });
+
   axios.interceptors.request.use((config) => {
     // Check if URL starts with /api and doesn't have a full host
     if (config.url?.startsWith('/api')) {
@@ -120,7 +67,13 @@ export const init = async (payload: InitChatPayload) => {
     return config;
   });
 
-  return { conversation, conversationHistory, token: pat?.token };
+  return {
+    conversation,
+    conversationHistory,
+    token: pat?.token,
+    userId: workspace.userId,
+    mcp: user.mcp,
+  };
 };
 
 export const createConversationHistoryForAgent = async (
@@ -266,6 +219,7 @@ export const updateExecutionStep = async (
 
 export const updateConversationHistoryMessage = async (
   userMessage: string,
+  thought: string,
   conversationHistoryId: string,
 ) => {
   await prisma.conversationHistory.update({
@@ -274,6 +228,7 @@ export const updateConversationHistoryMessage = async (
     },
     data: {
       message: userMessage,
+      thought,
       userType: UserType.Agent,
     },
   });

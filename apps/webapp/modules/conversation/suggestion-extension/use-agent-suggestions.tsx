@@ -3,6 +3,7 @@ import { ReactRenderer } from '@tiptap/react';
 import tippy, { type Instance as TippyInstance } from 'tippy.js';
 
 import { MentionList } from './mention-list';
+import { useMCPServers } from './use-mcp';
 
 interface SuggestionProps {
   editor: Editor;
@@ -13,15 +14,15 @@ interface SuggestionProps {
   clientRect?: any;
 }
 
-export const agents = [{ name: 'Hevy', key: 'hevy' }];
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const useMentionSuggestions = (): any => {
+  const mcpServers = useMCPServers();
+
   return {
     items: ({ query }: { query: string }) => {
-      return agents
+      return mcpServers
         .filter((item) =>
-          item.name.toLowerCase().startsWith(query.toLowerCase()),
+          item.key.toLowerCase().startsWith(query.toLowerCase()),
         )
         .slice(0, 5);
     },

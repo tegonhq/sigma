@@ -1,20 +1,27 @@
-import { useMutation } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 
 import type { User } from 'common/types';
+import { GetUserQuery } from './get-user';
 
 export interface UpdateUserParams {
-  fullname: string;
-  username: string;
+  fullname?: string;
+  username?: string;
   userId: string;
+  mcp?: string;
 }
 
-async function updateUser({ userId, fullname, username }: UpdateUserParams) {
+async function updateUser({
+  userId,
+  fullname,
+  username,
+  mcp,
+}: UpdateUserParams) {
   const response = await fetch(`/api/v1/users/${userId}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ fullname, username }),
+    body: JSON.stringify({ fullname, username, mcp }),
   });
 
   return response.json();
@@ -31,6 +38,8 @@ export function useUpdateUserMutation({
   onSuccess,
   onError,
 }: MutationParams) {
+  const queryClient = useQueryClient();
+
   const onMutationTriggered = () => {
     onMutate && onMutate();
   };
@@ -43,6 +52,8 @@ export function useUpdateUserMutation({
   };
 
   const onMutationSuccess = (data: User) => {
+    queryClient.invalidateQueries({ queryKey: [GetUserQuery] });
+
     onSuccess && onSuccess(data);
   };
 

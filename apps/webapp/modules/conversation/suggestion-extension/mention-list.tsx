@@ -23,6 +23,7 @@ export const MentionList = forwardRef(
   (props: MentionListProps, ref: React.Ref<any>) => {
     const [selectedIndex, setSelectedIndex] = useState(0);
 
+    console.log(props);
     const selectItem = (index: number) => {
       const item = props.items[index];
 
@@ -83,7 +84,7 @@ export const MentionList = forwardRef(
                 key={index}
                 onClick={() => selectItem(index)}
               >
-                <Icon size={14} className="rounded-sm" />
+                <Icon size={16} className="rounded-sm" />
                 {item.name}
               </button>
             );

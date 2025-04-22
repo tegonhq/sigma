@@ -77,11 +77,12 @@ export class UsersService {
     return userSerializer(user);
   }
   async updateUser(id: string, updateData: UpdateUserBody) {
+    const { mcp, ...otherUpdateData } = updateData;
     const user = await this.prisma.user.update({
       where: {
         id,
       },
-      data: updateData,
+      data: { ...otherUpdateData, mcp: JSON.parse(mcp) },
     });
     return userSerializer(user);
   }

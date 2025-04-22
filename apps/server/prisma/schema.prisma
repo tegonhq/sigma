@@ -99,6 +99,7 @@ model ConversationHistory {
   deleted   DateTime?
 
   message  String
+  thought  String   @default("")
   userType UserType
 
   context Json?

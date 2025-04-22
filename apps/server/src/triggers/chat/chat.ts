@@ -1,12 +1,15 @@
-import { logger, task } from '@trigger.dev/sdk/v3';
+import { logger, metadata, task } from '@trigger.dev/sdk/v3';
 import axios from 'axios';
 
+import { run } from './chat-utils';
+import { MCP } from './mcp';
 import {
   createConversationHistoryForAgent,
   getPreviousExecutionHistory,
   init,
   RunChatPayload,
   updateConversationHistoryMessage,
+  updateExecutionStep,
 } from './utils';
 
 // Save context to a JSON file before running the agent
@@ -25,6 +28,11 @@ export const chat = task({
     );
     const contextFromAPI = response.data;
     const { agents, previousHistory, ...otherData } = contextFromAPI;
+
+    // Initialise mcp
+    const mcp = new MCP();
+    await mcp.init();
+    await mcp.load(agents, init.mcp);
 
     // Prepare context with additional metadata
     const context = {
@@ -50,17 +58,48 @@ export const chat = task({
       context.previousHistory,
     );
 
-    console.log(message, previousExecutionHistory);
-
     // Prepare conversation history in agent-compatible format
     const agentConversationHistory = await createConversationHistoryForAgent(
       payload.conversationId,
     );
-    const agentUserMessage = '';
+    let agentUserMessage = '';
+    let thoughtMessage = '';
 
     await updateConversationHistoryMessage(
       agentUserMessage,
+      thoughtMessage,
       agentConversationHistory.id,
     );
+
+    const llmResponse = run(
+      message,
+      JSON.stringify(context),
+      previousExecutionHistory,
+      mcp,
+    );
+
+    const stream = await metadata.stream('messages', llmResponse);
+
+    for await (const step of stream) {
+      if (step.type === 'STEP') {
+        logger.info(`Current step response: ${step.message}`);
+        const stepDetails = JSON.parse(step.message);
+
+        await updateExecutionStep(
+          { ...stepDetails },
+          agentConversationHistory.id,
+        );
+
+        agentUserMessage += stepDetails.userMessage;
+        thoughtMessage += stepDetails.thought;
+
+        logger.info(`Current step message: ${agentUserMessage}`);
+        await updateConversationHistoryMessage(
+          agentUserMessage,
+          thoughtMessage,
+          agentConversationHistory.id,
+        );
+      }
+    }
   },
 });

@@ -1,6 +1,10 @@
 import { Attachment } from '../attachment';
 import { Workspace } from '../workspace';
 
+class Preferences {
+  mcp: any;
+}
+
 export class User {
   id: string;
   createdAt: Date;
@@ -9,6 +13,7 @@ export class User {
   fullname: string | null;
   username: string;
   initialSetupComplete: boolean;
+  preferences: Preferences;
   workspace?: Workspace;
   anonymousDataCollection: boolean;
   attachment?: Attachment[];

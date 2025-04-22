@@ -1,5 +1,4 @@
-import { User } from '@tegonhq/sigma-sdk';
-import { IsArray, IsString } from 'class-validator';
+import { IsArray, IsOptional, IsString } from 'class-validator';
 
 export class UserIdParams {
   @IsString()
@@ -8,10 +7,15 @@ export class UserIdParams {
 
 export class UpdateUserBody {
   @IsString()
-  fullname: string;
+  @IsOptional()
+  fullname?: string;
 
   @IsString()
-  username: string;
+  @IsOptional()
+  username?: string;
+
+  @IsString()
+  mcp: string;
 }
 
 export class UserIdsBody {
@@ -26,7 +30,9 @@ export interface PublicUser {
   email: string;
 }
 
-export function userSerializer(user: User) {
+// TODO: fix it
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function userSerializer(user: any) {
   return {
     id: user.id,
     createdAt: user.createdAt,
@@ -34,6 +40,8 @@ export function userSerializer(user: User) {
     email: user.email,
     fullname: user.fullname,
     username: user.username,
+    preferences: user.preferences,
+    mcp: user.mcp,
     initialSetupComplete: user.initialSetupComplete,
     anonymousDataCollection: user.anonymousDataCollection,
     workspace: user.workspace,
