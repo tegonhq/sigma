@@ -44,11 +44,15 @@ export function useStreamConversationMutation() {
 
   async function readStream(reader: ReadableStreamDefaultReader) {
     async function read() {
+      let completed = false;
+
       // eslint-disable-next-line no-constant-condition
-      while (true) {
+      while (!completed) {
         const { done, value } = await reader.read();
         if (done) {
           setIsLoading(false);
+          setThoughts([]);
+          setResponses([]);
           commonStore.update({ conversationStreaming: false });
 
           return;
@@ -60,12 +64,20 @@ export function useStreamConversationMutation() {
         chunk.split('\n\n').forEach((ch) => {
           if (ch) {
             const message = JSON.parse(ch.replace('data: ', ''));
+
             if (message.type.includes('MESSAGE')) {
               responses.push(message.message);
             }
 
             if (message.type.includes('THOUGHT')) {
-              responses.push(message.message);
+              thoughts.push(message.message);
+            }
+
+            if (message.type.includes('STREAM_END')) {
+              completed = true;
+              setIsLoading(false);
+              setThoughts([]);
+              setResponses([]);
             }
           }
 
@@ -76,6 +88,7 @@ export function useStreamConversationMutation() {
         setThoughts((prevChunk) => [...prevChunk, ...thoughts]);
       }
     }
+
     read();
   }
 

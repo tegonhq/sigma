@@ -24,7 +24,8 @@ interface AIConversationItemProps {
 export const ConversationItem = observer(
   ({ conversationHistoryId }: AIConversationItemProps) => {
     const { tasksStore, conversationHistoryStore } = useContextStore();
-
+    const { mutate: updateTask } = useUpdateTaskMutation({});
+    const user = React.useContext(UserContext);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const onTaskExtensionUpdate = ({ newNode }: any) => {
       const task = tasksStore.getTaskWithId(newNode.attrs.id);
@@ -42,8 +43,7 @@ export const ConversationItem = observer(
       conversationHistoryStore.getConversationHistoryForId(
         conversationHistoryId,
       );
-    const { mutate: updateTask } = useUpdateTaskMutation({});
-    const user = React.useContext(UserContext);
+
     const id = `a${conversationHistory.id.replace(/-/g, '')}`;
 
     const editor = useEditor({
@@ -80,6 +80,10 @@ export const ConversationItem = observer(
 
       return <AI size={16} />;
     };
+
+    if (!conversationHistory.message) {
+      return null;
+    }
 
     return (
       <div className="flex gap-2 border-b border-border py-4 px-5">

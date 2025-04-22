@@ -19,10 +19,13 @@ import { UserContext } from 'store/user-context';
 
 import { ConversationItem } from './conversation-item';
 import { ConversationTextarea } from './conversation-textarea';
+import { StreamingConversation } from './streaming-conversation';
 import { useConversationContext } from './use-conversation-context';
 
 export const Conversation = observer(() => {
   const { commonStore } = useContextStore();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_temp, setTemp] = React.useState(false);
 
   const { conversationHistory, conversation } = useConversationHistory(
     commonStore.currentConversationId,
@@ -33,6 +36,7 @@ export const Conversation = observer(() => {
     mutate: streamConversation,
     isLoading,
     thoughts,
+    responses,
   } = useStreamConversationMutation();
   const { mutate: createConversationHistory } =
     useCreateConversationHistoryMutation({});
@@ -46,6 +50,10 @@ export const Conversation = observer(() => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversation?.id, pageId]);
+
+  React.useEffect(() => {
+    setTemp(true);
+  }, [commonStore.currentConversationId]);
 
   const onSend = (text: string, agents: string[]) => {
     if (commonStore.currentConversationId) {
@@ -85,28 +93,28 @@ export const Conversation = observer(() => {
     }
   };
 
-  const lastThought = thoughts[thoughts.length - 1];
-
   return (
     <div className="flex flex-col h-[calc(100vh_-_3.5rem)]">
       <div className="grow overflow-hidden">
         <div className="flex flex-col h-full justify-end overflow-hidden">
           <ScrollAreaWithAutoScroll>
             {conversationHistory.map(
-              (conversationHistory: ConversationHistoryType, index: number) => (
-                <ConversationItem
-                  key={index}
-                  conversationHistoryId={conversationHistory.id}
-                />
-              ),
+              (ch: ConversationHistoryType, index: number) => {
+                return (
+                  <ConversationItem key={index} conversationHistoryId={ch.id} />
+                );
+              },
+            )}
+            {isLoading && (
+              <StreamingConversation messages={responses} thoughts={thoughts} />
             )}
           </ScrollAreaWithAutoScroll>
 
           {isLoading && (
-            <div className="flex flex-wrap p-3 gap-1">
+            <div className="flex flex-wrap p-1 mt-2 gap-1">
               <div
                 className={cn(
-                  'px-2 py-2 w-full flex flex-col items-start gap-1',
+                  'px-2 py-0 w-full flex flex-col items-start gap-1',
                 )}
               >
                 <div
@@ -115,14 +123,8 @@ export const Conversation = observer(() => {
                   )}
                 >
                   <LoaderLine size={18} className="animate-spin" />
-                  <p className="text-sm text-muted-foreground">Thinking</p>
+                  <p className="text-sm text-muted-foreground">Generating...</p>
                 </div>
-                {lastThought && (
-                  <p
-                    className="text-sm text-muted-foreground flex flex-wrap"
-                    dangerouslySetInnerHTML={{ __html: lastThought.message }}
-                  />
-                )}
               </div>
             </div>
           )}

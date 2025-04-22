@@ -12,6 +12,7 @@ import {
   TokenCount,
 } from './types';
 import { generateRandomId } from './utils';
+import { logger } from '@trigger.dev/sdk/v3';
 
 interface LLMCountResponse {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -98,8 +99,6 @@ function makeNextCall(
     AUTO_MODE: String(autoMode).toLowerCase(),
     PREVIOUS_EXECUTION_HISTORY: previousHistory ?? '',
   };
-
-  console.log(TOOLS);
 
   const templateHandler = Handlebars.compile(REACT_PROMPT);
   const prompt = templateHandler(promptInfo);
@@ -247,8 +246,8 @@ export async function* run(
         tokenCount,
       };
 
-      const agent = skillName.split('--')[1];
-      const toolName = skillName.split('--')[0];
+      const toolName = skillName.split('--')[1];
+      const agent = skillName.split('--')[0];
       const skillMessageToSend = skillMatch
         ? `\n<skill id="${skillId}" name="${toolName}" agent=${agent}></skill>\n`
         : '';
@@ -316,8 +315,7 @@ export async function* run(
 
       const parsedInput = JSON.parse(skillState.message);
       stepRecord.skillInput = parsedInput;
-      console.log(parsedInput);
-
+      logger.info(`Parsed input: ${skillState.message}`);
       const result = await mcp.callTool(skillName, parsedInput);
 
       const {

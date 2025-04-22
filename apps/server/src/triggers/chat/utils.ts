@@ -51,16 +51,7 @@ export const init = async (payload: InitChatPayload) => {
   axios.interceptors.request.use((config) => {
     // Check if URL starts with /api and doesn't have a full host
     if (config.url?.startsWith('/api')) {
-      config.url = `${process.env.SIGMA_HOST}${config.url.replace('/api', '')}`;
-      config.headers.Authorization = `Bearer ${pat?.token}`;
-    }
-
-    // Replace https://app.mysigma.ai with SIGMA_HOST environment variable this is for sigma agent
-    if (config.url?.includes('https://app.mysigma.ai/api')) {
-      config.url = config.url.replace(
-        'https://app.mysigma.ai/api',
-        process.env.SIGMA_HOST as string,
-      );
+      config.url = `${process.env.BACKEND_HOST}${config.url.replace('/api', '')}`;
       config.headers.Authorization = `Bearer ${pat?.token}`;
     }
 

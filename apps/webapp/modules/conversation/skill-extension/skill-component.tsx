@@ -36,6 +36,7 @@ export const SkillComponent = observer((props: any) => {
     <NodeViewWrapper className="inline w-fit">
       <div className="content">
         <div className="bg-grayAlpha-100 p-1 w-fit rounded px-2 flex gap-1 items-center">
+          <span className="text-muted-foreground">Executed action: </span>
           <Icon size={16} className="rounded-sm" />
           {snakeToTitleCase(name)}
         </div>

@@ -249,10 +249,7 @@ export class ConversationHistoryService {
         }
 
         // Process stream data
-        if (
-          part.type &&
-          (part.type.includes('agent__') || part.type === 'cot')
-        ) {
+        if (part.type && part.type.includes('messages')) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           response.write(`data: ${JSON.stringify((part as any).chunk)}\n\n`);
         }

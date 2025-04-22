@@ -23,7 +23,6 @@ export const MentionList = forwardRef(
   (props: MentionListProps, ref: React.Ref<any>) => {
     const [selectedIndex, setSelectedIndex] = useState(0);
 
-    console.log(props);
     const selectItem = (index: number) => {
       const item = props.items[index];
 

@@ -28,7 +28,7 @@ export default defineConfig({
     extensions: [
       syncEnvVars(() => ({
         DATABASE_URL: process.env.DATABASE_URL,
-        BACKEND_URL: process.env.BACKEND_HOST,
+        BACKEND_HOST: process.env.BACKEND_HOST,
       })),
       additionalPackages({
         packages: ['@tegonhq/sigma-sdk'],
