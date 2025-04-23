@@ -41,6 +41,7 @@ RUN npm install -g corepack && corepack enable
 COPY --from=pruner --chown=node:node /app/out/full/ .
 COPY --from=dev-deps --chown=node:node /app/ .
 COPY apps/webapp/.prod.env .env
+COPY apps/webapp/next.config.webapp.js /app/apps/webapp/next.config.js
 RUN echo "SENTRY_AUTH_TOKEN=$SENTRY_AUTH_TOKEN" >> .env
 RUN echo "[auth]\ntoken=$SENTRY_AUTH_TOKEN" >> /app/apps/webapp/.sentryclirc
 COPY --chown=node:node turbo.json turbo.json
