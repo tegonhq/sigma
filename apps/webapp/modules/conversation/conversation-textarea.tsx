@@ -28,9 +28,11 @@ export function ConversationTextarea({ onSend }: ConversationTextareaProps) {
   useHotkeys(
     [`${Key.Meta}+${Key.Enter}`],
     () => {
-      onSend(text, agents);
-      setText('');
-      editor.commands.clearContent(true);
+      if (text) {
+        onSend(text, agents);
+        setText('');
+        editor.commands.clearContent(true);
+      }
     },
     {
       scopes: [SCOPES.AI],
@@ -116,9 +118,11 @@ export function ConversationTextarea({ onSend }: ConversationTextareaProps) {
             className="transition-all duration-500 ease-in-out"
             type="submit"
             onClick={() => {
-              onSend(text, agents);
-              editor.commands.clearContent(true);
-              setText('');
+              if (text) {
+                onSend(text, agents);
+                editor.commands.clearContent(true);
+                setText('');
+              }
             }}
           >
             <SendLine size={20} />

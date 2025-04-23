@@ -196,7 +196,7 @@ export class TaskHooksService {
   }
 
   async handleBeautifyTask(task: Task, context: TaskHookContext) {
-    if (context.action === 'create') {
+    if (['create', 'update'].includes(context.action)) {
       const pat = await this.usersService.getOrCreatePat(
         context.userId,
         context.workspaceId,

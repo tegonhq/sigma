@@ -5,6 +5,7 @@ import React, {
   useImperativeHandle,
   useState,
 } from 'react';
+import Image from 'next/image';
 
 import { getIcon, type IconType } from 'common/icon-utils';
 
@@ -83,7 +84,17 @@ export const MentionList = forwardRef(
                 key={index}
                 onClick={() => selectItem(index)}
               >
-                <Icon size={16} className="rounded-sm" />
+                {item.name === 'Sigma' ? (
+                  <Image
+                    src="/logo_light.svg"
+                    alt="logo"
+                    key={1}
+                    width={16}
+                    height={16}
+                  />
+                ) : (
+                  <Icon size={14} className="rounded-sm" />
+                )}
                 {item.name}
               </button>
             );

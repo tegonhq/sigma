@@ -46,11 +46,11 @@ export const SubTasks = observer(
             variant="secondary"
             className={cn(
               'flex items-center gap-1',
-              variant !== SubTaskVariant.SHORT && 'h-7 px-2 text-base',
+              variant !== SubTaskVariant.SHORT && 'h-7 px-2 text-sm',
             )}
           >
-            <SubIssue size={variant === SubTaskVariant.SHORT ? 12 : 14} />
-            <span className="text-sm">
+            <SubIssue size={14} />
+            <span className="text-xs">
               {subTasks.filter((task) => task.status === 'Done').length}/
               {subTasks.length}
             </span>

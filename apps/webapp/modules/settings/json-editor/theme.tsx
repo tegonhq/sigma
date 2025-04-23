@@ -89,7 +89,7 @@ export function lightTheme(): Extension {
       '.cm-content': {
         caretColor: cursor,
         fontFamily: 'var(--font-geist-mono)',
-        fontSize: '14px',
+        fontSize: '13px',
       },
 
       '.cm-cursor, .cm-dropCursor': { borderLeftColor: cursor },

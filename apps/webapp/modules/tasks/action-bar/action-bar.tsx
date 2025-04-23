@@ -93,7 +93,7 @@ export const ActionBar = observer(({ openDialog }: ActionBarProps) => {
           variant="ghost"
           className="gap-1"
           onClick={() => {
-            markComplete(selectedTasks);
+            setDeleteTaskAlert(true);
           }}
         >
           <DeleteLine size={16} />

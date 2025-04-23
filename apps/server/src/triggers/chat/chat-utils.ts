@@ -276,6 +276,8 @@ export async function* run(
         break;
       }
 
+      logger.info(`Going ahead with action: ${skillName}`);
+
       const toolInfo = await mcp.getTool(skillName);
       const { response: skillLlmResponse, tokenCount: actionInputTokenCount } =
         makeActionInputCall(executionState, thought, toolInfo);
@@ -356,6 +358,7 @@ export async function* run(
 
     yield Message('Stream ended', AgentMessageType.STREAM_END);
   } catch (e) {
+    logger.error(e);
     yield Message(e.message, AgentMessageType.ERROR);
     yield Message('Stream ended', AgentMessageType.STREAM_END);
   }

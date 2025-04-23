@@ -54,13 +54,18 @@ export class MCP {
   }
 
   async getTool(name: string) {
-    const clientKey = name.split('--')[0];
-    const toolName = name.split('--')[1];
-    const client = this.clients[clientKey];
-    const { tools: clientTools } = await client.listTools();
-    const clientTool = clientTools.find((to: any) => to.name === toolName);
+    try {
+      const clientKey = name.split('--')[0];
+      const toolName = name.split('--')[1];
+      const client = this.clients[clientKey];
+      const { tools: clientTools } = await client.listTools();
+      const clientTool = clientTools.find((to: any) => to.name === toolName);
 
-    return JSON.stringify(clientTool);
+      return JSON.stringify(clientTool);
+    } catch (e) {
+      logger.error(e);
+      throw new Error('Getting tool failed');
+    }
   }
 
   async callTool(name: string, parameters: any) {

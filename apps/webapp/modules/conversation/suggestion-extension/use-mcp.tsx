@@ -9,25 +9,29 @@ export const useMCP = () => {
 };
 
 export const getMCPServers = (mcpConfig: string | object) => {
+  const defaultServer = { key: 'sigma', name: 'Sigma' };
+
   try {
-    // Parse the config if it's a string
+    // Handle string or object config
     const config =
       typeof mcpConfig === 'string' ? JSON.parse(mcpConfig) : mcpConfig;
 
-    // Check if mcpServers exists in the config
-    if (!config.mcpServers) {
-      return [];
+    // Return default if no mcpServers configuration exists
+    if (!config?.mcpServers) {
+      return [defaultServer];
     }
 
-    // Extract server names and create the array of objects
-    return Object.keys(config.mcpServers).map((key) => ({
-      name: key.charAt(0).toUpperCase() + key.slice(1),
-      // Capitalize the first letter for display
+    // Transform server keys to server objects with capitalized names
+    const userServers = Object.keys(config.mcpServers).map((key) => ({
       key,
+      name: key.charAt(0).toUpperCase() + key.slice(1), // Capitalize first letter
     }));
+
+    // Always include the default Sigma server
+    return [...userServers, defaultServer];
   } catch (error) {
     console.error('Error parsing MCP config:', error);
-    return [];
+    return [defaultServer];
   }
 };
 

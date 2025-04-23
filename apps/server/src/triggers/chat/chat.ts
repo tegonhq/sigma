@@ -42,14 +42,13 @@ export const chat = task({
           ? otherData.page[0]
           : {}),
       },
-      agents,
       previousHistory,
       todayDate: new Date(),
       workpsaceId: init?.conversation.workspaceId,
     };
 
     // Log which agents will be used for this conversation
-    logger.info(`Agents passed: ${JSON.stringify(context['agents'])}`);
+    logger.info(`Agents passed: ${JSON.stringify(agents)}`);
 
     // Extract user's goal from conversation history
     const message = init?.conversationHistory?.message;

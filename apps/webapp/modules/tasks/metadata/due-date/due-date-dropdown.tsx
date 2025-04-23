@@ -72,7 +72,7 @@ export const DuedateDropdown = observer(
               variant !== DuedateDropdownVariant.SHORT && 'h-7 px-2 text-base',
             )}
           >
-            <Fire size={variant === DuedateDropdownVariant.SHORT ? 12 : 14} />
+            <Fire size={14} />
             {timeText}
           </Badge>
         );

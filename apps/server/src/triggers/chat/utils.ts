@@ -4,6 +4,7 @@ import {
   PrismaClient,
   UserType,
 } from '@prisma/client';
+import { logger } from '@trigger.dev/sdk/v3';
 import axios from 'axios';
 
 import { HistoryStep } from './types';
@@ -24,7 +25,35 @@ export interface RunChatPayload {
   conversationHistory: ConversationHistory;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function createMCPConfig(userMCP: any, pat: string) {
+  const sigmaMCP = {
+    command: 'npx',
+    args: ['-y', '@tegonhq/sigma-mcp'],
+    env: {
+      API_BASE_URL: process.env.BACKEND_HOST,
+      API_TOKEN: pat,
+    },
+  };
+
+  if (userMCP && userMCP.mcpServers) {
+    return {
+      mcpServers: {
+        ...userMCP.mcpServers,
+        sigma: sigmaMCP,
+      },
+    };
+  }
+
+  return {
+    mcpServers: {
+      sigma: sigmaMCP,
+    },
+  };
+}
+
 export const init = async (payload: InitChatPayload) => {
+  logger.info('Loading init');
   const conversationHistory = await prisma.conversationHistory.findUnique({
     where: { id: payload.conversationHistoryId },
     include: { conversation: true },
@@ -50,6 +79,7 @@ export const init = async (payload: InitChatPayload) => {
 
   axios.interceptors.request.use((config) => {
     // Check if URL starts with /api and doesn't have a full host
+
     if (config.url?.startsWith('/api')) {
       config.url = `${process.env.BACKEND_HOST}${config.url.replace('/api', '')}`;
       config.headers.Authorization = `Bearer ${pat?.token}`;
@@ -58,12 +88,16 @@ export const init = async (payload: InitChatPayload) => {
     return config;
   });
 
+  const mcp = createMCPConfig(user.mcp, pat?.token);
+
+  logger.info(`Found users, workspace, conversation, ${JSON.stringify(mcp)}`);
+
   return {
     conversation,
     conversationHistory,
     token: pat?.token,
     userId: workspace.userId,
-    mcp: user.mcp,
+    mcp,
   };
 };
 

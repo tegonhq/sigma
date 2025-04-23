@@ -62,7 +62,7 @@ export const TaskInfo = observer(
               variant="secondary"
               className="flex items-center gap-1 shrink max-w-[300px]"
             >
-              {getIcon(list?.icon, 12)}
+              {getIcon(list?.icon, 14)}
               <span className="shrink  min-w-[0px] truncate">
                 {page?.title}
               </span>

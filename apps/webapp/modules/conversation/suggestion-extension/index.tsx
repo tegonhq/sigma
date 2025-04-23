@@ -1,4 +1,5 @@
 import type { Agent } from './mention-list';
+import Image from 'next/image';
 
 import { cn } from '@tegonhq/ui';
 import Mention from '@tiptap/extension-mention';
@@ -28,7 +29,17 @@ export const MentionComponent = observer((props: NodeViewProps) => {
           'mention bg-grayAlpha-100 px-1 rounded-sm text-foreground inline-flex w-fit items-center gap-1 h-5 relative top-0.5',
         )}
       >
-        <Icon size={14} className="rounded-sm" />
+        {agent.name === 'Sigma' ? (
+          <Image
+            src="/logo_light.svg"
+            alt="logo"
+            key={1}
+            width={14}
+            height={14}
+          />
+        ) : (
+          <Icon size={14} className="rounded-sm" />
+        )}
         {agent?.name}
       </span>
     </NodeViewWrapper>

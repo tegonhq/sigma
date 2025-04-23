@@ -103,7 +103,7 @@ export const ScheduleDropdown = observer(
                 variant="secondary"
                 className="flex items-center gap-1 shrink min-w-[0px] text-xs"
               >
-                <Cycle size={16} />
+                <Cycle size={14} />
               </Badge>
             </TooltipWrapper>
           );

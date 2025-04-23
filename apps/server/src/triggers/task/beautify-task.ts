@@ -33,7 +33,7 @@ export const beautifyTask = task({
     });
 
     const listsData = await prisma.list.findMany({
-      where: { deleted: null },
+      where: { deleted: null, workspaceId: sigmaTask.workspaceId },
       include: { page: true },
     });
 
@@ -104,17 +104,11 @@ export const beautifyTask = task({
             scheduleText: outputData.scheduleText,
           }),
 
-          ...(outputData.listId && {
-            list: { connect: { id: outputData.listId } },
-          }),
+          ...(outputData.listId &&
+            !sigmaTask.listId && {
+              list: { connect: { id: outputData.listId } },
+            }),
         };
-
-        await prisma.page.update({
-          where: { id: sigmaTask.pageId },
-          data: {
-            title: outputData.title,
-          },
-        });
 
         updatedTask = await prisma.task.update({
           where: { id: payload.taskId },

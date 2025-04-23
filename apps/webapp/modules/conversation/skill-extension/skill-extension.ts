@@ -7,6 +7,7 @@ export const skillExtension = Node.create({
   name: 'skill',
   group: 'block',
   atom: true,
+  selectable: false,
 
   addAttributes() {
     return {

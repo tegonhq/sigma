@@ -111,7 +111,7 @@ export const Conversation = observer(() => {
           </ScrollAreaWithAutoScroll>
 
           {isLoading && (
-            <div className="flex flex-wrap p-1 mt-2 gap-1">
+            <div className="flex flex-wrap p-1 px-3 mt-2 gap-1">
               <div
                 className={cn(
                   'px-2 py-0 w-full flex flex-col items-start gap-1',

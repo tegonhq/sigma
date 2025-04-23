@@ -125,7 +125,7 @@ export function JSONEditor(opts: JSONEditorProps) {
   return (
     <div
       className={cn(
-        'grid border-1 border-border rounded',
+        'grid border-1 border-border rounded text-sm',
         showButtons ? 'grid-rows-[2.5rem_1fr]' : 'grid-rows-[1fr]',
         opts.className,
       )}

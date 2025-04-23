@@ -3,13 +3,9 @@ import { AI } from '@tegonhq/ui';
 import { EditorContent, useEditor } from '@tiptap/react';
 import { observer } from 'mobx-react-lite';
 import React, { useEffect } from 'react';
-import { useDebouncedCallback } from 'use-debounce';
 
 import { extensionsForConversation } from 'common/editor';
-import { TaskExtension } from 'common/editor/task-extension';
 import { UserAvatar } from 'common/user-avatar';
-
-import { useUpdateTaskMutation } from 'services/tasks';
 
 import { useContextStore } from 'store/global-context-provider';
 import { UserContext } from 'store/user-context';
@@ -23,21 +19,8 @@ interface AIConversationItemProps {
 
 export const ConversationItem = observer(
   ({ conversationHistoryId }: AIConversationItemProps) => {
-    const { tasksStore, conversationHistoryStore } = useContextStore();
-    const { mutate: updateTask } = useUpdateTaskMutation({});
+    const { conversationHistoryStore } = useContextStore();
     const user = React.useContext(UserContext);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const onTaskExtensionUpdate = ({ newNode }: any) => {
-      const task = tasksStore.getTaskWithId(newNode.attrs.id);
-      if (task) {
-        debounceUpdateTask({
-          title: newNode.textContent,
-          taskId: task.id,
-        });
-      }
-
-      return true;
-    };
 
     const conversationHistory =
       conversationHistoryStore.getConversationHistoryForId(
@@ -47,25 +30,10 @@ export const ConversationItem = observer(
     const id = `a${conversationHistory.id.replace(/-/g, '')}`;
 
     const editor = useEditor({
-      extensions: [
-        ...extensionsForConversation,
-        TaskExtension({ update: onTaskExtensionUpdate }),
-        skillExtension,
-        CustomMention,
-      ],
+      extensions: [...extensionsForConversation, skillExtension, CustomMention],
       editable: false,
       content: conversationHistory.message,
     });
-
-    const debounceUpdateTask = useDebouncedCallback(
-      async ({ title, taskId }: { title: string; taskId: string }) => {
-        updateTask({
-          title,
-          taskId,
-        });
-      },
-      500,
-    );
 
     useEffect(() => {
       editor?.commands.setContent(conversationHistory.message);
