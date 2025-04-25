@@ -305,8 +305,8 @@ async function getNextWeekTasks(workspaceId: string) {
     page: task.page,
     summary: task.summary,
     suggestion: task.suggestion,
-    startTime: null,
-    endTime: null,
+    startTime: null as Date | null,
+    endTime: null as Date | null,
     dueDate: task.dueDate,
     status: task.status,
   }));
