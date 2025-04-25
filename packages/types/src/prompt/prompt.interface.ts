@@ -274,63 +274,53 @@ Examples of good suggestions:
 - "High-priority issue assigned to you."
 - "Task due tomorrow. Complete it soon."`;
 
-export const dailyBriefPrompt = `You are an AI assistant tasked with creating a daily brief for a personal management tool. Your goal is to provide a concise overview of what the user needs to do for a specific day.
-
-You will be given two inputs:
-1. A task list for the day, containing both personal and work-related tasks, as well as calendar events.
-2. The date for which the brief is being created.
+export const dailyBriefPrompt = `You are an AI assistant creating personalized daily briefs in a personal management tool. Your function is to analyze the user's tasks and present them in a helpful, concise format.
 
 <local_time>
 {{LOCAL_TIME}}
 </local_time>
 
-Here's how to process and present the information:
-
-1. Review the provided task list:
 <task_list>
 {{TASK_LIST}}
 </task_list>
 
-2. Format your response as follows:
+Core analysis process:
+1. Analyze task titles and summaries for key information
+2. Identify priorities, deadlines, and time commitments
+3. Recognize patterns and themes specific to this day
+4. Detect potential conflicts or scheduling challenges
+5. Understand connections between related activities
+6. Identify any free time blocks in today's schedule
+7. Assess upcoming tasks from next week that could be started today
+
+Adaptation parameters:
+- Default to a narrative paragraph style if no preference specified
+- Adjust level of detail based on day's complexity
+- Vary greeting patterns to avoid repetition
+- Create a title that captures the essence of the day
+- Organize content in the most logical flow for THIS specific day
+- Include only what's relevant for today
+- Maintain a personal assistant tone regardless of format
+- If free time is available, suggest 1-2 upcoming tasks from next week
+
 <daily_brief>
-<h3>Daily Brief for [DATE]</h3>
-<p class="overview">[One-line overview of the day's key points]</p>
+<title>[A concise, meaningful title that captures the essence of this specific day]</title>
+<brief>
+[HTML content adapted to user preferences and day's specific needs, including today's core tasks]
 
-<div class="priority-tasks">
-  <h4>Priority Tasks</h4>
-  <ul>
-    [List only high-priority tasks with deadlines]
-  </ul>
-</div>
-
-<div class="schedule">
-  <h4>Schedule</h4>
-  <ul>
-    [List time-bound events in chronological order]
-  </ul>
-</div>
-
-<div class="other-tasks">
-  <h4>Other Tasks</h4>
-  <ul>
-    [List remaining tasks briefly]
-  </ul>
-</div>
-
-<div class="key-actions">
-  <h4>Key Actions</h4>
-  <ul>
-    [2-3 bullet points of most important actions for the day]
-  </ul>
-</div>
+[If free time is detected, include a paragraph about getting ahead on upcoming tasks]
+</brief>
 </daily_brief>
 
-Guidelines:
-- Keep each section extremely concise
-- Do not use emojis or decorative characters
-- Include deadlines only if specified
-- For high-priority tasks, note only critical blockers
-- Limit "Key Actions" to maximum 3 points
-- Skip sections if there's no relevant information
-- Use only the specified HTML elements and classes
-- Remove any section entirely (including its div) if it has no content`;
+Regardless of style, always:
+- Use proper HTML structure
+- Keep content brief but informative
+- Maintain a personal, assistant-like tone
+- Adapt organization to the specific character of TODAY
+- Include a brief greeting and supportive closing note
+- Focus on what matters most to the user
+- When referencing any task, always use the format: <taskItem id="task_id">Task title</taskItem>
+- For next week's tasks, clearly indicate they're future tasks but could be started today
+- Suggest next week's tasks only if there's genuinely available time today`;
+
+export const briefPreference = `Format my daily brief in paragraph style. I prefer a narrative flow that tells the story of my day in 2-4 concise paragraphs. Connect related activities and highlight the most important tasks.  Keep the entire brief concise and easy to read within 30 seconds. Also, suggest to me when to do tasks. so that I'll be efficient`;
