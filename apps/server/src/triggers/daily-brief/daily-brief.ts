@@ -1,12 +1,7 @@
 import { PrismaClient } from '@prisma/client';
-import {
-  dailyBriefPrompt,
-  LLMModelEnum,
-  UserTypeEnum,
-} from '@tegonhq/sigma-sdk';
+import { dailyBriefPrompt, LLMModelEnum } from '@tegonhq/sigma-sdk';
 import { task } from '@trigger.dev/sdk/v3';
 import axios from 'axios';
-import { format } from 'date-fns';
 
 import { pageGroomTask } from './page-groom';
 
@@ -16,7 +11,6 @@ export const dailyBriefTask = task({
   id: 'daily-brief',
   run: async (payload: { workspaceId: string }) => {
     const today = new Date();
-    const formattedDate = format(today, 'dd-MM-yyyy');
 
     const workspace = await prisma.workspace.findUnique({
       where: { id: payload.workspaceId },
@@ -33,7 +27,7 @@ export const dailyBriefTask = task({
       throw new Error('Failed to groom page');
     }
 
-    const { page, todayTaskIds, yesterdayTaskIds, dueTaskIds } =
+    const { todayTaskIds, yesterdayTaskIds, dueTaskIds } =
       pageGroomResponse.output;
 
     // Skip if no tasks for today
@@ -51,15 +45,18 @@ export const dailyBriefTask = task({
     const todayTasks = await getTasks(todayTaskIds);
     const yesterdayTasks = await getTasks(yesterdayTaskIds);
     const dueTasks = await getTasks(dueTaskIds);
+    const nextWeekTasks = await getNextWeekTasks(payload.workspaceId);
     // Combine tasks from both taskOccurrences and tasks
     const tasksData = [
       `Today's tasks`,
       ...todayTasks.map(
         (task) =>
           `
+          id: ${task.id},
           title: ${task.page.title}, 
           summary: ${task.summary?.[0]?.content || ''}, 
-          suggestions: ${task.suggestion?.map((s) => `- ${s.content}`).join('\n') || ''}
+          suggestions: ${task.suggestion?.map((s) => `- ${s.content}`).join('\n') || ''},
+          dueDate: ${task.dueDate ? new Date(task.dueDate).toISOString() : 'not set'}
 
           `,
       ),
@@ -71,9 +68,11 @@ export const dailyBriefTask = task({
             ...dueTasks.map(
               (task) =>
                 `
+        id: ${task.id},
         title: ${task.page.title}, 
         summary: ${task.summary?.[0]?.content || ''}, 
-        suggestions: ${task.suggestion?.map((s) => `- ${s.content}`).join('\n') || ''}
+        suggestions: ${task.suggestion?.map((s) => `- ${s.content}`).join('\n') || ''},
+        dueDate: ${task.dueDate ? new Date(task.dueDate).toISOString() : 'not set'}
         `,
             ),
           ]
@@ -86,9 +85,30 @@ export const dailyBriefTask = task({
             ...yesterdayTasks.map(
               (task) =>
                 `
+        id: ${task.id},
         title: ${task.page.title}, 
         summary: ${task.summary?.[0]?.content || ''}, 
-        suggestions: ${task.suggestion?.map((s) => `- ${s.content}`).join('\n') || ''}
+        suggestions: ${task.suggestion?.map((s) => `- ${s.content}`).join('\n') || ''},
+        dueDate: ${task.dueDate ? new Date(task.dueDate).toISOString() : 'not set'}
+        `,
+            ),
+          ]
+        : []),
+
+      // Add section for next week's task occurrences
+      ...(nextWeekTasks.length > 0
+        ? [
+            `\nUpcoming tasks for next week:`,
+            ...nextWeekTasks.map(
+              (task) =>
+                `
+        id: ${task.id},
+        title: ${task.page.title}, 
+        summary: ${task.summary?.[0]?.content || ''}, 
+        dueDate: ${task.dueDate ? new Date(task.dueDate).toISOString() : 'not set'},
+        startTime: ${task.startTime ? new Date(task.startTime).toISOString() : 'not set'},
+        endTime: ${task.endTime ? new Date(task.endTime).toISOString() : 'not set'},
+        status: ${task.status || 'not set'}
         `,
             ),
           ]
@@ -102,10 +122,15 @@ export const dailyBriefTask = task({
         {
           messages: [
             {
-              role: 'user',
+              role: 'system',
               content: dailyBriefPrompt
                 .replace('{{TASK_LIST}}', tasksData.join('\n'))
                 .replace('{{LOCAL_TIME}}', new Date().toISOString()),
+            },
+            {
+              role: 'user',
+              content:
+                "Format my daily brief in paragraph style. I prefer a narrative flow that tells the story of my day in 2-4 concise paragraphs. Connect related activities and highlight the most important tasks.  Keep the entire brief concise and easy to read within 30 seconds. Also, suggest to me when to do tasks. so that I'll be efficient",
             },
           ],
           llmModel: LLMModelEnum.CLAUDESONNET,
@@ -115,33 +140,19 @@ export const dailyBriefTask = task({
       )
     ).data;
 
-    const briefMatch = briefResponse.match(
-      /<daily_brief>([\s\S]*?)<\/daily_brief>/,
-    );
-    const dailyBrief = briefMatch
-      ? briefMatch[1]
-          .trim()
-          .replace(/\n/g, '') // Remove all newlines
-          .replace(/\\n/g, '') // Remove escaped newlines
-      : '';
+    const { title, brief } = extractBriefComponents(briefResponse);
 
-    await prisma.conversation.create({
+    await prisma.brief.create({
       data: {
         workspace: { connect: { id: payload.workspaceId } },
-        title: formattedDate,
-        page: { connect: { id: page.id } },
-        user: { connect: { id: workspace.userId } },
-        ConversationHistory: {
-          create: {
-            message: dailyBrief,
-            userType: UserTypeEnum.System,
-          },
-        },
+        title,
+        content: brief,
+        date: today,
       },
     });
 
     return {
-      brief: dailyBrief,
+      brief,
     };
   },
 });
@@ -166,4 +177,142 @@ async function getTasks(taskIds: string[]) {
       suggestion: true,
     },
   });
+}
+
+function extractBriefComponents(response: string) {
+  // Extract the entire daily brief content
+  const briefMatch = response.match(/<daily_brief>([\s\S]*?)<\/daily_brief>/);
+
+  if (!briefMatch) {
+    return { title: null, brief: null };
+  }
+
+  // Extract title
+  const titleMatch = briefMatch[1].match(/<title>([\s\S]*?)<\/title>/);
+  const title = titleMatch ? titleMatch[1].trim() : null;
+
+  // Extract brief content
+  const briefContentMatch = briefMatch[1].match(/<brief>([\s\S]*?)<\/brief>/);
+  const brief = briefContentMatch ? briefContentMatch[1].trim() : null;
+
+  return { title, brief };
+}
+
+async function getNextWeekTasks(workspaceId: string) {
+  const nextWeekStart = new Date();
+  nextWeekStart.setDate(nextWeekStart.getDate() + 1); // Start from tomorrow
+  const nextWeekEnd = new Date();
+  nextWeekEnd.setDate(nextWeekEnd.getDate() + 7); // One week ahead
+
+  // Fetch task occurrences for next week
+  const nextWeekTaskOccurrences = await prisma.taskOccurrence.findMany({
+    where: {
+      workspaceId,
+      deleted: null,
+      startTime: {
+        gte: nextWeekStart,
+        lte: nextWeekEnd,
+      },
+      task: {
+        deleted: null,
+        archived: null,
+        completedAt: null,
+        recurrence: null,
+      },
+    },
+    include: {
+      task: {
+        include: {
+          page: {
+            select: {
+              title: true,
+            },
+          },
+          summary: {
+            where: {
+              deleted: null,
+            },
+            orderBy: {
+              updatedAt: 'desc',
+            },
+            take: 1,
+          },
+          suggestion: {
+            where: {
+              deleted: null,
+            },
+          },
+        },
+      },
+    },
+    orderBy: [{ startTime: 'asc' }],
+    take: 5, // Limit to a reasonable number of upcoming tasks
+  });
+
+  // Process the task occurrences into the format needed for the tasksData array
+  const nextWeekTasks = nextWeekTaskOccurrences.map((occurrence) => ({
+    id: occurrence.task.id,
+    page: occurrence.task.page,
+    summary: occurrence.task.summary,
+    suggestion: occurrence.task.suggestion,
+    startTime: occurrence.startTime,
+    endTime: occurrence.endTime,
+    dueDate: occurrence.task.dueDate,
+    status: occurrence.status,
+  }));
+
+  // Get tasks with due dates in the next week
+  const tasksWithDueDates = await prisma.task.findMany({
+    where: {
+      workspaceId,
+      deleted: null,
+      archived: null,
+      completedAt: null,
+      recurrence: null,
+      dueDate: {
+        gte: nextWeekStart,
+        lte: nextWeekEnd,
+      },
+    },
+    include: {
+      page: {
+        select: {
+          title: true,
+        },
+      },
+      summary: {
+        where: {
+          deleted: null,
+        },
+        orderBy: {
+          updatedAt: 'desc',
+        },
+        take: 1,
+      },
+      suggestion: {
+        where: {
+          deleted: null,
+        },
+      },
+    },
+    orderBy: [{ dueDate: 'asc' }],
+    take: 5, // Limit to a reasonable number of tasks
+  });
+
+  // Merge tasks with due dates into the nextWeekTasks array
+  const tasksWithDueDatesFormatted = tasksWithDueDates.map((task) => ({
+    id: task.id,
+    page: task.page,
+    summary: task.summary,
+    suggestion: task.suggestion,
+    startTime: null,
+    endTime: null,
+    dueDate: task.dueDate,
+    status: task.status,
+  }));
+
+  // Combine both types of tasks
+  return [...nextWeekTasks, ...tasksWithDueDatesFormatted];
+
+  return nextWeekTasks;
 }

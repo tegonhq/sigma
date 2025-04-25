@@ -37,7 +37,6 @@ export function Auth() {
   const { mutate: createAuthCode, isLoading } = useCreateAuthCodeMutation({
     onSuccess: async (data: AuthCodeResponse) => {
       setLoading(true);
-
       ipc.openUrl(
         `${publicRuntimeConfig.NEXT_PUBLIC_NODE_ENV === 'production' ? 'https://app.mysigma.ai' : publicRuntimeConfig.NEXT_PUBLIC_BASE_HOST}/authorize?code=${data.code}`,
       );
