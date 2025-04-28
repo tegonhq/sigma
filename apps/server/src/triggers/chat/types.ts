@@ -6,7 +6,8 @@ export interface AgentStep {
 
 export interface ExecutionState {
   query: string;
-  context?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  context?: Record<string, any>;
   previousHistory?: Array<{ agent: string; history: string }>;
   history: HistoryStep[];
   completed: boolean;
@@ -25,6 +26,8 @@ export interface TotalCost {
 }
 
 export interface HistoryStep {
+  agent?: string;
+
   // The agent's reasoning process for this step
   thought?: string;
 
@@ -37,6 +40,7 @@ export interface HistoryStep {
   skill?: string;
   skillId?: string;
   skillInput?: string;
+  skillOutput?: string;
 
   // This is when the action has run and the output will be put here
   observation?: string;
@@ -91,3 +95,37 @@ export const Message = (
   // For STEP and SKILL types, the message can contain JSON data as a string
   return { message, type, metadata: extraParams };
 };
+
+// Define types for the MCP tool schema
+export interface MCPTool {
+  name: string;
+  description: string;
+  inputSchema: {
+    type: string;
+    properties: Record<string, SchemaProperty>;
+    required?: string[];
+    additionalProperties: boolean;
+    $schema: string;
+  };
+}
+
+export type SchemaProperty =
+  | {
+      type: string | string[];
+      minimum?: number;
+      maximum?: number;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      default?: any;
+      minLength?: number;
+      pattern?: string;
+      enum?: string[];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      items?: any;
+      properties?: Record<string, SchemaProperty>;
+      required?: string[];
+      additionalProperties?: boolean;
+    }
+  | {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      anyOf: any[];
+    };

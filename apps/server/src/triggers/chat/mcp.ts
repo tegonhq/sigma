@@ -2,6 +2,8 @@
 
 import { logger } from '@trigger.dev/sdk/v3';
 
+import { convertMCPToolsToPlainText } from './mcp-tools-utils';
+import { MCPTool } from './types';
 export class MCP {
   private Client: any;
   private clients: Record<string, any> = {};
@@ -33,24 +35,26 @@ export class MCP {
     return StdioClientTransport;
   }
 
-  async tools() {
-    let tools = '';
+  async rawTools(): Promise<MCPTool[]> {
+    const allTools: MCPTool[] = [];
 
     for (const clientKey in this.clients) {
       const client = this.clients[clientKey];
-      tools += `${clientKey} \n`;
       const { tools: clientTools } = await client.listTools();
-      const toolDescriptions: string[] = [];
 
       for (const tool of clientTools) {
+        // Add client prefix to tool name
         tool.name = `${clientKey}--${tool.name}`;
-        toolDescriptions.push(JSON.stringify(tool));
+        allTools.push(tool);
       }
-
-      tools += toolDescriptions;
     }
 
-    return tools;
+    return allTools;
+  }
+
+  async tools(): Promise<string> {
+    const toolsList = await this.rawTools();
+    return convertMCPToolsToPlainText(toolsList);
   }
 
   async getTool(name: string) {
