@@ -544,6 +544,7 @@ enum PageType {
   Daily
   List
   Default
+  Context
 }
 
 enum UserType {
