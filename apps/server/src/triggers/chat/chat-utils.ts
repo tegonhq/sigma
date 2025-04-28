@@ -13,7 +13,7 @@ import {
   Message,
   TotalCost,
 } from './types';
-import { generateRandomId, getCost } from './utils';
+import { flattenObject, generateRandomId, getCost } from './utils';
 
 interface LLMOutputInterface {
   response: AsyncGenerator<string, any, any>;
@@ -77,14 +77,16 @@ function makeNextCall(
 
   // Format the history for the prompt
   const historyText = getHistoryText(history);
-
   // Format context information
   let contextText = '';
   if (context) {
-    contextText = Object.entries(context)
-      .map(([k, v]) => `- ${k}: ${v}`)
-      .join('\n');
+    // Process the entire context object at once
+    contextText = flattenObject(context).join('\n');
   }
+
+  const previousHistoryText = previousHistory
+    .map((item) => item.history)
+    .join('\n');
 
   const promptInfo = {
     SERVICE_NAME: 'Agent',
@@ -93,7 +95,7 @@ function makeNextCall(
     CONTEXT: contextText,
     EXECUTION_HISTORY: historyText,
     AUTO_MODE: String(autoMode).toLowerCase(),
-    PREVIOUS_EXECUTION_HISTORY: previousHistory ?? '',
+    PREVIOUS_EXECUTION_HISTORY: previousHistoryText ?? '',
   };
 
   const templateHandler = Handlebars.compile(REACT_PROMPT);
@@ -117,10 +119,13 @@ function makeActionInputCall(
   // Format context information
   let contextText = '';
   if (context) {
-    contextText = Object.entries(context)
-      .map(([k, v]) => `- ${k}: ${v}`)
-      .join('\n');
+    // Process the entire context object at once
+    contextText = flattenObject(context).join('\n');
   }
+
+  const previousHistoryText = previousHistory
+    .map((item) => item.history)
+    .join('\n');
 
   const promptInfo = {
     QUERY: executionState.query,
@@ -129,7 +134,7 @@ function makeActionInputCall(
     AUTO_MODE: String(autoMode).toLowerCase(),
     THOUGHT_PROCESS: thought,
     SELECTED_ACTION: skill,
-    PREVIOUS_EXECUTION_HISTORY: previousHistory ?? '',
+    PREVIOUS_EXECUTION_HISTORY: previousHistoryText ?? '',
   };
 
   const templateHandler = Handlebars.compile(ACTION_PROMPT);
@@ -143,7 +148,8 @@ function makeActionInputCall(
 
 export async function* run(
   message: string,
-  context: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  context: Record<string, any>,
   previousHistory: ExecutionState['previousHistory'],
   mcp: MCP,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -247,6 +253,7 @@ export async function* run(
 
       const toolName = skillName.split('--')[1];
       const agent = skillName.split('--')[0];
+      stepRecord.agent = agent;
       const skillMessageToSend = skillMatch
         ? `\n<skill id="${skillId}" name="${toolName}" agent=${agent}></skill>\n`
         : '';
@@ -319,12 +326,11 @@ export async function* run(
       );
 
       // Add the input to the step
-
       const parsedInput = JSON.parse(skillState.message);
-      stepRecord.skillInput = parsedInput;
-      logger.info(`Parsed input: ${skillState.message}`);
+      stepRecord.skillInput = JSON.stringify(parsedInput);
       const result = await mcp.callTool(skillName, parsedInput);
 
+      stepRecord.skillOutput = JSON.stringify(result);
       const { response: skillObservationResponse, input: observationInput } =
         makeActionObservationCall({
           skillInput: skillState.message,

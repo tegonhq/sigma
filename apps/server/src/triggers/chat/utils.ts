@@ -300,3 +300,17 @@ export const getCost = async (input: string, output: string) => {
 
   return result;
 };
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function flattenObject(obj: Record<string, any>, prefix = ''): string[] {
+  return Object.entries(obj).reduce<string[]>((result, [key, value]) => {
+    const entryKey = prefix ? `${prefix}_${key}` : key;
+
+    if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
+      // For nested objects, flatten them and add to results
+      return [...result, ...flattenObject(value, entryKey)];
+    }
+
+    // For primitive values or arrays, add directly
+    return [...result, `- ${entryKey}: ${value}`];
+  }, []);
+}

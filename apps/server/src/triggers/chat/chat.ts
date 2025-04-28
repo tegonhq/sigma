@@ -42,7 +42,6 @@ export const chat = task({
           ? otherData.page[0]
           : {}),
       },
-      previousHistory,
       todayDate: new Date(),
       workpsaceId: init?.conversation.workspaceId,
     };
@@ -53,9 +52,8 @@ export const chat = task({
     // Extract user's goal from conversation history
     const message = init?.conversationHistory?.message;
     // Retrieve execution history from previous interactions
-    const previousExecutionHistory = await getPreviousExecutionHistory(
-      context.previousHistory,
-    );
+    const previousExecutionHistory =
+      await getPreviousExecutionHistory(previousHistory);
 
     // Prepare conversation history in agent-compatible format
     const agentConversationHistory = await createConversationHistoryForAgent(
@@ -70,18 +68,12 @@ export const chat = task({
       agentConversationHistory.id,
     );
 
-    const llmResponse = run(
-      message,
-      JSON.stringify(context),
-      previousExecutionHistory,
-      mcp,
-    );
+    const llmResponse = run(message, context, previousExecutionHistory, mcp);
 
     const stream = await metadata.stream('messages', llmResponse);
 
     for await (const step of stream) {
       if (step.type === 'STEP') {
-        logger.info(`Current step response: ${step.message}`);
         const stepDetails = JSON.parse(step.message);
 
         await updateExecutionStep(
@@ -92,12 +84,13 @@ export const chat = task({
         agentUserMessage += stepDetails.userMessage;
         thoughtMessage += stepDetails.thought;
 
-        logger.info(`Current step message: ${agentUserMessage}`);
         await updateConversationHistoryMessage(
           agentUserMessage,
           thoughtMessage,
           agentConversationHistory.id,
         );
+      } else if (step.type === 'STREAM_END') {
+        break;
       }
     }
   },

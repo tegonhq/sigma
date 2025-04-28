@@ -205,24 +205,33 @@ Format your response using only the <observation> tags as follows:
 
 <observation>
 [EXTRACTED DATA]
-- Include a structured representation of all relevant data
-- For lists/collections: Include counts, IDs, and key properties of each item
-- For HTML content: Extract elements, attributes, classes, and text content
-- For JSON data: Extract all relevant key-value pairs
-- For errors: Include error codes, messages, and affected components
+- Present a clear, structured representation of all relevant data from the API response
+- ALWAYS include unique identifiers (IDs) when available
+- For collections/lists:
+  * Include total counts and key metadata (pagination info if available)
+  * For paginated data, note current page, total pages, total items, and parameters needed for next page
+  * Include complete details for 5-10 most relevant items including their IDs
+  * Format key items as: [ID] Name - Key properties
+- For structured data (JSON/objects): Extract all relevant key-value pairs
+- For errors: Highlight error codes, messages, and affected components first
 
-[INTERPRETATION]
-Based on this data, here's what we know for next steps: [Brief interpretation of significance in 2-3 sentences]
+[KEY RESOURCES AND CONTEXT]
+- List specific resources with their complete reference information (IDs, names, types)
+- Note any system states, permissions, or limitations revealed
+- Highlight the most relevant data points in relation to the original query
+
+Based on this data, here's what we know: [Brief factual interpretation including whether additional data exists beyond what's currently visible]
 </observation>
 
 Guidelines for your observation:
 
-- Be thorough in data extraction. Don't overlook important attributes, status flags, or metadata.
-- For structured data like task lists, always extract status information (complete/incomplete), IDs, and ordering.
-- When content is in HTML format, parse relevant attributes (class names, data attributes) and element relationships.
-- If the response contains any errors, mention them at the beginning of your observation.
-- Clearly separate the extracted data from your brief interpretation.
-- Do not claim information is missing if it can be inferred from the response.
-- Keep the interpretation focused on facts directly relevant to the original query and next steps.
-- Mention relevant tools that could be used with the extracted data for next steps.
+- Adapt your response structure to match the nature of the API response, while ensuring clarity and completeness.
+- Be thorough in data extraction but prioritize information needed for subsequent actions.
+- ALWAYS prominently include unique identifiers (IDs) for resources that may be referenced in future steps.
+- Format important resource references consistently to make them easily identifiable.
+- ALWAYS include pagination details when present, noting current page, total pages, total items, and how to access additional items.
+- Present data in formats that can be directly used in subsequent steps.
+- If conditional logic applies (e.g., "if X then Y"), clearly identify these relationships.
+- Focus exclusively on extracting and organizing information, NOT on suggesting next actions or tools.
+- Provide factual context about the data, not prescriptive next steps.
 `;
