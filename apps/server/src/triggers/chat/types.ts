@@ -18,6 +18,12 @@ export interface TokenCount {
   outputToken: number;
 }
 
+export interface TotalCost {
+  inputTokens: number;
+  outputTokens: number;
+  cost: number;
+}
+
 export interface HistoryStep {
   // The agent's reasoning process for this step
   thought?: string;
@@ -42,7 +48,7 @@ export interface HistoryStep {
   completed?: boolean;
 
   // Token count
-  tokenCount: TokenCount;
+  tokenCount: TotalCost;
 }
 
 export enum AgentMessageType {

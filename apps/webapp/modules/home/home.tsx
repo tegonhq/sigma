@@ -2,9 +2,9 @@ import { observer } from 'mobx-react-lite';
 import React from 'react';
 
 import { Conversation } from 'modules/conversation';
+import { Days } from 'modules/days';
 import { Instructions } from 'modules/instructions';
-import { ListPage } from 'modules/lists';
-import { MyDay } from 'modules/my-day';
+import { Lists } from 'modules/lists';
 import { SearchDialog } from 'modules/search';
 import { Tasks } from 'modules/tasks';
 import { AddTaskDialogProvider } from 'modules/tasks/add-task';
@@ -22,8 +22,8 @@ import { TabViewType } from 'store/application';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getComponent(componentType: string, props: any) {
-  if (componentType === TabViewType.MY_DAY) {
-    return <MyDay />;
+  if (componentType === TabViewType.DAYS) {
+    return <Days />;
   }
 
   if (componentType === TabViewType.MY_TASKS) {
@@ -31,10 +31,18 @@ function getComponent(componentType: string, props: any) {
   }
 
   if (componentType === TabViewType.LIST) {
-    return <ListPage {...props} />;
+    return <Lists {...props} />;
   }
 
-  if (componentType === TabViewType.INSTRUCTIONS) {
+  if (componentType === TabViewType.CONTEXT) {
+    return <Instructions {...props} />;
+  }
+
+  if (componentType === TabViewType.SYNC) {
+    return <Instructions {...props} />;
+  }
+
+  if (componentType === TabViewType.NOTIFICATIONS) {
     return <Instructions {...props} />;
   }
 
@@ -42,7 +50,7 @@ function getComponent(componentType: string, props: any) {
     return <Conversation {...props} />;
   }
 
-  return <MyDay />;
+  return <Days />;
 }
 
 export const Home = observer(() => {

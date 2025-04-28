@@ -8,6 +8,24 @@ generator client {
   // previewFeatures = []
 }
 
+model Activity {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  text String
+
+  integrationAccount   IntegrationAccount? @relation(fields: [integrationAccountId], references: [id])
+  integrationAccountId String?
+
+  task   Task?   @relation(fields: [taskId], references: [id])
+  taskId String?
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId String
+}
+
 model AIRequest {
   id        String    @id @default(uuid())
   createdAt DateTime  @default(now())
@@ -128,24 +146,6 @@ model ConversationExecutionStep {
   conversationHistoryId String
 }
 
-model IndexJob {
-  id        String    @id @default(uuid())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deleted   DateTime?
-
-  type     String
-  status   String
-  sourceId String
-  metadata Json?
-
-  integrationAccount   IntegrationAccount @relation(fields: [integrationAccountId], references: [id])
-  integrationAccountId String
-
-  workspace   Workspace @relation(fields: [workspaceId], references: [id])
-  workspaceId String
-}
-
 model IntegrationAccount {
   id        String    @id @default(uuid())
   createdAt DateTime  @default(now())
@@ -163,8 +163,8 @@ model IntegrationAccount {
   integrationDefinitionId String
   workspace               Workspace               @relation(references: [id], fields: [workspaceId])
   workspaceId             String
-  IndexJob                IndexJob[]
   TaskExternalLink        TaskExternalLink[]
+  Activity                Activity[]
 
   @@unique([accountId, integrationDefinitionId, workspaceId])
 }
@@ -195,6 +195,8 @@ model List {
   updatedAt DateTime  @updatedAt
   deleted   DateTime?
 
+  favourite Boolean @default(false)
+
   icon String?
 
   page   Page   @relation(fields: [pageId], references: [id])
@@ -204,6 +206,28 @@ model List {
   workspaceId String?
 
   Task Task[]
+}
+
+model Notification {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  type String
+  read Boolean @default(false)
+
+  // For conversation notifications
+  conversationId String?
+
+  // For brief/summary notifications
+  syncId String?
+
+  // For activity notifications
+  activityId String?
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId String
 }
 
 model Page {
@@ -267,6 +291,19 @@ model Prompt {
   workspaceId String
 
   @@unique([name, workspaceId])
+}
+
+model Sync {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+  title     String
+  content   String
+  date      DateTime
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId String
 }
 
 model SyncAction {
@@ -355,6 +392,7 @@ model Task {
   conversation     Conversation[]
   suggestion       Suggestion[]
   summary          Summary[]
+  Activity         Activity[]
 }
 
 model TaskExternalLink {
@@ -460,13 +498,15 @@ model Workspace {
   attachments           Attachment[]
   pages                 Page[]
   Conversation          Conversation[]
-  IndexJob              IndexJob[]
   tasks                 Task[]
   taskOccurrence        TaskOccurrence[]
   aIRequest             AIRequest[]
   Prompt                Prompt[]
   List                  List[]
   agentWorklog          AgentWorklog[]
+  Activity              Activity[]
+  Notification          Notification[]
+  Sync                  Sync[]
 }
 
 enum ModelName {

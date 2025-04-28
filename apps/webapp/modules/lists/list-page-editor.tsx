@@ -18,6 +18,7 @@ import type { ListType, PageType } from 'common/types';
 import { useUpdateTaskMutation } from 'services/tasks';
 
 import { useContextStore } from 'store/global-context-provider';
+import { SocketContext } from 'common/wrappers';
 
 interface ListPageEditorProps {
   page: PageType;
@@ -36,6 +37,7 @@ export function ListPageEditor({
   const [doc, setDoc] = React.useState(undefined);
   const { tasksStore } = useContextStore();
   const { mutate: updateTask } = useUpdateTaskMutation({});
+  const socket = React.useContext(SocketContext);
 
   // Store a map of taskId -> debounced update functions
   // eslint-disable-next-line @typescript-eslint/ban-types
@@ -83,7 +85,8 @@ export function ListPageEditor({
       url: getSocketURL(),
       name: page.id,
       document: ydoc,
-      token: '1234',
+
+      websocketProvider: socket,
     });
     setDoc(ydoc);
     setProvider(provider);

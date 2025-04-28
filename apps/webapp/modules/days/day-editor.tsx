@@ -18,6 +18,7 @@ import {
 import { AddTaskSelector } from 'common/editor/add-task-selector';
 import { TaskExtension } from 'common/editor/task-extension';
 import type { PageType } from 'common/types';
+import { SocketContext } from 'common/wrappers';
 
 import { useCreatePageMutation } from 'services/pages';
 import { useUpdateTaskMutation } from 'services/tasks';
@@ -26,20 +27,24 @@ import { useContextStore } from 'store/global-context-provider';
 
 interface DayEditorProps {
   date: Date;
+  onChange: () => void;
 }
 
 interface EditorWithPageProps {
   page: PageType;
   date: Date;
+  onChange?: () => void;
 }
 
 export const EditorWithPage = observer(
-  ({ page, date }: EditorWithPageProps) => {
+  ({ page, date, onChange }: EditorWithPageProps) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [_, setProvider] = React.useState<HocuspocusProvider>(undefined);
+    const [provider, setProvider] =
+      React.useState<HocuspocusProvider>(undefined);
     const [doc, setDoc] = React.useState(undefined);
     const { tasksStore } = useContextStore();
     const { mutate: updateTask } = useUpdateTaskMutation({});
+    const socket = React.useContext(SocketContext);
 
     const debounceUpdateTask = useDebouncedCallback(
       async ({ title, taskId }: { title: string; taskId: string }) => {
@@ -57,6 +62,15 @@ export const EditorWithPage = observer(
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [page.id]);
 
+    React.useEffect(() => {
+      return () => {
+        if (provider) {
+          provider.destroy();
+        }
+      };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
     const initPageSocket = async () => {
       setDoc(undefined);
       setProvider(undefined);
@@ -70,14 +84,17 @@ export const EditorWithPage = observer(
         url: getSocketURL(),
         name: page.id,
         document: ydoc,
-        token: '1234',
+        token: '',
+        websocketProvider: socket,
       });
 
       setDoc(ydoc);
       setProvider(provider);
     };
 
-    const onDescriptionChange = () => {};
+    const onDescriptionChange = () => {
+      onChange();
+    };
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const onTaskExtensionUpdate = ({ newNode }: any) => {
@@ -120,7 +137,7 @@ export const EditorWithPage = observer(
   },
 );
 
-export const DayEditor = observer(({ date }: DayEditorProps) => {
+export const DayEditor = observer(({ date, onChange }: DayEditorProps) => {
   const { mutate: createPage } = useCreatePageMutation({});
   const { pagesStore } = useContextStore();
   const page = pagesStore.getDailyPageWithDate(date);
@@ -141,9 +158,5 @@ export const DayEditor = observer(({ date }: DayEditorProps) => {
     return null;
   }
 
-  return (
-    <div className="flex flex-col min-h-[calc(100vh_-_65vh)]">
-      <EditorWithPage page={page} date={date} />
-    </div>
-  );
+  return <EditorWithPage page={page} date={date} onChange={onChange} />;
 });

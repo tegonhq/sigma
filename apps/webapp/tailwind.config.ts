@@ -23,7 +23,7 @@ const config = {
       sm: '13px',
       base: '14px',
       md: '15px',
-      lg: '16px',
+      lg: '17px',
       xl: '20px',
       '2xl': '24px',
     },

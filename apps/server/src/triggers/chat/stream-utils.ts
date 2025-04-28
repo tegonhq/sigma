@@ -2,7 +2,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { MessageParam } from '@anthropic-ai/sdk/resources';
 
 import { AgentMessageType, Message } from './types';
-import { TokenCount } from './types';
+
 interface State {
   inTag: boolean;
   messageEnded: boolean;
@@ -96,7 +96,6 @@ export async function* processTag(
 
 export async function* generate(
   messages: MessageParam[],
-  tokenCountState?: TokenCount,
 ): AsyncGenerator<string> {
   // Check for API keys
 
@@ -119,21 +118,10 @@ export async function* generate(
       max_tokens: 5000,
     });
 
-    tokenCountState.inputTokens = Math.ceil(
-      messages.reduce((acc, msg) => acc + (msg.content?.length || 0) / 4, 0),
-    );
-
-    let outputTokenCount = 0;
-
     for await (const chunk of stream) {
       if (chunk.type === 'content_block_delta') {
         const content = chunk.delta?.text || '';
         if (content) {
-          if (tokenCountState) {
-            // Increment output token count for each chunk
-            outputTokenCount += 1; // This is an approximation
-            tokenCountState.outputToken = outputTokenCount;
-          }
           yield content;
         }
       } else if (

@@ -8,6 +8,7 @@ import { logger } from '@trigger.dev/sdk/v3';
 import axios from 'axios';
 
 import { HistoryStep } from './types';
+import { tokenizeAndEstimateCost } from 'llm-cost';
 
 const prisma = new PrismaClient();
 
@@ -288,4 +289,14 @@ export const generateRandomId = (): string => {
   }
 
   return result.toLowerCase();
+};
+
+export const getCost = async (input: string, output: string) => {
+  const result = await tokenizeAndEstimateCost({
+    model: 'gpt-4',
+    input,
+    output,
+  });
+
+  return result;
 };

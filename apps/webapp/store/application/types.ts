@@ -15,11 +15,16 @@ export interface TabType {
 }
 
 export enum TabViewType {
-  MY_DAY = 'my_day',
+  DAYS = 'days',
   MY_TASKS = 'my_tasks',
   LIST = 'lists',
-  INSTRUCTIONS = 'instructions',
   AI = 'ai',
+
+  SYNC = 'sync',
+  CONTEXT = 'context',
+
+  // Misc
+  NOTIFICATIONS = 'notifications',
 }
 
 export interface TabGroupType {

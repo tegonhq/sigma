@@ -16,7 +16,7 @@ export const PageItem = observer(({ page }: PageItemProps) => {
   const { updateTabType } = useApplication();
 
   const openPage = () => {
-    updateTabType(0, TabViewType.MY_DAY, {
+    updateTabType(0, TabViewType.DAYS, {
       data: {
         date: parse(page.title, 'dd-MM-yyyy', new Date()),
       },

@@ -3,7 +3,10 @@ import {
   Button,
   CalendarLine,
   cn,
+  DocumentLine,
+  Inbox,
   IssuesLine,
+  Project,
   Sidebar,
   SidebarContent,
   SidebarFooter,
@@ -12,6 +15,7 @@ import {
   SidebarMenu,
   SidebarMenuItem,
 } from '@tegonhq/ui';
+import { RefreshCcw } from 'lucide-react';
 import { observer } from 'mobx-react-lite';
 import getConfig from 'next/config';
 import Image from 'next/image';
@@ -52,9 +56,12 @@ export const AppSidebar = observer(
       (event) => {
         switch (event.key) {
           case '1':
-            navigate(TabViewType.MY_DAY);
+            navigate(TabViewType.DAYS);
             return;
           case '2':
+            navigate(TabViewType.MY_TASKS);
+            break;
+          case '3':
             navigate(TabViewType.MY_TASKS);
         }
       },
@@ -67,24 +74,20 @@ export const AppSidebar = observer(
 
     const navigate = (page: TabViewType, id?: string) => {
       switch (page) {
-        case TabViewType.MY_DAY:
-          updateTabType(0, TabViewType.MY_DAY, {
+        case TabViewType.DAYS:
+          updateTabType(0, TabViewType.DAYS, {
             data: {
               date: new Date(),
             },
           });
 
           return;
-        case TabViewType.MY_TASKS:
-          updateTabType(0, TabViewType.MY_TASKS, {});
-          return;
-        case TabViewType.AI:
-          closeRightScreen();
-          updateTabType(0, TabViewType.AI, {});
-          return;
         case TabViewType.LIST:
           closeRightScreen();
-          updateTabType(0, TabViewType.LIST, { entityId: id });
+          updateTabType(0, TabViewType.LIST, id ? { entityId: id } : {});
+          return;
+        default:
+          updateTabType(0, page, {});
       }
     };
 
@@ -104,14 +107,25 @@ export const AppSidebar = observer(
                 <Button
                   variant="secondary"
                   className="flex gap-1 w-fit"
-                  isActive={firstTab.type === TabViewType.MY_DAY}
-                  onClick={() => navigate(TabViewType.MY_DAY)}
+                  isActive={firstTab.type === TabViewType.SYNC}
+                  onClick={() => navigate(TabViewType.SYNC)}
                 >
-                  <CalendarLine className="h-4 w-4" />
-                  My day
+                  <Inbox className="h-4 w-4" />
+                  Inbox
                 </Button>
               </SidebarMenuItem>
 
+              <SidebarMenuItem>
+                <Button
+                  variant="secondary"
+                  className="flex gap-1 w-fit"
+                  isActive={firstTab.type === TabViewType.DAYS}
+                  onClick={() => navigate(TabViewType.DAYS)}
+                >
+                  <CalendarLine className="h-4 w-4" />
+                  Today
+                </Button>
+              </SidebarMenuItem>
               <SidebarMenuItem>
                 <Button
                   variant="secondary"
@@ -123,12 +137,26 @@ export const AppSidebar = observer(
                   Tasks
                 </Button>
               </SidebarMenuItem>
+
+              <SidebarMenuItem>
+                <Button
+                  variant="secondary"
+                  className="flex gap-1 w-fit"
+                  isActive={
+                    firstTab.type === TabViewType.LIST && !firstTab.entity_id
+                  }
+                  onClick={() => navigate(TabViewType.LIST)}
+                >
+                  <Project className="h-4 w-4" />
+                  Lists
+                </Button>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroup>
 
           <SidebarGroup>
             <h3 className="text-sm text-muted-foreground mb-1 flex justify-between items-center">
-              <p>Lists</p>
+              <p>Favourites</p>
               <Button
                 size="xs"
                 variant="ghost"

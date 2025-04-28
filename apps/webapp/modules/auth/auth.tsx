@@ -28,6 +28,9 @@ export const AuthSchema = z.object({
 
 export function Auth() {
   const router = useRouter();
+  const {
+    query: { redirectToPath },
+  } = router;
 
   const [loading, setLoading] = React.useState(false);
 
@@ -61,7 +64,7 @@ export function Auth() {
 
         // This is where Google should redirect the user back after login or error.
         // This URL goes on the Google's dashboard as well.
-        frontendRedirectURI: 'https://app.mysigma.ai/auth/google',
+        frontendRedirectURI: `https://app.mysigma.ai/auth/google${redirectToPath ? `?redirectToPath=${redirectToPath}` : ''}`,
       });
 
       /*

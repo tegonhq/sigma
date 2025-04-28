@@ -129,6 +129,10 @@ export const TasksStore: IAnyStateTreeNode = types
 
       return lastTask.number;
     },
+
+    getTasksForList(listId: string) {
+      return self.tasks.filter((task: TaskType) => task.listId === listId);
+    },
   }));
 
 export interface TasksStoreType {
@@ -149,4 +153,5 @@ export interface TasksStoreType {
   getTasksForDate: (date: Date) => TaskType[];
   getTasksNotCompleted: () => TaskType[];
   getSubTasks: (taskId: string) => TaskType[];
+  getTasksForList: (listId: string) => TaskType[];
 }

@@ -63,7 +63,7 @@ export class MCP {
 
       return JSON.stringify(clientTool);
     } catch (e) {
-      logger.error(e);
+      logger.error(e ?? 'Getting tool failed');
       throw new Error('Getting tool failed');
     }
   }

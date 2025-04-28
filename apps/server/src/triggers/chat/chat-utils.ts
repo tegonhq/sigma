@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { logger } from '@trigger.dev/sdk/v3';
 import Handlebars from 'handlebars';
 
@@ -10,14 +11,13 @@ import {
   ExecutionState,
   HistoryStep,
   Message,
-  TokenCount,
+  TotalCost,
 } from './types';
-import { generateRandomId } from './utils';
+import { generateRandomId, getCost } from './utils';
 
-interface LLMCountResponse {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+interface LLMOutputInterface {
   response: AsyncGenerator<string, any, any>;
-  tokenCount: TokenCount;
+  input: string;
 }
 
 function getHistoryText(history: HistoryStep[]) {
@@ -48,7 +48,7 @@ function makeActionObservationCall({
   skillInput: string;
   thought: string;
   executionState: ExecutionState;
-}): LLMCountResponse {
+}): LLMOutputInterface {
   const historyText = getHistoryText(executionState.history);
 
   const promptInfo = {
@@ -62,21 +62,17 @@ function makeActionObservationCall({
 
   const templateHandler = Handlebars.compile(OBSERVATION_PROMPT);
   const actionResponsePrompt = templateHandler(promptInfo);
-  const tokenCount: TokenCount = { inputTokens: 0, outputToken: 0 };
 
   // Get the next action from the LLM
-  const response = generate(
-    [{ role: 'user', content: actionResponsePrompt }],
-    tokenCount,
-  );
+  const response = generate([{ role: 'user', content: actionResponsePrompt }]);
 
-  return { response, tokenCount };
+  return { response, input: actionResponsePrompt };
 }
 
 function makeNextCall(
   executionState: ExecutionState,
   TOOLS: string,
-): LLMCountResponse {
+): LLMOutputInterface {
   const { context, history, previousHistory, autoMode } = executionState;
 
   // Format the history for the prompt
@@ -103,18 +99,17 @@ function makeNextCall(
   const templateHandler = Handlebars.compile(REACT_PROMPT);
   const prompt = templateHandler(promptInfo);
 
-  const tokenCount: TokenCount = { inputTokens: 0, outputToken: 0 };
   // Get the next action from the LLM
-  const response = generate([{ role: 'user', content: prompt }], tokenCount);
+  const response = generate([{ role: 'user', content: prompt }]);
 
-  return { response, tokenCount };
+  return { response, input: prompt };
 }
 
 function makeActionInputCall(
   executionState: ExecutionState,
   thought: string,
   skill: string,
-): LLMCountResponse {
+): LLMOutputInterface {
   const { context, history, previousHistory, autoMode } = executionState;
 
   // Format the history for the prompt
@@ -140,15 +135,10 @@ function makeActionInputCall(
   const templateHandler = Handlebars.compile(ACTION_PROMPT);
   const actionPrompt = templateHandler(promptInfo);
 
-  const tokenCount: TokenCount = { inputTokens: 0, outputToken: 0 };
-
   // Get the next action from the LLM
-  const response = generate(
-    [{ role: 'user', content: actionPrompt }],
-    tokenCount,
-  );
+  const response = generate([{ role: 'user', content: actionPrompt }]);
 
-  return { response, tokenCount };
+  return { response, input: actionPrompt };
 }
 
 export async function* run(
@@ -170,9 +160,11 @@ export async function* run(
     autoMode: true,
   };
 
+  const totalCost: TotalCost = { inputTokens: 0, outputTokens: 0, cost: 0 };
+
   try {
     while (!executionState.completed && guardLoop < 10) {
-      const { response: llmResponse, tokenCount } = makeNextCall(
+      const { response: llmResponse, input: thoughtInput } = makeNextCall(
         executionState,
         tools,
       );
@@ -227,6 +219,13 @@ export async function* run(
         }
       }
 
+      const costForThought = await getCost(thoughtInput, totalMessage);
+      totalCost.inputTokens += costForThought.inputTokens ?? 0;
+      totalCost.outputTokens += costForThought.outputTokens ?? 0;
+      totalCost.cost += costForThought.cost ?? 0;
+
+      logger.info(`Cost for thought: ${JSON.stringify(costForThought)}`);
+
       const skillMatch = totalMessage.match(/<action>(.*?)<\/action>/s);
       const isFinalAnswer = totalMessage.includes('<final_response>');
       const isQuestion = totalMessage.includes('<question_response>');
@@ -243,7 +242,7 @@ export async function* run(
         userMessage: messageState.message,
         isQuestion,
         isFinal: isFinalAnswer,
-        tokenCount,
+        tokenCount: costForThought,
       };
 
       const toolName = skillName.split('--')[1];
@@ -279,7 +278,7 @@ export async function* run(
       logger.info(`Going ahead with action: ${skillName}`);
 
       const toolInfo = await mcp.getTool(skillName);
-      const { response: skillLlmResponse, tokenCount: actionInputTokenCount } =
+      const { response: skillLlmResponse, input: actionInput } =
         makeActionInputCall(executionState, thought, toolInfo);
 
       let totalSkillResponse = '';
@@ -310,8 +309,14 @@ export async function* run(
         );
       }
 
-      stepRecord.tokenCount.inputTokens += actionInputTokenCount.inputTokens;
-      stepRecord.tokenCount.outputToken += actionInputTokenCount.outputToken;
+      const costForActionInput = await getCost(actionInput, totalSkillResponse);
+      totalCost.inputTokens += costForActionInput.inputTokens ?? 0;
+      totalCost.outputTokens += costForActionInput.outputTokens ?? 0;
+      totalCost.cost += costForActionInput.cost ?? 0;
+
+      logger.info(
+        `Cost for actionInput: ${JSON.stringify(costForActionInput)}`,
+      );
 
       // Add the input to the step
 
@@ -320,24 +325,31 @@ export async function* run(
       logger.info(`Parsed input: ${skillState.message}`);
       const result = await mcp.callTool(skillName, parsedInput);
 
-      const {
-        response: skillObservationResponse,
-        tokenCount: observationTokenCount,
-      } = makeActionObservationCall({
-        skillInput: skillState.message,
-        skillName,
-        skillResponse: JSON.stringify(result),
-        thought,
-        executionState,
-      });
+      const { response: skillObservationResponse, input: observationInput } =
+        makeActionObservationCall({
+          skillInput: skillState.message,
+          skillName,
+          skillResponse: JSON.stringify(result),
+          thought,
+          executionState,
+        });
 
       let observationText = '';
       for await (const chunk of skillObservationResponse) {
         observationText += chunk;
       }
 
-      stepRecord.tokenCount.inputTokens += observationTokenCount.inputTokens;
-      stepRecord.tokenCount.outputToken += observationTokenCount.outputToken;
+      const costForObservation = await getCost(
+        observationInput,
+        observationText,
+      );
+      totalCost.inputTokens += costForObservation.inputTokens ?? 0;
+      totalCost.outputTokens += costForObservation.outputTokens ?? 0;
+      totalCost.cost += costForObservation.cost ?? 0;
+
+      logger.info(
+        `Cost for observation: ${JSON.stringify(costForObservation)}`,
+      );
 
       // Extract observation content from tags
       const observationMatch = observationText.match(
@@ -349,6 +361,7 @@ export async function* run(
 
       // Record the observation
       stepRecord.observation = observation;
+      stepRecord.tokenCount = totalCost;
 
       yield Message(JSON.stringify(stepRecord), AgentMessageType.STEP);
       executionState.history.push(stepRecord);

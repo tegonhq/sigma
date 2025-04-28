@@ -25,11 +25,13 @@ const Tab = types
     id: types.identifier,
     entity_id: types.union(types.string, types.undefined),
     type: types.enumeration([
-      'my_day',
+      'days',
       'my_tasks',
       'lists',
-      'instructions',
       'ai',
+      'context',
+      'sync',
+      'notifications',
     ]),
     order: types.number,
     data: types.frozen(),
@@ -67,7 +69,7 @@ const TabGroup = types
         const newTab = Tab.create({
           id,
           entity_id: undefined,
-          type: 'my_day',
+          type: 'days',
           order: 0,
           data: {},
         });
@@ -115,8 +117,8 @@ export const defaultApplicationStoreValue: {
       tabs: [
         {
           id: initialId,
-          entity_id: 'my_day',
-          type: 'my_day',
+          entity_id: 'days',
+          type: 'days',
           order: 0,
           data: { date: new Date() },
         },
@@ -162,7 +164,9 @@ const ApplicationStore = types
         try {
           applySnapshot(self, data[0]);
           historyLoad(data[0]);
-        } catch (e) {}
+        } catch (e) {
+          historyLoad();
+        }
       } else {
         historyLoad();
       }

@@ -19,6 +19,7 @@ import type { PageType, TaskType } from 'common/types';
 import { useUpdateTaskMutation } from 'services/tasks';
 
 import { useContextStore } from 'store/global-context-provider';
+import { SocketContext } from 'common/wrappers';
 
 interface SingleTaskEditorProps {
   page: PageType;
@@ -37,6 +38,7 @@ export function SingleTaskEditor({
   const [doc, setDoc] = React.useState(undefined);
   const { tasksStore } = useContextStore();
   const { mutate: updateTask } = useUpdateTaskMutation({});
+  const socket = React.useContext(SocketContext);
 
   const debounceUpdateTask = useDebouncedCallback(
     async ({ title, taskId }: { title: string; taskId: string }) => {
@@ -66,7 +68,7 @@ export function SingleTaskEditor({
       url: getSocketURL(),
       name: page.id,
       document: ydoc,
-      token: '1234',
+      websocketProvider: socket,
     });
     setDoc(ydoc);
     setProvider(provider);

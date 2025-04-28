@@ -15,6 +15,9 @@ import {
   TaskIntegrationMetadataWrapper,
   TaskIntegrationViewType,
 } from '../task-integration-metadata';
+import { getIcon } from 'common/icon-picker';
+import { useApplication } from 'hooks/application';
+import { TabViewType } from 'store/application';
 
 interface SingleTaskMetadataProps {
   task: TaskType;
@@ -22,8 +25,11 @@ interface SingleTaskMetadataProps {
 
 export const SingleTaskMetadata = observer(
   ({ task }: SingleTaskMetadataProps) => {
-    const { tasksStore, pagesStore } = useContextStore();
+    const { tasksStore, pagesStore, listsStore } = useContextStore();
     const { openTask } = React.useContext(TaskViewContext);
+    const list = listsStore.getListWithId(task.listId);
+    const listPage = pagesStore.getPageWithId(list?.pageId);
+    const { updateTabType } = useApplication();
 
     const parentTask = () => {
       const parent = tasksStore.getTaskWithId(task?.parentId);
@@ -52,6 +58,24 @@ export const SingleTaskMetadata = observer(
           <ScheduleDropdown task={task} />
           <DuedateDropdown task={task} />
           <SubTasks taskId={task.id} />
+          {list && (
+            <Badge
+              variant="secondary"
+              className="flex items-center gap-1 shrink max-w-[300px] h-7 p-2 text-base"
+              onClick={() =>
+                updateTabType(
+                  0,
+                  TabViewType.LIST,
+                  list.id ? { entityId: list.id } : {},
+                )
+              }
+            >
+              {getIcon(list?.icon, 16)}
+              <span className="shrink  min-w-[0px] truncate">
+                {listPage?.title}
+              </span>
+            </Badge>
+          )}
           {task.parentId && parentTask()}
           <TaskExternalInfo task={task} />
         </div>

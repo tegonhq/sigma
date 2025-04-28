@@ -72,8 +72,8 @@ export function ConversationTextarea({ onSend }: ConversationTextareaProps) {
   };
 
   return (
-    <div className="p-2">
-      <div className="flex flex-col rounded pt-2 bg-grayAlpha-100 ">
+    <div className="p-4">
+      <div className="flex flex-col rounded pt-2 bg-background">
         <EditorRoot>
           <EditorContent
             extensions={[

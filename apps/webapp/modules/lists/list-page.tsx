@@ -10,6 +10,7 @@ import { PageTitle } from 'modules/tasks/single-task/single-task-title';
 
 import { getIcon } from 'common/icon-picker';
 import { IconPicker } from 'common/icon-picker/icon-picker';
+import type { ListType } from 'common/types';
 import { RightSideLayout } from 'layouts/right-side-layout';
 
 import { useUpdateListMutation } from 'services/lists';
@@ -20,13 +21,12 @@ import { useContextStore } from 'store/global-context-provider';
 import { ListPageEditor } from './list-page-editor';
 import { ListPageHeader } from './list-page-header';
 
-interface TabsProps {
-  entity_id: string;
+interface ListPageProps {
+  list: ListType;
 }
 
-export const ListPage = observer(({ entity_id }: TabsProps) => {
-  const { listsStore, pagesStore } = useContextStore();
-  const list = listsStore.getListWithId(entity_id);
+export const ListPage = observer(({ list }: ListPageProps) => {
+  const { pagesStore } = useContextStore();
   const page = pagesStore.getPageWithId(list?.pageId);
   const { mutate: updatePage } = useUpdatePageMutation({});
   const { mutate: updateList } = useUpdateListMutation({});

@@ -1,16 +1,22 @@
 import { Loader, useToast } from '@tegonhq/ui';
+import { useRouter } from 'next/router';
 import React from 'react';
 import { signInAndUp } from 'supertokens-auth-react/recipe/thirdparty';
 
 export function Google() {
   const { toast } = useToast();
+  const {
+    query: { redirectToPath },
+  } = useRouter();
 
   async function handleGoogleCallback() {
     try {
       const response = await signInAndUp();
 
       if (response.status === 'OK') {
-        window.location.assign('/');
+        window.location.assign(
+          redirectToPath ? (redirectToPath as string) : '/',
+        );
       } else if (response.status === 'SIGN_IN_UP_NOT_ALLOWED') {
         // the reason string is a user friendly message
         // about what went wrong. It can also contain a support code which users

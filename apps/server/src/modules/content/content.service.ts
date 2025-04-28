@@ -47,8 +47,7 @@ export class ContentService implements OnModuleInit {
           },
         }),
       ],
-
-      async onAuthenticate(data) {
+      async onConnect(data) {
         const isValid = isValidAuthentication(data.requestHeaders);
 
         if (!isValid) {
@@ -56,6 +55,8 @@ export class ContentService implements OnModuleInit {
             message: `Connection disconnected`,
             where: `ContentGateway.handleConnection`,
           });
+
+          throw new Error('Unable to connect');
         }
       },
     });

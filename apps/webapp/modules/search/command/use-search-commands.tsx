@@ -30,28 +30,6 @@ interface CommandType {
   command: () => void;
 }
 
-function isValidDateFormat(dateString: string) {
-  // Regular expression to match the dd-mm-yyyy format
-  const regex = /^\d{2}-\d{2}-\d{4}$/;
-
-  if (!regex.test(dateString)) {
-    return false; // Does not match the basic pattern
-  }
-
-  // Split the string into day, month, and year
-  const [day, month, year] = dateString.split('-').map(Number);
-
-  // Check if the date is valid
-  const date = new Date(year, month - 1, day);
-
-  // Verify if the constructed date matches the input
-  return (
-    date.getFullYear() === year &&
-    date.getMonth() === month - 1 &&
-    date.getDate() === day
-  );
-}
-
 export const useSearchCommands = (value: string, onClose: () => void) => {
   const { tasksStore, pagesStore, listsStore } = useContextStore();
   const { setDialogOpen } = React.useContext(AddTaskDialogContext);
@@ -96,7 +74,7 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
         text: 'Go to today',
         shortcut: 'cmd + 1',
         command: () => {
-          updateTabType(0, TabViewType.MY_DAY, {
+          updateTabType(0, TabViewType.DAYS, {
             data: {
               date: new Date(),
             },
@@ -125,23 +103,6 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
           text: `${value} ... ask sigma`,
           command: () => {
             updateTabType(1, TabViewType.AI, {});
-            onClose();
-          },
-        },
-      ];
-    }
-
-    if (isValidDateFormat(value)) {
-      commands['default'] = [
-        ...commands['default'],
-        {
-          Icon: CalendarLine,
-          text: `Go to date: ${value}`,
-          shortcut: '',
-          command: () => {
-            updateTabData(0, {
-              date: parse(value, 'dd-MM-yyyy', new Date()),
-            });
             onClose();
           },
         },
@@ -192,7 +153,7 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
       ];
     }
 
-    if (value && !isValidDateFormat(value)) {
+    if (value) {
       const pages = pagesStore.searchPages(value);
 
       commands['Pages'] = pages.map((page) => {

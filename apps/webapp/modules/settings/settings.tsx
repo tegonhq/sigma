@@ -15,6 +15,7 @@ import {
   SettingsLine,
   Button,
   AI,
+  DocumentLine,
 } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
@@ -43,7 +44,10 @@ export const Settings = observer(({ open, setOpen }: SettingsProps) => {
       { name: 'Workspace', icon: BuildingLine },
       { name: 'Preferences', icon: SettingsLine },
       { name: 'Integrations', icon: StackLine },
+    ],
+    ai: [
       { name: 'MCP', icon: AI },
+      { name: 'Context', icon: DocumentLine },
     ],
   };
 
@@ -62,6 +66,31 @@ export const Settings = observer(({ open, setOpen }: SettingsProps) => {
                 <SidebarGroupContent>
                   <SidebarMenu className="gap-0.5">
                     {data.nav.map((item) => (
+                      <SidebarMenuItem key={item.name}>
+                        <Button
+                          variant="secondary"
+                          isActive={item.name === settingsView}
+                          onClick={() => setSettingsView(item.name)}
+                          className={cn(
+                            'flex gap-1 w-fit min-w-0 justify-start',
+                          )}
+                        >
+                          <item.icon size={18} />
+                          <span>{item.name}</span>
+                        </Button>
+                      </SidebarMenuItem>
+                    ))}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </SidebarGroup>
+
+              <SidebarGroup>
+                <h3 className="text-sm text-muted-foreground mb-1 flex justify-between items-center">
+                  <p>AI</p>
+                </h3>
+                <SidebarGroupContent>
+                  <SidebarMenu className="gap-0.5">
+                    {data.ai.map((item) => (
                       <SidebarMenuItem key={item.name}>
                         <Button
                           variant="secondary"

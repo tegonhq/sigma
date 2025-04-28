@@ -123,14 +123,10 @@ export const PagesStore: IAnyStateTreeNode = types
             name: 'title',
             weight: 1,
           },
-          {
-            name: 'description',
-            weight: 10,
-          },
         ], // Fields to search
 
         includeScore: true, // Optional: include match scores
-        threshold: 0.6, // Lower threshold for stricter matches
+        threshold: 0.9, // Lower threshold for stricter matches
         distance: 100, // Reduce distance to prioritize closer matches
         findAllMatches: true, // Include all potential matches
         useExtendedSearch: true, // Enable advanced search features

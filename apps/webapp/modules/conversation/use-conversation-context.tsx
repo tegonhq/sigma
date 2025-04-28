@@ -19,7 +19,7 @@ export const useConversationContext = () => {
       return tasksStore.getTaskWithId(firstTab.entity_id)?.pageId;
     }
 
-    if (firstTab.type === TabViewType.MY_DAY) {
+    if (firstTab.type === TabViewType.DAYS) {
       const { date = new Date() } = firstTab.data;
 
       const page = pagesStore.getDailyPageWithDate(date);

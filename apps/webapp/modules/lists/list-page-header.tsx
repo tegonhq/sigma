@@ -1,6 +1,7 @@
 import {
   Breadcrumb,
   BreadcrumbItem,
+  BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
   Button,
@@ -25,7 +26,7 @@ import { useContextStore } from 'store/global-context-provider';
 import { DeleteListAlert } from './delete-list-alert';
 
 interface ListPageHeaderProps {
-  list: ListType;
+  list?: ListType;
 }
 
 export const ListPageHeader = observer(({ list }: ListPageHeaderProps) => {
@@ -64,6 +65,9 @@ export const ListPageHeader = observer(({ list }: ListPageHeaderProps) => {
         <Navigation />
         <Breadcrumb>
           <BreadcrumbList className="gap-1">
+            <BreadcrumbItem>
+              <BreadcrumbLink className="text-foreground">Lists</BreadcrumbLink>
+            </BreadcrumbItem>
             {page && (
               <>
                 <BreadcrumbItem>
@@ -75,27 +79,29 @@ export const ListPageHeader = observer(({ list }: ListPageHeaderProps) => {
             )}
           </BreadcrumbList>
         </Breadcrumb>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={(e) => {
-                e.preventDefault();
-              }}
-            >
-              <MoreLine size={16} />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start">
-            <DropdownMenuItem onClick={() => setDeleteListDialog(true)}>
-              <div className="flex gap-2 items-center mr-2">
-                <DeleteLine size={16} />
-                <span>Delete list</span>
-              </div>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {page && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={(e) => {
+                  e.preventDefault();
+                }}
+              >
+                <MoreLine size={16} />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+              <DropdownMenuItem onClick={() => setDeleteListDialog(true)}>
+                <div className="flex gap-2 items-center mr-2">
+                  <DeleteLine size={16} />
+                  <span>Delete list</span>
+                </div>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
       {deleteListDialog && (
         <DeleteListAlert
