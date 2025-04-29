@@ -112,7 +112,10 @@ export const TaskOccurrencesStore: IAnyStateTreeNode = types
         }
       }
 
-      self.loading = false;
+      setTimeout(() => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (self as any).setLoading(false);
+      }, 100);
     };
 
     const load = flow(function* () {

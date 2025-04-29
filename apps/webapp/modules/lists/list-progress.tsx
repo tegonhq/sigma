@@ -18,7 +18,6 @@ export const ListProgress = observer(
 
     const tasks = tasksStore.getTasksForList(list?.id);
 
-    console.log(tasks);
     if (!list) {
       return null;
     }

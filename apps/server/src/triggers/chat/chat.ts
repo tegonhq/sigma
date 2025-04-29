@@ -20,6 +20,10 @@ import {
  */
 export const chat = task({
   id: 'chat',
+  queue: {
+    name: 'chat',
+    concurrencyLimit: 10,
+  },
   init,
   run: async (payload: RunChatPayload, { init }) => {
     // Fetch conversation context from the Sigma API

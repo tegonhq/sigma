@@ -55,14 +55,14 @@ export const Days = observer(() => {
     }
 
     if (isToday(date)) {
-      return 'Today';
+      return '- Today';
     } else if (isTomorrow(date)) {
-      return 'Tomorrow';
+      return '- Tomorrow';
     } else if (isYesterday(date)) {
-      return 'Yesterday';
+      return '- Yesterday';
     }
 
-    return format(date, 'EE, MMM do, yyyy');
+    return '';
   }, []);
 
   // Item content renderer
@@ -73,7 +73,7 @@ export const Days = observer(() => {
         <div className="flex w-full justify-center items-center mb-10">
           <div className="flex flex-col ml-2 max-w-[97ch] w-full justify-center">
             <h3 className="text-2xl mb-2 flex gap-1 font-medium">
-              {getDayLabel(date)}
+              {format(date, 'EE, MMM do, yyyy')} {getDayLabel(date)}
             </h3>
             <div className="min-h-[400px]">
               <DayEditor date={date} onChange={() => {}} />
@@ -88,17 +88,6 @@ export const Days = observer(() => {
   // Initial scroll complete
   const [initialScrollDone, setInitialScrollDone] = React.useState(false);
 
-  React.useEffect(() => {
-    if (!initialScrollDone && virtuosoRef.current) {
-      // Scroll to today (which is at INITIAL_RANGE index)
-      virtuosoRef.current.scrollToIndex({
-        index: INITIAL_RANGE * 3,
-        align: 'top',
-      });
-      setInitialScrollDone(true);
-    }
-  }, [initialScrollDone]);
-
   return (
     <RightSideLayout header={<Header />}>
       <div className="flex h-full justify-center w-full">
@@ -112,10 +101,9 @@ export const Days = observer(() => {
             endReached={appendDays}
             overscan={LOAD_MORE_COUNT}
             customScrollParent={scrollRef.current}
-            initialTopMostItemIndex={INITIAL_RANGE * 2}
+            initialTopMostItemIndex={INITIAL_RANGE}
             rangeChanged={({ startIndex }) => console.log(startIndex)}
             atTopStateChange={(atTop) => {
-              console.log(atTop, initialScrollDone);
               if (initialScrollDone && atTop) {
                 prependDays();
               } else {

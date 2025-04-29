@@ -52,6 +52,14 @@ export default class WorkspacesService {
           preferences: {
             timezone: workspaceData.timezone,
           },
+          pages: {
+            create: {
+              title: 'Context',
+              type: 'Context',
+              sortOrder: '',
+              description: '',
+            },
+          },
         },
       });
 

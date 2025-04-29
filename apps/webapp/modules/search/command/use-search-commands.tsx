@@ -7,12 +7,14 @@ import {
   Fire,
   IssuesLine,
   Project,
+  SettingsLine,
 } from '@tegonhq/ui';
 import { parse } from 'date-fns';
 import { Check } from 'lucide-react';
 import React from 'react';
 
 import { DailogViewsContext, DialogType } from 'modules/dialog-views-provider';
+import { useSettings } from 'modules/settings';
 import { AddTaskDialogContext } from 'modules/tasks/add-task';
 
 import { useApplication } from 'hooks/application';
@@ -21,11 +23,13 @@ import { TabViewType } from 'store/application';
 import { useContextStore } from 'store/global-context-provider';
 
 import { useTaskOperations } from './use-task-operations';
+import { useCreateListMutation } from 'services/lists';
+import type { ListType } from 'common/types';
 
 interface CommandType {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Icon: any;
-  text: string;
+  text: string | React.ReactNode;
   shortcut?: string;
   command: () => void;
 }
@@ -38,6 +42,12 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
   const firstTab = tabs[0];
   const { openDialog } = React.useContext(DailogViewsContext);
   const { markComplete, deleteTasks } = useTaskOperations();
+  const { openSettings } = useSettings();
+  const { mutate: createList } = useCreateListMutation({
+    onSuccess: (data: ListType) => {
+      updateTabType(0, TabViewType.LIST, data.id ? { entityId: data.id } : {});
+    },
+  });
 
   const getTasks = () => {
     if (selectedTasks.length > 0) {
@@ -72,7 +82,7 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
       {
         Icon: CalendarLine,
         text: 'Go to today',
-        shortcut: 'cmd + 1',
+        shortcut: 'G + T',
         command: () => {
           updateTabType(0, TabViewType.DAYS, {
             data: {
@@ -86,10 +96,38 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
       {
         Icon: IssuesLine,
         text: 'Go to tasks',
-        shortcut: 'cmd + 2',
+        shortcut: 'G + M',
         command: () => {
           updateTabType(0, TabViewType.MY_TASKS, {});
 
+          onClose();
+        },
+      },
+      {
+        Icon: Project,
+        text: 'Go to lists',
+        shortcut: 'G + L',
+        command: () => {
+          updateTabType(0, TabViewType.MY_TASKS, {});
+
+          onClose();
+        },
+      },
+      {
+        Icon: SettingsLine,
+        text: 'Go to settings',
+        shortcut: 'G + S',
+        command: () => {
+          openSettings();
+          onClose();
+        },
+      },
+      {
+        Icon: Project,
+        text: 'Create list',
+
+        command: () => {
+          createList();
           onClose();
         },
       },
@@ -104,6 +142,23 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
           command: () => {
             updateTabType(1, TabViewType.AI, {});
             onClose();
+          },
+        },
+      ];
+
+      commands['settings'] = [
+        {
+          Icon: DocumentLine,
+          text: 'Context',
+          command: () => {
+            openSettings('Context');
+          },
+        },
+        {
+          Icon: AI,
+          text: 'MCP',
+          command: () => {
+            openSettings('MCP');
           },
         },
       ];

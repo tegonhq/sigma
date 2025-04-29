@@ -7,7 +7,7 @@ import { pageGroomTask } from './page-groom';
 
 const prisma = new PrismaClient();
 
-export const dailyBriefTask = task({
+export const dailySyncTask = task({
   id: 'daily-brief',
   run: async (payload: { workspaceId: string }) => {
     const today = new Date();
@@ -55,7 +55,6 @@ export const dailyBriefTask = task({
           id: ${task.id},
           title: ${task.page.title}, 
           summary: ${task.summary?.[0]?.content || ''}, 
-          suggestions: ${task.suggestion?.map((s) => `- ${s.content}`).join('\n') || ''},
           dueDate: ${task.dueDate ? new Date(task.dueDate).toISOString() : 'not set'}
 
           `,
@@ -71,7 +70,6 @@ export const dailyBriefTask = task({
         id: ${task.id},
         title: ${task.page.title}, 
         summary: ${task.summary?.[0]?.content || ''}, 
-        suggestions: ${task.suggestion?.map((s) => `- ${s.content}`).join('\n') || ''},
         dueDate: ${task.dueDate ? new Date(task.dueDate).toISOString() : 'not set'}
         `,
             ),
@@ -88,7 +86,6 @@ export const dailyBriefTask = task({
         id: ${task.id},
         title: ${task.page.title}, 
         summary: ${task.summary?.[0]?.content || ''}, 
-        suggestions: ${task.suggestion?.map((s) => `- ${s.content}`).join('\n') || ''},
         dueDate: ${task.dueDate ? new Date(task.dueDate).toISOString() : 'not set'}
         `,
             ),
@@ -140,9 +137,9 @@ export const dailyBriefTask = task({
       )
     ).data;
 
-    const { title, brief } = extractBriefComponents(briefResponse);
+    const { title, brief } = extractSyncComponents(briefResponse);
 
-    await prisma.brief.create({
+    await prisma.sync.create({
       data: {
         workspace: { connect: { id: payload.workspaceId } },
         title,
@@ -174,12 +171,11 @@ async function getTasks(taskIds: string[]) {
           deleted: null,
         },
       },
-      suggestion: true,
     },
   });
 }
 
-function extractBriefComponents(response: string) {
+function extractSyncComponents(response: string) {
   // Extract the entire daily brief content
   const briefMatch = response.match(/<daily_brief>([\s\S]*?)<\/daily_brief>/);
 
@@ -237,11 +233,6 @@ async function getNextWeekTasks(workspaceId: string) {
             },
             take: 1,
           },
-          suggestion: {
-            where: {
-              deleted: null,
-            },
-          },
         },
       },
     },
@@ -254,7 +245,6 @@ async function getNextWeekTasks(workspaceId: string) {
     id: occurrence.task.id,
     page: occurrence.task.page,
     summary: occurrence.task.summary,
-    suggestion: occurrence.task.suggestion,
     startTime: occurrence.startTime,
     endTime: occurrence.endTime,
     dueDate: occurrence.task.dueDate,
@@ -289,11 +279,6 @@ async function getNextWeekTasks(workspaceId: string) {
         },
         take: 1,
       },
-      suggestion: {
-        where: {
-          deleted: null,
-        },
-      },
     },
     orderBy: [{ dueDate: 'asc' }],
     take: 5, // Limit to a reasonable number of tasks
@@ -304,7 +289,6 @@ async function getNextWeekTasks(workspaceId: string) {
     id: task.id,
     page: task.page,
     summary: task.summary,
-    suggestion: task.suggestion,
     startTime: null as Date | null,
     endTime: null as Date | null,
     dueDate: task.dueDate,
@@ -313,6 +297,4 @@ async function getNextWeekTasks(workspaceId: string) {
 
   // Combine both types of tasks
   return [...nextWeekTasks, ...tasksWithDueDatesFormatted];
-
-  return nextWeekTasks;
 }

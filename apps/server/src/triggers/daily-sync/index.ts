@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import { schedules } from '@trigger.dev/sdk/v3';
 
-import { dailyBriefTask } from './daily-brief';
+import { dailySyncTask } from './daily-sync';
 
 const prisma = new PrismaClient();
 export const scheduleDailyBrief = schedules.task({
@@ -20,7 +20,7 @@ export const scheduleDailyBrief = schedules.task({
       })),
     );
 
-    const results = await dailyBriefTask.batchTriggerAndWait(
+    const results = await dailySyncTask.batchTriggerAndWait(
       workspacePats.map((wp) => ({
         payload: {
           workspaceId: wp.workspaceId,

@@ -3,7 +3,6 @@ import {
   Button,
   CalendarLine,
   cn,
-  DocumentLine,
   Inbox,
   IssuesLine,
   Project,
@@ -15,7 +14,6 @@ import {
   SidebarMenu,
   SidebarMenuItem,
 } from '@tegonhq/ui';
-import { RefreshCcw } from 'lucide-react';
 import { observer } from 'mobx-react-lite';
 import getConfig from 'next/config';
 import Image from 'next/image';
@@ -24,9 +22,10 @@ import { useHotkeys } from 'react-hotkeys-hook';
 
 import { Updates } from 'modules/updates/updates';
 
-import { getPlatformModifierKey } from 'common/common-utils';
 import { getIcon } from 'common/icon-picker';
+import { Shortcut } from 'common/shortcut';
 import { SCOPES } from 'common/shortcut-scopes';
+import { TooltipWrapper } from 'common/tooltip';
 import type { ListType } from 'common/types';
 
 import { useApplication } from 'hooks/application';
@@ -51,18 +50,21 @@ export const AppSidebar = observer(
     });
 
     useHotkeys(
-      [`${getPlatformModifierKey()}+1`, `${getPlatformModifierKey()}+2`],
+      [`g+i`, `g+m`, `g+t`, `g+l`],
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (event) => {
         switch (event.key) {
-          case '1':
+          case 'i':
+            navigate(TabViewType.SYNC);
+            return;
+          case 'm':
+            navigate(TabViewType.MY_TASKS);
+            return;
+          case 't':
             navigate(TabViewType.DAYS);
             return;
-          case '2':
-            navigate(TabViewType.MY_TASKS);
-            break;
-          case '3':
-            navigate(TabViewType.MY_TASKS);
+          case 'l':
+            navigate(TabViewType.LIST);
         }
       },
       {
@@ -104,52 +106,84 @@ export const AppSidebar = observer(
           <SidebarGroup>
             <SidebarMenu className="gap-0.5">
               <SidebarMenuItem>
-                <Button
-                  variant="secondary"
-                  className="flex gap-1 w-fit"
-                  isActive={firstTab.type === TabViewType.SYNC}
-                  onClick={() => navigate(TabViewType.SYNC)}
-                >
-                  <Inbox className="h-4 w-4" />
-                  Inbox
-                </Button>
-              </SidebarMenuItem>
-
-              <SidebarMenuItem>
-                <Button
-                  variant="secondary"
-                  className="flex gap-1 w-fit"
-                  isActive={firstTab.type === TabViewType.DAYS}
-                  onClick={() => navigate(TabViewType.DAYS)}
-                >
-                  <CalendarLine className="h-4 w-4" />
-                  Today
-                </Button>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <Button
-                  variant="secondary"
-                  className="flex gap-1 w-fit"
-                  isActive={firstTab.type === TabViewType.MY_TASKS}
-                  onClick={() => navigate(TabViewType.MY_TASKS)}
-                >
-                  <IssuesLine className="h-4 w-4" />
-                  Tasks
-                </Button>
-              </SidebarMenuItem>
-
-              <SidebarMenuItem>
-                <Button
-                  variant="secondary"
-                  className="flex gap-1 w-fit"
-                  isActive={
-                    firstTab.type === TabViewType.LIST && !firstTab.entity_id
+                <TooltipWrapper
+                  tooltip={
+                    <>
+                      Go to inbox <Shortcut shortcut="G + I" />
+                    </>
                   }
-                  onClick={() => navigate(TabViewType.LIST)}
                 >
-                  <Project className="h-4 w-4" />
-                  Lists
-                </Button>
+                  <Button
+                    variant="secondary"
+                    className="flex gap-1 w-fit"
+                    isActive={firstTab.type === TabViewType.SYNC}
+                    onClick={() => navigate(TabViewType.SYNC)}
+                  >
+                    <Inbox className="h-4 w-4" />
+                    Inbox
+                  </Button>
+                </TooltipWrapper>
+              </SidebarMenuItem>
+
+              <SidebarMenuItem>
+                <TooltipWrapper
+                  tooltip={
+                    <>
+                      Go to today <Shortcut shortcut="G + T" />
+                    </>
+                  }
+                >
+                  <Button
+                    variant="secondary"
+                    className="flex gap-1 w-fit"
+                    isActive={firstTab.type === TabViewType.DAYS}
+                    onClick={() => navigate(TabViewType.DAYS)}
+                  >
+                    <CalendarLine className="h-4 w-4" />
+                    Today
+                  </Button>
+                </TooltipWrapper>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <TooltipWrapper
+                  tooltip={
+                    <>
+                      Go to tasks <Shortcut shortcut="G + M" />
+                    </>
+                  }
+                >
+                  <Button
+                    variant="secondary"
+                    className="flex gap-1 w-fit"
+                    isActive={firstTab.type === TabViewType.MY_TASKS}
+                    onClick={() => navigate(TabViewType.MY_TASKS)}
+                  >
+                    <IssuesLine className="h-4 w-4" />
+                    Tasks
+                  </Button>
+                </TooltipWrapper>
+              </SidebarMenuItem>
+
+              <SidebarMenuItem>
+                <TooltipWrapper
+                  tooltip={
+                    <>
+                      Go to lists <Shortcut shortcut="G + L" />
+                    </>
+                  }
+                >
+                  <Button
+                    variant="secondary"
+                    className="flex gap-1 w-fit"
+                    isActive={
+                      firstTab.type === TabViewType.LIST && !firstTab.entity_id
+                    }
+                    onClick={() => navigate(TabViewType.LIST)}
+                  >
+                    <Project className="h-4 w-4" />
+                    Lists
+                  </Button>
+                </TooltipWrapper>
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroup>

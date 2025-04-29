@@ -14,6 +14,8 @@ import { SCOPES } from 'common/shortcut-scopes';
 import { useApplication } from 'hooks/application';
 
 import { historyManager } from 'store/history';
+import { TooltipWrapper } from 'common/tooltip';
+import { Shortcut } from 'common/shortcut';
 
 export const Navigation = observer(() => {
   const { back, forward } = useApplication();
@@ -51,9 +53,11 @@ export const Navigation = observer(() => {
 
   return (
     <div className="flex items-center">
-      <Button size="sm" variant="ghost" onClick={toggleSidebar}>
-        <SidebarLine size={16} />
-      </Button>
+      <TooltipWrapper tooltip={<Shortcut shortcut="Toogle [" />}>
+        <Button size="sm" variant="ghost" onClick={toggleSidebar}>
+          <SidebarLine size={16} />
+        </Button>
+      </TooltipWrapper>
       <Button
         size="sm"
         variant="ghost"

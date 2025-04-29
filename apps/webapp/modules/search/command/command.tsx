@@ -1,4 +1,5 @@
 import {
+  ArrowRight,
   CommandEmpty,
   CommandGroup,
   CommandInput,
@@ -51,6 +52,38 @@ export const CommandComponent = observer(
             );
           })}
         </>
+      );
+    };
+
+    const settingsCommands = () => {
+      const settingsCommands = commands['settings'];
+
+      if (!settingsCommands) {
+        return null;
+      }
+
+      return (
+        <CommandGroup heading="Settings">
+          {settingsCommands.map((command, index: number) => {
+            return (
+              <CommandItem
+                onSelect={command.command}
+                key={`default__${index}`}
+                className="flex gap-2 items-center py-2"
+              >
+                <command.Icon size={16} />
+                <div className="grow flex gap-2 items-center">
+                  <div className="text-muted-foreground">Settings</div>{' '}
+                  <ArrowRight className="text-muted-foreground" size={14} />
+                  <div>{command.text}</div>
+                </div>
+                {!fromQuickWindow && command.shortcut && (
+                  <Shortcut shortcut={command.shortcut} className="font-mono" />
+                )}
+              </CommandItem>
+            );
+          })}
+        </CommandGroup>
       );
     };
 
@@ -155,6 +188,7 @@ export const CommandComponent = observer(
         <CommandList className="p-2 flex-1 max-h-[100%]">
           <CommandEmpty>No results found.</CommandEmpty>
           {defaultCommands()}
+          {settingsCommands()}
           {taskCommands()}
 
           {pagesCommands()}

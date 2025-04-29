@@ -6,12 +6,14 @@ export enum PageTypeEnum {
   Default = 'Default',
   Daily = 'Daily',
   List = 'List',
+  Context = 'Context',
 }
 
 export const PageType = {
   Default: 'Default',
   Daily: 'Daily',
   List: 'List',
+  Context: 'Context',
 };
 
 export type PageType = (typeof PageType)[keyof typeof PageType];
