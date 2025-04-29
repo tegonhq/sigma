@@ -25,8 +25,6 @@ import { OAuthCallbackModule } from 'modules/oauth-callback/oauth-callback.modul
 import { PagesModule } from 'modules/pages/pages.module';
 import { PromptsModule } from 'modules/prompts/prompts.module';
 import { ReplicationModule } from 'modules/replication/replication.module';
-import { SuggestionModule } from 'modules/suggestion/suggestion.module';
-import { SummaryModule } from 'modules/summary/summary.module';
 import { SyncActionsModule } from 'modules/sync-actions/sync-actions.module';
 import { TaskOccurenceModule } from 'modules/task-occurrence/task-occurrence.model';
 import { TasksModule } from 'modules/tasks/tasks.module';
@@ -114,8 +112,6 @@ import { AppService } from './app.service';
 
     AIRequestsModule,
     PromptsModule,
-    SuggestionModule,
-    SummaryModule,
   ],
   controllers: [AppController],
   providers: [

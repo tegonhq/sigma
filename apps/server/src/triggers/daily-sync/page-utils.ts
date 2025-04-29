@@ -89,7 +89,6 @@ export function updateTaskListsInPage(
       ];
     }
     // If no updated task lists, we don't need to change anything
-
     return descriptionJson;
   } catch (error) {
     console.error('Error updating taskLists in page:', error);

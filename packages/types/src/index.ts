@@ -12,7 +12,6 @@ export * from './integration-definition';
 export * from './list';
 export * from './page';
 export * from './prompt';
-export * from './suggestions';
 export * from './summary';
 export * from './sync-action';
 export * from './task';

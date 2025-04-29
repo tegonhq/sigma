@@ -91,6 +91,7 @@ export class TaskOccurenceController {
   ) {
     const taskOccurrenceIds = taskOccurrenceIdsString.split(',');
 
+    console.log(taskOccurrenceIds);
     return await this.taskOccurenceService.deleteTaskOccurence(
       taskOccurrenceIds,
       true,

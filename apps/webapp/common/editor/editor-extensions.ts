@@ -16,6 +16,7 @@ import {
   AIHighlight,
   TaskList,
   CustomKeymap,
+  TaskItem,
 } from 'novel/extensions';
 import AutoJoiner from 'tiptap-extension-auto-joiner'; // optional
 // import GlobalDragHandle from 'tiptap-extension-global-drag-handle';
@@ -175,6 +176,8 @@ export const extensionsForConversation = [
   heading,
   AIHighlight,
   fileExtension,
+  TaskItem,
+  TaskList,
   imageExtension,
   HighlightExtension,
   datePageExtension,
@@ -188,4 +191,16 @@ export const extensionsForConversation = [
   CodeBlockLowlight.configure({
     lowlight,
   }),
+];
+
+export const contextExtensions = [
+  starterKit,
+  tiptapLink,
+  horizontalRule,
+  heading,
+  AIHighlight,
+  TaskItem,
+  TaskList,
+  imageExtension,
+  HighlightExtension,
 ];

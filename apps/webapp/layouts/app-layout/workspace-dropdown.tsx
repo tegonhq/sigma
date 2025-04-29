@@ -14,7 +14,7 @@ import React from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { signOut } from 'supertokens-auth-react/recipe/session';
 
-import { Settings } from 'modules/settings';
+import { Settings, useSettings } from 'modules/settings';
 
 import { SCOPES } from 'common/shortcut-scopes';
 
@@ -23,8 +23,8 @@ import { useContextStore } from 'store/global-context-provider';
 export const WorkspaceDropdown = observer(() => {
   const { workspaceStore } = useContextStore();
   const { replace } = useRouter();
-  const [settingsOpen, setSettingsOpen] = React.useState(false);
   const { toggleSidebar } = useSidebar();
+  const { openSettings } = useSettings();
 
   useHotkeys(
     ['['],
@@ -56,7 +56,7 @@ export const WorkspaceDropdown = observer(() => {
           <DropdownMenuGroup>
             <DropdownMenuItem
               onClick={() => {
-                setSettingsOpen(true);
+                openSettings();
               }}
             >
               Preferences
@@ -73,8 +73,6 @@ export const WorkspaceDropdown = observer(() => {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-
-      <Settings open={settingsOpen} setOpen={setSettingsOpen} />
     </>
   );
 });

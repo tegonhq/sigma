@@ -107,6 +107,9 @@ export const PagesStore: IAnyStateTreeNode = types
         (page: PageType) => dates.includes(page.title) && page.type === 'Daily',
       );
     },
+    getContextPage() {
+      return self.pages.find((page: PageType) => page.type === 'Context');
+    },
     get getSortOrderForNewPage() {
       const lastPage = self.pages[self.pages.length - 1];
 
@@ -117,20 +120,23 @@ export const PagesStore: IAnyStateTreeNode = types
       return generateKeyBetween(lastPage?.sortOrder, null);
     },
     searchPages(query: string) {
-      const fuse = new Fuse(self.pages.toJSON(), {
-        keys: [
-          {
-            name: 'title',
-            weight: 1,
-          },
-        ], // Fields to search
+      const fuse = new Fuse(
+        self.pages.toJSON().filter((page) => page.type !== 'Context'),
+        {
+          keys: [
+            {
+              name: 'title',
+              weight: 1,
+            },
+          ], // Fields to search
 
-        includeScore: true, // Optional: include match scores
-        threshold: 0.9, // Lower threshold for stricter matches
-        distance: 100, // Reduce distance to prioritize closer matches
-        findAllMatches: true, // Include all potential matches
-        useExtendedSearch: true, // Enable advanced search features
-      });
+          includeScore: true, // Optional: include match scores
+          threshold: 0.9, // Lower threshold for stricter matches
+          distance: 100, // Reduce distance to prioritize closer matches
+          findAllMatches: true, // Include all potential matches
+          useExtendedSearch: true, // Enable advanced search features
+        },
+      );
 
       if (!query.trim()) {
         return [];
@@ -164,4 +170,5 @@ export interface PagesStoreType {
     sortOrder?: string;
   }>;
   searchPages: (query: string) => PageType[];
+  getContextPage: () => PageType;
 }

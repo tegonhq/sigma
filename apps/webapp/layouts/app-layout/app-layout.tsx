@@ -2,6 +2,8 @@ import { cn, SidebarInset, SidebarProvider } from '@tegonhq/ui';
 import { GeistMono } from 'geist/font/mono';
 import { GeistSans } from 'geist/font/sans';
 
+import { SettingsProvider } from 'modules/settings';
+
 import { AppSidebar } from './app-sidebar';
 
 interface AppLayoutProps {
@@ -17,10 +19,12 @@ export function AppLayout({ children }: AppLayoutProps) {
         '--sidebar-width-mobile': '13rem',
       }}
     >
-      <AppSidebar />
-      <SidebarInset className="bg-transparent md:peer-data-[variant=inset]:shadow-none">
-        {children}
-      </SidebarInset>
+      <SettingsProvider>
+        <AppSidebar />
+        <SidebarInset className="bg-transparent md:peer-data-[variant=inset]:shadow-none">
+          {children}
+        </SidebarInset>
+      </SettingsProvider>
     </SidebarProvider>
   );
 }
