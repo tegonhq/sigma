@@ -1,4 +1,5 @@
 import { anthropic } from '@ai-sdk/anthropic';
+import { google } from '@ai-sdk/google';
 import { openai } from '@ai-sdk/openai';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -127,6 +128,18 @@ export default class AIRequestsService {
           where: `AIRequestsService.makeModelCall`,
         });
         modelInstance = anthropic(finalModel);
+        break;
+
+      case LLMModelEnum.GEMINI25FLASH:
+      case LLMModelEnum.GEMINI25PRO:
+      case LLMModelEnum.GEMINI20FLASH:
+      case LLMModelEnum.GEMINI20FLASHLITE:
+        finalModel = LLMMappings[model];
+        this.logger.info({
+          message: `Sending request to Gemini with model: ${finalModel}`,
+          where: `AIRequestsService.makeModelCall`,
+        });
+        modelInstance = google(finalModel);
         break;
 
       default:

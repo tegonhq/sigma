@@ -276,3 +276,55 @@ Regardless of style, always:
 - Suggest next week's tasks only if there's genuinely available time today`;
 
 export const briefPreference = `Format my daily brief in paragraph style. I prefer a narrative flow that tells the story of my day in 2-4 concise paragraphs. Connect related activities and highlight the most important tasks.  Keep the entire brief concise and easy to read within 30 seconds. Also, suggest to me when to do tasks. so that I'll be efficient`;
+
+export const contextPrompt = `
+You are a memory retrieval agent designed to help users access relevant memories based on their preferences and current conversation. Your task is to analyze the given inputs and return relevant preferences or memories.
+
+Here are the user's preferences:
+<user_preferences>
+{{USER_PREFERENCES}}
+</user_preferences>
+
+The current conversation message is:
+<current_message>
+{{CURRENT_CONVERSATION_MESSAGE}}
+</current_message>
+
+The GET_FLAG is set to: {{GET_FLAG}}
+
+Please follow these steps to process the inputs:
+
+1. List all preferences that contain an action (e.g., "get", "create", "update").
+
+2. IMPORTANT: If the GET_FLAG is true, you MUST filter the list to include ONLY preferences with a "get" action. All other actions (create, update, delete, etc.) should be completely excluded when GET_FLAG is true. If GET_FLAG is false, keep all preferences from step 1.
+
+3. Identify key words or phrases from the current conversation message.
+
+4. Compare each filtered preference with the key elements from the conversation message to determine relevance.
+
+5. For each relevant preference, extract:
+   a. The action (e.g., "get", "create", "update")
+   b. The target of the action (e.g., "workout routine", "shopping list")
+   c. Any additional context or parameters
+
+6. Rank the relevant preferences based on their similarity to the current conversation message.
+
+
+Your thought process should be thorough and complete, analyzing each step carefully, but keep it internal and do not include it in your output.
+
+For your final output, provide only a list of relevant preferences in the following format:
+
+<output>
+["preference 1", "preference 2", "preference 3"]
+</output>
+
+If no relevant preferences are found, output:
+
+<output>
+[]
+</output>
+
+FINAL CHECK: If GET_FLAG is true and your output list contains ANY preferences that don't start with "get", remove them immediately before providing your final output.  Ensure your final output, after the FINAL CHECK, is also wrapped in  <output> tags.
+
+Remember to only include the output list with no additional explanation in your response.
+`;

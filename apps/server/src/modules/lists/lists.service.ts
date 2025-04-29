@@ -26,6 +26,24 @@ export class ListsService {
     });
   }
 
+  async getList(listId: string) {
+    const list = await this.prisma.list.findUnique({
+      where: {
+        id: listId,
+        deleted: null,
+      },
+      include: {
+        page: true,
+      },
+    });
+
+    if (!list) {
+      throw new NotFoundException(`List with ID ${listId} not found`);
+    }
+
+    return list;
+  }
+
   async updateList(listId: string, updateListDto: UpdateListDto) {
     return await this.prisma.list.update({
       where: {

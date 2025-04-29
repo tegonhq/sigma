@@ -1,4 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { Prisma } from '@prisma/client';
 import {
   CreateBulkTasksDto,
   CreateTaskDto,
@@ -7,6 +9,7 @@ import {
   Task,
   UpdateTaskDto,
 } from '@tegonhq/sigma-sdk';
+import { CohereClientV2 } from 'cohere-ai';
 import { PrismaService } from 'nestjs-prisma';
 
 import { IntegrationsService } from 'modules/integrations/integrations.service';
@@ -22,6 +25,7 @@ export class TasksService {
     private taskOccurenceService: TaskOccurenceService,
     private integrationService: IntegrationsService,
     private pageService: PagesService,
+    private configService: ConfigService,
   ) {}
 
   async getTaskBySourceId(
@@ -342,5 +346,64 @@ export class TasksService {
         },
       });
     });
+  }
+
+  async searchTasks(query: string, workspaceId: string) {
+    // First, get all tasks that match the query string
+    const whereClause: Prisma.TaskWhereInput = {
+      deleted: null,
+      workspaceId,
+      page: {
+        title: {
+          contains: query,
+          mode: 'insensitive',
+        },
+      },
+    };
+
+    const tasks = await this.prisma.task.findMany({
+      where: whereClause,
+      include: {
+        page: true,
+      },
+      take: 10,
+    });
+
+    const cohereApiKey = this.configService.get<string>('COHERE_API_KEY');
+    let cohereClient: CohereClientV2 | null = null;
+    if (cohereApiKey) {
+      cohereClient = new CohereClientV2({
+        token: cohereApiKey,
+      });
+    }
+
+    // If no tasks found or Cohere client not initialized, return tasks
+    if (tasks.length === 0 || !cohereClient) {
+      return tasks.slice(0, 3);
+    }
+
+    try {
+      // Extract task titles for reranking
+      const documents = tasks.map((task) => task.page?.title || '');
+
+      // Call Cohere rerank API
+      const rerankedResults = await cohereClient.rerank({
+        query,
+        documents,
+        model: 'rerank-v3.5',
+        topN: 3,
+      });
+
+      // Sort tasks based on reranking results
+      const rerankedTasks = rerankedResults.results.map((result) => {
+        return tasks[result.index];
+      });
+
+      return rerankedTasks;
+    } catch (error) {
+      // If reranking fails, fall back to sorting by updatedAt
+      console.error('Cohere reranking failed:', error);
+      return tasks.slice(0, 3);
+    }
   }
 }

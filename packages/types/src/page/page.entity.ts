@@ -65,3 +65,5 @@ export class Page {
   task?: any[];
   conversation?: any[];
 }
+
+export type PublicPage = Omit<Page, 'descriptionBinary'>;

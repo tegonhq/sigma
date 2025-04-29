@@ -3,9 +3,9 @@ import {
   CreateTaskOccurrenceDTO,
   DateFilterEnum,
   GetTaskOccurrenceDTO,
-  Page,
   PageTypeEnum,
   Preferences,
+  PublicPage,
   TaskOccurrence,
   UpdateTaskOccurenceDTO,
 } from '@tegonhq/sigma-sdk';
@@ -104,7 +104,7 @@ export class TaskOccurenceService {
     });
     const timezone = (workspace.preferences as Preferences).timezone;
 
-    let page: Page;
+    let page: PublicPage;
     if (!pageId || modifyPage) {
       const formattedDate = formatInTimeZone(
         new Date(startTime),
