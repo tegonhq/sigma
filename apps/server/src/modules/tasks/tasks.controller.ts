@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { CreateBulkTasksDto, CreateTaskDto, Task } from '@tegonhq/sigma-sdk';
@@ -20,6 +21,15 @@ import { TasksService } from './tasks.service';
 })
 export class TasksController {
   constructor(private tasksService: TasksService) {}
+
+  @Get('search')
+  @UseGuards(AuthGuard)
+  async searchTasks(
+    @Query('query') query: string,
+    @Workspace() workspaceId: string,
+  ): Promise<Task[]> {
+    return await this.tasksService.searchTasks(query, workspaceId);
+  }
 
   @Get(':taskId')
   @UseGuards(AuthGuard)

@@ -19,7 +19,6 @@ export const PageSelect = {
 
   title: true,
   description: true,
-  descriptionBinary: true,
 
   sortOrder: true,
   parentId: true,

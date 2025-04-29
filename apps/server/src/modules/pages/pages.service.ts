@@ -1,4 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { Prisma } from '@prisma/client';
 import {
   convertHtmlToTiptapJson,
   convertTiptapJsonToHtml,
@@ -10,7 +12,6 @@ import {
   LLMModelEnum,
   OutlinkType,
   Outlink,
-  Page,
   PageSelect,
   UpdatePageDto,
   enchancePrompt,
@@ -18,7 +19,9 @@ import {
   Task,
   CreateTaskDto,
   PageTypeEnum,
+  PublicPage,
 } from '@tegonhq/sigma-sdk';
+import { CohereClientV2 } from 'cohere-ai';
 import { parse } from 'date-fns';
 import { PrismaService } from 'nestjs-prisma';
 
@@ -41,12 +44,13 @@ export class PagesService {
     private prisma: PrismaService,
     private aiRequestService: AIRequestsService,
     private contentService: ContentService,
+    private configService: ConfigService,
   ) {}
 
   async getPageByTitle(
     workspaceId: string,
     getPageByTitleDto: GetPageByTitleDto,
-  ): Promise<Page> {
+  ): Promise<PublicPage> {
     const page = await this.prisma.page.findFirst({
       where: {
         title: getPageByTitleDto.title,
@@ -68,7 +72,7 @@ export class PagesService {
   async getOrCreatePageByTitle(
     workspaceId: string,
     getPageByTitleDto: GetPageByTitleDto,
-  ): Promise<Page> {
+  ): Promise<PublicPage> {
     // Combine find and create into a single transaction if needed
     const { title, type, taskIds } = getPageByTitleDto;
 
@@ -130,7 +134,7 @@ export class PagesService {
     return page;
   }
 
-  async getPage(pageId: string): Promise<Page> {
+  async getPage(pageId: string): Promise<PublicPage> {
     const page = await this.prisma.page.findUnique({
       where: {
         id: pageId,
@@ -150,7 +154,7 @@ export class PagesService {
   async createPage(
     { parentId, description, htmlDescription, ...pageData }: CreatePageDto,
     workspaceId: string,
-  ): Promise<Page> {
+  ): Promise<PublicPage> {
     let finalDescription = description;
     if (htmlDescription && !description) {
       finalDescription = JSON.stringify(
@@ -191,7 +195,7 @@ export class PagesService {
     { parentId, description, htmlDescription, ...pageData }: UpdatePageDto,
     pageId: string,
     tx?: TransactionClient,
-  ): Promise<Page> {
+  ): Promise<PublicPage> {
     const prismaClient = tx || this.prisma;
 
     let finalDescription = description;
@@ -219,7 +223,7 @@ export class PagesService {
     });
   }
 
-  async deletePage(pageId: string): Promise<Page> {
+  async deletePage(pageId: string): Promise<PublicPage> {
     return this.prisma.page.update({
       where: { id: pageId },
       data: {
@@ -676,6 +680,84 @@ export class PagesService {
 
     if (payload.changedData.title) {
       await this.handleTitleChange(payload.pageId, payload.changedData);
+    }
+  }
+
+  async searchPages(query: string, workspaceId: string): Promise<PublicPage[]> {
+    // Find pages that match the query string in title or description
+    const whereClause: Prisma.PageWhereInput = {
+      deleted: null,
+      workspaceId,
+      OR: [
+        {
+          title: {
+            contains: query,
+            mode: 'insensitive',
+          },
+        },
+      ],
+    };
+
+    const pages = await this.prisma.page.findMany({
+      where: whereClause,
+      select: PageSelect,
+      take: 10,
+      orderBy: {
+        updatedAt: 'desc',
+      },
+    });
+
+    // Convert description to HTML for each page
+    const pagesWithHtml = pages.map((page) => {
+      if (page?.description) {
+        try {
+          const descriptionJson = JSON.parse(page.description as string);
+          page.description = convertTiptapJsonToHtml(descriptionJson);
+        } catch (error) {
+          console.error(
+            `Failed to parse description for page ${page.id}:`,
+            error,
+          );
+        }
+      }
+      return page;
+    });
+
+    const cohereApiKey = this.configService.get<string>('COHERE_API_KEY');
+    let cohereClient: CohereClientV2 | null = null;
+    if (cohereApiKey) {
+      cohereClient = new CohereClientV2({
+        token: cohereApiKey,
+      });
+    }
+
+    // If no pages found or Cohere client not initialized, return pages
+    if (pagesWithHtml.length === 0 || !cohereClient) {
+      return pagesWithHtml.slice(0, 3);
+    }
+
+    try {
+      // Extract page titles for reranking
+      const documents = pagesWithHtml.map((page) => page.title || '');
+
+      // Call Cohere rerank API
+      const rerankedResults = await cohereClient.rerank({
+        query,
+        documents,
+        model: 'rerank-v3.5',
+        topN: 3,
+      });
+
+      // Sort pages based on reranking results
+      const rerankedPages = rerankedResults.results.map((result) => {
+        return pagesWithHtml[result.index];
+      });
+
+      return rerankedPages;
+    } catch (error) {
+      // If reranking fails, fall back to returning the original results
+      console.error('Cohere reranking failed:', error);
+      return pagesWithHtml.slice(0, 3);
     }
   }
 }

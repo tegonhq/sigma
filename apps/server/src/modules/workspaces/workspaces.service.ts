@@ -1,5 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import {
+  contextPrompt,
+  LLMModelEnum,
   PageTypeEnum,
   Workspace,
   WorkspaceRequestParamsDto,
@@ -10,6 +12,8 @@ import { PrismaService } from 'nestjs-prisma';
 import supertokens from 'supertokens-node';
 import Session from 'supertokens-node/recipe/session';
 
+import AIRequestsService from 'modules/ai-requests/ai-requests.services';
+
 import {
   CreateInitialResourcesDto,
   CreateWorkspaceInput,
@@ -18,7 +22,10 @@ import {
 
 @Injectable()
 export default class WorkspacesService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private aiRequestsService: AIRequestsService,
+  ) {}
 
   async createInitialResources(
     userId: string,
@@ -159,5 +166,61 @@ export default class WorkspacesService {
         id: WorkspaceIdRequestBody.workspaceId,
       },
     });
+  }
+
+  async getRelevantContext(
+    worskspaceId: string,
+    query: string,
+    getFlag: boolean,
+  ) {
+    const contextResponse = await this.aiRequestsService.getLLMRequest(
+      {
+        messages: [
+          {
+            role: 'user',
+            content: contextPrompt
+              .replace(
+                '{{USER_PREFERENCES}}',
+                `Slack-based
+"When a message is posted in #priority-tasks containing the word 'urgent', create a task and fetch related Sentry errors for the linked issue ID."
+
+Email-based
+"If I receive an email from design@client.com, create a task under the 'Client Review' project and add a due date 3 days later."
+
+Information extraction
+"If someone in a conversation mentions my role or job title, extract and save it in my profile."
+
+Mixed automation
+"When a GitHub PR is linked in Slack and mentions a ticket ID, comment on the ticket with the PR link and mark the ticket as 'In Review'."
+
+AI suggestions
+"When an email contains a meeting summary or an action point, convert the summary to a checklist task."
+
+Github
+"When a new issue is created, create a new task and add to relevant list"`,
+              )
+              .replace('{{CURRENT_CONVERSATION_MESSAGE}}', query)
+              .replace('{{GET_FLAG}}', getFlag.toString()),
+          },
+        ],
+        llmModel: LLMModelEnum.GEMINI25FLASH,
+        model: 'context',
+      },
+      worskspaceId,
+    );
+
+    const outputRegex = /<output>\s*(.*?)\s*<\/output>/s;
+    const match = contextResponse.match(outputRegex);
+
+    if (match && match[1]) {
+      try {
+        return JSON.parse(match[1]);
+      } catch (e) {
+        console.error('Failed to parse context response:', e);
+        return [];
+      }
+    }
+
+    return [];
   }
 }

@@ -5,13 +5,14 @@ import {
   Get,
   Param,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
   CreatePageDto,
   EnhancePageResponse,
   GetPageByTitleDto,
-  Page,
+  PublicPage,
   PageRequestParamsDto,
   UpdatePageDto,
 } from '@tegonhq/sigma-sdk';
@@ -27,9 +28,21 @@ import { PagesService } from './pages.service';
 })
 export class PagesController {
   constructor(private pagesService: PagesService) {}
+
+  @Get('search')
+  @UseGuards(AuthGuard)
+  async searchPages(
+    @Query('query') query: string,
+    @Workspace() workspaceId: string,
+  ): Promise<PublicPage[]> {
+    return await this.pagesService.searchPages(query, workspaceId);
+  }
+
   @Get(':pageId')
   @UseGuards(AuthGuard)
-  async getPage(@Param() pageParams: PageRequestParamsDto): Promise<Page> {
+  async getPage(
+    @Param() pageParams: PageRequestParamsDto,
+  ): Promise<PublicPage> {
     return await this.pagesService.getPage(pageParams.pageId);
   }
 
@@ -38,7 +51,7 @@ export class PagesController {
   async getPageByTitle(
     @Workspace() workspaceId: string,
     @Body() getPageByTitleDto: GetPageByTitleDto,
-  ): Promise<Page> {
+  ): Promise<PublicPage> {
     return await this.pagesService.getOrCreatePageByTitle(
       workspaceId,
       getPageByTitleDto,
@@ -50,7 +63,7 @@ export class PagesController {
   async createPage(
     @Workspace() workspaceId: string,
     @Body() pageData: CreatePageDto,
-  ): Promise<Page> {
+  ): Promise<PublicPage> {
     return await this.pagesService.createPage(pageData, workspaceId);
   }
 
@@ -59,7 +72,7 @@ export class PagesController {
   async updateIssue(
     @Param() pageParams: PageRequestParamsDto,
     @Body() pageData: UpdatePageDto,
-  ): Promise<Page> {
+  ): Promise<PublicPage> {
     return await this.pagesService.updatePage(pageData, pageParams.pageId);
   }
 
@@ -73,7 +86,9 @@ export class PagesController {
 
   @Delete(':pageId')
   @UseGuards(AuthGuard)
-  async deletePage(@Param() pageParams: PageRequestParamsDto): Promise<Page> {
+  async deletePage(
+    @Param() pageParams: PageRequestParamsDto,
+  ): Promise<PublicPage> {
     return await this.pagesService.deletePage(pageParams.pageId);
   }
 }

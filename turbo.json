@@ -47,34 +47,42 @@
     "TRIGGER_COMMON_ID",
     "TRIGGER_API_URL",
     "GOOGLE_CLIENT_ID",
-    "GOOGLE_CLIENT_SECRET"
+    "GOOGLE_CLIENT_SECRET",
+    "COHERE_API_KEY",
+    "GOOGLE_GENERATIVE_AI_API_KEY"
   ],
   "ui": "tui",
   "tasks": {
     "build": {
-      "dependsOn": [ "^build" ],
-      "outputs": [ "dist/**", ".next/**" ]
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".next/**"]
     },
     "compile": {
-      "env": [ "APPLE_APP_SPECIFIC_PASSWORD", "APPLE_ID", "APPLE_TEAM_ID", "CSC_LINK", "CSC_KEY_PASSWORD" ],
-      "dependsOn": [ "^compile" ],
-      "outputs": [ "dist/**", ".next/**" ]
+      "env": [
+        "APPLE_APP_SPECIFIC_PASSWORD",
+        "APPLE_ID",
+        "APPLE_TEAM_ID",
+        "CSC_LINK",
+        "CSC_KEY_PASSWORD"
+      ],
+      "dependsOn": ["^compile"],
+      "outputs": ["dist/**", ".next/**"]
     },
-    "lint": { },
+    "lint": {},
     "generate": {
-      "dependsOn": [ "^generate" ],
+      "dependsOn": ["^generate"],
       "cache": false
     },
     "dev": {
-      "dependsOn": [ "generate" ],
+      "dependsOn": ["generate"],
       "interactive": true,
       "cache": false
     },
     "prisma:studio": {
-      "env": [ "DATABASE_URL" ]
+      "env": ["DATABASE_URL"]
     },
     "migrate": {
-      "env": [ "DATABASE_URL" ],
+      "env": ["DATABASE_URL"],
       "interactive": true,
       "cache": false
     },

@@ -1,6 +1,7 @@
-import { JsonValue, Page, Task } from '@tegonhq/sigma-sdk';
+import { convertTiptapJsonToHtml } from '@sigma/editor-extensions';
+import { JsonValue, Page, PublicPage, Task } from '@tegonhq/sigma-sdk';
 
-export function getTaskListsInPage(page: Page) {
+export function getTaskListsInPage(page: PublicPage) {
   const description = page.description;
 
   try {
@@ -22,7 +23,7 @@ export function getTaskListsInPage(page: Page) {
 }
 
 export function updateTaskListsInPage(
-  page: Page,
+  page: PublicPage,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   updatedTaskLists: Array<Record<string, any>>,
 ) {
@@ -217,4 +218,48 @@ export function getOutlinksTaskId(pageOutlinks: JsonValue) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .map((outlink: any) => outlink.id)
   );
+}
+
+/**
+ * Serializes a page object for API responses
+ * - Converts description from JSON to HTML
+ * - Excludes descriptionBinary field
+ * - Handles error cases gracefully
+ */
+export function serializePage(page: Page): Omit<Page, 'descriptionBinary'> {
+  if (!page) {
+    return null;
+  }
+
+  // Create a new object without descriptionBinary
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { descriptionBinary, ...serializedPage } = page;
+
+  // Convert description to HTML if it exists
+  if (serializedPage.description) {
+    try {
+      const descriptionJson =
+        typeof serializedPage.description === 'string'
+          ? JSON.parse(serializedPage.description as string)
+          : serializedPage.description;
+      serializedPage.description = convertTiptapJsonToHtml(descriptionJson);
+    } catch (error) {
+      console.error(`Failed to parse description for page ${page.id}:`, error);
+      // Keep the original description if parsing fails
+    }
+  }
+
+  return serializedPage;
+}
+
+/**
+ * Serializes an array of pages for API responses
+ */
+export function serializePages(
+  pages: Page[],
+): Array<Omit<Page, 'descriptionBinary'>> {
+  if (!pages || !Array.isArray(pages)) {
+    return [];
+  }
+  return pages.map(serializePage);
 }

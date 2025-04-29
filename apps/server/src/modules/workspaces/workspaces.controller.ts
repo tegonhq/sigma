@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Query,
   Req,
   Res,
   UseGuards,
@@ -15,6 +16,7 @@ import { SessionContainer } from 'supertokens-node/recipe/session';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
 import { Session as SessionDecorator } from 'modules/auth/session.decorator';
+import { Workspace as WorkspaceDecorator } from 'modules/auth/session.decorator';
 
 import {
   CreateInitialResourcesDto,
@@ -52,6 +54,19 @@ export class WorkspacesController {
     @Param('workspaceSlug') workspaceSlug: string,
   ): Promise<Workspace> {
     return await this.workspacesService.getWorkspaceBySlug(workspaceSlug);
+  }
+
+  @Get('relevant-context')
+  @UseGuards(AuthGuard)
+  async getRelevantContext(
+    @WorkspaceDecorator() workspaceId: string,
+    @Query('query') query: string,
+  ) {
+    return await this.workspacesService.getRelevantContext(
+      workspaceId,
+      query,
+      true,
+    );
   }
 
   @Get(':workspaceId')

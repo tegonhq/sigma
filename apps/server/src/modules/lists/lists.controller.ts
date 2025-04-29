@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   Post,
   UseGuards,
@@ -39,5 +40,11 @@ export class ListsController {
   @UseGuards(AuthGuard)
   async deleteList(@Param() listIdDto: ListIdDto): Promise<List> {
     return await this.lists.deleteList(listIdDto.listId);
+  }
+
+  @Get(':listId')
+  @UseGuards(AuthGuard)
+  async getList(@Param() listIdDto: ListIdDto): Promise<List> {
+    return await this.lists.getList(listIdDto.listId);
   }
 }
