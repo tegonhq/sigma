@@ -8,129 +8,119 @@ import {
   Project,
 } from '@tegonhq/ui';
 import Image from 'next/image';
-
-import { Feature } from 'src/components';
+import Link from 'next/link';
 
 export default function Index() {
   return (
     <div className="h-[100vh] w-[100vw] bg-background flex flex-col items-center overflow-auto">
-      <div className="p-2 w-full flex gap-2 flex-col items-center pt-10">
+      <div className="flex flex-col items-center w-full max-w-[800px] px-4 pt-10">
         <Image
           src="/logo_light.svg"
           alt="logo"
           key={1}
-          width={50}
-          height={50}
+          width={65}
+          height={65}
         />
-        <div className="max-w-[800px] w-full px-4">
-          <h2 className="text-[40px] font-mono mt-4 text-center text-bold">
-            the to-do list that works as your assistant
-          </h2>
-        </div>
+        <h2 className="text-[36px] font-mono mt-6 text-center font-bold w-full">
+          the to-do app that thinks for you
+        </h2>
+        <p className="text-lg font-inter text-foreground/50 mt-3 italic text-center tracking-tight w-full">
+          from &quot;manage emails&quot; to &quot;medicine reminders&quot; — ai plans and gets it done
+        </p>
       </div>
 
-      <div className="max-w-[800px] mt-8 space-y-6 text-left px-4 leading-[40px] mb-10 lowercase">
-        <p className="text-xl text-foreground/50 mt-4 italic">
-          from &apos;fix bugs&apos; to &apos;buy groceries&apos;—ai plans and
-          gets it done
+      <div className="max-w-[800px] mt-6 px-4 space-y-6">
+        <p className="text-lg font-inter text-foreground/80 tracking-tight leading-relaxed">
+          the way we work is changing—no more manual effort just to stay organized. sigma is the first to-do app with a built-in ai agent that proactively gathers context, plans your day, and actually does the heavy lifting.
         </p>
 
-        <p className="text-xl text-foreground/80">
-          the way we work is changing—no more starting from scratch on mundane
-          tasks. with intelligent agents transforming our workflows, automations
-          are taking over, and how we plan our days is getting a major upgrade.
-        </p>
-
-        <p className="text-xl text-foreground/80">
-          imagine a todo app that doesn&apos;t just track your tasks, but
-          actually gets things done for you. sigma is that all-in-one workspace
-          for notes, tasks, and projects, built for the modern era. it pulls in{' '}
-          <Feature
-            Icon={<IssuesLine size={20} />}
-            text="tasks"
+        <p className="text-lg font-inter text-foreground/80 tracking-tight leading-relaxed">
+          imagine a to-do app that knows your world: it scans your email, github, slack, jira, calendar, and more—then suggests and creates{' '}
+          <Link
             href="/features/task"
-          />{' '}
-          automatically from all your favorite tools like github, slack, and
-          jira, so nothing ever slips through the cracks. think of its{' '}
-          <Feature
-            Icon={<CalendarLine size={20} />}
-            text="daily planner"
-            href="/features/daily-planner"
-          />
-          as a standup meeting for your brain—helping you carve out the perfect
-          day with optimized focus and flow.
-        </p>
-
-        <p className="text-xl text-foreground/80">
-          and when it comes to organizing, sigma&apos;s{' '}
-          <Feature
-            Icon={<Project size={20} />}
-            text="lists"
+            className={cn(
+              buttonVariants({ size: 'default', variant: 'secondary' }),
+              'gap-1.5 text-lg font-inter px-2 py-0.5 h-auto inline-flex'
+            )}
+          >
+            <IssuesLine size={16} /> tasks
+          </Link>{' '}
+          and{' '}
+          <Link
             href="/features/lists"
-          />{' '}
-          feature is like a swiss army knife—whether you&apos;re managing tasks,
-          jotting down notes, or stashing code snippets, it&apos;s got you
-          covered. plus, with built-in{' '}
-          <Feature
-            Icon={<AI size={20} />}
-            text="agents"
-            href="/features/agents"
-          />{' '}
-          like a coding assistant and a browser helper, you have a 24/7 sidekick
-          for research, automation, and execution.
+            className={cn(
+              buttonVariants({ size: 'default', variant: 'secondary' }),
+              'gap-1.5 text-lg font-inter px-2 py-0.5 h-auto inline-flex'
+            )}
+          >
+            <Project size={16} /> lists
+          </Link>{' '}
+          automatically. sigma learns your preferences too via{' '}
+          <Link
+            href="/features/signals"
+            className={cn(
+              buttonVariants({ size: 'default', variant: 'secondary' }),
+              'gap-1.5 text-lg font-inter px-2 py-0.5 h-auto inline-flex'
+            )}
+          >
+            <AI size={16} /> signals
+          </Link> , a dedicated section where you and your agent collaborate to define exactly how sigma should behave. set up rules and instructions—like &quot;any email from job agencies goes to my job list&quot;—and sigma will honor them.
         </p>
 
-        <p className="text-xl text-foreground/80">
-          but sigma isn&apos;t just another productivity tool—it&apos;s your
-          control center. as it grows, it&apos;ll anticipate your needs,
-          streamline your workflows, and keep you in your creative zone.
+        <p className="text-lg font-inter text-foreground/80 tracking-tight leading-relaxed">
+          until now, to-do apps have depended on you to capture every task. sigma flips the script. by unifying your task stream and acting on your signals, it removes the friction of manual entry and keeps your day running smoothly.
         </p>
 
-        <p className="text-xl text-foreground/80">
-          welcome to the next generation of todo lists. come join us and shape
-          the future of work.
+        <p className="text-lg font-inter text-foreground/80 tracking-tight leading-relaxed">
+          and sigma isn&apos;t just an aggregator—it&apos;s your ai agent: clean your inbox with &quot;archive newsletters&quot;, gather project details with &quot;show my open jira tickets&quot;, or prep for meetings with &quot;get me background on today&apos;s attendee&quot; and sigma compiles contacts, recent chats, and relevant tasks.
         </p>
 
-        <p className="text-xl text-foreground/80"> – the sigma team </p>
+        <p className="text-lg font-inter text-foreground/80 tracking-tight leading-relaxed">
+          welcome to a to-do app that works as your agent—because your best ideas deserve more than just a list. they deserve execution.
+        </p>
 
-        <div className="flex justify-center w-full p-2 gap-2">
+        <p className="text-lg font-inter text-foreground/80 italic tracking-tight">
+          — the sigma team
+        </p>
+
+        <div className="flex justify-center w-full gap-2">
           <a
             href="https://discord.gg/dVTC3BmgEq"
             target="_blank"
             className={cn(
-              buttonVariants({ size: 'xl', variant: 'secondary' }),
-              'gap-2 text-lg px-3',
+              buttonVariants({ size: 'default', variant: 'secondary' }),
+              'gap-2 text-base px-2.5'
             )}
           >
-            <RiDiscordFill size={20} />
+            <RiDiscordFill size={16} />
             discord
           </a>
           <a
             href="https://github.com/tegonhq/sigma"
             target="_blank"
             className={cn(
-              buttonVariants({ size: 'xl', variant: 'secondary' }),
-              'gap-2 text-lg px-3',
+              buttonVariants({ size: 'default', variant: 'secondary' }),
+              'gap-2 text-base px-2.5'
             )}
           >
-            <RiGithubFill size={20} />
+            <RiGithubFill size={16} />
             github
           </a>
 
           <a
-            href="https://github.com/tegonhq/sigma/releases/tag/v0.1.11"
+            href="https://github.com/tegonhq/sigma/releases/tag/v0.1.12"
             target="_blank"
             className={cn(
-              buttonVariants({ size: 'xl', variant: 'secondary' }),
-              'gap-2 text-lg px-3',
+              buttonVariants({ size: 'default', variant: 'secondary' }),
+              'gap-2 text-base px-2.5'
             )}
           >
             <Image
               src="/logo_light.svg"
               alt="logo"
               key={1}
-              width={20}
-              height={20}
+              width={16}
+              height={16}
             />
             download
           </a>

@@ -6,15 +6,15 @@ import Link from 'next/link';
 export default function ListsFeature() {
   return (
     <div className="h-[100vh] w-[100vw] bg-background flex flex-col items-center overflow-auto">
-      <div className="p-2 w-full flex gap-2 flex-col items-center pt-10">
-        <Project size={50} className="text-foreground" />
-        <div className="max-w-[800px] w-full px-4">
-          <h2 className="text-[40px] font-mono mt-4 text-center text-bold flex justify-center items-center">
+      <div className="w-full max-w-[800px] px-4 pt-10">
+        <div className="flex flex-col items-center gap-4">
+          <Project size={32} className="text-foreground" />
+          <h2 className="text-[36px] font-mono font-bold flex items-center gap-3">
             <Link
               href="/"
-              className="text-muted-foreground hover:text-foreground transition-colors relative right-5 top-1"
+              className="text-muted-foreground hover:text-foreground transition-colors"
             >
-              <RiArrowLeftLine size={30} />
+              <RiArrowLeftLine size={24} />
             </Link>
             lists
           </h2>
@@ -22,8 +22,8 @@ export default function ListsFeature() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-[800px] mt-8 space-y-8 text-left px-4 leading-[32px] mb-10">
-        <p className="text-xl text-foreground/80">
+      <div className="max-w-[800px] mt-8 space-y-6 text-left px-4 leading-[32px] mb-10">
+        <p className="text-lg font-inter text-foreground/80 tracking-tight leading-relaxed">
           lists are your swiss army knife for organizing anything—code snippets,
           meeting notes, weekend plans, or that side project you&apos;re
           procrastinating on. think of them as flexible docs where chaos becomes
@@ -31,18 +31,18 @@ export default function ListsFeature() {
         </p>
 
         <div className="flex flex-col gap-2">
-          <h3 className="text-2xl font-semibold">mix tasks, notes, and more</h3>
-          <div className="space-y-4">
+          <h3 className="text-lg font-inter font-semibold tracking-tight">mix tasks, notes, and more</h3>
+          <div className="space-y-3">
             <div>
-              <h4 className="text-xl font-medium mb-2">work</h4>
-              <p className="text-xl text-foreground/80">
+              <h4 className="text-lg font-inter font-medium mb-1 tracking-tight">work</h4>
+              <p className="text-lg font-inter text-foreground/80 tracking-tight leading-relaxed">
                 a &quot;q4 migration plan&quot; list could have headers, pr
                 links, and subtasks like &quot;update dependencies.&quot;
               </p>
             </div>
             <div>
-              <h4 className="text-xl font-medium mb-2">personal</h4>
-              <p className="text-xl text-foreground/80">
+              <h4 className="text-lg font-inter font-medium mb-1 tracking-tight">personal</h4>
+              <p className="text-lg font-inter text-foreground/80 tracking-tight leading-relaxed">
                 a &quot;camping trip&quot; list with checklists (tent, snacks),
                 weather screenshots, and a loose note like &quot;ask dave about
                 campfire recipes.&quot;
@@ -52,17 +52,17 @@ export default function ListsFeature() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <h3 className="text-xl font-semibold">tasks ↔ lists, made easy</h3>
-          <div className="space-y-4">
-            <p className="text-xl text-foreground/80">
+          <h3 className="text-lg font-inter font-semibold tracking-tight">tasks ↔ lists, made easy</h3>
+          <div className="space-y-3">
+            <p className="text-lg font-inter text-foreground/80 tracking-tight leading-relaxed">
               add a checklist (e.g., &quot;fix auth bug 🔐&quot;) → boom,
               it&apos;s a tracked task in your tasks section, linked to the
               list.
             </p>
-            <p className="text-xl text-foreground/80">
+            <p className="text-lg font-inter text-foreground/80 tracking-tight leading-relaxed">
               use{' '}
-              <span className="font-mono bg-muted px-2 py-1 rounded">
-                [[T-42
+              <span className="font-mono bg-grayAlpha-100 px-2 py-1 rounded">
+                [[T-42]]
               </span>{' '}
               to embed existing tasks (like that jira ticket you&apos;ve been
               avoiding).
@@ -71,21 +71,21 @@ export default function ListsFeature() {
         </div>
 
         {/* Call to Action */}
-        <div className="text-center mt-12 pt-8">
+        <div className="text-center mt-8">
           <a
             href="https://github.com/tegonhq/sigma/releases/tag/v0.1.11"
             target="_blank"
             className={cn(
-              buttonVariants({ size: 'xl', variant: 'secondary' }),
-              'gap-2 text-lg px-3',
+              buttonVariants({ size: 'default', variant: 'secondary' }),
+              'gap-2 text-base font-inter px-2.5'
             )}
           >
             <Image
               src="/logo_light.svg"
               alt="logo"
               key={1}
-              width={20}
-              height={20}
+              width={16}
+              height={16}
             />
             download
           </a>
