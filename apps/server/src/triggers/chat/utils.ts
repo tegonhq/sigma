@@ -6,9 +6,9 @@ import {
 } from '@prisma/client';
 import { logger } from '@trigger.dev/sdk/v3';
 import axios from 'axios';
+import { tokenizeAndEstimateCost } from 'llm-cost';
 
 import { HistoryStep } from './types';
-import { tokenizeAndEstimateCost } from 'llm-cost';
 
 const prisma = new PrismaClient();
 
@@ -113,6 +113,21 @@ export const createConversationHistoryForAgent = async (
       thoughts: {},
     },
   });
+};
+
+export const getConversationHistoryFormat = (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  previousHistory: any[],
+): string => {
+  if (previousHistory) {
+    const historyText = previousHistory
+      .map((history) => `${history.userType}: \n ${history.message}`)
+      .join('\n------------\n');
+
+    return historyText;
+  }
+
+  return '';
 };
 
 export const getPreviousExecutionHistory = async (

@@ -135,6 +135,7 @@ export class ConversationHistoryService {
             descrition: page.description
               ? generateHTML(JSON.parse(page.description), defaultExtensions)
               : undefined,
+            type: page.type,
           };
         }),
       );
@@ -163,6 +164,7 @@ export class ConversationHistoryService {
                   defaultExtensions,
                 )
               : undefined,
+            type: task.page.type,
           };
         }),
       );

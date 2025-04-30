@@ -197,13 +197,20 @@ AI suggestions
 "When an email contains a meeting summary or an action point, convert the summary to a checklist task."
 
 Github
-"When a new issue is created, create a new task and add to relevant list"`,
+"When a new issue is created, create a new task and add to relevant list"
+
+Hevy
+Manoj prefers compound workouts
+Manoj loves HIIT, Strength and conditioning over traditional weightlifting
+MAnoj usual format of routine looks like warmup, main workouts, core and stretching
+Manoj has only access to very basic GYM, has a cycle. 
+`,
               )
               .replace('{{CURRENT_CONVERSATION_MESSAGE}}', query)
               .replace('{{GET_FLAG}}', getFlag.toString()),
           },
         ],
-        llmModel: LLMModelEnum.GEMINI25FLASH,
+        llmModel: LLMModelEnum.GEMINI20FLASHLITE,
         model: 'context',
       },
       worskspaceId,

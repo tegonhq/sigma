@@ -3,14 +3,14 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { PageTypeEnum, UpdateListDto } from '@tegonhq/sigma-sdk';
+import { List, PageTypeEnum, Task, UpdateListDto } from '@tegonhq/sigma-sdk';
 import { PrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class ListsService {
   constructor(private prisma: PrismaService) {}
 
-  async createList(workspaceId: string) {
+  async createList(workspaceId: string, title?: string) {
     return await this.prisma.list.create({
       data: {
         workspace: { connect: { id: workspaceId } },
@@ -20,6 +20,7 @@ export class ListsService {
             tags: [],
             type: PageTypeEnum.List,
             workspace: { connect: { id: workspaceId } },
+            ...(title ? { title } : {}),
           },
         },
       },
@@ -90,6 +91,28 @@ export class ListsService {
       data: {
         deleted: new Date().toISOString(),
       },
+    });
+  }
+
+  async getAllLists(
+    workspaceId: string,
+    page: number,
+    size: number,
+  ): Promise<List[]> {
+    const skip = (page - 1) * size;
+    return await this.prisma.list.findMany({
+      where: { deleted: null, workspaceId },
+      include: {
+        page: { select: { id: true, title: true } },
+      },
+      skip,
+      take: size,
+    });
+  }
+
+  async getListTasks(listId: string): Promise<Task[]> {
+    return await this.prisma.task.findMany({
+      where: { listId, deleted: null },
     });
   }
 }

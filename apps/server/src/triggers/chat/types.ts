@@ -10,6 +10,7 @@ export interface ExecutionState {
   context?: Record<string, any>;
   previousHistory?: Array<{ agent: string; history: string }>;
   history: HistoryStep[];
+  userMemoryContext?: string;
   completed: boolean;
   autoMode: boolean;
 }
@@ -53,6 +54,8 @@ export interface HistoryStep {
 
   // Token count
   tokenCount: TotalCost;
+
+  finalTokenCount?: TotalCost;
 }
 
 export enum AgentMessageType {
@@ -124,6 +127,7 @@ export type SchemaProperty =
       properties?: Record<string, SchemaProperty>;
       required?: string[];
       additionalProperties?: boolean;
+      description?: string;
     }
   | {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
