@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { logger } from '@trigger.dev/sdk/v3';
 import Handlebars from 'handlebars';
 
 import { MCP } from './mcp';
-import { ACTION_PROMPT, OBSERVATION_PROMPT, REACT_PROMPT } from './prompt';
+import { OBSERVATION_PROMPT, REACT_PROMPT } from './prompt';
 import { generate, processTag } from './stream-utils';
 import {
   AgentMessage,
@@ -96,6 +97,7 @@ function makeNextCall(
     EXECUTION_HISTORY: historyText,
     AUTO_MODE: String(autoMode).toLowerCase(),
     PREVIOUS_EXECUTION_HISTORY: previousHistoryText ?? '',
+    USER_MEMORY: executionState.userMemoryContext,
   };
 
   const templateHandler = Handlebars.compile(REACT_PROMPT);
@@ -107,49 +109,11 @@ function makeNextCall(
   return { response, input: prompt };
 }
 
-function makeActionInputCall(
-  executionState: ExecutionState,
-  thought: string,
-  skill: string,
-): LLMOutputInterface {
-  const { context, history, previousHistory, autoMode } = executionState;
-
-  // Format the history for the prompt
-  const historyText = getHistoryText(history);
-  // Format context information
-  let contextText = '';
-  if (context) {
-    // Process the entire context object at once
-    contextText = flattenObject(context).join('\n');
-  }
-
-  const previousHistoryText = previousHistory
-    .map((item) => item.history)
-    .join('\n');
-
-  const promptInfo = {
-    QUERY: executionState.query,
-    CONTEXT: contextText,
-    EXECUTION_HISTORY: historyText,
-    AUTO_MODE: String(autoMode).toLowerCase(),
-    THOUGHT_PROCESS: thought,
-    SELECTED_ACTION: skill,
-    PREVIOUS_EXECUTION_HISTORY: previousHistoryText ?? '',
-  };
-
-  const templateHandler = Handlebars.compile(ACTION_PROMPT);
-  const actionPrompt = templateHandler(promptInfo);
-
-  // Get the next action from the LLM
-  const response = generate([{ role: 'user', content: actionPrompt }]);
-
-  return { response, input: actionPrompt };
-}
-
 export async function* run(
   message: string,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   context: Record<string, any>,
+  userMemoryContext: string,
   previousHistory: ExecutionState['previousHistory'],
   mcp: MCP,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -161,6 +125,7 @@ export async function* run(
     query: message,
     context,
     previousHistory,
+    userMemoryContext,
     history: [], // Track the full ReAct history
     completed: false,
     autoMode: true,
@@ -190,6 +155,12 @@ export async function* run(
         lastSent: '',
       };
 
+      const skillState = {
+        inTag: false,
+        message: '',
+        messageEnded: false,
+        lastSent: '',
+      };
       // LLm thought response
       for await (const chunk of llmResponse) {
         totalMessage += chunk;
@@ -223,6 +194,21 @@ export async function* run(
             },
           );
         }
+
+        if (!skillState.messageEnded) {
+          yield* processTag(
+            skillState,
+            totalMessage,
+            chunk,
+            '<action_input>',
+            '</action_input>',
+            {
+              start: AgentMessageType.SKILL_START,
+              chunk: AgentMessageType.SKILL_CHUNK,
+              end: AgentMessageType.SKILL_END,
+            },
+          );
+        }
       }
 
       const costForThought = await getCost(thoughtInput, totalMessage);
@@ -240,6 +226,7 @@ export async function* run(
       const thought = thoughtState.message;
       const skillName = skillMatch ? skillMatch[1].trim() : '';
       const skillId = skillMatch ? generateRandomId() : undefined;
+
       // Record this step in history
       const stepRecord: HistoryStep = {
         thought,
@@ -270,6 +257,7 @@ export async function* run(
       // If this is the final break here
       if (isFinalAnswer) {
         executionState.completed = true;
+        stepRecord.finalTokenCount = totalCost;
         yield Message(JSON.stringify(stepRecord), AgentMessageType.STEP);
         executionState.history.push(stepRecord);
         break;
@@ -277,6 +265,7 @@ export async function* run(
 
       // If it is question break the while loop here
       if (isQuestion) {
+        stepRecord.finalTokenCount = totalCost;
         yield Message(JSON.stringify(stepRecord), AgentMessageType.STEP);
         executionState.history.push(stepRecord);
         break;
@@ -284,51 +273,22 @@ export async function* run(
 
       logger.info(`Going ahead with action: ${skillName}`);
 
-      const toolInfo = await mcp.getTool(skillName);
-      const { response: skillLlmResponse, input: actionInput } =
-        makeActionInputCall(executionState, thought, toolInfo);
-
-      let totalSkillResponse = '';
-
-      const skillState = {
-        inTag: false,
-        message: '',
-        messageEnded: false,
-        lastSent: '',
-      };
-
-      // Skill Input
-      for await (const chunk of skillLlmResponse) {
-        totalSkillResponse += chunk;
-
-        yield* processTag(
-          skillState,
-          totalSkillResponse,
-          chunk,
-          '<action_input>',
-          '</action_input>',
-          {
-            start: AgentMessageType.SKILL_START,
-            chunk: AgentMessageType.SKILL_CHUNK,
-            end: AgentMessageType.SKILL_END,
-          },
-          { skillId },
+      // Add the input to the step
+      let result;
+      try {
+        const parsedInput = JSON.parse(skillState.message);
+        stepRecord.skillInput = skillState.message;
+        logger.info(
+          `skillName: ${skillName} \n Parsed Input: ${skillState.message}`,
+        );
+        result = await mcp.callTool(skillName, parsedInput);
+      } catch (e) {
+        logger.error(e);
+        stepRecord.skillInput = skillState.message;
+        logger.info(
+          `skillName: ${skillName} \n Parsed Input: ${skillState.message}`,
         );
       }
-
-      const costForActionInput = await getCost(actionInput, totalSkillResponse);
-      totalCost.inputTokens += costForActionInput.inputTokens ?? 0;
-      totalCost.outputTokens += costForActionInput.outputTokens ?? 0;
-      totalCost.cost += costForActionInput.cost ?? 0;
-
-      logger.info(
-        `Cost for actionInput: ${JSON.stringify(costForActionInput)}`,
-      );
-
-      // Add the input to the step
-      const parsedInput = JSON.parse(skillState.message);
-      stepRecord.skillInput = JSON.stringify(parsedInput);
-      const result = await mcp.callTool(skillName, parsedInput);
 
       stepRecord.skillOutput = JSON.stringify(result);
       const { response: skillObservationResponse, input: observationInput } =

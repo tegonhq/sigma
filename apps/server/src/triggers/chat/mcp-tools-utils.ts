@@ -25,8 +25,13 @@ function toolToPlainText(tool: MCPTool): string {
       // Get default value if present
       const defaultInfo = getDefaultInfo(paramProps);
 
+      // Get description if present
+      const description =
+        'description' in paramProps ? paramProps.description : '';
+      const descriptionInfo = description ? ` ${description}` : '';
+
       // Format parameter info
-      text += `- ${paramName} (${typeInfo}) [${isRequired}]${defaultInfo}\n`;
+      text += `- ${paramName} (${typeInfo}) [${isRequired}]${defaultInfo}${descriptionInfo}\n`;
 
       // Handle nested objects (exercises, sets, etc.)
       if (
@@ -47,7 +52,15 @@ function toolToPlainText(tool: MCPTool): string {
           const nestedTypeInfo = getTypeInfo(nestedProp);
           const nestedDefaultInfo = getDefaultInfo(nestedProp);
 
-          text += `  - ${nestedName} (${nestedTypeInfo}) [${isNestedRequired}]${nestedDefaultInfo}\n`;
+          // Get description if present
+          const nestedDescription =
+            'description' in nestedProp ? nestedProp.description : '';
+          const nestedDescriptionInfo = nestedDescription
+            ? ` ${nestedDescription}`
+            : '';
+
+          // Format parameter info
+          text += `  - ${nestedName} (${nestedTypeInfo}) [${isNestedRequired}]${nestedDefaultInfo}${nestedDescriptionInfo}\n`;
 
           // Handle doubly nested objects (like sets within exercises)
           if (

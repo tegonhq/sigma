@@ -96,6 +96,7 @@ export async function* processTag(
 
 export async function* generate(
   messages: MessageParam[],
+  system?: string,
 ): AsyncGenerator<string> {
   // Check for API keys
 
@@ -116,6 +117,7 @@ export async function* generate(
       messages,
       model,
       max_tokens: 5000,
+      system,
     });
 
     for await (const chunk of stream) {

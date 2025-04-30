@@ -65,7 +65,7 @@ export class WorkspacesController {
     return await this.workspacesService.getRelevantContext(
       workspaceId,
       query,
-      true,
+      false,
     );
   }
 

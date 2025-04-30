@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { logger } from '@trigger.dev/sdk/v3';
 
 import { convertMCPToolsToPlainText } from './mcp-tools-utils';

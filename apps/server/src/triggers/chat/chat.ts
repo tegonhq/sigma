@@ -31,7 +31,8 @@ export const chat = task({
       `/api/v1/conversation_history/${payload.conversationHistoryId}/context`,
     );
     const contextFromAPI = response.data;
-    const { agents, previousHistory, ...otherData } = contextFromAPI;
+    const { agents, previousHistory, userMemoryContext, ...otherData } =
+      contextFromAPI;
 
     // Initialise mcp
     const mcp = new MCP();
@@ -43,7 +44,7 @@ export const chat = task({
       // Currently this is assuming we only have one page in context
       context: {
         ...(otherData.page && otherData.page.length > 0
-          ? otherData.page[0]
+          ? { page: otherData.page[0] }
           : {}),
       },
       todayDate: new Date(),
@@ -72,7 +73,13 @@ export const chat = task({
       agentConversationHistory.id,
     );
 
-    const llmResponse = run(message, context, previousExecutionHistory, mcp);
+    const llmResponse = run(
+      message,
+      context,
+      userMemoryContext,
+      previousExecutionHistory,
+      mcp,
+    );
 
     const stream = await metadata.stream('messages', llmResponse);
 
