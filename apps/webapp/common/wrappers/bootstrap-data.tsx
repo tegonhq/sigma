@@ -35,6 +35,7 @@ export function BootstrapWrapper({ children }: Props) {
     listsStore,
     taskOccurrencesStore,
     taskExternalLinksStore,
+    agentWorklogsStore,
   } = useContextStore();
 
   const MODEL_STORE_MAP = {
@@ -47,6 +48,7 @@ export function BootstrapWrapper({ children }: Props) {
     [MODELS.List]: listsStore,
     [MODELS.TaskOccurrence]: taskOccurrencesStore,
     [MODELS.TaskExternalLink]: taskExternalLinksStore,
+    [MODELS.AgentWorklog]: agentWorklogsStore,
   };
 
   React.useEffect(() => {

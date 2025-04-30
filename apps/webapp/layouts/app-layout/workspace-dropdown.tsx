@@ -38,41 +38,39 @@ export const WorkspaceDropdown = observer(() => {
   );
 
   return (
-    <>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="hover:bg-transparent justify-between gap-2 items-center shrink min-w-[0px] max-w-[150px]"
-          >
-            <div className="flex justify-between gap-2 items-center">
-              <AvatarText text={workspaceStore.workspace.name} noOfChar={1} />
-            </div>
-          </Button>
-        </DropdownMenuTrigger>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="hover:bg-transparent justify-between gap-2 items-center shrink min-w-[0px] max-w-[150px]"
+        >
+          <div className="flex justify-between gap-2 items-center">
+            <AvatarText text={workspaceStore.workspace.name} noOfChar={1} />
+          </div>
+        </Button>
+      </DropdownMenuTrigger>
 
-        <DropdownMenuContent className="min-w-60" align="start">
-          <DropdownMenuGroup>
-            <DropdownMenuItem
-              onClick={() => {
-                openSettings();
-              }}
-            >
-              Preferences
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
+      <DropdownMenuContent className="min-w-60" align="start">
+        <DropdownMenuGroup>
           <DropdownMenuItem
-            onClick={async () => {
-              await signOut();
-
-              replace('/auth');
+            onClick={() => {
+              openSettings();
             }}
           >
-            Log out
+            Preferences
           </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </>
+        </DropdownMenuGroup>
+        <DropdownMenuItem
+          onClick={async () => {
+            await signOut();
+
+            replace('/auth');
+          }}
+        >
+          Log out
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 });

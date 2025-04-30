@@ -50,7 +50,7 @@ export const Header = observer(({ actions }: HeaderProps) => {
           </BreadcrumbList>
         </Breadcrumb>
       </div>
-      <div className="pr-4">{actions}</div>
+      <div className="pr-2">{actions}</div>
     </header>
   );
 });

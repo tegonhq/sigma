@@ -12,6 +12,10 @@ const prisma = new PrismaClient();
 
 export const beautifyTask = task({
   id: 'beautify-task',
+  queue: {
+    name: 'beautify-task',
+    concurrencyLimit: 10,
+  },
   run: async (payload: { taskId: string; pat: string }) => {
     const sigmaTask = await prisma.task.findUnique({
       where: { id: payload.taskId },

@@ -7,4 +7,7 @@ export const List = types.model({
 
   pageId: types.string,
   icon: types.union(types.undefined, types.null, types.string),
+
+  // v2
+  favourite: types.union(types.undefined, types.boolean),
 });

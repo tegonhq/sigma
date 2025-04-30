@@ -2,6 +2,10 @@ import { types } from 'mobx-state-tree';
 import React from 'react';
 
 import {
+  AgentWorklogsStore,
+  type AgentWorklogStoreType,
+} from './agent-worklog';
+import {
   ApplicationStore,
   defaultApplicationStoreValue,
   type ApplicationStoreType,
@@ -49,6 +53,7 @@ const StoreContextModel = types.model({
   listsStore: ListsStore,
   taskOccurrencesStore: TaskOccurrencesStore,
   taskExternalLinksStore: TaskExternalLinksStore,
+  agentWorklogsStore: AgentWorklogsStore,
 });
 
 export const storeContextStore = StoreContextModel.create({
@@ -89,6 +94,9 @@ export const storeContextStore = StoreContextModel.create({
   taskExternalLinksStore: {
     taskExternalLinks: {},
   },
+  agentWorklogsStore: {
+    agentWorklogs: [],
+  },
 });
 
 export interface StoreContextInstanceType {
@@ -103,6 +111,7 @@ export interface StoreContextInstanceType {
   listsStore: ListsStoreType;
   taskOccurrencesStore: TaskOccurrencesStoreType;
   taskExternalLinksStore: TaskExternalLinksStoreType;
+  agentWorklogsStore: AgentWorklogStoreType;
 }
 export const StoreContext =
   React.createContext<null | StoreContextInstanceType>(null);

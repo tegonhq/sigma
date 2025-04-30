@@ -6,7 +6,7 @@ import { useContextStore } from 'store/global-context-provider';
 
 import { ListPage } from './list-page';
 import { ListPageHeader } from './list-page-header';
-import { ListsList } from './lists-list';
+import { ListsList } from './list-view';
 
 interface TabsProps {
   entity_id: string;

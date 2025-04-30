@@ -20,6 +20,7 @@ import { useContextStore } from 'store/global-context-provider';
 
 import { ListPageEditor } from './list-page-editor';
 import { ListPageHeader } from './list-page-header';
+import { FavouriteButton } from './list-view/favourite-button';
 
 interface ListPageProps {
   list: ListType;

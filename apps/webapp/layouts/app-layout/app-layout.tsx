@@ -2,6 +2,7 @@ import { cn, SidebarInset, SidebarProvider } from '@tegonhq/ui';
 import { GeistMono } from 'geist/font/mono';
 import { GeistSans } from 'geist/font/sans';
 
+import { AIThinking } from 'modules/ai-thinking';
 import { SettingsProvider } from 'modules/settings';
 
 import { AppSidebar } from './app-sidebar';
@@ -25,6 +26,8 @@ export function AppLayout({ children }: AppLayoutProps) {
           {children}
         </SidebarInset>
       </SettingsProvider>
+
+      <AIThinking />
     </SidebarProvider>
   );
 }
