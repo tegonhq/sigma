@@ -2,6 +2,7 @@ import { runInAction } from 'mobx';
 
 import type { SyncActionRecord } from 'common/types';
 
+import { saveAgentWorklog } from 'store/agent-worklog';
 import { saveConversationHistorytData } from 'store/conversation-history';
 import { saveConversationData } from 'store/conversations';
 import { saveIntegrationAccountData } from 'store/integration-accounts';
@@ -50,6 +51,7 @@ export async function saveSocketData(
       [MODELS.TaskOccurrence]: saveTaskOccurrencesData,
       [MODELS.List]: saveListData,
       [MODELS.TaskExternalLink]: saveTaskExternalLinkData,
+      [MODELS.AgentWorklog]: saveAgentWorklog,
     };
 
     // Process records using the handler map

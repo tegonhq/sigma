@@ -14,7 +14,9 @@ model Activity {
   updatedAt DateTime  @updatedAt
   deleted   DateTime?
 
-  text String
+  text      String
+  sourceId  String?
+  sourceURL String?
 
   integrationAccount   IntegrationAccount? @relation(fields: [integrationAccountId], references: [id])
   integrationAccountId String?

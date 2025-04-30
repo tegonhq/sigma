@@ -196,12 +196,17 @@ const config = {
           '0%': { textDecorationColor: 'transparent' },
           '100%': { textDecorationColor: 'currentColor' },
         },
+        gradientSlide: {
+          '0%': { backgroundPosition: '0% 50%' },
+          '100%': { backgroundPosition: '100% 50%' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         'multiline-strikethrough':
           'multiline-strikethrough 0.3s ease-in forwards',
+        'gradient-slide': 'gradientSlide 2s linear infinite',
       },
     },
   },

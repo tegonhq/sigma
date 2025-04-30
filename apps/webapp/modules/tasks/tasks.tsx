@@ -14,6 +14,7 @@ import { ScheduleList } from './group-view/schedule';
 import { StatusList } from './group-view/status';
 import { Header } from './header';
 import { SingleTask } from './single-task';
+import { HeaderActions } from './header-actions';
 
 interface TabsProps {
   entity_id: string;
@@ -44,7 +45,7 @@ export const Tasks = observer(({ entity_id }: TabsProps) => {
   };
 
   return (
-    <RightSideLayout header={<Header />}>
+    <RightSideLayout header={<Header actions={<HeaderActions />} />}>
       <Filters />
 
       {getComponent()}

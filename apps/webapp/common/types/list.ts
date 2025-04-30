@@ -3,5 +3,6 @@ export interface ListType {
   createdAt: string;
   updatedAt: string;
   pageId: string;
+  favourite: boolean;
   icon?: string;
 }

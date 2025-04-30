@@ -3,6 +3,7 @@ import type { ApplicationStoreType } from './application';
 import Dexie from 'dexie';
 
 import type {
+  AgentWorklogType,
   ConversationHistoryType,
   ConversationType,
   IntegrationAccountType,
@@ -29,11 +30,12 @@ export class SigmaDatabase extends Dexie {
   lists: Dexie.Table<ListType, string>;
   taskOccurrences: Dexie.Table<TaskOccurrenceType, string>;
   taskExternalLinks: Dexie.Table<TaskExternalLinkType, string>;
+  agentWorklogs: Dexie.Table<AgentWorklogType, string>;
 
   constructor(databaseName: string) {
     super(databaseName);
 
-    this.version(29).stores({
+    this.version(30).stores({
       [MODELS.Workspace]: 'id,createdAt,updatedAt,name,slug,userId',
       [MODELS.IntegrationAccount]:
         'id,createdAt,updatedAt,accountId,settings,integratedById,integrationDefinitionId,workspaceId',
@@ -50,7 +52,9 @@ export class SigmaDatabase extends Dexie {
         'id,createdAt,updatedAt,title,userId,workspaceId,pageId,taskId',
       [MODELS.ConversationHistory]:
         'id,createdAt,updatedAt,message,userType,context,thoughts,userId,conversationId',
-      [MODELS.List]: 'id,createdAt,updatedAt,pageId,icon',
+      [MODELS.List]: 'id,createdAt,updatedAt,pageId,icon,favourite',
+      [MODELS.AgentWorklog]:
+        'id,createdAt,updatedAt,modelName,modelId,state,type,workspaceId',
 
       Application: 'id,sidebarCollapsed,tabGroups,activeTabGroupId',
     });
@@ -65,6 +69,7 @@ export class SigmaDatabase extends Dexie {
     this.taskOccurrences = this.table(MODELS.TaskOccurrence);
     this.taskExternalLinks = this.table(MODELS.TaskExternalLink);
     this.application = this.table('Application');
+    this.agentWorklogs = this.table('AgentWorklog');
   }
 }
 

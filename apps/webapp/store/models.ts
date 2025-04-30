@@ -9,4 +9,6 @@ export enum MODELS {
   Conversation = 'Conversation',
   ConversationHistory = 'ConversationHistory',
   List = 'List',
+
+  AgentWorklog = 'AgentWorklog',
 }

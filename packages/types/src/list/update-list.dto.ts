@@ -1,6 +1,11 @@
-import { IsString } from 'class-validator';
+import { IsBoolean, IsOptional, IsString } from 'class-validator';
 
 export class UpdateListDto {
   @IsString()
-  icon: string;
+  @IsOptional()
+  icon?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  favourite?: boolean;
 }

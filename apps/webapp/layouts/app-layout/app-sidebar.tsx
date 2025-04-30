@@ -69,8 +69,6 @@ export const AppSidebar = observer(
       },
       {
         scopes: [SCOPES.Global],
-        enableOnFormTags: true,
-        enableOnContentEditable: true,
       },
     );
 
@@ -203,6 +201,10 @@ export const AppSidebar = observer(
             </h3>
             <SidebarMenu className="gap-0.5">
               {lists.map((list: ListTypeWithCount) => {
+                if (!list.favourite) {
+                  return null;
+                }
+
                 const isActive =
                   firstTab.type === TabViewType.LIST &&
                   firstTab.entity_id === list.id;

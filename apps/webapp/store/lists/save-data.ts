@@ -17,6 +17,7 @@ export async function saveListData(
 
         pageId: record.data.pageId,
         icon: record.data.icon,
+        favourite: record.data.favourite,
       };
 
       switch (record.action) {

@@ -27,7 +27,7 @@ export function TooltipWrapper({
       <TooltipTrigger asChild>
         <div className={cn(className)}>{children}</div>
       </TooltipTrigger>
-      <TooltipContent className={cn('p-2', tooltipClassName)}>
+      <TooltipContent className={cn('p-2', tooltipClassName)} side="bottom">
         <span>{tooltip}</span>
       </TooltipContent>
     </Tooltip>

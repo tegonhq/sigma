@@ -1,4 +1,5 @@
 import {
+  AddLine,
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
@@ -19,15 +20,40 @@ import React from 'react';
 import type { ListType } from 'common/types';
 import { Navigation } from 'layouts/app-layout';
 
-import { useDeleteListMutation } from 'services/lists';
+import { useApplication } from 'hooks/application';
 
+import {
+  useCreateListMutation,
+  useDeleteListMutation,
+  useUpdateListMutation,
+} from 'services/lists';
+
+import { TabViewType } from 'store/application';
 import { useContextStore } from 'store/global-context-provider';
 
 import { DeleteListAlert } from './delete-list-alert';
+import { FavouriteButton } from './list-view/favourite-button';
 
 interface ListPageHeaderProps {
   list?: ListType;
 }
+
+export const HeaderActions = () => {
+  const { updateTabType } = useApplication();
+
+  const { mutate: createList } = useCreateListMutation({
+    onSuccess: (data: ListType) => {
+      updateTabType(0, TabViewType.LIST, { entityId: data.id });
+    },
+  });
+
+  return (
+    <Button className="gap-1" variant="secondary" onClick={() => createList()}>
+      <AddLine size={14} />
+      New list
+    </Button>
+  );
+};
 
 export const ListPageHeader = observer(({ list }: ListPageHeaderProps) => {
   const { pagesStore } = useContextStore();
@@ -35,6 +61,7 @@ export const ListPageHeader = observer(({ list }: ListPageHeaderProps) => {
   const [deleteListDialog, setDeleteListDialog] = React.useState(false);
   const { mutate: deleteListAPI } = useDeleteListMutation({});
   const { toast } = useToast();
+  const { mutate: updateList } = useUpdateListMutation({});
 
   const deleteList = () => {
     deleteListAPI(
@@ -80,28 +107,43 @@ export const ListPageHeader = observer(({ list }: ListPageHeaderProps) => {
           </BreadcrumbList>
         </Breadcrumb>
         {page && (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={(e) => {
-                  e.preventDefault();
-                }}
-              >
-                <MoreLine size={16} />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start">
-              <DropdownMenuItem onClick={() => setDeleteListDialog(true)}>
-                <div className="flex gap-2 items-center mr-2">
-                  <DeleteLine size={16} />
-                  <span>Delete list</span>
-                </div>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <>
+            <FavouriteButton
+              onChange={(favourite) => {
+                updateList({
+                  listId: list.id,
+                  favourite,
+                });
+              }}
+              favourite={list.favourite}
+            />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="xs"
+                  onClick={(e) => {
+                    e.preventDefault();
+                  }}
+                >
+                  <MoreLine size={16} />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                <DropdownMenuItem onClick={() => setDeleteListDialog(true)}>
+                  <div className="flex gap-2 items-center mr-2">
+                    <DeleteLine size={16} />
+                    <span>Delete</span>
+                  </div>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </>
         )}
+      </div>
+
+      <div className="pr-2">
+        <HeaderActions />
       </div>
       {deleteListDialog && (
         <DeleteListAlert

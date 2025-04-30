@@ -33,6 +33,7 @@ export const SocketDataSyncWrapper: React.FC<Props> = observer(
       conversationHistoryStore,
       listsStore,
       taskExternalLinksStore,
+      agentWorklogsStore,
     } = useContextStore();
     const user = React.useContext(UserContext);
     const hashKey = user.id;
@@ -73,6 +74,7 @@ export const SocketDataSyncWrapper: React.FC<Props> = observer(
         [MODELS.ConversationHistory]: conversationHistoryStore,
         [MODELS.List]: listsStore,
         [MODELS.TaskExternalLink]: taskExternalLinksStore,
+        [MODELS.AgentWorklog]: agentWorklogsStore,
       };
 
       socket.on('message', async (newMessage: string) => {

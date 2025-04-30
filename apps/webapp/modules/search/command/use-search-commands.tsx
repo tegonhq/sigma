@@ -17,14 +17,16 @@ import { DailogViewsContext, DialogType } from 'modules/dialog-views-provider';
 import { useSettings } from 'modules/settings';
 import { AddTaskDialogContext } from 'modules/tasks/add-task';
 
+import type { ListType } from 'common/types';
+
 import { useApplication } from 'hooks/application';
+
+import { useCreateListMutation } from 'services/lists';
 
 import { TabViewType } from 'store/application';
 import { useContextStore } from 'store/global-context-provider';
 
 import { useTaskOperations } from './use-task-operations';
-import { useCreateListMutation } from 'services/lists';
-import type { ListType } from 'common/types';
 
 interface CommandType {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

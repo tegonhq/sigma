@@ -8,7 +8,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { CreateBulkTasksDto, CreateTaskDto, Task } from '@tegonhq/sigma-sdk';
+import { CreateTaskDto, Task } from '@tegonhq/sigma-sdk';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
 import { UserId, Workspace } from 'modules/auth/session.decorator';
@@ -62,15 +62,6 @@ export class TasksController {
     @Body() taskData: CreateTaskDto,
   ): Promise<Task> {
     return await this.tasksService.upsertTaskBySource(taskData, workspaceId);
-  }
-
-  @Post('bulk')
-  @UseGuards(AuthGuard)
-  async createBulkTasks(
-    @Body() tasksData: CreateBulkTasksDto,
-    @Workspace() workspaceId: string,
-  ): Promise<Task[]> {
-    return await this.tasksService.createBulkTasks(tasksData, workspaceId);
   }
 
   @Post(':taskId')

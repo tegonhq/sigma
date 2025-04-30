@@ -62,9 +62,7 @@ export class ListsService {
       where: {
         id: listId,
       },
-      data: {
-        icon: updateListDto.icon,
-      },
+      data: updateListDto,
     });
   }
 
