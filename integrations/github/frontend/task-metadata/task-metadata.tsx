@@ -82,7 +82,7 @@ export const TaskMetadata = ({ view, taskExternalLink }: TaskMetadataProps) => {
           <Badge
             variant="secondary"
             className={cn(
-              'flex items-center gap-1 shrink min-w-[0px] text-xs',
+              'flex items-center gap-1 shrink min-w-[0px] text-sm',
               view !== TaskIntegrationViewType.TASK_LIST_ITEM && 'h-7 px-2 text-base',
             )}
           >
@@ -91,7 +91,7 @@ export const TaskMetadata = ({ view, taskExternalLink }: TaskMetadataProps) => {
           <Badge
             variant="secondary"
             className={cn(
-              'flex items-center gap-1 shrink min-w-[0px] text-xs',
+              'flex items-center gap-1 shrink min-w-[0px] text-sm',
               view !== TaskIntegrationViewType.TASK_LIST_ITEM && 'h-7 px-2 text-base',
             )}
           >

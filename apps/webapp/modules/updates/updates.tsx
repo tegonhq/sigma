@@ -78,7 +78,7 @@ export const Updates = () => {
   }
 
   return (
-    <div className="flex p-3 bg-background-2 rounded-lg shadow-1 text-xs">
+    <div className="flex p-3 bg-background-2 rounded-lg shadow-1 text-sm">
       {updateState.available && (
         <div className="flex flex-col gap-2">
           <p>A new version is available for download</p>

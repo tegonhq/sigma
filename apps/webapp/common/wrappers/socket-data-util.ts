@@ -2,12 +2,14 @@ import { runInAction } from 'mobx';
 
 import type { SyncActionRecord } from 'common/types';
 
+import { saveActivityData } from 'store/activity';
 import { saveAgentWorklog } from 'store/agent-worklog';
 import { saveConversationHistorytData } from 'store/conversation-history';
 import { saveConversationData } from 'store/conversations';
 import { saveIntegrationAccountData } from 'store/integration-accounts';
 import { saveListData } from 'store/lists';
 import { MODELS } from 'store/models';
+import { saveNotificationData } from 'store/notification';
 import { savePageData } from 'store/pages';
 import { saveTaskExternalLinkData } from 'store/task-external-links';
 import { saveTaskOccurrencesData } from 'store/task-occurrences';
@@ -52,6 +54,8 @@ export async function saveSocketData(
       [MODELS.List]: saveListData,
       [MODELS.TaskExternalLink]: saveTaskExternalLinkData,
       [MODELS.AgentWorklog]: saveAgentWorklog,
+      [MODELS.Notification]: saveNotificationData,
+      [MODELS.Activity]: saveActivityData,
     };
 
     // Process records using the handler map

@@ -1,5 +1,6 @@
 import {
   OnGatewayConnection,
+  OnGatewayDisconnect,
   OnGatewayInit,
   WebSocketGateway,
   WebSocketServer,
@@ -17,11 +18,14 @@ import { isValidAuthentication } from './sync.utils';
     credentials: true,
   },
 })
-export class SyncGateway implements OnGatewayInit, OnGatewayConnection {
+export class SyncGateway
+  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
+{
   @WebSocketServer() wss: Server;
 
   private readonly clientsMetadata: Record<string, ClientMetadata> = {};
   private readonly logger: LoggerService = new LoggerService('SyncGateway');
+  private connectionCount = 0;
 
   afterInit() {
     this.logger.info({
@@ -31,18 +35,20 @@ export class SyncGateway implements OnGatewayInit, OnGatewayConnection {
   }
 
   async handleConnection(client: Socket) {
+    this.connectionCount++;
+    const { query, headers } = client.handshake;
+
     this.logger.info({
-      message: `Connection is made by ${client.id}`,
+      message: `Connection is made by ${client.id}  userId ${query.userId}. Total connections: ${this.connectionCount}`,
       where: `SyncGateway.handleConnection`,
     });
-
-    const { query, headers } = client.handshake;
 
     const isValid = isValidAuthentication(headers);
 
     if (!isValid) {
+      this.connectionCount--;
       this.logger.info({
-        message: `Connection disconnected ${client.id}`,
+        message: `Connection disconnected ${client.id} userId ${query.userId}. Total connections: ${this.connectionCount}`,
         where: `SyncGateway.handleConnection`,
       });
       client.disconnect(true);
@@ -56,5 +62,15 @@ export class SyncGateway implements OnGatewayInit, OnGatewayConnection {
 
     client.join(query.workspaceId);
     client.join(query.userId);
+  }
+
+  handleDisconnect(client: Socket) {
+    this.connectionCount--;
+    const currentClient = this.clientsMetadata[client.id];
+    delete this.clientsMetadata[client.id];
+    this.logger.info({
+      message: `Client disconnected: ${client.id} userId ${currentClient.userId}. Total connections: ${this.connectionCount}`,
+      where: `SyncGateway.handleDisconnect`,
+    });
   }
 }

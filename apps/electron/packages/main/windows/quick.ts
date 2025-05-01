@@ -8,9 +8,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 export async function createQuickWindow(show = true) {
-  const primaryDisplay = screen.getPrimaryDisplay();
-  const {width} = primaryDisplay.workArea;
-  const {bounds} = primaryDisplay; // workArea excludes the macOS menu bar
+  const cursorPoint = screen.getCursorScreenPoint();
+  const currentDisplay = screen.getDisplayNearestPoint(cursorPoint);
+  const {width} = currentDisplay.workArea;
+  const {bounds} = currentDisplay; // Use bounds of current display with cursor
 
   const smallerWindow = new BrowserWindow({
     show: false, // Use the 'ready-to-show' event to show the instantiated BrowserWindow.
@@ -18,9 +19,9 @@ export async function createQuickWindow(show = true) {
     height: 500, // Set minimum height
     icon: path.join(__dirname, '/../../../buildResources/icon.png'),
     resizable: false,
-    x: width - 500 - 20,
+    x: bounds.x + width - 500 - 20,
     y: bounds.y + 60,
-    movable: true,
+    movable: false,
     minimizable: false,
     maximizable: false,
     fullscreenable: false,
@@ -39,10 +40,12 @@ export async function createQuickWindow(show = true) {
     },
   });
 
-  smallerWindow.setAlwaysOnTop(true, 'screen-saver', 1);
+  smallerWindow.setAlwaysOnTop(true, 'screen-saver', 2);
   smallerWindow.setVisibleOnAllWorkspaces(true, {
     visibleOnFullScreen: true,
   });
+
+  if (app.dock) app.dock.show();
 
   /**
    * If the 'show' property of the BrowserWindow's constructor is omitted from the initialization options,
@@ -57,7 +60,7 @@ export async function createQuickWindow(show = true) {
       smallerWindow.show();
 
       if (import.meta.env.DEV) {
-        smallerWindow?.webContents.openDevTools();
+        // smallerWindow?.webContents.openDevTools();
       }
     }
   });

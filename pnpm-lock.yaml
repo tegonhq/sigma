@@ -205,8 +205,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/editor-extensions
       '@tegonhq/sigma-sdk':
-        specifier: 0.1.19
-        version: 0.1.19
+        specifier: 0.1.20
+        version: 0.1.20
       '@trigger.dev/sdk':
         specifier: 3.3.17
         version: 3.3.17(zod@3.23.8)
@@ -4724,8 +4724,8 @@ packages:
     resolution: {integrity: sha512-ldZXEhOBb8Is7xLs01fR3YEc3DERiz5silj8tnGkFZytt1abEvl/GhUmCE0PMLaMPTa3Jk4HbKmRlHmu+gCftg==}
     engines: {node: '>=12'}
 
-  '@tegonhq/sigma-sdk@0.1.19':
-    resolution: {integrity: sha512-Co6xVGswL9wKupz3prMp+LvlxgkGyEVmtgiOGa0TsAlJX6IdytAL4ldkOCgau+gPmYBnPotow+NWSfhNRaRRPA==}
+  '@tegonhq/sigma-sdk@0.1.20':
+    resolution: {integrity: sha512-Q5gia2epFmGFWbiA8Xq2WXgF7bK5x9nkPE3Sqi7JXGVrK9o146aywonNks922RmlKpv83My1QUFuaUcNg15Nng==}
     engines: {node: '>=18.0.0'}
 
   '@tegonhq/ui@0.2.35':
@@ -18018,7 +18018,7 @@ snapshots:
 
   '@tanstack/table-core@8.21.3': {}
 
-  '@tegonhq/sigma-sdk@0.1.19': {}
+  '@tegonhq/sigma-sdk@0.1.20': {}
 
   '@tegonhq/ui@0.2.35(@opentelemetry/api@1.9.0)(@types/react-dom@18.3.6(@types/react@18.3.20))(@types/react@18.3.20)(javascript-time-ago@2.5.11)(react-dom@18.3.1(react@18.3.1))(react-hook-form@7.49.3(react@18.3.1))(react@18.3.1)(sswr@2.2.0(svelte@5.28.2))(svelte@5.28.2)(tailwindcss@3.4.17(ts-node@10.9.2(@swc/core@1.11.22(@swc/helpers@0.5.17))(@types/node@20.16.11)(typescript@5.8.3)))(zod@3.23.8)':
     dependencies:

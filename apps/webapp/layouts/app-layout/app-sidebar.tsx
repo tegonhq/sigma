@@ -114,8 +114,8 @@ export const AppSidebar = observer(
                   <Button
                     variant="secondary"
                     className="flex gap-1 w-fit"
-                    isActive={firstTab.type === TabViewType.SYNC}
-                    onClick={() => navigate(TabViewType.SYNC)}
+                    isActive={firstTab.type === TabViewType.NOTIFICATIONS}
+                    onClick={() => navigate(TabViewType.NOTIFICATIONS)}
                   >
                     <Inbox className="h-4 w-4" />
                     Inbox

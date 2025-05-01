@@ -41,7 +41,7 @@ export async function createMainWindow() {
     browserWindow?.show();
 
     if (isDev) {
-      browserWindow?.webContents.openDevTools();
+      // browserWindow?.webContents.openDevTools();
     }
   });
 

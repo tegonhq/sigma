@@ -1,4 +1,4 @@
-import {globalShortcut, Menu, nativeImage, Tray, type BrowserWindow} from 'electron';
+import {globalShortcut, Menu, nativeImage, Tray, type BrowserWindow, screen} from 'electron';
 import {createMainWindow} from './main';
 import {createQuickWindow, registerQuickStates} from './quick';
 
@@ -42,12 +42,14 @@ export async function restoreOrCreateWindow() {
   }
 
   appWindows.main.focus();
+
+  return appWindows.main;
 }
 
 export function registerShortcut() {
   // Register a global shortcut
   const isRegistered = globalShortcut.register('CommandOrControl+Shift+K', () => {
-    restoreOrCreateQuickWindow();
+    restoreOrCreateQuickWindow(true);
   });
 
   if (isRegistered) {
@@ -60,12 +62,27 @@ export function registerShortcut() {
 /**
  * Restore an existing BrowserWindow or Create a new BrowserWindow.
  */
-export async function restoreOrCreateQuickWindow() {
+export async function restoreOrCreateQuickWindow(show = false) {
   if (!appWindows.quick || appWindows.quick.isDestroyed()) {
-    log.info('destroyed\n');
-    appWindows.quick = await createQuickWindow();
+    appWindows.quick = await createQuickWindow(show);
     registerQuickStates(appWindows.quick);
+
+    if (!show) {
+      return;
+    }
   }
+
+  // Reposition window based on current cursor position
+  const cursorPoint = screen.getCursorScreenPoint();
+  const currentDisplay = screen.getDisplayNearestPoint(cursorPoint);
+  const {width} = currentDisplay.workArea;
+  const {bounds} = currentDisplay;
+
+  // Update window position to top-right of current display
+  appWindows.quick.setPosition(bounds.x + width - 500 - 20, bounds.y + 60);
+
+  // Ensure it remains on top
+  appWindows.quick.setAlwaysOnTop(true, 'screen-saver', 2);
 
   if (!appWindows.quick.isVisible()) {
     appWindows.quick.show();

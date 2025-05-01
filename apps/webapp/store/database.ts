@@ -3,11 +3,13 @@ import type { ApplicationStoreType } from './application';
 import Dexie from 'dexie';
 
 import type {
+  ActivityType,
   AgentWorklogType,
   ConversationHistoryType,
   ConversationType,
   IntegrationAccountType,
   ListType,
+  NotificationType,
   PageType,
   StatusType,
   TaskExternalLinkType,
@@ -31,11 +33,13 @@ export class SigmaDatabase extends Dexie {
   taskOccurrences: Dexie.Table<TaskOccurrenceType, string>;
   taskExternalLinks: Dexie.Table<TaskExternalLinkType, string>;
   agentWorklogs: Dexie.Table<AgentWorklogType, string>;
+  activities: Dexie.Table<ActivityType, string>;
+  notifications: Dexie.Table<NotificationType, string>;
 
   constructor(databaseName: string) {
     super(databaseName);
 
-    this.version(30).stores({
+    this.version(31).stores({
       [MODELS.Workspace]: 'id,createdAt,updatedAt,name,slug,userId',
       [MODELS.IntegrationAccount]:
         'id,createdAt,updatedAt,accountId,settings,integratedById,integrationDefinitionId,workspaceId',
@@ -55,6 +59,10 @@ export class SigmaDatabase extends Dexie {
       [MODELS.List]: 'id,createdAt,updatedAt,pageId,icon,favourite',
       [MODELS.AgentWorklog]:
         'id,createdAt,updatedAt,modelName,modelId,state,type,workspaceId',
+      [MODELS.Activity]:
+        'id,createdAt,updatedAt,text,sourceId,sourceURL,taskId,integrationAccountId,workspaceId',
+      [MODELS.Notification]:
+        'id,createdAt,updatedAt,type,read,modelName,modelId,workspaceId',
 
       Application: 'id,sidebarCollapsed,tabGroups,activeTabGroupId',
     });
@@ -69,7 +77,9 @@ export class SigmaDatabase extends Dexie {
     this.taskOccurrences = this.table(MODELS.TaskOccurrence);
     this.taskExternalLinks = this.table(MODELS.TaskExternalLink);
     this.application = this.table('Application');
-    this.agentWorklogs = this.table('AgentWorklog');
+    this.agentWorklogs = this.table(MODELS.AgentWorklog);
+    this.activities = this.table(MODELS.Activity);
+    this.notifications = this.table(MODELS.Notification);
   }
 }
 

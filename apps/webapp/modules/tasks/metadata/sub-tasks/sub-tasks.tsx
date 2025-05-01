@@ -50,7 +50,7 @@ export const SubTasks = observer(
             )}
           >
             <SubIssue size={14} />
-            <span className="text-xs">
+            <span className="text-sm">
               {subTasks.filter((task) => task.status === 'Done').length}/
               {subTasks.length}
             </span>
@@ -76,7 +76,7 @@ export const SubTasks = observer(
                         className="shrink-0 h-[16px] w-[16px] ml-1"
                         checked={task.status === 'Done'}
                       />
-                      <div className="text-muted-foreground font-mono min-w-[40px] pl-1 text-xs self-center">
+                      <div className="text-muted-foreground font-mono min-w-[40px] pl-1 text-sm self-center">
                         T-{task.number}
                       </div>
                       <div className="inline-flex ml-1 items-center justify-start shrink min-w-[0px] min-h-[24px]">

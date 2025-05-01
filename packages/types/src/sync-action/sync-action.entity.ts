@@ -1,12 +1,14 @@
 import { Workspace } from '../workspace';
 
 export enum ModelNameEnum {
+  Activity = 'Activity',
   AgentWorklog = 'AgentWorklog',
   Conversation = 'Conversation',
   ConversationHistory = 'ConversationHistory',
   IntegrationAccount = 'IntegrationAccount',
   IntegrationDefinitionV2 = 'IntegrationDefinitionV2',
   List = 'List',
+  Notification = 'Notification',
   Page = 'Page',
   Task = 'Task',
   TaskExternalLink = 'TaskExternalLink',
@@ -16,12 +18,14 @@ export enum ModelNameEnum {
 }
 
 export const ModelName = {
+  Activity: 'Activity',
   AgentWorklog: 'AgentWorklog',
   Conversation: 'Conversation',
   ConversationHistory: 'ConversationHistory',
   IntegrationAccount: 'IntegrationAccount',
   IntegrationDefinitionV2: 'IntegrationDefinitionV2',
   List: 'List',
+  Notification: 'Notification',
   Page: 'Page',
   Task: 'Task',
   TaskExternalLink: 'TaskExternalLink',

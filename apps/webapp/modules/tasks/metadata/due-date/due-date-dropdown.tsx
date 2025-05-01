@@ -68,7 +68,7 @@ export const DuedateDropdown = observer(
           <Badge
             variant="secondary"
             className={cn(
-              'flex items-center gap-1 shrink min-w-[0px] text-xs',
+              'flex items-center gap-1 shrink min-w-[0px] text-sm',
               variant !== DuedateDropdownVariant.SHORT && 'h-7 px-2 text-base',
             )}
           >

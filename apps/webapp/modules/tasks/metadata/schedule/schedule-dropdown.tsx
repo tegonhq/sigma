@@ -80,7 +80,7 @@ export const ScheduleDropdown = observer(
         <Badge
           variant="secondary"
           className={cn(
-            'flex items-center gap-1 shrink min-w-[0px] text-xs',
+            'flex items-center gap-1 shrink min-w-[0px] text-sm',
             variant !== ScheduleDropdownVariant.SHORT && 'h-7 px-2 text-base',
           )}
         >
@@ -101,7 +101,7 @@ export const ScheduleDropdown = observer(
             <TooltipWrapper tooltip={task.scheduleText}>
               <Badge
                 variant="secondary"
-                className="flex items-center gap-1 shrink min-w-[0px] text-xs"
+                className="flex items-center gap-1 shrink min-w-[0px] text-sm"
               >
                 <Cycle size={14} />
               </Badge>

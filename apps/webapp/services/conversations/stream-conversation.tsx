@@ -62,23 +62,32 @@ export function useStreamConversationMutation() {
         const thoughts: Array<{ type: string }> = [];
         const responses: Array<{ type: string }> = [];
         chunk.split('\n\n').forEach((ch) => {
-          if (ch) {
-            const message = JSON.parse(ch.replace('data: ', ''));
+          try {
+            if (ch) {
+              const message = JSON.parse(ch.replace('data: ', ''));
 
-            if (message.type.includes('MESSAGE')) {
-              responses.push(message.message);
-            }
+              if (message.type.includes('MESSAGE')) {
+                responses.push(message.message);
+              }
 
-            if (message.type.includes('THOUGHT')) {
-              thoughts.push(message.message);
-            }
+              if (message.type.includes('THOUGHT')) {
+                thoughts.push(message.message);
+              }
 
-            if (message.type.includes('STREAM_END')) {
-              completed = true;
-              setIsLoading(false);
-              setThoughts([]);
-              setResponses([]);
+              if (message.type.includes('STREAM_END')) {
+                completed = true;
+                setIsLoading(false);
+                setThoughts([]);
+                setResponses([]);
+                return;
+              }
             }
+          } catch (e) {
+            completed = true;
+            setIsLoading(false);
+            setThoughts([]);
+            setResponses([]);
+            return;
           }
 
           return undefined;

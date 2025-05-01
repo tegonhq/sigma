@@ -2,9 +2,12 @@ export interface ActivityType {
   id: string;
   createdAt: string;
   updatedAt: string;
-  type: string | null;
-  eventData: string | null;
-  name: string;
+
+  text: string;
+  sourceId?: string;
+  sourceURL?: string;
+
+  taskId?: string;
   workspaceId: string;
-  integrationAccountId: string | null;
+  integrationAccountId?: string;
 }

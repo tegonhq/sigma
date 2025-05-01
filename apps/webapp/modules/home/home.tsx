@@ -3,7 +3,7 @@ import React from 'react';
 
 import { Conversation } from 'modules/conversation';
 import { Days } from 'modules/days';
-import { Instructions } from 'modules/instructions';
+import { Inbox } from 'modules/inbox';
 import { Lists } from 'modules/lists';
 import { SearchDialog } from 'modules/search';
 import { Tasks } from 'modules/tasks';
@@ -19,6 +19,7 @@ import { useIPC } from 'hooks/ipc';
 import { useScope } from 'hooks/use-scope';
 
 import { TabViewType } from 'store/application';
+import { useWindowListener } from './window-listener';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getComponent(componentType: string, props: any) {
@@ -34,16 +35,8 @@ function getComponent(componentType: string, props: any) {
     return <Lists {...props} />;
   }
 
-  if (componentType === TabViewType.CONTEXT) {
-    return <Instructions {...props} />;
-  }
-
-  if (componentType === TabViewType.SYNC) {
-    return <Instructions {...props} />;
-  }
-
   if (componentType === TabViewType.NOTIFICATIONS) {
-    return <Instructions {...props} />;
+    return <Inbox {...props} />;
   }
 
   if (componentType === TabViewType.AI) {
@@ -56,6 +49,7 @@ function getComponent(componentType: string, props: any) {
 export const Home = observer(() => {
   useScope(SCOPES.Global);
   const { tabs } = useApplication();
+  useWindowListener();
 
   const firstTab = tabs[0];
   const ipc = useIPC();
