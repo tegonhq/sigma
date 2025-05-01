@@ -59,7 +59,7 @@ export default function SignalsFeature() {
                   • i&apos;m 30 years old, male, and co-founder at sigma
                 </p>
                 <p className="text-lg font-inter text-foreground/80 tracking-tight leading-relaxed">
-                  • i only stay in five-star hotels when traveling
+                  • prefer airbnbs over hotels
                 </p>
               </div>
             </div>
