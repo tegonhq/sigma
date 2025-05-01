@@ -1,5 +1,6 @@
 // @hidden
 
+import { cn } from '@tegonhq/ui';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import React from 'react';
 
@@ -142,8 +143,10 @@ export function useAutoScroll(options: UseAutoScrollOptions = {}) {
 
 export const ScrollAreaWithAutoScroll = ({
   children,
+  className,
 }: {
   children: React.ReactNode;
+  className?: string;
 }) => {
   const { scrollRef } = useAutoScroll({
     smooth: true,
@@ -151,7 +154,7 @@ export const ScrollAreaWithAutoScroll = ({
   });
 
   return (
-    <div ref={scrollRef} className="overflow-y-auto">
+    <div ref={scrollRef} className={cn('overflow-y-auto', className)}>
       {children}
     </div>
   );

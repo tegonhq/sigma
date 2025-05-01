@@ -24,8 +24,9 @@ model Activity {
   task   Task?   @relation(fields: [taskId], references: [id])
   taskId String?
 
-  workspace   Workspace @relation(fields: [workspaceId], references: [id])
-  workspaceId String
+  workspace    Workspace      @relation(fields: [workspaceId], references: [id])
+  workspaceId  String
+  Conversation Conversation[]
 }
 
 model AIRequest {
@@ -98,16 +99,19 @@ model Conversation {
   updatedAt DateTime  @updatedAt
   deleted   DateTime?
 
-  title       String?
-  user        User       @relation(fields: [userId], references: [id])
-  userId      String
+  title  String?
+  user   User    @relation(fields: [userId], references: [id])
+  userId String
+
   workspace   Workspace? @relation(fields: [workspaceId], references: [id])
   workspaceId String?
 
-  page   Page?   @relation(fields: [pageId], references: [id])
-  pageId String?
-  task   Task?   @relation(fields: [taskId], references: [id])
-  taskId String?
+  page       Page?     @relation(fields: [pageId], references: [id])
+  pageId     String?
+  task       Task?     @relation(fields: [taskId], references: [id])
+  taskId     String?
+  activity   Activity? @relation(fields: [activityId], references: [id])
+  activityId String?
 
   ConversationHistory ConversationHistory[]
 }
@@ -219,14 +223,8 @@ model Notification {
   type String
   read Boolean @default(false)
 
-  // For conversation notifications
-  conversationId String?
-
-  // For brief/summary notifications
-  syncId String?
-
-  // For activity notifications
-  activityId String?
+  modelName String
+  modelId   String
 
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
   workspaceId String
@@ -499,6 +497,7 @@ model Workspace {
 }
 
 enum ModelName {
+  Activity
   AgentWorklog
   Attachment
   Conversation
@@ -506,6 +505,7 @@ enum ModelName {
   IntegrationAccount
   IntegrationDefinitionV2
   List
+  Notification
   Page
   SyncAction
   Task

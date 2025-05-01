@@ -43,6 +43,16 @@ const electronHandler = {
     restartAndInstall: () => {
       ipcRenderer.invoke('update-and-restart');
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    fromOtherWindows: (callback: (event: IpcRendererEvent, ...args: any[]) => void) => {
+      ipcRenderer.on('from-windows', callback);
+    },
+
+    // used to talk between windows
+    sendToMain: ({type, id}: {type: string; id: string}) => {
+      // Send the message to main process using a specific channel
+      ipcRenderer.send('from-quick-window', {type, id});
+    },
   },
 };
 

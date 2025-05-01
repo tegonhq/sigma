@@ -33,7 +33,7 @@ export const GroupingOrderingOptions = observer(() => {
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            <SelectLabel className="text-xs font-normal">Group by</SelectLabel>
+            <SelectLabel className="text-sm font-normal">Group by</SelectLabel>
             <SelectItem value="schedule">Schedule</SelectItem>
             <SelectItem value="status">Status</SelectItem>
             <SelectItem value="assignee">List</SelectItem>

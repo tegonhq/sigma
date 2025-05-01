@@ -127,7 +127,7 @@ export function AuthEmail() {
             </Form>
           </div>
 
-          <div className="mt-4 text-xs text-muted-foreground">
+          <div className="mt-4 text-sm text-muted-foreground">
             By clicking continue, you agree to our Terms of Service and Privacy
             Policy.
           </div>

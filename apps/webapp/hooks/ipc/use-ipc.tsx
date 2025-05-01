@@ -9,6 +9,10 @@ export interface IPCRenderer {
   getIntegrationsFolder: () => Promise<string>;
   initIntegrations: () => void;
   restartAndInstall: () => void;
+
+  // For other window communication
+  sendToMain: ({ type, id }: { type: string; id: string }) => void;
+  fromOtherWindows(callback: (event: any, ...args: any[]) => void): void;
 }
 
 export const useIPC = (): IPCRenderer => {

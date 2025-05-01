@@ -1,4 +1,4 @@
-import { PageTypeEnum } from '@sigma/types';
+import { UserTypeEnum } from '@sigma/types';
 import {
   AI,
   CalendarLine,
@@ -9,7 +9,6 @@ import {
   Project,
   SettingsLine,
 } from '@tegonhq/ui';
-import { parse } from 'date-fns';
 import { Check } from 'lucide-react';
 import React from 'react';
 
@@ -20,7 +19,9 @@ import { AddTaskDialogContext } from 'modules/tasks/add-task';
 import type { ListType } from 'common/types';
 
 import { useApplication } from 'hooks/application';
+import { useIPC } from 'hooks/ipc';
 
+import { useCreateConversationMutation } from 'services/conversations';
 import { useCreateListMutation } from 'services/lists';
 
 import { TabViewType } from 'store/application';
@@ -36,11 +37,20 @@ interface CommandType {
   command: () => void;
 }
 
-export const useSearchCommands = (value: string, onClose: () => void) => {
+export const useSearchCommands = (
+  value: string,
+  openConversation: ({
+    conversationId,
+    conversationHistoryId,
+  }: {
+    conversationHistoryId: string;
+    conversationId: string;
+  }) => void,
+  onClose: () => void,
+) => {
   const { tasksStore, pagesStore, listsStore } = useContextStore();
   const { setDialogOpen } = React.useContext(AddTaskDialogContext);
-  const { updateTabData, tabs, updateTabType, selectedTasks } =
-    useApplication();
+  const { tabs, updateTabType, selectedTasks } = useApplication();
   const firstTab = tabs[0];
   const { openDialog } = React.useContext(DailogViewsContext);
   const { markComplete, deleteTasks } = useTaskOperations();
@@ -50,6 +60,7 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
       updateTabType(0, TabViewType.LIST, data.id ? { entityId: data.id } : {});
     },
   });
+  const { mutate: createConversation } = useCreateConversationMutation({});
 
   const getTasks = () => {
     if (selectedTasks.length > 0) {
@@ -142,8 +153,20 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
           Icon: AI,
           text: `${value} ... ask sigma`,
           command: () => {
-            updateTabType(1, TabViewType.AI, {});
-            onClose();
+            createConversation(
+              {
+                message: value,
+                userType: UserTypeEnum.User,
+              },
+              {
+                onSuccess: (data) => {
+                  openConversation({
+                    conversationHistoryId: data.ConversationHistory[0].id,
+                    conversationId: data.id,
+                  });
+                },
+              },
+            );
           },
         },
       ];
@@ -213,66 +236,107 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
     if (value) {
       const pages = pagesStore.searchPages(value);
 
-      commands['Pages'] = pages.map((page) => {
-        const task = tasksStore.getTaskForPage(page.id);
-        const list = listsStore.getListWithPageId(page.id);
+      commands['Pages'] = pages
+        .map((page) => {
+          const task = tasksStore.getTaskForPage(page.id);
+          const list = listsStore.getListWithPageId(page.id);
 
-        if (task) {
-          return {
-            Icon: IssuesLine,
-            text: page.title,
-            key: task.id,
-            command: () => {
-              updateTabType(0, TabViewType.MY_TASKS, {
-                entityId: task.id,
-              });
+          if (task) {
+            return {
+              Icon: IssuesLine,
+              text: page.title,
+              key: task.id,
+              command: () => {
+                updateTabType(0, TabViewType.MY_TASKS, {
+                  entityId: task.id,
+                });
 
-              onClose();
-            },
-          };
-        }
+                onClose();
+              },
+            };
+          }
 
-        if (list) {
-          return {
-            Icon: Project,
-            text: page.title,
-            key: list.id,
-            command: () => {
-              updateTabType(0, TabViewType.LIST, {
-                entityId: list.id,
-              });
+          if (list) {
+            return {
+              Icon: Project,
+              text: page.title,
+              key: list.id,
+              command: () => {
+                updateTabType(0, TabViewType.LIST, {
+                  entityId: list.id,
+                });
 
-              onClose();
-            },
-          };
-        }
+                onClose();
+              },
+            };
+          }
 
-        if (page.type === PageTypeEnum.Daily) {
-          return {
-            Icon: CalendarLine,
-            text: page.title,
-            command: () => {
-              updateTabData(0, {
-                date: parse(page.title, 'dd-MM-yyyy', new Date()),
-              });
+          return undefined;
+        })
+        .filter(Boolean);
+    }
 
-              onClose();
-            },
-          };
-        }
+    return commands;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
+};
 
-        return {
-          Icon: DocumentLine,
-          text: page.title,
+export const useSearchCommandsQuick = (value: string, onClose: () => void) => {
+  const { tasksStore, pagesStore, listsStore } = useContextStore();
+  const ipc = useIPC();
+
+  return React.useMemo(() => {
+    const commands: Record<string, CommandType[]> = {};
+    commands['default'] = [];
+    if (value) {
+      commands['default'] = [
+        ...commands['default'],
+        {
+          Icon: AI,
+          text: `${value} ... ask sigma`,
           command: () => {
-            updateTabData(0, {
-              date: parse(page.title, 'dd-MM-yyyy', new Date()),
-            });
-
             onClose();
           },
-        };
-      });
+        },
+      ];
+    }
+
+    if (value) {
+      const pages = pagesStore.searchPages(value);
+
+      commands['Pages'] = pages
+        .map((page) => {
+          const task = tasksStore.getTaskForPage(page.id);
+          const list = listsStore.getListWithPageId(page.id);
+
+          if (task) {
+            return {
+              Icon: IssuesLine,
+              text: page.title,
+              key: task.id,
+              command: () => {
+                ipc.sendToMain({ type: 'Task', id: task.id });
+                onClose();
+              },
+            };
+          }
+
+          if (list) {
+            return {
+              Icon: Project,
+              text: page.title,
+              key: list.id,
+              command: () => {
+                ipc.sendToMain({ type: 'List', id: list.id });
+
+                onClose();
+              },
+            };
+          }
+
+          return undefined;
+        })
+        .filter(Boolean);
     }
 
     return commands;

@@ -12,3 +12,4 @@ export * from './list';
 export * from './task-occurrence';
 export * from './tasl-external-link';
 export * from './agent-worklog';
+export * from './notification';

@@ -11,4 +11,6 @@ export enum MODELS {
   List = 'List',
 
   AgentWorklog = 'AgentWorklog',
+  Activity = 'Activity',
+  Notification = 'Notification',
 }

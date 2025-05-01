@@ -1,6 +1,7 @@
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
+import { Workspace } from 'modules/auth/session.decorator';
 
 import {
   BootstrapRequestQuery,
@@ -26,11 +27,14 @@ export class SyncActionsController {
 
   @Get('delta')
   @UseGuards(AuthGuard)
-  async getDelta(@Query() deltaQuery: DeltaRequestQuery) {
+  async getDelta(
+    @Query() deltaQuery: DeltaRequestQuery,
+    @Workspace() workspaceId: string,
+  ) {
     return await this.syncActionsService.getDelta(
       deltaQuery.modelNames,
       BigInt(deltaQuery.lastSequenceId),
-      deltaQuery.workspaceId,
+      workspaceId,
     );
   }
 }

@@ -308,7 +308,7 @@ export const generateRandomId = (): string => {
 
 export const getCost = async (input: string, output: string) => {
   const result = await tokenizeAndEstimateCost({
-    model: 'gpt-4',
+    model: 'claude-3-7-sonnet-20250219',
     input,
     output,
   });

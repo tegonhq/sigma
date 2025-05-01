@@ -13,8 +13,8 @@ import { Filters } from './filters';
 import { ScheduleList } from './group-view/schedule';
 import { StatusList } from './group-view/status';
 import { Header } from './header';
-import { SingleTask } from './single-task';
 import { HeaderActions } from './header-actions';
+import { SingleTask } from './single-task';
 
 interface TabsProps {
   entity_id: string;

@@ -12,7 +12,8 @@ import { AllProviders } from 'common/wrappers/all-providers';
 import { useIPC } from 'hooks/ipc';
 import { useScope } from 'hooks/use-scope';
 
-import { CommandComponent } from './command';
+import { CommandComponent, CommandComponentQuick } from './command';
+import { QuickConverstion } from 'modules/conversation';
 
 export const Search = () => {
   useScope(SCOPES.Search);
@@ -21,7 +22,7 @@ export const Search = () => {
   useHotkeys(
     Key.Escape,
     () => {
-      ipc.sendMessage('quick-window-close');
+      onClose();
     },
     {
       scopes: [SCOPES.Search],
@@ -29,13 +30,15 @@ export const Search = () => {
     },
   );
 
+  const onClose = () => {
+    ipc.sendMessage('quick-window-close');
+  };
+
   return (
     <AllProviders>
       <AddTaskDialogProvider>
-        <Command className="h-[600px] border border-border shadow">
-          <CommandComponent fromQuickWindow />
-
-          <div className="border-border border-t-1"></div>
+        <Command className="border border-border shadow">
+          <CommandComponentQuick onClose={onClose} />
         </Command>
       </AddTaskDialogProvider>
     </AllProviders>
@@ -45,6 +48,10 @@ export const Search = () => {
 export const SearchDialog = observer(() => {
   useScope(SCOPES.Search);
   const [open, setOpen] = React.useState(false);
+  const [quickConversation, setQuickConversation] = React.useState<{
+    conversationHistoryId: string;
+    conversationId: string;
+  }>(undefined);
 
   useHotkeys(
     [`${Key.Control}+k`, `${Key.Meta}+k`],
@@ -61,12 +68,28 @@ export const SearchDialog = observer(() => {
   return (
     <CommandDialog
       open={open}
-      onOpenChange={setOpen}
+      onOpenChange={(value) => {
+        if (!value) {
+          setQuickConversation(undefined);
+        }
+
+        setOpen(value);
+      }}
       commandProps={{
         className: 'border-border border w-[600px]',
       }}
     >
-      <CommandComponent onClose={() => setOpen(false)} />
+      {quickConversation ? (
+        <QuickConverstion
+          conversationId={quickConversation.conversationId}
+          defaultConversationHistoryId={quickConversation.conversationHistoryId}
+        />
+      ) : (
+        <CommandComponent
+          onClose={() => setOpen(false)}
+          openConversation={setQuickConversation}
+        />
+      )}
     </CommandDialog>
   );
 });

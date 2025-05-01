@@ -13,7 +13,7 @@ export const TaskMetadata = observer(({ taskId }: { taskId: string }) => {
 
   return (
     <div
-      className={cn('flex items-start shrink-0 gap-2 h-4 text-xs')}
+      className={cn('flex items-start shrink-0 gap-2 h-4 text-sm')}
       contentEditable={false}
     >
       <div

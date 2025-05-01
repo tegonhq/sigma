@@ -27,11 +27,7 @@ export const AIHistoryDropdown = observer(() => {
   const pageId = useConversationContext();
 
   const conversations = React.useMemo(() => {
-    return sort(
-      conversationsStore.conversations.filter(
-        (conversation) => conversation.pageId === pageId,
-      ),
-    ).desc(
+    return sort(conversationsStore.conversations).desc(
       (conversation: ConversationType) => new Date(conversation.createdAt),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -38,8 +38,10 @@ export const Conversation = observer(() => {
     thoughts,
     responses,
   } = useStreamConversationMutation();
-  const { mutate: createConversationHistory } =
-    useCreateConversationHistoryMutation({});
+  const {
+    mutate: createConversationHistory,
+    data: conversationHistoryCreated,
+  } = useCreateConversationHistoryMutation({});
   const { mutate: createConversation } = useCreateConversationMutation({});
 
   const pageId = useConversationContext();
@@ -56,6 +58,10 @@ export const Conversation = observer(() => {
   }, [commonStore.currentConversationId]);
 
   const onSend = (text: string, agents: string[]) => {
+    if (isLoading) {
+      return;
+    }
+
     if (commonStore.currentConversationId) {
       createConversationHistory(
         {
@@ -93,18 +99,36 @@ export const Conversation = observer(() => {
     }
   };
 
+  const getConversations = () => {
+    let reached = false;
+
+    return (
+      <>
+        {conversationHistory.map(
+          (ch: ConversationHistoryType, index: number) => {
+            if (reached === true && isLoading) {
+              return null;
+            }
+
+            if (conversationHistoryCreated?.id === ch.id) {
+              reached = true;
+            }
+
+            return (
+              <ConversationItem key={index} conversationHistoryId={ch.id} />
+            );
+          },
+        )}
+      </>
+    );
+  };
+
   return (
     <div className="flex flex-col h-[calc(100vh_-_3.5rem)]">
       <div className="grow overflow-hidden">
         <div className="flex flex-col h-full justify-end overflow-hidden">
           <ScrollAreaWithAutoScroll>
-            {conversationHistory.map(
-              (ch: ConversationHistoryType, index: number) => {
-                return (
-                  <ConversationItem key={index} conversationHistoryId={ch.id} />
-                );
-              },
-            )}
+            {getConversations()}
             {isLoading && (
               <StreamingConversation messages={responses} thoughts={thoughts} />
             )}
