@@ -82,7 +82,7 @@ export const SubTasks = observer(
                       <div className="inline-flex ml-1 items-center justify-start shrink min-w-[0px] min-h-[24px]">
                         <div
                           className={cn(
-                            'text-left truncate',
+                            'text-left truncate text-base',
                             task.status === 'Done' &&
                               'line-through opacity-60 decoration-[1px] decoration-muted-foreground',
                           )}

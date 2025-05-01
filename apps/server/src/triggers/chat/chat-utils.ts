@@ -113,7 +113,7 @@ export async function* run(
   message: string,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   context: Record<string, any>,
-  userMemoryContext: string,
+  userContext: string[],
   previousHistory: ExecutionState['previousHistory'],
   mcp: MCP,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -125,7 +125,7 @@ export async function* run(
     query: message,
     context,
     previousHistory,
-    userMemoryContext,
+    userMemoryContext: userContext.join(''),
     history: [], // Track the full ReAct history
     completed: false,
     autoMode: true,

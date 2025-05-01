@@ -12,10 +12,7 @@ import {
 import { endOfDay, addDays, endOfWeek, formatISO } from 'date-fns';
 import React from 'react';
 
-import {
-  useGetTaskScheduleMutation,
-  useUpdateTaskMutation,
-} from 'services/tasks';
+import { useAddDueDateMutation, useUpdateTaskMutation } from 'services/tasks';
 
 import { useContextStore } from 'store/global-context-provider';
 
@@ -93,7 +90,7 @@ export const DueDateDialog = ({ onClose, taskIds }: DueDateDialogProps) => {
   const localISOString = formatISO(now, { representation: 'complete' });
 
   const { mutate: updateTask } = useUpdateTaskMutation({});
-  const { mutate: getTaskSchedule, isLoading } = useGetTaskScheduleMutation({});
+  const { mutate: addDuedate, isLoading } = useAddDueDateMutation({});
 
   const getTaskAndOccurrence = (taskIdWithOccurrence: string) => {
     const taskId = taskIdWithOccurrence.split('__')[0];
@@ -126,39 +123,15 @@ export const DueDateDialog = ({ onClose, taskIds }: DueDateDialogProps) => {
       });
       onClose();
     } else {
-      getTaskSchedule(
-        {
-          text: dueDate.text,
-          currentTime: localISOString,
-        },
-        {
-          onSuccess: (data) => {
-            if (data.dueDate) {
-              taskIds.forEach((taskIdWithOccurrence) => {
-                const { taskId } = getTaskAndOccurrence(taskIdWithOccurrence);
-
-                updateTask({
-                  taskId,
-                  dueDate: data.dueDate,
-                });
-              });
-              onClose();
-            }
-
-            if (data.startTime) {
-              taskIds.forEach((taskIdWithOccurrence) => {
-                const { taskId } = getTaskAndOccurrence(taskIdWithOccurrence);
-
-                updateTask({
-                  taskId,
-                  dueDate: endOfDay(data.startTime),
-                });
-              });
-              onClose();
-            }
-          },
-        },
-      );
+      addDuedate({
+        text: dueDate.text,
+        currentTime: localISOString,
+        taskIds: taskIds.map(
+          (taskIdWithOccurrence) =>
+            getTaskAndOccurrence(taskIdWithOccurrence).taskId,
+        ),
+      });
+      onClose();
     }
   };
 

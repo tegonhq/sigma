@@ -11,7 +11,7 @@ export class ConversationService {
     userId: string,
     conversationData: CreateConversationDto,
   ): Promise<Conversation> {
-    const { pageId, taskId, ...otherData } = conversationData;
+    const { pageId, taskId, title, ...otherData } = conversationData;
 
     return this.prisma.conversation.create({
       data: {
@@ -19,7 +19,8 @@ export class ConversationService {
         userId,
         pageId,
         taskId,
-        title: conversationData.message.substring(0, 100),
+        title:
+          title.substring(0, 100) ?? conversationData.message.substring(0, 100),
         ConversationHistory: {
           create: {
             userId,

@@ -9,6 +9,7 @@ import type { PageType } from 'common/types';
 import { sigmaDatabase } from 'store/database';
 
 import { Page } from './models';
+import { sort } from 'fast-sort';
 
 export const PagesStore: IAnyStateTreeNode = types
   .model({
@@ -120,6 +121,12 @@ export const PagesStore: IAnyStateTreeNode = types
       return generateKeyBetween(lastPage?.sortOrder, null);
     },
     searchPages(query: string) {
+      if (query === '') {
+        return sort(self.pages.toJSON().filter((page) => page.type === 'List'))
+          .desc((page) => page.updatedAt)
+          .slice(0, 10);
+      }
+
       const fuse = new Fuse(
         self.pages.toJSON().filter((page) => page.type !== 'Context'),
         {

@@ -21,7 +21,7 @@ import { useContextStore } from 'store/global-context-provider';
 
 import { SettingSection } from '../setting-section';
 
-export const Context = observer(() => {
+export const Signals = observer(() => {
   const { pagesStore } = useContextStore();
   const page = pagesStore.getContextPage();
   const [provider, setProvider] = React.useState(undefined);

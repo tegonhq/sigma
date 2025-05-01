@@ -13,9 +13,15 @@ import { TasksAIController } from './tasks-ai.controller';
 import TasksAIService from './tasks-ai.service';
 import { TasksController } from './tasks.controller';
 import { TasksService } from './tasks.service';
+import { TaskOccurenceModule } from 'modules/task-occurrence/task-occurrence.model';
 
 @Module({
-  imports: [PrismaModule, ConversationModule, ContentModule],
+  imports: [
+    PrismaModule,
+    ConversationModule,
+    ContentModule,
+    TaskOccurenceModule,
+  ],
   controllers: [TasksController, TasksAIController],
   providers: [
     PrismaService,

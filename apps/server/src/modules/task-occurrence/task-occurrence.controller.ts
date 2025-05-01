@@ -68,6 +68,7 @@ export class TaskOccurenceController {
     return await this.taskOccurenceService.createTaskOccurence(
       createTaskOccurencesData,
       workspaceId,
+      true,
     );
   }
 
@@ -128,6 +129,7 @@ export class TaskOccurenceController {
     @Param('taskId') taskId: string,
     @Workspace() workspaceId: string,
   ) {
+    console.log(taskId);
     return await this.taskOccurenceService.deleteTaskOccurenceByTask(
       taskId,
       workspaceId,

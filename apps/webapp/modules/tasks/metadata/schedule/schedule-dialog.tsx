@@ -25,7 +25,7 @@ import { useApplication } from 'hooks/application';
 
 import {
   useCreateTaskOccurrenceMutation,
-  useDeleteTaskOccurrenceMutation,
+  useDeleteAllTaskOccurrencesMutation,
   useUpdateTaskOccurrenceMutation,
 } from 'services/task-occurrence';
 import {
@@ -117,13 +117,14 @@ export const ScheduleDialog = ({ onClose, taskIds }: ScheduleDialogProps) => {
   const now = new Date(); // Get current local time
   const localISOString = formatISO(now, { representation: 'complete' });
 
-  const { mutate: updateTask } = useUpdateTaskMutation({});
   const { mutate: getTaskSchedule, isLoading } = useGetTaskScheduleMutation({});
-  const { mutate: deleteTaskOccurrence } = useDeleteTaskOccurrenceMutation({});
+
   const { mutate: updateTaskOccurrenceAPI } = useUpdateTaskOccurrenceMutation(
     {},
   );
   const { mutate: createTaskOccurrence } = useCreateTaskOccurrenceMutation({});
+  const { mutate: deleteAllTaskOccurrences } =
+    useDeleteAllTaskOccurrencesMutation({});
 
   const getTaskAndOccurrence = (taskIdWithOccurrence: string) => {
     const taskId = taskIdWithOccurrence.split('__')[0];
@@ -182,11 +183,12 @@ export const ScheduleDialog = ({ onClose, taskIds }: ScheduleDialogProps) => {
   const onCommand = (schedule: ScheduleSample) => {
     if (schedule.text === 'Remove schedule') {
       taskIds.forEach((taskIdWithOccurrence) => {
-        const { taskOccurrenceId } = getTaskAndOccurrence(taskIdWithOccurrence);
-        if (taskOccurrenceId) {
-          deleteTaskOccurrence({
-            taskOccurrenceId,
+        const { taskId } = getTaskAndOccurrence(taskIdWithOccurrence);
+        if (taskId) {
+          deleteAllTaskOccurrences({
+            taskId,
           });
+        } else {
         }
       });
       onClose();
@@ -198,42 +200,15 @@ export const ScheduleDialog = ({ onClose, taskIds }: ScheduleDialogProps) => {
 
       onClose();
     } else {
-      getTaskSchedule(
-        {
-          text: schedule.text,
-          currentTime: localISOString,
-        },
-        {
-          onSuccess: (data) => {
-            if (data.dueDate) {
-              return;
-            }
-
-            if (data.startTime && !data.recurrenceRule[0]) {
-              updateTaskOccurrence(
-                taskIds,
-                startOfDay(data.startTime).toISOString(),
-              );
-
-              onClose();
-              return;
-            }
-
-            taskIds.forEach((taskId) => {
-              updateTask({
-                taskId,
-                status: 'Todo',
-                recurrence: data.recurrenceRule ? data.recurrenceRule : [],
-                scheduleText: data.scheduleText ? data.scheduleText : null,
-                startTime: data.startTime ? data.startTime : null,
-                endTime: data.endTime ? data.endTime : null,
-              });
-            });
-
-            onClose();
-          },
-        },
-      );
+      getTaskSchedule({
+        text: schedule.text,
+        currentTime: localISOString,
+        taskIds: taskIds.map(
+          (taskIdWithOccurrence) =>
+            getTaskAndOccurrence(taskIdWithOccurrence).taskId,
+        ),
+      });
+      onClose();
     }
 
     clearSelectedTask();

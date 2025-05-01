@@ -25,6 +25,8 @@ export const tablesToSendMessagesFor = new Map([
   [ModelNameEnum.TaskExternalLink, true],
   [ModelNameEnum.TaskOccurrence, true],
   [ModelNameEnum.Workspace, true],
+  [ModelNameEnum.Activity, true],
+  [ModelNameEnum.Notification, true],
 ]);
 
 export const tableHooks = new Map([

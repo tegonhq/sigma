@@ -22,6 +22,8 @@ export const beautifyTask = task({
       include: { page: true, taskExternalLink: true },
     });
 
+    logger.info(JSON.stringify(sigmaTask));
+
     if (sigmaTask.taskExternalLink.length > 0) {
       return "Beautify doesn't run for tasks created with integrations";
     }
@@ -51,6 +53,7 @@ export const beautifyTask = task({
           {
             text: sigmaTask.page.title,
             currentTime: new Date().toISOString(),
+            taskIds: [],
           },
           { headers: { Authorization: `Bearer ${payload.pat}` } },
         )

@@ -23,7 +23,7 @@ export function TooltipWrapper({
   }
 
   return (
-    <Tooltip>
+    <Tooltip delayDuration={1000} disableHoverableContent>
       <TooltipTrigger asChild>
         <div className={cn(className)}>{children}</div>
       </TooltipTrigger>

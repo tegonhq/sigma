@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { convertTiptapJsonToHtml } from '@sigma/editor-extensions';
 import {
   contextPrompt,
   LLMModelEnum,
@@ -19,9 +20,14 @@ import {
   CreateWorkspaceInput,
   UpdateWorkspaceInput,
 } from './workspaces.interface';
+import { LoggerService } from 'modules/logger/logger.service';
 
 @Injectable()
 export default class WorkspacesService {
+  private readonly logger: LoggerService = new LoggerService(
+    'WorkspaceService',
+  );
+
   constructor(
     private prisma: PrismaService,
     private aiRequestsService: AIRequestsService,
@@ -169,63 +175,53 @@ export default class WorkspacesService {
   }
 
   async getRelevantContext(
-    worskspaceId: string,
+    workspaceId: string,
     query: string,
     getFlag: boolean,
   ) {
-    const contextResponse = await this.aiRequestsService.getLLMRequest(
-      {
-        messages: [
-          {
-            role: 'user',
-            content: contextPrompt
-              .replace(
-                '{{USER_PREFERENCES}}',
-                `Slack-based
-"When a message is posted in #priority-tasks containing the word 'urgent', create a task and fetch related Sentry errors for the linked issue ID."
-
-Email-based
-"If I receive an email from design@client.com, create a task under the 'Client Review' project and add a due date 3 days later."
-
-Information extraction
-"If someone in a conversation mentions my role or job title, extract and save it in my profile."
-
-Mixed automation
-"When a GitHub PR is linked in Slack and mentions a ticket ID, comment on the ticket with the PR link and mark the ticket as 'In Review'."
-
-AI suggestions
-"When an email contains a meeting summary or an action point, convert the summary to a checklist task."
-
-Github
-"When a new issue is created, create a new task and add to relevant list"
-
-Hevy
-Manoj prefers compound workouts
-Manoj loves HIIT, Strength and conditioning over traditional weightlifting
-MAnoj usual format of routine looks like warmup, main workouts, core and stretching
-Manoj has only access to very basic GYM, has a cycle. 
-`,
-              )
-              .replace('{{CURRENT_CONVERSATION_MESSAGE}}', query)
-              .replace('{{GET_FLAG}}', getFlag.toString()),
-          },
-        ],
-        llmModel: LLMModelEnum.GEMINI20FLASHLITE,
-        model: 'context',
+    const userContextPage = await this.prisma.page.findFirst({
+      where: {
+        workspaceId,
+        type: 'Context',
       },
-      worskspaceId,
-    );
+    });
+    const userContextPageHTML = userContextPage.description
+      ? convertTiptapJsonToHtml(JSON.parse(userContextPage.description))
+      : '';
 
-    const outputRegex = /<output>\s*(.*?)\s*<\/output>/s;
-    const match = contextResponse.match(outputRegex);
+    try {
+      const contextResponse = await this.aiRequestsService.getLLMRequest(
+        {
+          messages: [
+            {
+              role: 'user',
+              content: contextPrompt
+                .replace('{{USER_PREFERENCES}}', userContextPageHTML)
+                .replace('{{CURRENT_CONVERSATION_MESSAGE}}', query)
+                .replace('{{GET_FLAG}}', getFlag.toString()),
+            },
+          ],
+          llmModel: LLMModelEnum.GEMINI20FLASHLITE,
+          model: 'context',
+        },
+        workspaceId,
+      );
 
-    if (match && match[1]) {
-      try {
-        return JSON.parse(match[1]);
-      } catch (e) {
-        console.error('Failed to parse context response:', e);
-        return [];
+      const outputRegex = /<output>\s*(.*?)\s*<\/output>/s;
+      const match = contextResponse.match(outputRegex);
+
+      if (match && match[1]) {
+        try {
+          return JSON.parse(match[1]);
+        } catch (e) {
+          this.logger.error({
+            message: `Failed to parse context response: ${e}`,
+          });
+          return [];
+        }
       }
+    } catch (e) {
+      this.logger.error(e);
     }
 
     return [];

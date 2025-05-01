@@ -20,7 +20,7 @@ import {
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 
-import { Context } from './context';
+import { Signals } from './signals';
 import { Integrations } from './integrations';
 import { MCP } from './mcp';
 import { Preferences } from './preferences';
@@ -37,7 +37,7 @@ const COMPONENTS_MAP = {
   Integrations,
   Preferences,
   MCP,
-  Context,
+  Signals,
 };
 
 export const Settings = observer(
@@ -53,7 +53,7 @@ export const Settings = observer(
       ],
       ai: [
         { name: 'MCP', icon: AI },
-        { name: 'Context', icon: DocumentLine },
+        { name: 'Signals', icon: DocumentLine },
       ],
     };
 
