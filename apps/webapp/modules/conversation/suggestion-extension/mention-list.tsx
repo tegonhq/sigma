@@ -1,11 +1,11 @@
 import { cn } from '@tegonhq/ui';
+import Image from 'next/image';
 import React, {
   forwardRef,
   useEffect,
   useImperativeHandle,
   useState,
 } from 'react';
-import Image from 'next/image';
 
 import { getIcon, type IconType } from 'common/icon-utils';
 

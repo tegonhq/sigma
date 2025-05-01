@@ -60,7 +60,7 @@ export default class AIRequestsService {
     const model = reqBody.llmModel;
     this.logger.info({
       message: `Received request with model: ${model}`,
-      payload: { userMessages },
+
       where: `AIRequestsService.LLMRequestStream`,
     });
 

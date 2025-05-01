@@ -30,7 +30,7 @@ export interface RunChatPayload {
 function createMCPConfig(userMCP: any, pat: string) {
   const sigmaMCP = {
     command: 'npx',
-    args: ['-y', '@tegonhq/sigma-mcp'],
+    args: ['-y', '@tegonhq/sigma-mcp-server'],
     env: {
       API_BASE_URL: process.env.BACKEND_HOST,
       API_TOKEN: pat,

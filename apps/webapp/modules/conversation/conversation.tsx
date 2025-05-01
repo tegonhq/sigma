@@ -2,7 +2,6 @@ import { UserTypeEnum } from '@sigma/types';
 import { cn, LoaderLine } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
-
 import type { ConversationHistoryType } from 'common/types';
 import { ScrollAreaWithAutoScroll } from 'common/use-auto-scroll';
 
@@ -24,10 +23,8 @@ import { useConversationContext } from './use-conversation-context';
 
 export const Conversation = observer(() => {
   const { commonStore } = useContextStore();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_temp, setTemp] = React.useState(false);
 
-  const { conversationHistory, conversation } = useConversationHistory(
+  const { conversationHistory } = useConversationHistory(
     commonStore.currentConversationId,
   );
 
@@ -46,18 +43,7 @@ export const Conversation = observer(() => {
 
   const pageId = useConversationContext();
 
-  React.useEffect(() => {
-    if (conversation?.pageId && conversation.pageId !== pageId) {
-      commonStore.update({ currentConversationId: undefined });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [conversation?.id, pageId]);
-
-  React.useEffect(() => {
-    setTemp(true);
-  }, [commonStore.currentConversationId]);
-
-  const onSend = (text: string, agents: string[]) => {
+  const onSend = (text: string, agents: string[], title: string) => {
     if (isLoading) {
       return;
     }
@@ -86,6 +72,7 @@ export const Conversation = observer(() => {
           userType: UserTypeEnum.User,
           pageId,
           context: { agents },
+          title,
         },
         {
           onSuccess: (data) => {

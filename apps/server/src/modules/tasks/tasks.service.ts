@@ -58,9 +58,6 @@ export class TasksService {
         id: taskId,
         deleted: null,
       },
-      include: {
-        page: true,
-      },
     });
     return task;
   }

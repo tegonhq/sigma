@@ -29,7 +29,7 @@ import { LinkTaskExtension } from './link-task';
 import trailingNode from './trailing-node';
 
 // create a lowlight instance with all languages loaded
-const lowlight = createLowlight(all);
+export const lowlight = createLowlight(all);
 
 const tiptapLink = TiptapLink.configure({
   HTMLAttributes: {
@@ -86,7 +86,7 @@ const starterKit = StarterKit.configure({
   },
   paragraph: {
     HTMLAttributes: {
-      class: cx('leading-[24px] text-md mt-[1rem] paragraph-node'),
+      class: cx('leading-[24px] mt-[1rem] paragraph-node'),
     },
   },
   codeBlock: false,

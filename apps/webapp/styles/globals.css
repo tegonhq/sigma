@@ -31,7 +31,6 @@ strong {
   a,
   button {
     cursor: default;
-    user-select: none;
   }
 
   @supports (scrollbar-width: auto) {
@@ -62,6 +61,10 @@ strong {
     .overflow-auto::-webkit-scrollbar {
       max-width: 5px;
     }
+  }
+
+  nav[aria-label='breadcrumb'] li {
+    @apply text-base;
   }
 
   .tiptap p.is-editor-empty:first-child::before {

@@ -31,8 +31,14 @@ export const chat = task({
       `/api/v1/conversation_history/${payload.conversationHistoryId}/context`,
     );
     const contextFromAPI = response.data;
-    const { agents, previousHistory, userMemoryContext, ...otherData } =
-      contextFromAPI;
+    const { previousHistory, userContext, ...otherData } = contextFromAPI;
+
+    let { agents = [] } = contextFromAPI;
+    // Add sigma as a default agent if it's not already in the list
+    if (!agents.includes('sigma')) {
+      agents = [...agents, 'sigma'];
+      logger.info(`Added sigma as a default agent`);
+    }
 
     // Initialise mcp
     const mcp = new MCP();
@@ -76,7 +82,7 @@ export const chat = task({
     const llmResponse = run(
       message,
       context,
-      userMemoryContext,
+      userContext,
       previousExecutionHistory,
       mcp,
     );

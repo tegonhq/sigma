@@ -24,7 +24,7 @@ export const InboxItem = observer(
     return (
       <div
         className={cn(
-          'ml-4 p-3 py-0 mr-4 flex gap-1 items-center hover:bg-grayAlpha-200 rounded',
+          'ml-2 p-3 py-0 mr-4 flex gap-1 items-center hover:bg-grayAlpha-200 rounded',
         )}
         onClick={() => {
           if (!notification.read) {
@@ -37,7 +37,7 @@ export const InboxItem = observer(
             !false && 'border-b',
           )}
         >
-          <div className="flex justify-between text-sm">
+          <div className="flex justify-between">
             <div
               className={cn(
                 'w-[calc(100%_-_110px)]',

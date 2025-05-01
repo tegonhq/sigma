@@ -24,4 +24,8 @@ export class CreateConversationDto {
   @IsString()
   @IsOptional()
   taskId?: string;
+
+  @IsString()
+  @IsOptional()
+  title?: string;
 }

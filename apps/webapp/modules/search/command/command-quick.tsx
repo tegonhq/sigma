@@ -12,12 +12,19 @@ import { useSearchCommandsQuick } from './use-search-commands';
 
 interface CommandComponentProps {
   onClose?: () => void;
+  openConversation: ({
+    conversationId,
+    conversationHistoryId,
+  }: {
+    conversationHistoryId: string;
+    conversationId: string;
+  }) => void;
 }
 
 export const CommandComponentQuick = observer(
-  ({ onClose }: CommandComponentProps) => {
+  ({ onClose, openConversation }: CommandComponentProps) => {
     const [value, setValue] = React.useState('');
-    const commands = useSearchCommandsQuick(value, onClose);
+    const commands = useSearchCommandsQuick(value, openConversation, onClose);
 
     const defaultCommands = () => {
       const defaultCommands = commands['default'];

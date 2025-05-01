@@ -14,6 +14,8 @@ export const InboxList = observer(() => {
     (notification: NotificationType) => new Date(notification.createdAt),
   ) as NotificationType[];
 
+  console.log(notifications);
+
   return (
     <ScrollArea>
       <div className="flex flex-col pt-2">

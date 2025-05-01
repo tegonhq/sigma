@@ -1,21 +1,22 @@
 import { Button, cn, SendLine } from '@tegonhq/ui';
 import { Document } from '@tiptap/extension-document';
+import HardBreak from '@tiptap/extension-hard-break';
 import { Paragraph } from '@tiptap/extension-paragraph';
 import { Text } from '@tiptap/extension-text';
 import { EditorContent } from 'novel';
-import { Placeholder } from 'novel/extensions';
+import { CodeBlockLowlight, Placeholder } from 'novel/extensions';
 import { useState } from 'react';
 import React from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
 
-import { EditorRoot, type EditorT } from 'common/editor';
+import { EditorRoot, lowlight, type EditorT } from 'common/editor';
 import { SCOPES } from 'common/shortcut-scopes';
 
 import { CustomMention, useMentionSuggestions } from './suggestion-extension';
 
 interface ConversationTextareaProps {
-  onSend: (value: string, agents: string[]) => void;
+  onSend: (value: string, agents: string[], title: string) => void;
 }
 
 export function ConversationTextarea({ onSend }: ConversationTextareaProps) {
@@ -26,10 +27,12 @@ export function ConversationTextarea({ onSend }: ConversationTextareaProps) {
   const suggestion = useMentionSuggestions();
 
   useHotkeys(
-    [`${Key.Meta}+${Key.Enter}`],
+    [Key.Enter],
     () => {
       if (text) {
-        onSend(text, agents);
+        const title = editor.getText();
+
+        onSend(text, agents, title);
         setText('');
         editor.commands.clearContent(true);
       }
@@ -83,6 +86,12 @@ export function ConversationTextarea({ onSend }: ConversationTextareaProps) {
               CustomMention.configure({
                 suggestion,
               }),
+              CodeBlockLowlight.configure({
+                lowlight,
+              }),
+              HardBreak.configure({
+                keepMarks: true,
+              }),
               Placeholder.configure({
                 placeholder: () => {
                   return 'Ask sigma...';
@@ -104,10 +113,29 @@ export function ConversationTextarea({ onSend }: ConversationTextareaProps) {
               attributes: {
                 class: `prose prose-lg dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full`,
               },
+              handleKeyDown(view, event) {
+                // Block default Enter
+                if (event.key === 'Enter' && !event.shiftKey) {
+                  event.preventDefault();
+                  return true;
+                }
+
+                // Allow Shift+Enter to insert hard break
+                if (event.key === 'Enter' && event.shiftKey) {
+                  view.dispatch(
+                    view.state.tr.replaceSelectionWith(
+                      view.state.schema.nodes.hardBreak.create(),
+                    ),
+                  );
+                  return true;
+                }
+
+                return false;
+              },
             }}
             immediatelyRender={false}
             className={cn(
-              'editor-container w-full min-w-full text-base sm:rounded-lg px-3 ',
+              'editor-container w-full min-w-full text-base sm:rounded-lg px-3 max-h-[400px] overflow-auto',
             )}
           ></EditorContent>
         </EditorRoot>
@@ -119,7 +147,9 @@ export function ConversationTextarea({ onSend }: ConversationTextareaProps) {
             type="submit"
             onClick={() => {
               if (text) {
-                onSend(text, agents);
+                const title = editor.getText();
+
+                onSend(text, agents, title);
                 editor.commands.clearContent(true);
                 setText('');
               }

@@ -36,7 +36,7 @@ export function Provider({ children }: ProviderProps) {
           disableTransitionOnChange
         >
           <HotkeysProvider initiallyActiveScopes={[SCOPES.Global]}>
-            <TooltipProvider delayDuration={500}>
+            <TooltipProvider delayDuration={2000} disableHoverableContent>
               <StoreContext.Provider value={storeContextStore as any}>
                 <QueryClientProvider client={queryClientRef.current}>
                   <TaskViewProvider>

@@ -101,6 +101,20 @@ export async function getWorkspaceId(
       });
 
       return agentWorklog.workspaceId;
+
+    case ModelName.Activity:
+      const activity = await prisma.activity.findUnique({
+        where: { id: modelId },
+      });
+
+      return activity.workspaceId;
+
+    case ModelName.Notification:
+      const notification = await prisma.notification.findUnique({
+        where: { id: modelId },
+      });
+
+      return notification.workspaceId;
     default:
       return undefined;
   }
@@ -113,6 +127,7 @@ export async function getModelData(
 ) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const modelMap: Record<ModelName, any> = {
+    Activity: prisma.activity,
     Workspace: prisma.workspace,
     Template: prisma.template,
     Page: prisma.page,
@@ -122,6 +137,7 @@ export async function getModelData(
     Conversation: prisma.conversation,
     ConversationHistory: prisma.conversationHistory,
     List: prisma.list,
+    Notification: prisma.notification,
     IntegrationAccount: {
       findUnique: (args: { where: { id: string } }) =>
         prisma.integrationAccount.findUnique({

@@ -14,9 +14,14 @@ import { runs, tasks } from '@trigger.dev/sdk/v3';
 import { Response } from 'express';
 import { PrismaService } from 'nestjs-prisma';
 
+import WorkspacesService from 'modules/workspaces/workspaces.service';
+
 @Injectable()
 export class ConversationHistoryService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private workspace: WorkspacesService,
+  ) {}
 
   async createConversationHistory(
     conversationHistoryData: CreateConversationHistoryDto,
@@ -91,6 +96,12 @@ export class ConversationHistoryService {
         include: { conversation: true },
       });
 
+    const userContext = (await this.workspace.getRelevantContext(
+      conversationHistory.conversation.workspaceId,
+      conversationHistory.message,
+      false,
+    )) as string[];
+
     if (!conversationHistory) {
       return null;
     }
@@ -109,15 +120,6 @@ export class ConversationHistoryService {
       }
     }
 
-    if (conversationHistory.conversation.taskId) {
-      if (!context.tasks) {
-        context.tasks = [];
-      }
-      if (!context.tasks.includes(conversationHistory.conversation.taskId)) {
-        context.tasks.push(conversationHistory.conversation.taskId);
-      }
-    }
-
     // Get pages data if pageIds exist
     let page: Array<Partial<Page>> = [];
     if (context.pages?.length) {
@@ -129,7 +131,7 @@ export class ConversationHistoryService {
             },
           });
 
-          return {
+          const pageData: Record<string, string> = {
             title: page.title,
             id: page.id,
             descrition: page.description
@@ -137,38 +139,39 @@ export class ConversationHistoryService {
               : undefined,
             type: page.type,
           };
+
+          // If page type is List, fetch the list and add listId
+          if (page.type === 'List') {
+            const list = await this.prisma.list.findFirst({
+              where: {
+                pageId: page.id,
+              },
+            });
+            if (list) {
+              pageData['listId'] = list.id;
+            }
+          }
+
+          // If page type is Default, fetch tasks for that page and add taskId
+          if (page.type === 'Default') {
+            const task = await this.prisma.task.findFirst({
+              where: {
+                pageId: page.id,
+              },
+            });
+            if (task) {
+              pageData['taskId'] = task.id;
+            }
+          }
+
+          return pageData;
         }),
       );
     }
 
     // Get pages data if pageIds exist
+    // eslint-disable-next-line prefer-const
     let task: Array<Partial<Task>> = [];
-    if (context.tasks?.length) {
-      task = await Promise.all(
-        context.tasks.map(async (taskId: string) => {
-          const task = await this.prisma.task.findUnique({
-            where: {
-              id: taskId,
-            },
-            include: {
-              page: true,
-            },
-          });
-
-          return {
-            title: task.page.title,
-            id: task.id,
-            descrition: task.page.description
-              ? generateHTML(
-                  JSON.parse(task.page.description),
-                  defaultExtensions,
-                )
-              : undefined,
-            type: task.page.type,
-          };
-        }),
-      );
-    }
 
     // Get previous conversation history message and response
     let previousHistory = null;
@@ -191,6 +194,7 @@ export class ConversationHistoryService {
       page,
       task,
       previousHistory,
+      userContext,
       ...otherContextData,
     };
   }

@@ -16,11 +16,11 @@ export async function createQuickWindow(show = true) {
   const smallerWindow = new BrowserWindow({
     show: false, // Use the 'ready-to-show' event to show the instantiated BrowserWindow.
     width: 500, // Set minimum width
-    height: 500, // Set minimum height
+    height: 400, // Set minimum height
     icon: path.join(__dirname, '/../../../buildResources/icon.png'),
     resizable: false,
     x: bounds.x + width - 500 - 20,
-    y: bounds.y + 60,
+    y: 0,
     movable: false,
     minimizable: false,
     maximizable: false,

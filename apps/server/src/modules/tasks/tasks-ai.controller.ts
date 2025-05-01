@@ -21,4 +21,22 @@ export class TasksAIController {
   ) {
     return await this.tasksAiService.recurrence(reccurenceInput, workspaceId);
   }
+
+  @Post('schedule')
+  @UseGuards(AuthGuard)
+  async schedule(
+    @Body() reccurenceInput: ReccurenceInput,
+    @Workspace() workspaceId: string,
+  ) {
+    return await this.tasksAiService.schedule(reccurenceInput, workspaceId);
+  }
+
+  @Post('duedate')
+  @UseGuards(AuthGuard)
+  async dueDate(
+    @Body() reccurenceInput: ReccurenceInput,
+    @Workspace() workspaceId: string,
+  ) {
+    return await this.tasksAiService.duedate(reccurenceInput, workspaceId);
+  }
 }

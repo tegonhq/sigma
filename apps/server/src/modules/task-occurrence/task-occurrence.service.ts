@@ -14,6 +14,7 @@ import { PrismaService } from 'nestjs-prisma';
 import { RRule } from 'rrule';
 
 import { PagesService } from 'modules/pages/pages.service';
+import { endOfDay, subDays } from 'date-fns';
 
 @Injectable()
 export class TaskOccurenceService {
@@ -436,12 +437,13 @@ export class TaskOccurenceService {
     });
     const timezone = (workspace.preferences as Preferences).timezone;
 
-    // Mark occurrences as deleted
+    // Mark occurrences as deleted (including today and future occurrences)
+    const yesterday = endOfDay(subDays(new Date(), 1));
     await this.prisma.taskOccurrence.updateMany({
       where: {
         taskId,
         startTime: {
-          gte: new Date(),
+          gte: yesterday,
         },
       },
       data: { deleted: new Date().toISOString() },

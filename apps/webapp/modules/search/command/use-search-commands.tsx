@@ -157,6 +157,7 @@ export const useSearchCommands = (
               {
                 message: value,
                 userType: UserTypeEnum.User,
+                title: value,
               },
               {
                 onSuccess: (data) => {
@@ -174,9 +175,10 @@ export const useSearchCommands = (
       commands['settings'] = [
         {
           Icon: DocumentLine,
-          text: 'Context',
+          text: 'Signals',
           command: () => {
-            openSettings('Context');
+            openSettings('Signals');
+            onClose();
           },
         },
         {
@@ -184,6 +186,7 @@ export const useSearchCommands = (
           text: 'MCP',
           command: () => {
             openSettings('MCP');
+            onClose();
           },
         },
       ];
@@ -281,8 +284,20 @@ export const useSearchCommands = (
   }, [value]);
 };
 
-export const useSearchCommandsQuick = (value: string, onClose: () => void) => {
+export const useSearchCommandsQuick = (
+  value: string,
+  openConversation: ({
+    conversationId,
+    conversationHistoryId,
+  }: {
+    conversationHistoryId: string;
+    conversationId: string;
+  }) => void,
+  onClose: () => void,
+) => {
   const { tasksStore, pagesStore, listsStore } = useContextStore();
+  const { mutate: createConversation } = useCreateConversationMutation({});
+
   const ipc = useIPC();
 
   return React.useMemo(() => {
@@ -295,49 +310,61 @@ export const useSearchCommandsQuick = (value: string, onClose: () => void) => {
           Icon: AI,
           text: `${value} ... ask sigma`,
           command: () => {
-            onClose();
+            createConversation(
+              {
+                message: value,
+                userType: UserTypeEnum.User,
+                title: value,
+              },
+              {
+                onSuccess: (data) => {
+                  openConversation({
+                    conversationHistoryId: data.ConversationHistory[0].id,
+                    conversationId: data.id,
+                  });
+                },
+              },
+            );
           },
         },
       ];
     }
 
-    if (value) {
-      const pages = pagesStore.searchPages(value);
+    const pages = pagesStore.searchPages(value ?? '');
 
-      commands['Pages'] = pages
-        .map((page) => {
-          const task = tasksStore.getTaskForPage(page.id);
-          const list = listsStore.getListWithPageId(page.id);
+    commands['Pages'] = pages
+      .map((page) => {
+        const task = tasksStore.getTaskForPage(page.id);
+        const list = listsStore.getListWithPageId(page.id);
 
-          if (task) {
-            return {
-              Icon: IssuesLine,
-              text: page.title,
-              key: task.id,
-              command: () => {
-                ipc.sendToMain({ type: 'Task', id: task.id });
-                onClose();
-              },
-            };
-          }
+        if (task) {
+          return {
+            Icon: IssuesLine,
+            text: page.title,
+            key: task.id,
+            command: () => {
+              ipc.sendToMain({ type: 'Task', id: task.id });
+              onClose();
+            },
+          };
+        }
 
-          if (list) {
-            return {
-              Icon: Project,
-              text: page.title,
-              key: list.id,
-              command: () => {
-                ipc.sendToMain({ type: 'List', id: list.id });
+        if (list) {
+          return {
+            Icon: Project,
+            text: page.title,
+            key: list.id,
+            command: () => {
+              ipc.sendToMain({ type: 'List', id: list.id });
 
-                onClose();
-              },
-            };
-          }
+              onClose();
+            },
+          };
+        }
 
-          return undefined;
-        })
-        .filter(Boolean);
-    }
+        return undefined;
+      })
+      .filter(Boolean);
 
     return commands;
     // eslint-disable-next-line react-hooks/exhaustive-deps

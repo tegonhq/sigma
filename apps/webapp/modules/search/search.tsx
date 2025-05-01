@@ -4,6 +4,7 @@ import React from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
 
+import { QuickConverstion } from 'modules/conversation';
 import { AddTaskDialogProvider } from 'modules/tasks/add-task';
 
 import { SCOPES } from 'common/shortcut-scopes';
@@ -13,11 +14,14 @@ import { useIPC } from 'hooks/ipc';
 import { useScope } from 'hooks/use-scope';
 
 import { CommandComponent, CommandComponentQuick } from './command';
-import { QuickConverstion } from 'modules/conversation';
 
 export const Search = () => {
   useScope(SCOPES.Search);
   const ipc = useIPC();
+  const [quickConversation, setQuickConversation] = React.useState<{
+    conversationHistoryId: string;
+    conversationId: string;
+  }>(undefined);
 
   useHotkeys(
     Key.Escape,
@@ -31,6 +35,8 @@ export const Search = () => {
   );
 
   const onClose = () => {
+    setQuickConversation(undefined);
+
     ipc.sendMessage('quick-window-close');
   };
 
@@ -38,7 +44,19 @@ export const Search = () => {
     <AllProviders>
       <AddTaskDialogProvider>
         <Command className="border border-border shadow">
-          <CommandComponentQuick onClose={onClose} />
+          {quickConversation ? (
+            <QuickConverstion
+              conversationId={quickConversation.conversationId}
+              defaultConversationHistoryId={
+                quickConversation.conversationHistoryId
+              }
+            />
+          ) : (
+            <CommandComponentQuick
+              onClose={onClose}
+              openConversation={setQuickConversation}
+            />
+          )}
         </Command>
       </AddTaskDialogProvider>
     </AllProviders>

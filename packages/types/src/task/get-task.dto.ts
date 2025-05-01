@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator';
+import { IsArray, IsString } from 'class-validator';
 
 export class TaskDto {
   @IsString()
@@ -16,4 +16,7 @@ export class ReccurenceInput {
 
   @IsString()
   currentTime: string;
+
+  @IsArray()
+  taskIds: string[];
 }
