@@ -275,19 +275,19 @@ export async function* run(
 
       // Add the input to the step
       let result;
+      const skillInput = totalMessage.match(
+        /<action_input>(.*?)<\/action_input>/s,
+      );
       try {
-        const parsedInput = JSON.parse(skillState.message);
-        stepRecord.skillInput = skillState.message;
+        const parsedInput = JSON.parse(skillInput ? skillInput[1] : '');
+        stepRecord.skillInput = parsedInput;
         logger.info(
-          `skillName: ${skillName} \n Parsed Input: ${skillState.message}`,
+          `skillName: ${skillName} \n Parsed Input: ${JSON.stringify(parsedInput)}`,
         );
         result = await mcp.callTool(skillName, parsedInput);
       } catch (e) {
         logger.error(e);
-        stepRecord.skillInput = skillState.message;
-        logger.info(
-          `skillName: ${skillName} \n Parsed Input: ${skillState.message}`,
-        );
+        stepRecord.skillInput = skillInput ? skillInput[1] : '';
       }
 
       stepRecord.skillOutput = JSON.stringify(result);

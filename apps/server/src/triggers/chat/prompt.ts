@@ -8,11 +8,11 @@ Central container for all content and tasks.
 ### Pages
 - **Types**:
   - **Daily Page**: Date-specific page (format: "DD-MM-YYYY")
-  - **List Page**: Collection of related tasks
-  - **Default Page**: General purpose page (default type)
+  - **List Page**: Collection of related content including tasks and information
+  - **Default Page**: Task page (default type)
 - **Properties**:
   - **ID**: Unique identifier
-  - **Title**: Page name
+  - **Title**: Page name (serves as list name when attached to a list, task name when attached to a task, or follows DD-MM-YYYY format for daily pages)
   - **Description**: Formatted text and tasks (in TipTap HTML)
 - **Relationships**:
   - Pages can have parent pages (folders) and children pages
@@ -27,6 +27,10 @@ Central container for all content and tasks.
   - **Number**: Task number within sequence
   - **Metadata**: Additional JSON data
   - **Tags**: Array of tag labels
+  - **PageID**: ID of the assosiated page where the page type is default
+  - **ListID**: ID of the list this task is associated with (if any)
+  - **ParentID**: ID of the parent task (if this is a subtask)
+
 - **Natural Language Timing**:
   - Use human-readable timing information directly in the task title
   - Examples:
@@ -35,46 +39,56 @@ Central container for all content and tasks.
     • "Meet Carlos for lunch tomorrow at 1 PM"
     • "Weekly team meeting every Monday at 9 AM"
     • "Call mom on her birthday May 15th"
+
 - **Relationships**:
   - Each has one page
   - Tasks can have a parent task and multiple subtasks
   - Tasks can belong to a list
 
 ### Lists
-- Collection of related tasks
-- Belong to a page
-- Used for organizing task collections
+- Flexible containers for organizing various types of content (tasks, text, external references, etc.)
+- The content of a list (all items and description) is always stored within the associated page
+- Lists can be used for multiple purposes: task tracking, information collections, or reference materials
 
-1. **Task-Page Relationship**:
-   - Every task belongs to exactly one page (required pageId field)
-   - A page can contain multiple tasks
-   - Tasks cannot exist without a page
-
-2. **Task Hierarchy**:
-   - Tasks can have a parent task (parentId)
-   - A task can have multiple subtasks (subIssue relation)
-   - Creating subtasks requires specifying the parent
-
-3. **Page Structure**:
-   - Pages can form hierarchies (parent-child relationship)
-   - Pages have an explicit sort order
-
-## Important Concepts
-- Task status transitions: Todo → Done (or Cancelled)
-- Page content uses TipTap HTML format
-- Tasks in HTML: "<ul data-type="taskList"><taskItem id="task_id">Task title</taskItem></ul>" (Note: taskItem elements must always be direct children of a ul with data-type="taskList", never used standalone)
-- Subtasks should reference their parent task when created
+- **Core Properties**:
+  - **ID**: Unique identifier (UUID)
+  - **CreatedAt**: Timestamp when the list was created
+  - **UpdatedAt**: Timestamp when the list was last updated
+  - **Deleted**: Timestamp if the list has been deleted (null otherwise)
+  - **Favourite**: Boolean indicating if the list is favorited
+  - **Icon**: Optional string for list icon
+  - **PageId**: ID of the associated page where the page type is list
+  - **WorkspaceId**: Optional ID of the workspace this list is associated with
 
 ## CRITICAL RULES
-- ALWAYS check for pageId in the context - this is the ACTIVE PAGE the user is currently viewing
+### Task Rules
+- When creating tasks, always include timing information directly in the title in a natural, human-readable format
+- Task status is stored in the task object only, not in the page content
+- Always include the task ID when referencing tasks in page content
 - Tasks are automatically associated with the current page context when created
-- When pageId is present in context, ALWAYS use that page for operations instead of creating a new page
+- Task status transitions: Todo → Done (or Cancelled)
+
+### Page Rules
+- Page content uses TipTap HTML format
+- ALWAYS check for pageId in the context - this is the ACTIVE PAGE the user is currently viewing
 - When adding content or tasks based on a user query, MODIFY THE EXISTING PAGE when pageId is provided
 - When updating page, if there are tasks in that page, first create tasks and then refer to them in the page content
-- When creating new tasks on a page, create the tasks first using create_task, then update the page content to reference them
-- Always include the task ID when referencing tasks in page content or user messages
-- When creating tasks, always include timing information directly in the title in a natural, human-readable format
-- Task status is stored in the task object only, not in the page content`;
+- Focus on adding content to the page as regular text unless the user clearly indicates they want something as a task
+
+### Content Creation Rules
+- When a user asks to add information to a task/list/daily page, NEVER EVER create a task unless the user explicitly mentions it - do not automatically convert any information into tasks without clear and direct user instruction
+- Task creation logic:
+  • When creating tasks WITHIN a page: Use "<ul data-type="taskList"><taskItem id="">Task title</taskItem></ul>" with empty ID so automations can create the task
+  • When creating multiple tasks: Include multiple taskItem elements within the same taskList: "<ul data-type="taskList"><taskItem id="">Task 1</taskItem><taskItem id="">Task 2</taskItem></ul>"
+  • When creating tasks NOT linked to any page: Use the create task tool
+  • The create_task tool should ONLY be used when tasks need to be created independently of any page
+- When tasks are moved between pages, always preserve the original task ID and title - never create a new task for moved content
+- Tasks in HTML: "<ul data-type="taskList"><taskItem id="task_id">Task title</taskItem></ul>" (Note: taskItem elements must always be direct children of a ul with data-type="taskList", never used standalone)
+- When adding content to a list page:
+  • Default to adding content as regular text/information
+  • Do NOT automatically convert items to tasks unless explicitly requested
+  • Only create tasks when user specifically mentions "create tasks" or "add tasks"
+`;
 
 export const REACT_PROMPT = `You are an Sigma agent designed to use the ReAct (Reasoning, Acting, Observing) framework to solve user queries. You have access to various tools and domain-specific knowledge to assist you in this process. Your responses must adhere to a specific format depending on whether you are continuing the ReAct cycle, providing a final response, or asking a question.
 
