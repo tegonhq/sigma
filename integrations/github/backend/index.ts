@@ -26,7 +26,7 @@ export async function run(eventPayload: IntegrationEventPayload) {
       return eventPayload.eventBody.integrationAccount.integrationConfiguration.access_token;
 
     case IntegrationPayloadEventType.INITIAL_TASK_SYNC:
-      return syncInitialTasks(eventPayload.eventBody);
+      return {};
 
     default:
       return {

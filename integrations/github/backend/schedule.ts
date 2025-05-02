@@ -50,7 +50,7 @@ export async function handleSchedule(eventBody: any) {
     notificationCount += filteredNotifications?.length || 0;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const tasks: any = [];
+    const activity: any = [];
 
     await Promise.all(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -58,6 +58,7 @@ export async function handleSchedule(eventBody: any) {
         const { reason, subject } = notification;
 
         let url: string = '';
+        let sourceURL: string = '';
         let hasTask: boolean = false;
         let sourceId: string = '';
         let status = 'Todo';
@@ -75,6 +76,7 @@ export async function handleSchedule(eventBody: any) {
 
           case 'assign':
             url = subject.url;
+            sourceURL = subject.html_url;
             subjectType = subject.type.toLowerCase();
             hasTask = true;
             githubData = await getGithubData(url, integrationConfiguration.access_token);
@@ -85,6 +87,7 @@ export async function handleSchedule(eventBody: any) {
 
           case 'review_requested':
             url = subject.url;
+            sourceURL = subject.html_url;
             subjectType = subject.type.toLowerCase();
             hasTask = true;
             githubData = await getGithubData(url, integrationConfiguration.access_token);
@@ -95,6 +98,7 @@ export async function handleSchedule(eventBody: any) {
 
           case 'state_change':
             url = subject.url;
+            sourceURL = subject.html_url;
             subjectType = subject.type.toLowerCase();
             hasTask = true;
             githubData = await getGithubData(url, integrationConfiguration.access_token);
@@ -112,6 +116,7 @@ export async function handleSchedule(eventBody: any) {
 
           case 'subscribed':
             url = subject.url;
+            sourceURL = subject.html_url;
             subjectType = subject.type.toLowerCase();
             hasTask = true;
             githubData = await getGithubData(url, integrationConfiguration.access_token);
@@ -129,6 +134,7 @@ export async function handleSchedule(eventBody: any) {
 
           case 'author':
             url = subject.url;
+            sourceURL = subject.html_url;
             subjectType = subject.type.toLowerCase();
             hasTask = true;
             githubData = await getGithubData(url, integrationConfiguration.access_token);
@@ -143,11 +149,12 @@ export async function handleSchedule(eventBody: any) {
 
         if (url) {
           if (hasTask) {
-            tasks.push({
+            activity.push({
               url,
               title,
               status,
               sourceId,
+              sourceURL,
               integrationAccountId: integrationAccount.id,
             });
           }

@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function createTasks(tasks: any) {
   const batchSize = 10;
   const results = [];

@@ -1,6 +1,5 @@
 import { PrismaClient } from '@prisma/client';
 import { logger, schedules, task } from '@trigger.dev/sdk/v3';
-import axios from 'axios';
 
 import { integrationRunSchedule } from './integration-run-schedule';
 
@@ -12,7 +11,7 @@ export const scheduler = task({
     const { integrationAccountId } = payload;
 
     const integrationAccount = await prisma.integrationAccount.findUnique({
-      where: { id: integrationAccountId },
+      where: { id: integrationAccountId, deleted: null },
       include: {
         integrationDefinition: true,
         workspace: true,
@@ -24,10 +23,8 @@ export const scheduler = task({
       return null;
     }
 
-    const specResponse = await axios.get(
-      `${integrationAccount.integrationDefinition.url}/spec.json`,
-    );
-    const spec = specResponse.data;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const spec = integrationAccount.integrationDefinition.spec as any;
 
     if (spec.schedule && spec.schedule.frequency) {
       const createdSchedule = await schedules.create({

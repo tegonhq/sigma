@@ -220,21 +220,6 @@ export class OAuthCallbackService {
           sessionRecord.workspaceId,
         );
 
-      await this.integrationService.runIntegrationTriggerAsync(
-        integrationDefinition,
-        {
-          event: IntegrationPayloadEventType.INITIAL_TASK_SYNC,
-          userId: sessionRecord.userId,
-          workspaceId: sessionRecord.workspaceId,
-          eventBody: {
-            integrationAccount,
-            integrationDefinition,
-          },
-        },
-        sessionRecord.userId,
-        sessionRecord.workspaceId,
-      );
-
       await tasks.trigger<typeof scheduler>('scheduler', {
         integrationAccountId: integrationAccount.id,
       });
