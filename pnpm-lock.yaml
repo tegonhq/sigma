@@ -205,8 +205,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/editor-extensions
       '@tegonhq/sigma-sdk':
-        specifier: 0.1.23
-        version: 0.1.23
+        specifier: workspace:*
+        version: link:../../packages/sdk
       '@trigger.dev/sdk':
         specifier: 3.3.17
         version: 3.3.17(zod@3.23.8)
@@ -273,9 +273,6 @@ importers:
       knex:
         specifier: ^3.1.0
         version: 3.1.0(pg@8.15.6)
-      llm-cost:
-        specifier: 1.0.5
-        version: 1.0.5
       marked:
         specifier: ^14.1.2
         version: 14.1.4
@@ -4723,10 +4720,6 @@ packages:
   '@tanstack/table-core@8.21.3':
     resolution: {integrity: sha512-ldZXEhOBb8Is7xLs01fR3YEc3DERiz5silj8tnGkFZytt1abEvl/GhUmCE0PMLaMPTa3Jk4HbKmRlHmu+gCftg==}
     engines: {node: '>=12'}
-
-  '@tegonhq/sigma-sdk@0.1.23':
-    resolution: {integrity: sha512-1JXGN6+tmvlnIt726jyBr1msRUGn1FyoLsrjLmKcS+PgC7nd1Hp6Sjsw3OcWqXeRvN2kN8eK4ALpMkfRxiwqgA==}
-    engines: {node: '>=18.0.0'}
 
   '@tegonhq/ui@0.2.35':
     resolution: {integrity: sha512-qjT8hul0+DdUOHdJQJFNnHNig5H8ChnWakrwfmzMpgyhCJdDJ4U/VPq3dSNY83WGC1O8avIsF2qpNp7CNdKCWQ==}
@@ -9335,9 +9328,6 @@ packages:
     engines: {node: '>=14'}
     hasBin: true
 
-  llm-cost@1.0.5:
-    resolution: {integrity: sha512-1JBZBwmcgX1yIEY9ky9mYuU7VnaE82siEOZJgG9Gq6qNs+VLUlU1X24yHjBRjGdwoBhfn5APJIdifdMrcpvH1w==}
-
   load-tsconfig@0.2.5:
     resolution: {integrity: sha512-IXO6OCs9yg8tMKzfPZ1YmheJbZCiEsnBdcB03l0OcfK9prKnJb96siuHCr5Fl37/yo9DnKU+TLpxzTUspw9shg==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
@@ -12303,9 +12293,6 @@ packages:
 
   through@2.3.8:
     resolution: {integrity: sha512-w89qg7PI8wAdvX60bMDP+bFoD5Dvhm9oLheFp5O4a2QF0cSBGsBX4qZmadPMvVqlLJBBci+WqGGOAPvcDeNSVg==}
-
-  tiktoken@1.0.21:
-    resolution: {integrity: sha512-/kqtlepLMptX0OgbYD9aMYbM7EFrMZCL7EoHM8Psmg2FuhXoo/bH64KqOiZGGwa6oS9TPdSEDKBnV2LuB8+5vQ==}
 
   tildify@2.0.0:
     resolution: {integrity: sha512-Cc+OraorugtXNfs50hU9KS369rFXCfgGLpfCfvlc+Ud5u6VWmUQsOAa9HbTvheQdYnrdJqqv1e5oIqXppMYnSw==}
@@ -18017,8 +18004,6 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
 
   '@tanstack/table-core@8.21.3': {}
-
-  '@tegonhq/sigma-sdk@0.1.23': {}
 
   '@tegonhq/ui@0.2.35(@opentelemetry/api@1.9.0)(@types/react-dom@18.3.6(@types/react@18.3.20))(@types/react@18.3.20)(javascript-time-ago@2.5.11)(react-dom@18.3.1(react@18.3.1))(react-hook-form@7.49.3(react@18.3.1))(react@18.3.1)(sswr@2.2.0(svelte@5.28.2))(svelte@5.28.2)(tailwindcss@3.4.17(ts-node@10.9.2(@swc/core@1.11.22(@swc/helpers@0.5.17))(@types/node@20.16.11)(typescript@5.8.3)))(zod@3.23.8)':
     dependencies:
@@ -24054,10 +24039,6 @@ snapshots:
       commander: 10.0.1
     optional: true
 
-  llm-cost@1.0.5:
-    dependencies:
-      tiktoken: 1.0.21
-
   load-tsconfig@0.2.5: {}
 
   loader-runner@4.3.0: {}
@@ -27977,8 +27958,6 @@ snapshots:
   throttleit@2.1.0: {}
 
   through@2.3.8: {}
-
-  tiktoken@1.0.21: {}
 
   tildify@2.0.0: {}
 

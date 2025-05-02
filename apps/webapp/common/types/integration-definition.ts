@@ -32,7 +32,8 @@ export interface IntegrationDefinitionType {
 
   name: string;
   icon: string;
-  spec: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  spec: any;
   workspaceId: string;
 
   url: string;

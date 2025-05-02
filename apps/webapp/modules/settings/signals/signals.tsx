@@ -1,11 +1,15 @@
 import { HocuspocusProvider } from '@hocuspocus/provider';
+import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import Collaboration from '@tiptap/extension-collaboration';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { IndexeddbPersistence } from 'y-indexeddb';
 import * as Y from 'yjs';
 
-import { CustomMention } from 'modules/conversation/suggestion-extension';
+import {
+  CustomMention,
+  useMentionSuggestions,
+} from 'modules/conversation/suggestion-extension';
 
 import {
   contextExtensions,
@@ -13,6 +17,7 @@ import {
   EditorContextProvider,
   EditorExtensions,
   getSocketURL,
+  lowlight,
   suggestionItems,
 } from 'common/editor';
 import { SocketContext } from 'common/wrappers';
@@ -27,6 +32,7 @@ export const Signals = observer(() => {
   const [provider, setProvider] = React.useState(undefined);
   const [doc, setDoc] = React.useState(undefined);
   const socket = React.useContext(SocketContext);
+  const suggestion = useMentionSuggestions();
 
   React.useEffect(() => {
     if (page?.id) {
@@ -79,7 +85,12 @@ export const Signals = observer(() => {
                 document: doc,
               }),
               ...contextExtensions,
-              CustomMention,
+              CodeBlockLowlight.configure({
+                lowlight,
+              }),
+              CustomMention.configure({
+                suggestion,
+              }),
             ]}
             placeholder="Write your preferences."
             autoFocus

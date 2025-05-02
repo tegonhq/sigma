@@ -27,23 +27,6 @@ export class IntegrationDefinitionController {
   }
 
   // /**
-  //  * Get spec for integration definition
-  //  */
-  @Get(':integrationDefinitionId/spec')
-  @UseGuards(AuthGuard)
-  async getIntegrationDefinitionSpec(
-    @Param()
-    integrationDefinitionRequestIdBody: IntegrationDefinitionIdDto,
-  ) {
-    const integrationDefinition =
-      await this.integrationDefinitionService.getIntegrationDefinitionWithSpec(
-        integrationDefinitionRequestIdBody.integrationDefinitionId,
-      );
-
-    return integrationDefinition.spec;
-  }
-
-  // /**
   //  * Get integration definition
   //  */
   @Get(':integrationDefinitionId')
@@ -52,8 +35,8 @@ export class IntegrationDefinitionController {
     @Param()
     integrationDefinitionRequestIdBody: IntegrationDefinitionIdDto,
   ) {
-    return await this.integrationDefinitionService.getIntegrationDefinitionWithSpec(
-      integrationDefinitionRequestIdBody.integrationDefinitionId,
+    return await this.integrationDefinitionService.getIntegrationDefinitionWithId(
+      integrationDefinitionRequestIdBody,
     );
   }
 }
