@@ -240,6 +240,12 @@ export default class ReplicationService {
               this.pagesService.handleHooks({ pageId: modelId, changedData });
             }
 
+            if (
+              ModelNameEnum.Activity === modelName &&
+              change.kind === 'insert'
+            ) {
+            }
+
             if (ModelNameEnum.Task === modelName) {
               this.taskHooksService.executeHookWithId(
                 modelId,

@@ -8,6 +8,7 @@ export interface ConversationType {
   title: string;
   userId: string;
   workspaceId: string;
+  activityId?: string;
 
   pageId?: string;
   taskId?: string;

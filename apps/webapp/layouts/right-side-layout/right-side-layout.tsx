@@ -17,6 +17,7 @@ import { useLocalCommonState } from 'common/use-local-state';
 import { useApplication } from 'hooks/application';
 import { useScope } from 'hooks/use-scope';
 
+import { TabViewType } from 'store/application';
 import { TabContext } from 'store/tab-context';
 
 import { RightSideHeader } from './right-side-header';
@@ -56,6 +57,10 @@ export const RightSideLayout = observer(
       (event) => {
         switch (event.key) {
           case 'l':
+            if (firstTab.type === TabViewType.NOTIFICATIONS) {
+              return;
+            }
+
             if (event.metaKey) {
               if (rightSideCollapsed) {
                 setRightSideCollapsed(false);

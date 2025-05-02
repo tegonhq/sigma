@@ -56,6 +56,12 @@ export const NotificationsStore: IAnyStateTreeNode = types
     get getNotifications() {
       return self.notifications;
     },
+
+    getNotification(notificationId: string) {
+      return self.notifications.find(
+        (notification) => notification.id === notificationId,
+      );
+    },
   }));
 
 export interface NotificationsStoreType {
@@ -67,4 +73,5 @@ export interface NotificationsStoreType {
   load: () => Promise<void>;
 
   getNotifications: NotificationType[];
+  getNotification: (notificationId: string) => NotificationType;
 }

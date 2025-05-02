@@ -1,10 +1,10 @@
 import { logger, metadata, task } from '@trigger.dev/sdk/v3';
-import axios from 'axios';
 
 import { run } from './chat-utils';
 import { MCP } from './mcp';
 import {
   createConversationHistoryForAgent,
+  createNotificationForActivity,
   getPreviousExecutionHistory,
   init,
   RunChatPayload,
@@ -26,11 +26,7 @@ export const chat = task({
   },
   init,
   run: async (payload: RunChatPayload, { init }) => {
-    // Fetch conversation context from the Sigma API
-    const response = await axios.get(
-      `/api/v1/conversation_history/${payload.conversationHistoryId}/context`,
-    );
-    const contextFromAPI = response.data;
+    const contextFromAPI = payload.context;
     const { previousHistory, userContext, ...otherData } = contextFromAPI;
 
     let { agents = [] } = contextFromAPI;
@@ -109,6 +105,13 @@ export const chat = task({
       } else if (step.type === 'STREAM_END') {
         break;
       }
+    }
+
+    if (payload.activityId) {
+      await createNotificationForActivity(
+        payload.activityId,
+        init?.conversation.workspaceId,
+      );
     }
   },
 });

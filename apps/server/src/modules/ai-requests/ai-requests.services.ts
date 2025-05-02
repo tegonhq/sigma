@@ -9,7 +9,6 @@ import {
   GetAIRequestDTO,
   LLMMappings,
   LLMModelEnum,
-  OpenAIModels,
 } from '@tegonhq/sigma-sdk';
 import {
   CoreMessage,
@@ -99,10 +98,8 @@ export default class AIRequestsService {
     let finalModel: string;
 
     if (
-      (OpenAIModels.includes(model) &&
-        !this.configService.get('OPENAI_API_KEY')) ||
-      (ClaudeModels.includes(model) &&
-        !this.configService.get('ANTHROPIC_API_KEY'))
+      ClaudeModels.includes(model) &&
+      !this.configService.get('ANTHROPIC_API_KEY')
     ) {
       model = null;
     }

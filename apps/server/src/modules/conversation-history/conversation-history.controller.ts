@@ -9,7 +9,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import {
-  ConversationContext,
   ConversationHistory,
   ConversationHistoryParamsDto,
   ConversationParamsDto,
@@ -80,16 +79,6 @@ export class ConversationHistoryController {
   ): Promise<ConversationHistory[]> {
     return await this.conversationHistoryService.getAllConversationHistory(
       conversationParams.conversationId,
-    );
-  }
-
-  @Get(':conversationHistoryId/context')
-  @UseGuards(AuthGuard)
-  async getConversation(
-    @Param() conversationParams: ConversationHistoryParamsDto,
-  ): Promise<ConversationContext> {
-    return await this.conversationHistoryService.getConversationContext(
-      conversationParams.conversationHistoryId,
     );
   }
 
