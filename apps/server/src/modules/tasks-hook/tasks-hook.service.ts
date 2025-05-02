@@ -290,13 +290,13 @@ export class TaskHooksService {
           await addTaskToListPage(task);
         }
 
-        return { message: 'Handled schedule update' };
+        return { message: 'Handled list update' };
 
       case 'delete':
         if (task.listId) {
           await removeTaskInListPage(task);
         }
-        return { message: 'Handled schedule delete' };
+        return { message: 'Handled list delete' };
     }
   }
 
