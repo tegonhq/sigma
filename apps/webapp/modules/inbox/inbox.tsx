@@ -3,6 +3,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from '@tegonhq/ui';
+import { observer } from 'mobx-react-lite';
 import React from 'react';
 
 import { SCOPES } from 'common/shortcut-scopes';
@@ -10,11 +11,11 @@ import { RightSideLayout } from 'layouts/right-side-layout';
 
 import { useScope } from 'hooks/use-scope';
 
+import { useContextStore } from 'store/global-context-provider';
+
 import { Header } from './header';
 import { InboxConversation } from './inbox-conversation';
 import { InboxList } from './inbox-list';
-import { observer } from 'mobx-react-lite';
-import { useContextStore } from 'store/global-context-provider';
 
 export const Inbox = observer(() => {
   useScope(SCOPES.INBOX);

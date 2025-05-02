@@ -1,5 +1,4 @@
 import type { Agent } from './mention-list';
-import Image from 'next/image';
 
 import { cn } from '@tegonhq/ui';
 import Mention from '@tiptap/extension-mention';
@@ -10,6 +9,7 @@ import {
   ReactNodeViewRenderer,
 } from '@tiptap/react';
 import { observer } from 'mobx-react-lite';
+import Image from 'next/image';
 
 import { getIcon, type IconType } from 'common/icon-utils';
 

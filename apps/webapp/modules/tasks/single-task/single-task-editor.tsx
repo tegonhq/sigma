@@ -15,11 +15,11 @@ import {
 } from 'common/editor';
 import { TaskExtension } from 'common/editor/task-extension';
 import type { PageType, TaskType } from 'common/types';
+import { SocketContext } from 'common/wrappers';
 
 import { useUpdateTaskMutation } from 'services/tasks';
 
 import { useContextStore } from 'store/global-context-provider';
-import { SocketContext } from 'common/wrappers';
 
 interface SingleTaskEditorProps {
   page: PageType;

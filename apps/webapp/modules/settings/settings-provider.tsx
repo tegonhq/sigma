@@ -1,7 +1,9 @@
 import React, { createContext, useContext, useState } from 'react';
-import { Settings } from './settings';
 import { useHotkeys } from 'react-hotkeys-hook';
+
 import { SCOPES } from 'common/shortcut-scopes';
+
+import { Settings } from './settings';
 
 interface SettingsContextType {
   isOpen: boolean;

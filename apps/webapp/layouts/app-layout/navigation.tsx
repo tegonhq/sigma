@@ -9,13 +9,13 @@ import { observer } from 'mobx-react-lite';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
 
+import { Shortcut } from 'common/shortcut';
 import { SCOPES } from 'common/shortcut-scopes';
+import { TooltipWrapper } from 'common/tooltip';
 
 import { useApplication } from 'hooks/application';
 
 import { historyManager } from 'store/history';
-import { TooltipWrapper } from 'common/tooltip';
-import { Shortcut } from 'common/shortcut';
 
 export const Navigation = observer(() => {
   const { back, forward } = useApplication();

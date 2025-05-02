@@ -307,4 +307,18 @@ export class UsersService {
       workspaceId: code.workspaceId,
     };
   }
+
+  async hasAvailableCredits(userId: string) {
+    const userUsage = await this.prisma.userUsage.findUnique({
+      where: {
+        userId,
+      },
+    });
+
+    if (!userUsage) {
+      return false;
+    }
+
+    return userUsage.availableCredits > 0;
+  }
 }

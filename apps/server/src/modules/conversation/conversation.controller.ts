@@ -14,6 +14,7 @@ import {
 } from '@tegonhq/sigma-sdk';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
+import { CreditsGuard } from 'modules/auth/credit.guard';
 import { UserId, Workspace } from 'modules/auth/session.decorator';
 
 import { ConversationService } from './conversation.service';
@@ -26,7 +27,7 @@ export class ConversationController {
   constructor(private conversationService: ConversationService) {}
 
   @Post()
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, CreditsGuard)
   async createConversation(
     @Workspace() workspaceId: string,
     @UserId() userId: string,
@@ -40,7 +41,7 @@ export class ConversationController {
   }
 
   @Get(':conversationId')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, CreditsGuard)
   async getConversation(
     @Param() conversationParams: ConversationParamsDto,
   ): Promise<Conversation> {

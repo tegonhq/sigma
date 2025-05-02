@@ -19,6 +19,7 @@ import { useIPC } from 'hooks/ipc';
 import { useScope } from 'hooks/use-scope';
 
 import { TabViewType } from 'store/application';
+
 import { useWindowListener } from './window-listener';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -28,10 +28,7 @@ import {
   useDeleteAllTaskOccurrencesMutation,
   useUpdateTaskOccurrenceMutation,
 } from 'services/task-occurrence';
-import {
-  useGetTaskScheduleMutation,
-  useUpdateTaskMutation,
-} from 'services/tasks';
+import { useGetTaskScheduleMutation } from 'services/tasks';
 
 import { useContextStore } from 'store/global-context-provider';
 

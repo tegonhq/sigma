@@ -96,7 +96,7 @@ export async function* processTag(
 
 export async function* generate(
   messages: CoreMessage[],
-  system?: string,
+  _system?: string,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onFinish?: (event: any) => void,
 ): AsyncGenerator<string> {
@@ -115,7 +115,6 @@ export async function* generate(
   if (anthropicKey) {
     const { textStream } = await streamText({
       model: modelInstance as LanguageModelV1,
-      system,
       messages,
       onFinish,
     });
@@ -123,6 +122,7 @@ export async function* generate(
     for await (const chunk of textStream) {
       yield chunk;
     }
+
     return;
   }
 

@@ -10,6 +10,7 @@ import { PrismaModule } from 'nestjs-prisma';
 import config from 'common/configs/config';
 import { loggingMiddleware } from 'common/middleware/logging.middleware';
 
+import { ActivityModule } from 'modules/activity/activity.module';
 import { AIRequestsModule } from 'modules/ai-requests/ai-requests.module';
 import { ALSModule } from 'modules/als/als.module';
 import { AttachmentModule } from 'modules/attachments/attachments.module';
@@ -112,6 +113,7 @@ import { AppService } from './app.service';
 
     AIRequestsModule,
     PromptsModule,
+    ActivityModule,
   ],
   controllers: [AppController],
   providers: [

@@ -1,5 +1,5 @@
 import { UserTypeEnum } from '@sigma/types';
-import { cn, LoaderLine } from '@tegonhq/ui';
+import { cn, LoaderLine, useToast } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 
@@ -14,6 +14,7 @@ import { useConversationHistory } from 'hooks/conversations';
 
 import {
   useCreateConversationHistoryMutation,
+  useCreateConversationMutation,
   useStreamConversationMutation,
 } from 'services/conversations';
 
@@ -27,10 +28,11 @@ interface InboxConversationProps {
 export const InboxConversation = observer(
   ({ activityId }: InboxConversationProps) => {
     const { commonStore, conversationsStore } = useContextStore();
-    const conversation =
-      conversationsStore.conversations[
-        conversationsStore.conversations.length - 1
-      ];
+    const conversation = conversationsStore.conversations.find(
+      (conversation) => conversation.activityId === activityId,
+    );
+    const { mutate: createConversation } = useCreateConversationMutation({});
+    const { toast } = useToast();
 
     const { conversationHistory } = useConversationHistory(conversation?.id);
 
@@ -51,22 +53,48 @@ export const InboxConversation = observer(
         return;
       }
 
-      createConversationHistory(
-        {
-          message: text,
-          userType: UserTypeEnum.User,
-          userId: user.id,
-          conversationId: commonStore.currentConversationId,
-          context: { agents },
-        },
-        {
-          onSuccess: (data) => {
-            streamConversation({
-              conversationHistoryId: data.id,
-            });
+      if (conversation) {
+        createConversationHistory(
+          {
+            message: text,
+            userType: UserTypeEnum.User,
+            userId: user.id,
+            conversationId: conversation?.id,
+            context: { agents },
           },
-        },
-      );
+          {
+            onSuccess: (data) => {
+              streamConversation({
+                conversationHistoryId: data.id,
+              });
+            },
+          },
+        );
+      } else {
+        createConversation(
+          {
+            message: text,
+            userType: UserTypeEnum.User,
+            context: { agents },
+            title: text,
+          },
+          {
+            onSuccess: (data) => {
+              commonStore.update({ currentConversationId: data.id });
+              streamConversation({
+                conversationHistoryId: data.ConversationHistory[0].id,
+              });
+            },
+            onError: (data) => {
+              const errorMessage = data.response?.data?.message;
+              toast({
+                title: 'Conversation error',
+                description: errorMessage ?? 'Conversation creation failed',
+              });
+            },
+          },
+        );
+      }
     };
 
     const getConversations = () => {

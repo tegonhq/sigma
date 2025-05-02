@@ -8,6 +8,7 @@ import {
 } from 'pg-logical-replication';
 import { v4 as uuidv4 } from 'uuid';
 
+import ActivityService from 'modules/activity/activity.service';
 import { LoggerService } from 'modules/logger/logger.service';
 import { PagesService } from 'modules/pages/pages.service';
 import { SyncGateway } from 'modules/sync/sync.gateway';
@@ -37,6 +38,7 @@ export default class ReplicationService {
     private syncActionsService: SyncActionsService,
     private pagesService: PagesService,
     private taskHooksService: TaskHooksService,
+    private activity: ActivityService,
   ) {
     this.client = new Client({
       user: configService.get('POSTGRES_USER'),
@@ -244,6 +246,7 @@ export default class ReplicationService {
               ModelNameEnum.Activity === modelName &&
               change.kind === 'insert'
             ) {
+              this.activity.runActivity(modelId);
             }
 
             if (ModelNameEnum.Task === modelName) {

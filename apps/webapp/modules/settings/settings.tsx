@@ -20,10 +20,10 @@ import {
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 
-import { Signals } from './signals';
 import { Integrations } from './integrations';
 import { MCP } from './mcp';
 import { Preferences } from './preferences';
+import { Signals } from './signals';
 import { Workspace } from './workspace';
 
 interface SettingsProps {
