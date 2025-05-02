@@ -50,7 +50,7 @@ export const InboxItem = observer(
     return (
       <div
         className={cn(
-          'ml-2 p-3 py-0 mr-2 flex gap-1 items-center hover:bg-grayAlpha-100 rounded',
+          'ml-2 p-3 py-0 mr-2 mb-1 flex gap-1 items-center hover:bg-grayAlpha-100 rounded',
           selected && 'bg-grayAlpha-200',
         )}
         onClick={() => {

@@ -14,9 +14,9 @@ import supertokens from 'supertokens-node';
 import Session from 'supertokens-node/recipe/session';
 
 import AIRequestsService from 'modules/ai-requests/ai-requests.services';
-import { ContentService } from 'modules/content/content.service';
 import { LoggerService } from 'modules/logger/logger.service';
 
+import { OnboardingContent } from './constants';
 import {
   CreateInitialResourcesDto,
   CreateWorkspaceInput,
@@ -34,209 +34,15 @@ export default class WorkspacesService {
     private prisma: PrismaService,
     private listsService: ListsService,
     private aiRequestsService: AIRequestsService,
-    private content: ContentService,
   ) {}
 
-  private async createOnboardingListAndTasks(workspaceId: string) {
+  async createOnboardingListAndTasks(workspaceId: string) {
     // Create the onboarding list
-    const list = await this.listsService.createList(workspaceId);
-
-    // Create the onboarding page content
-    const onboardingContent = {
-      type: 'doc',
-      content: [
-        {
-          type: 'heading',
-          attrs: { level: 1 },
-          content: [{ type: 'text', text: 'Welcome to Sigma 🚀' }],
-        },
-        {
-          type: 'paragraph',
-          content: [
-            {
-              type: 'text',
-              text: 'Sigma is your all-in-one platform to manage tasks, organise notes and plan your day with the help of a built-in personal assistant.',
-            },
-          ],
-        },
-        {
-          type: 'heading',
-          attrs: { level: 2 },
-          content: [{ type: 'text', text: 'Discover the basics' }],
-        },
-        {
-          type: 'taskList',
-          content: [
-            {
-              type: 'taskItem',
-              attrs: {},
-              content: [
-                {
-                  type: 'text',
-                  text: 'Click the checkmark to mark a task as complete',
-                },
-              ],
-            },
-            {
-              type: 'taskItem',
-              attrs: {},
-              content: [
-                {
-                  type: 'text',
-                  text: "Create a new task using 'CMD + N' shortcut or type '/' in a page",
-                },
-              ],
-            },
-            {
-              type: 'taskItem',
-              attrs: {},
-              content: [
-                {
-                  type: 'text',
-                  text: 'Click the task id (e.g., T-1) to view and add task details',
-                },
-              ],
-            },
-            {
-              type: 'taskItem',
-              attrs: {},
-              content: [
-                {
-                  type: 'text',
-                  text: 'Create your first list by clicking the + button in the sidebar',
-                },
-              ],
-            },
-            {
-              type: 'taskItem',
-              attrs: {},
-              content: [
-                {
-                  type: 'text',
-                  text: 'Create a new task and schedule a task automatically by typing phrases like "tomorrow", "on monday"',
-                },
-              ],
-            },
-            {
-              type: 'taskItem',
-              attrs: {},
-              content: [
-                {
-                  type: 'text',
-                  text: 'Link an existing task to any page or to my day by typing  [[task name]] ',
-                },
-              ],
-            },
-          ],
-        },
-        {
-          type: 'heading',
-          attrs: { level: 3 },
-          content: [{ type: 'text', text: 'Learn more about Sigma' }],
-        },
-        {
-          type: 'bulletList',
-          content: [
-            {
-              type: 'listItem',
-              content: [
-                {
-                  type: 'text',
-                  text: 'Learn more about ',
-                },
-                {
-                  type: 'text',
-                  marks: [
-                    {
-                      type: 'link',
-                      attrs: { href: 'https://github.com/tegonhq/sigma/wiki' },
-                    },
-                  ],
-                  text: 'basic concepts',
-                },
-                {
-                  type: 'text',
-                  text: ' in Sigma',
-                },
-              ],
-            },
-            {
-              type: 'listItem',
-              content: [
-                {
-                  type: 'text',
-                  text: 'See all ',
-                },
-                {
-                  type: 'text',
-                  marks: [
-                    {
-                      type: 'link',
-                      attrs: {
-                        href: 'https://github.com/tegonhq/sigma/wiki/keyboard-shortcuts',
-                      },
-                    },
-                  ],
-                  text: 'keyboard shortcuts',
-                },
-                {
-                  type: 'text',
-                  text: ' to work even faster',
-                },
-              ],
-            },
-            {
-              type: 'listItem',
-              content: [
-                {
-                  type: 'text',
-                  text: 'Join our ',
-                },
-                {
-                  type: 'text',
-                  marks: [
-                    {
-                      type: 'link',
-                      attrs: { href: 'https://discord.gg/dVTC3BmgEq' },
-                    },
-                  ],
-                  text: 'discord server',
-                },
-                {
-                  type: 'text',
-                  text: ' to be informed about new updates or for support',
-                },
-              ],
-            },
-            {
-              type: 'listItem',
-              content: [
-                {
-                  type: 'text',
-                  text: 'We are open-source, check out our ',
-                },
-                {
-                  type: 'text',
-                  marks: [
-                    {
-                      type: 'link',
-                      attrs: { href: 'https://github.com/tegonhq/sigma' },
-                    },
-                  ],
-                  text: 'github repo',
-                },
-                {
-                  type: 'text',
-                  text: ' (please give us a star as well)',
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    };
-
-    this.content.updateContentForDocument(list.pageId, onboardingContent);
+    const list = await this.listsService.createList(
+      workspaceId,
+      'Getting started with Sigma',
+      JSON.stringify(OnboardingContent),
+    );
 
     return list;
   }

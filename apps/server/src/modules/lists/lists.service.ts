@@ -13,12 +13,21 @@ import {
 } from '@tegonhq/sigma-sdk';
 import { PrismaService } from 'nestjs-prisma';
 
+import { PagesService } from 'modules/pages/pages.service';
+
 @Injectable()
 export class ListsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private page: PagesService,
+  ) {}
 
-  async createList(workspaceId: string, title?: string) {
-    return await this.prisma.list.create({
+  async createList(
+    workspaceId: string,
+    title?: string,
+    defaultPageContent?: string,
+  ) {
+    const list = await this.prisma.list.create({
       data: {
         workspace: { connect: { id: workspaceId } },
         page: {
@@ -32,6 +41,17 @@ export class ListsService {
         },
       },
     });
+
+    if (defaultPageContent) {
+      await this.page.updatePage(
+        {
+          description: defaultPageContent,
+        },
+        list.pageId,
+      );
+    }
+
+    return list;
   }
 
   async getList(listId: string) {

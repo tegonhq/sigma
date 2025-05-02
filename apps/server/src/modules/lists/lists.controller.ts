@@ -28,7 +28,7 @@ export class ListsController {
     @Workspace() workspaceId: string,
     @Body('title') title?: string,
   ): Promise<List> {
-    return await this.lists.createList(workspaceId, title);
+    return await this.lists.createList(workspaceId, title, '');
   }
 
   @Post(':listId')

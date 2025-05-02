@@ -158,7 +158,7 @@ export class PagesService {
     let finalDescription = description;
     if (htmlDescription && !description) {
       finalDescription = JSON.stringify(
-        await convertHtmlToTiptapJson(htmlDescription),
+        convertHtmlToTiptapJson(htmlDescription),
       );
     }
 
@@ -205,6 +205,7 @@ export class PagesService {
       );
     }
 
+    console.log(finalDescription);
     // Update the page with new description in the same transaction
     if (finalDescription) {
       await this.contentService.updateContentForDocument(
@@ -221,11 +222,6 @@ export class PagesService {
       },
       select: PageSelect,
     });
-
-    if (page.description) {
-      const descriptionJson = JSON.parse(page.description);
-      page.description = convertTiptapJsonToHtml(descriptionJson);
-    }
 
     return page;
   }

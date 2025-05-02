@@ -39,6 +39,7 @@ export const Inbox = observer(() => {
           minSize={16}
           collapsible
           collapsedSize={16}
+          className="h-[calc(100vh_-_54px)]"
         >
           <div className="flex flex-col h-full">
             <InboxList
