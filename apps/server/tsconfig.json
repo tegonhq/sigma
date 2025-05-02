@@ -1,0 +1,15 @@
+{
+  "extends": "@sigma/typescript-config/nest.json",
+  "compilerOptions": {
+    "baseUrl": "src",
+    "module": "commonjs",
+    "outDir": "./dist"
+  },
+  "exclude": ["node_modules", ".trigger"],
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "prisma/scripts/create-number.js",
+    "trigger.config.ts"
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalEnv": [
+    "VERSION",
+    "NODE_ENV",
+    "PORT",
+    "LOG_LEVEL",
+    "CREATE_LOG_FILE",
+    "POSTGRES_USER",
+    "POSTGRES_PASSWORD",
+    "POSTGRES_DB",
+    "DB_HOST",
+    "DB_PORT",
+    "DB_SCHEMA",
+    "DATABASE_URL",
+    "REPLICATION_DATABASE_URL",
+    "SYNC_SERVER",
+    "SUPERTOKEN_CONNECTION_URI",
+    "PORT",
+    "FRONTEND_HOST",
+    "BACKEND_HOST",
+    "BACKEND_URL",
+    "PUBLIC_ATTACHMENT_URL",
+    "OAUTH_CALLBACK_URL",
+
+
+    "ANTHROPIC_API_KEY",
+    "GOOGLE_GENERATIVE_AI_API_KEY",
+    "COHERE_API_KEY",
+
+    "SMTP_HOST",
+    "SMTP_PORT",
+    "SMTP_USER",
+    "SMTP_PASSWORD",
+    "SMTP_DEFAULT_FROM",
+
+    "STORAGE_PROVIDER",
+    "BUCKET_NAME",
+    "GCP_SERVICE_ACCOUNT_FILE",
+
+    "REDIS_URL",
+    "REDIS_PORT",
+
+    "TRIGGER_DB",
+    "TRIGGER_DATABASE_URL",
+    "TRIGGER_TOKEN",
+    "TRIGGER_ACCESS_TOKEN",
+    "TRIGGER_SECRET_KEY",
+    "TRIGGER_COMMON_ID",
+    "TRIGGER_API_URL",
+    "GOOGLE_CLIENT_ID",
+    "GOOGLE_CLIENT_SECRET"
+  ],
+  "ui": "tui",
+  "tasks": {
+    "build": {
+      "dependsOn": [ "^build" ],
+      "outputs": [ "dist/**", ".next/**" ]
+    },
+    "compile": {
+      "env": [
+        "APPLE_APP_SPECIFIC_PASSWORD",
+        "APPLE_ID",
+        "APPLE_TEAM_ID",
+        "CSC_LINK",
+        "CSC_KEY_PASSWORD"
+      ],
+      "dependsOn": [ "^compile" ],
+      "outputs": [ "dist/**", ".next/**" ]
+    },
+    "lint": { },
+    "generate": {
+      "dependsOn": [ "^generate" ],
+      "cache": false
+    },
+    "dev": {
+      "dependsOn": [ "generate" ],
+      "interactive": true,
+      "cache": false
+    },
+    "prisma:studio": {
+      "env": [ "DATABASE_URL" ]
+    },
+    "migrate": {
+      "env": [ "DATABASE_URL" ],
+      "interactive": true,
+      "cache": false
+    },
+    "trigger-deploy": {
+      "cache": false
+    },
+    "trigger-dev": {
+      "interactive": true,
+      "cache": false
+    }
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "name": "sigma",
+  "version": "0.1.12",
+  "scripts": {
+    "build": "dotenv -- turbo build",
+    "compile": "dotenv -- turbo run compile --filter=electron",
+    "dev": "dotenv -- turbo run dev --parallel --filter=!website",
+    "dev:website": "dotenv -- turbo run dev --parallel --filter=website",
+    "lint": "turbo run lint",
+    "generate": "dotenv -- turbo run generate",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "prisma:studio": "dotenv -- turbo run prisma:studio --filter=server",
+    "trigger-deploy": "dotenv -- turbo run trigger-deploy --filter=server --",
+    "trigger-dev": "dotenv -- turbo run trigger-dev --filter=server --",
+    "migrate": "dotenv -- turbo run migrate --filter=server"
+  },
+  "devDependencies": {
+    "dotenv-cli": "^7.4.4",
+    "prettier": "^3.5.0",
+    "turbo": "^2.4.1",
+    "typescript": "^5.7.3",
+    "zod": "3.23.8"
+  },
+  "packageManager": "pnpm@10.3.0",
+  "engines": {
+    "node": ">=18"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@nestjs/core",
+      "@prisma/client",
+      "@prisma/engines",
+      "@sentry/cli",
+      "@swc/core",
+      "bcrypt",
+      "browser-tabs-lock",
+      "core-js",
+      "electron",
+      "electron-deeplink",
+      "esbuild",
+      "lzma-native",
+      "msgpackr-extract",
+      "prisma",
+      "protobufjs",
+      "sharp"
+    ]
+  }
+}

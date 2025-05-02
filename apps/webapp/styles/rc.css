@@ -1,0 +1,54 @@
+:root {
+  .rc-tree .rc-tree-treenode .rc-tree-node-content-wrapper {
+    display: inline-flex; /* Align children horizontally */
+    align-items: center; /* Center them vertically */
+    width: 100%; /* Take full width */
+    position: relative;
+    display: inline-block;
+    text-decoration: none;
+    vertical-align: top;
+    position: relative;
+    cursor: pointer;
+  }
+
+  .rc-tree-title {
+    flex: 1; /* Allow the title to take up remaining space */
+    overflow: hidden; /* Prevent overflow */
+    text-overflow: ellipsis; /* Ellipsis for overflowing text */
+    white-space: nowrap; /* Prevent text from wrapping */
+  }
+
+  /* Ensure the div inside title behaves properly */
+  .rc-tree-title div {
+    display: flex;
+    align-items: center;
+    width: 100%; /* Ensure div takes up full space */
+    gap: 0.5rem; /* Optional spacing */
+  }
+
+  .rc-tree-title .truncate {
+    flex: 1; /* Ensure the text takes remaining space */
+    overflow: hidden; /* Truncate overflowing content */
+    text-overflow: ellipsis; /* Apply ellipsis */
+    white-space: nowrap; /* Prevent wrapping */
+  }
+
+  .rc-tree-node-content-wrapper > div {
+    background-color: var(--gray-700) !important;
+  }
+
+  .rc-tree .rc-tree-treenode.drop-target {
+    background-color: oklch(0% 0 0 / 6.27%) !important;
+  }
+
+  .rc-tree-indent {
+    display: inline-block;
+    vertical-align: bottom;
+    height: 10px;
+  }
+
+  .rc-tree-indent-unit {
+    display: inline-block;
+    width: 8px;
+  }
+}

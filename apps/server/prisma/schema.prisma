@@ -1,0 +1,558 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  // previewFeatures = []
+}
+
+model Activity {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  text      String
+  sourceId  String?
+  sourceURL String?
+
+  integrationAccount   IntegrationAccount? @relation(fields: [integrationAccountId], references: [id])
+  integrationAccountId String?
+
+  task   Task?   @relation(fields: [taskId], references: [id])
+  taskId String?
+
+  workspace    Workspace      @relation(fields: [workspaceId], references: [id])
+  workspaceId  String
+  Conversation Conversation[]
+}
+
+model AIRequest {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  modelName   String
+  data        String
+  response    String?
+  llmModel    String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId String
+
+  successful Boolean @default(false)
+}
+
+model AgentWorklog {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  modelName String
+  modelId   String
+  state     String
+  type      String
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId String
+}
+
+model Attachment {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  fileName       String?
+  originalName   String
+  fileType       String
+  fileExt        String
+  size           Int
+  url            String?
+  status         AttachmentStatus
+  sourceMetadata Json?
+
+  uploadedBy   User?      @relation(fields: [uploadedById], references: [id])
+  uploadedById String?
+  workspace    Workspace? @relation(fields: [workspaceId], references: [id])
+  workspaceId  String?
+}
+
+// Used to authenticate users from cli
+model AuthorizationCode {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  personalAccessTokenId String?
+  workspaceId           String?
+  code                  String
+}
+
+model Conversation {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  title  String?
+  user   User    @relation(fields: [userId], references: [id])
+  userId String
+
+  workspace   Workspace? @relation(fields: [workspaceId], references: [id])
+  workspaceId String?
+
+  page       Page?     @relation(fields: [pageId], references: [id])
+  pageId     String?
+  task       Task?     @relation(fields: [taskId], references: [id])
+  taskId     String?
+  activity   Activity? @relation(fields: [activityId], references: [id])
+  activityId String?
+
+  ConversationHistory ConversationHistory[]
+}
+
+model ConversationHistory {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  message  String
+  thought  String   @default("")
+  userType UserType
+
+  context Json?
+
+  thoughts Json?
+  user     User?   @relation(fields: [userId], references: [id])
+  userId   String?
+
+  conversation              Conversation                @relation(fields: [conversationId], references: [id])
+  conversationId            String
+  ConversationExecutionStep ConversationExecutionStep[]
+}
+
+model ConversationExecutionStep {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  thought String
+  message String
+
+  metadata Json? @default("{}")
+
+  conversationHistory   ConversationHistory @relation(fields: [conversationHistoryId], references: [id])
+  conversationHistoryId String
+}
+
+model IntegrationAccount {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  integrationConfiguration Json
+  accountId                String?
+  settings                 Json?
+  isActive                 Boolean @default(true)
+
+  integratedBy            User                    @relation(references: [id], fields: [integratedById])
+  integratedById          String
+  integrationDefinition   IntegrationDefinitionV2 @relation(references: [id], fields: [integrationDefinitionId])
+  integrationDefinitionId String
+  workspace               Workspace               @relation(references: [id], fields: [workspaceId])
+  workspaceId             String
+  TaskExternalLink        TaskExternalLink[]
+  Activity                Activity[]
+
+  @@unique([accountId, integrationDefinitionId, workspaceId])
+}
+
+model IntegrationDefinitionV2 {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  name        String  @unique
+  slug        String
+  description String
+  icon        String
+  config      Json?
+  spec        Json    @default("{}")
+  version     String?
+  url         String?
+
+  workspace   Workspace? @relation(references: [id], fields: [workspaceId])
+  workspaceId String?
+
+  IntegrationAccount IntegrationAccount[]
+}
+
+model List {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  favourite Boolean @default(false)
+
+  icon String?
+
+  page   Page   @relation(fields: [pageId], references: [id])
+  pageId String
+
+  workspace   Workspace? @relation(references: [id], fields: [workspaceId])
+  workspaceId String?
+
+  Task Task[]
+}
+
+model Notification {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  type String
+  read Boolean @default(false)
+
+  modelName String
+  modelId   String
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId String
+}
+
+model Page {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+  archived  DateTime?
+
+  title String?
+
+  description       String?
+  descriptionBinary Bytes?
+
+  sortOrder String // LexoRank value for order
+  parentId  String? // Self-referencing: Points to another page (folder)
+  parent    Page?   @relation("ParentChild", fields: [parentId], references: [id])
+  children  Page[]  @relation("ParentChild")
+
+  outlinks Json?    @default("[]")
+  tags     String[]
+
+  type PageType @default(Default)
+
+  workspaceId    String
+  workspace      Workspace        @relation(fields: [workspaceId], references: [id])
+  task           Task[]
+  conversation   Conversation[]
+  taskOccurrence TaskOccurrence[]
+  List           List[]
+}
+
+model PersonalAccessToken {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  name  String
+  jwt   String
+  token String
+
+  user        User   @relation(fields: [userId], references: [id])
+  userId      String
+  type        String @default("user")
+  workspaceId String
+
+  @@unique([name, userId, token])
+}
+
+model Prompt {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  name        String
+  prompt      String
+  model       String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId String
+
+  @@unique([name, workspaceId])
+}
+
+model Sync {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+  title     String
+  content   String
+  date      DateTime
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId String
+}
+
+model SyncAction {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  modelName  ModelName
+  modelId    String
+  action     ActionType
+  sequenceId BigInt
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId String
+
+  @@unique([modelId, action])
+}
+
+model Summary {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+  archived  DateTime?
+
+  content String
+
+  taskId String
+  task   Task   @relation(fields: [taskId], references: [id])
+}
+
+model Task {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+  archived  DateTime?
+
+  number      Int?
+  completedAt DateTime?
+
+  status   String?
+  metadata Json    @default("{}")
+
+  // This is used in recurring tasks
+  startTime    DateTime?
+  endTime      DateTime?
+  recurrence   String[]
+  scheduleText String?
+
+  dueDate  DateTime?
+  remindAt DateTime?
+  tags     String[]
+
+  source Json?
+
+  page   Page   @relation(fields: [pageId], references: [id])
+  pageId String
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId String
+
+  list   List?   @relation(fields: [listId], references: [id])
+  listId String?
+
+  // Very big mistake 
+  parent   Task?   @relation("SubIssue", fields: [parentId], references: [id])
+  parentId String?
+  subIssue Task[]  @relation("SubIssue")
+
+  taskOccurrence   TaskOccurrence[]
+  taskExternalLink TaskExternalLink[]
+  conversation     Conversation[]
+  summary          Summary[]
+  Activity         Activity[]
+}
+
+model TaskExternalLink {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  taskId   String
+  task     Task   @relation(fields: [taskId], references: [id])
+  metadata Json   @default("{}")
+
+  sourceId String?
+  url      String
+
+  integrationAccount   IntegrationAccount @relation(fields: [integrationAccountId], references: [id])
+  integrationAccountId String
+}
+
+model TaskOccurrence {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  startTime DateTime?
+  endTime   DateTime?
+  status    String?
+
+  task   Task   @relation(fields: [taskId], references: [id])
+  taskId String
+
+  page   Page   @relation(fields: [pageId], references: [id])
+  pageId String
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId String
+
+  @@unique([taskId, pageId])
+}
+
+model Template {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  name         String
+  templateData Json
+
+  createdBy   User      @relation(fields: [createdById], references: [id])
+  createdById String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId String
+}
+
+model User {
+  id String @id @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  email     String   @unique
+
+  fullname                String?
+  username                String
+  initialSetupComplete    Boolean @default(false)
+  anonymousDataCollection Boolean @default(false)
+
+  workspace Workspace?
+
+  image       String?
+  preferences Json?
+  mcp         Json?
+
+  template            Template[]
+  integrationAccount  IntegrationAccount[]
+  attachment          Attachment[]
+  personalAccessToken PersonalAccessToken[]
+  Conversation        Conversation[]
+  ConversationHistory ConversationHistory[]
+  UserUsage           UserUsage?
+}
+
+model UserUsage {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  availableCredits Int @default(0)
+  usedCredits      Int @default(0)
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @unique
+}
+
+model Workspace {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  name String
+  slug String  @unique
+  icon String?
+
+  userId String? @unique
+  user   User?   @relation(fields: [userId], references: [id])
+
+  actionsEnabled Boolean @default(true)
+  preferences    Json?
+
+  template              Template[]
+  syncAction            SyncAction[]
+  integrationAccount    IntegrationAccount[]
+  integrationDefinition IntegrationDefinitionV2[]
+  attachments           Attachment[]
+  pages                 Page[]
+  Conversation          Conversation[]
+  tasks                 Task[]
+  taskOccurrence        TaskOccurrence[]
+  aIRequest             AIRequest[]
+  Prompt                Prompt[]
+  List                  List[]
+  agentWorklog          AgentWorklog[]
+  Activity              Activity[]
+  Notification          Notification[]
+  Sync                  Sync[]
+}
+
+enum ModelName {
+  Activity
+  AgentWorklog
+  Attachment
+  Conversation
+  ConversationHistory
+  IntegrationAccount
+  IntegrationDefinitionV2
+  List
+  Notification
+  Page
+  SyncAction
+  Task
+  TaskOccurrence
+  TaskExternalLink
+  User
+  Workspace
+}
+
+enum ActionType {
+  I
+  U
+  D
+}
+
+enum AttachmentStatus {
+  Pending
+  Failed
+  Uploaded
+  Deleted
+  External
+}
+
+enum PageType {
+  Daily
+  List
+  Default
+  Context
+}
+
+enum UserType {
+  Agent
+  User
+  System
+}

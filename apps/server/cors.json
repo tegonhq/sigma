@@ -1,0 +1,19 @@
+[
+  {
+    "origin": [
+      "http://localhost:3000",
+      "https://app.tegon.ai",
+      "https://attachment.tegon.ai"
+    ],
+    "method": ["GET", "POST", "PUT", "HEAD", "OPTIONS"],
+    "responseHeader": [
+      "Content-Type",
+      "Authorization",
+      "Access-Control-Allow-Origin",
+      "Cache-Control",
+      "Content-Length",
+      "Content-Range"
+    ],
+    "maxAgeSeconds": 3600
+  }
+]

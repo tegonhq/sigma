@@ -1,0 +1,9 @@
+{
+  "name": "@sigma/typescript-config",
+  "version": "0.0.0",
+  "private": true,
+  "publishConfig": {
+    "access": "public"
+  },
+  "packageManager": "pnpm@10.3.0"
+}

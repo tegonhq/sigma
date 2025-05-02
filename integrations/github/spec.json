@@ -1,0 +1,35 @@
+{
+  "name": "Github extension",
+  "key": "github",
+  "description": "Plan, track, and manage your agile and software development projects in Github. Customize your workflow, collaborate, and release great software.",
+  "icon": "Github",
+  "schedule": {
+    "frequency": "*/5 * * * *"
+  },
+  "mcp": {
+    "command": "npx",
+    "args": [
+      "-y",
+      "@modelcontextprotocol/server-github"
+    ],
+    "env": {
+      "GITHUB_PERSONAL_ACCESS_TOKEN": "${config:github_token}"
+    }
+  },
+  "auth": {
+    "OAuth2": {
+      "token_url": "https://github.com/login/oauth/access_token",
+      "authorization_url": "https://github.com/login/oauth/authorize",
+      "scopes": [
+        "user",
+        "public_repo",
+        "repo",
+        "notifications",
+        "gist",
+        "read:org",
+        "repo_hooks"
+      ],
+      "scope_separator": ","
+    }
+  }
+}

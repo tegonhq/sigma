@@ -1,0 +1,102 @@
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
+import { Workspace, WorkspaceRequestParamsDto } from '@tegonhq/sigma-sdk';
+import { Request, Response } from 'express';
+import { SessionContainer } from 'supertokens-node/recipe/session';
+
+import { AuthGuard } from 'modules/auth/auth.guard';
+import { Session as SessionDecorator } from 'modules/auth/session.decorator';
+import { Workspace as WorkspaceDecorator } from 'modules/auth/session.decorator';
+
+import {
+  CreateInitialResourcesDto,
+  UpdateWorkspaceInput,
+} from './workspaces.interface';
+import WorkspacesService from './workspaces.service';
+
+@Controller({
+  version: '1',
+  path: 'workspaces',
+})
+export class WorkspacesController {
+  constructor(private workspacesService: WorkspacesService) {}
+
+  @Post('onboarding')
+  @UseGuards(AuthGuard)
+  async createIntialResources(
+    @SessionDecorator() session: SessionContainer,
+    @Body() workspaceData: CreateInitialResourcesDto,
+    @Res() res: Response,
+    @Req() req: Request,
+  ) {
+    const userId = session.getUserId();
+    return await this.workspacesService.createInitialResources(
+      userId,
+      workspaceData,
+      res,
+      req,
+    );
+  }
+
+  @Get('slug/:workspaceSlug')
+  @UseGuards(AuthGuard)
+  async getWorkspaceBySlug(
+    @Param('workspaceSlug') workspaceSlug: string,
+  ): Promise<Workspace> {
+    return await this.workspacesService.getWorkspaceBySlug(workspaceSlug);
+  }
+
+  @Get('relevant-context')
+  @UseGuards(AuthGuard)
+  async getRelevantContext(
+    @WorkspaceDecorator() workspaceId: string,
+    @Query('query') query: string,
+  ) {
+    return await this.workspacesService.getRelevantContext(
+      workspaceId,
+      query,
+      false,
+    );
+  }
+
+  @Get(':workspaceId')
+  @UseGuards(AuthGuard)
+  async getWorkspace(
+    @Param()
+    workspaceId: WorkspaceRequestParamsDto,
+  ): Promise<Workspace> {
+    return await this.workspacesService.getWorkspace(workspaceId);
+  }
+
+  @Post(':workspaceId')
+  @UseGuards(AuthGuard)
+  async updateWorkspace(
+    @Param()
+    workspaceId: WorkspaceRequestParamsDto,
+    @Body() workspaceData: UpdateWorkspaceInput,
+  ): Promise<Workspace> {
+    return await this.workspacesService.updateWorkspace(
+      workspaceId,
+      workspaceData,
+    );
+  }
+
+  @Delete(':workspaceId')
+  @UseGuards(AuthGuard)
+  async deleteWorkspace(
+    @Param()
+    workspaceId: WorkspaceRequestParamsDto,
+  ): Promise<Workspace> {
+    return await this.workspacesService.deleteWorkspace(workspaceId);
+  }
+}
