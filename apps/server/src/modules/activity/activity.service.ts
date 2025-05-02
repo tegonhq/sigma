@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { UserTypeEnum } from '@tegonhq/sigma-sdk';
+import { CreateActivityDto, UserTypeEnum } from '@tegonhq/sigma-sdk';
 import { tasks } from '@trigger.dev/sdk/v3';
 import { PrismaService } from 'nestjs-prisma';
 
@@ -11,6 +11,15 @@ export default class ActivityService {
     private prisma: PrismaService,
     private workspace: WorkspacesService,
   ) {}
+
+  async createActivity(createActivity: CreateActivityDto, workspaceId: string) {
+    return await this.prisma.activity.create({
+      data: {
+        ...createActivity,
+        workspaceId,
+      },
+    });
+  }
 
   async runActivity(activityId: string) {
     const activity = await this.prisma.activity.findUnique({

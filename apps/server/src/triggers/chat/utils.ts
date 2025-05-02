@@ -15,6 +15,8 @@ export interface InitChatPayload {
   conversationId: string;
   conversationHistoryId: string;
   autoMode: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  context: any;
 }
 
 export interface RunChatPayload {
@@ -56,6 +58,7 @@ function createMCPConfig(userMCP: any, pat: string) {
 }
 
 export const init = async (payload: InitChatPayload) => {
+  const agents = payload.context.agents;
   logger.info('Loading init');
   const conversationHistory = await prisma.conversationHistory.findUnique({
     where: { id: payload.conversationHistoryId },
@@ -80,6 +83,60 @@ export const init = async (payload: InitChatPayload) => {
     where: { id: workspace.userId as string },
   });
 
+  const integrationAccounts = await prisma.integrationAccount.findMany({
+    where: {
+      workspaceId: workspace.id,
+      integrationDefinition: { slug: { in: agents } },
+    },
+    include: { integrationDefinition: true },
+  });
+
+  // Create MCP server configurations for each integration account
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const integrationMCPServers: Record<string, any> = {};
+
+  for (const account of integrationAccounts) {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const spec = account.integrationDefinition?.spec as any;
+      if (spec.mcp) {
+        const mcpSpec = spec.mcp;
+        const configuredMCP = { ...mcpSpec };
+
+        // Replace config placeholders in environment variables
+        if (configuredMCP.env) {
+          for (const [key, value] of Object.entries(configuredMCP.env)) {
+            if (typeof value === 'string' && value.includes('${config:')) {
+              // Extract the config key from the placeholder
+              const configKey = value.match(/\$\{config:(.*?)\}/)?.[1];
+              if (
+                configKey &&
+                account.integrationConfiguration &&
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                (account.integrationConfiguration as any)[configKey]
+              ) {
+                configuredMCP.env[key] = value.replace(
+                  `\${config:${configKey}}`,
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  (account.integrationConfiguration as any)[configKey],
+                );
+              }
+            }
+          }
+        }
+
+        // Add to the MCP servers collection
+        integrationMCPServers[account.integrationDefinition.slug] =
+          configuredMCP;
+      }
+    } catch (error) {
+      logger.error(
+        `Failed to configure MCP for ${account.integrationDefinition?.slug}:`,
+        error,
+      );
+    }
+  }
+
   axios.interceptors.request.use((config) => {
     // Check if URL starts with /api and doesn't have a full host
 
@@ -100,7 +157,7 @@ export const init = async (payload: InitChatPayload) => {
     conversationHistory,
     token: pat?.token,
     userId: workspace.userId,
-    mcp,
+    mcp: { mcpServers: { ...mcp.mcpServers, ...integrationMCPServers } },
   };
 };
 

@@ -186,6 +186,7 @@ model IntegrationDefinitionV2 {
   description String
   icon        String
   config      Json?
+  spec        Json    @default("{}")
   version     String?
   url         String?
 

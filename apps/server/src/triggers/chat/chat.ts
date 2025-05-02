@@ -35,10 +35,9 @@ export const chat = task({
       return;
     }
 
-    const contextFromAPI = payload.context;
-    const { previousHistory, userContext, ...otherData } = contextFromAPI;
+    const { previousHistory, userContext, ...otherData } = payload.context;
 
-    let { agents = [] } = contextFromAPI;
+    let { agents = [] } = payload.context;
     // Add sigma as a default agent if it's not already in the list
     if (!agents.includes('sigma')) {
       agents = [...agents, 'sigma'];

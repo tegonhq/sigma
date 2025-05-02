@@ -37,7 +37,7 @@ export class IntegrationDefinition {
   description: string;
   icon: string;
   config?: any;
-  spec?: Spec;
+  spec?: any;
   version?: string;
   url?: string;
   workspace?: Workspace;

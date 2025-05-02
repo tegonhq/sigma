@@ -1,5 +1,8 @@
 import React from 'react';
 
+import { useGetIntegrationDefinitions } from 'services/integration-definition';
+
+import { useContextStore } from 'store/global-context-provider';
 import { UserContext } from 'store/user-context';
 
 export const useMCP = () => {
@@ -34,6 +37,21 @@ export const getMCPServers = (mcpConfig: string | object) => {
 };
 
 export const useMCPServers = () => {
+  const { data: integrationDefinitions } = useGetIntegrationDefinitions();
+  const { integrationAccountsStore } = useContextStore();
   const mcp = useMCP();
-  return React.useMemo(() => getMCPServers(mcp), [mcp]);
+
+  const preloadMCPs = integrationAccountsStore.integrationAccounts.map((ia) => {
+    const integrationDefinition = integrationDefinitions.find(
+      (id) => id.id === ia.integrationDefinitionId,
+    );
+
+    return {
+      key: integrationDefinition.slug,
+      name: integrationDefinition.name,
+    };
+  });
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  return React.useMemo(() => [...getMCPServers(mcp), ...preloadMCPs], [mcp]);
 };

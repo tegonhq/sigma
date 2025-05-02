@@ -6,6 +6,8 @@ import ReactTimeAgo from 'react-time-ago';
 import { type NotificationType } from 'common/types';
 
 import { useContextStore } from 'store/global-context-provider';
+import { useGetIntegrationDefinitions } from 'services/integration-definition';
+import { getIcon, type IconType } from 'common/icon-utils';
 
 interface InboxItemProps {
   notification: NotificationType;
@@ -20,9 +22,26 @@ function getNotificationText(): string {
 
 export const InboxItem = observer(
   ({ notification, selected, onSelect, nextIsSelected }: InboxItemProps) => {
-    const { activitesStore } = useContextStore();
+    const { activitesStore, integrationAccountsStore } = useContextStore();
 
     const activity = activitesStore.getActivityById(notification.modelId);
+    const { data: integrationDefinitions } = useGetIntegrationDefinitions();
+
+    const integrationAccount = integrationAccountsStore.getAccountWithId(
+      activity?.integrationAccountId,
+    );
+    const integrationDefinition =
+      integrationDefinitions &&
+      integrationDefinitions.find(
+        (integrationDefinition) =>
+          integrationDefinition.id ===
+          integrationAccount?.integrationDefinitionId,
+      );
+
+    const Icon = integrationDefinition
+      ? getIcon(integrationDefinition.icon as IconType)
+      : undefined;
+
     // TODO : will fail when issues are from different teams
     const noBorder = nextIsSelected || selected;
     console.log(activity);
@@ -46,7 +65,7 @@ export const InboxItem = observer(
             !noBorder && 'border-b border-border',
           )}
         >
-          <div className="flex justify-between">
+          <div className="flex justify-between w-full items-center">
             <div
               className={cn(
                 'w-[calc(100%_-_40px)]',
@@ -55,7 +74,9 @@ export const InboxItem = observer(
             >
               <div className="truncate"> {activity?.text} </div>
             </div>
-            <div className="text-muted-foreground w-[70px] text-right"></div>
+            <div className="text-foreground text-right">
+              {Icon && <Icon size={18} className="dark:text-background" />}
+            </div>
           </div>
 
           <div className="flex justify-between text-xs">

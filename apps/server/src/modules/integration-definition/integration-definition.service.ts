@@ -5,16 +5,8 @@ import {
 } from '@tegonhq/sigma-sdk';
 import { PrismaService } from 'nestjs-prisma';
 
-import { fetcher } from 'common/remote-loader/load-remote-module';
-
-import { LoggerService } from 'modules/logger/logger.service';
-
 @Injectable()
 export class IntegrationDefinitionService {
-  private readonly logger = new LoggerService(
-    IntegrationDefinitionService.name,
-  );
-
   constructor(private prisma: PrismaService) {}
 
   async getIntegrationDefinitions(
@@ -40,21 +32,5 @@ export class IntegrationDefinitionService {
     return await this.prisma.integrationDefinitionV2.findUnique({
       where: { id: integrationDefinitionRequestIdBody.integrationDefinitionId },
     });
-  }
-
-  async getIntegrationDefinitionWithSpec(
-    integrationDefinitionId: string,
-  ): Promise<IntegrationDefinition | undefined> {
-    try {
-      const integrationDefinition = await this.getIntegrationDefinitionWithId({
-        integrationDefinitionId,
-      });
-
-      const spec = await fetcher(`${integrationDefinition.url}/spec.json`);
-      return { ...integrationDefinition, spec };
-    } catch (e) {
-      this.logger.error({ message: `Integration spec fetching failed: ${e}` });
-      return undefined;
-    }
   }
 }

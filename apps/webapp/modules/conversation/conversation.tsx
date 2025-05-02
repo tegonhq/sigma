@@ -1,5 +1,5 @@
 import { UserTypeEnum } from '@sigma/types';
-import { cn, LoaderLine, useToast } from '@tegonhq/ui';
+import { cn, Loader, LoaderLine, useToast } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 
@@ -13,6 +13,7 @@ import {
   useCreateConversationMutation,
   useStreamConversationMutation,
 } from 'services/conversations';
+import { useGetIntegrationDefinitions } from 'services/integration-definition';
 
 import { useContextStore } from 'store/global-context-provider';
 import { UserContext } from 'store/user-context';
@@ -29,6 +30,7 @@ export const Conversation = observer(() => {
   const { conversationHistory } = useConversationHistory(
     commonStore.currentConversationId,
   );
+  const { isLoading: integrationsLoading } = useGetIntegrationDefinitions();
 
   const user = React.useContext(UserContext);
   const {
@@ -126,6 +128,10 @@ export const Conversation = observer(() => {
       </>
     );
   };
+
+  if (integrationsLoading) {
+    return <Loader />;
+  }
 
   return (
     <div className="flex flex-col h-[calc(100vh_-_3.5rem)]">

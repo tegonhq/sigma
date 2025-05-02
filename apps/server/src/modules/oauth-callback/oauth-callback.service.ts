@@ -51,9 +51,9 @@ export class OAuthCallbackService {
     });
 
     const integrationDefinition =
-      await this.integrationDefinitionService.getIntegrationDefinitionWithSpec(
+      await this.integrationDefinitionService.getIntegrationDefinitionWithId({
         integrationDefinitionId,
-      );
+      });
 
     const spec = integrationDefinition.spec;
     const externalConfig = spec.auth.OAuth2 as OAuth2Params;
@@ -134,9 +134,9 @@ export class OAuthCallbackService {
     }
 
     const integrationDefinition =
-      await this.integrationDefinitionService.getIntegrationDefinitionWithSpec(
-        sessionRecord.integrationDefinitionId,
-      );
+      await this.integrationDefinitionService.getIntegrationDefinitionWithId({
+        integrationDefinitionId: sessionRecord.integrationDefinitionId,
+      });
 
     const template = (await getTemplate(
       integrationDefinition,

@@ -32,6 +32,11 @@ export class UsersService {
           email,
           fullname,
           username: username ?? email.split('@')[0],
+          UserUsage: {
+            create: {
+              availableCredits: 50,
+            },
+          },
         },
         update: {},
       });
