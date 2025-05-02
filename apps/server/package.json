@@ -1,6 +1,6 @@
 {
   "name": "server",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "Sigma server",
   "author": "Sigma",
   "private": true,
