@@ -20,7 +20,6 @@ import { useContextStore } from 'store/global-context-provider';
 
 import { ListPageEditor } from './list-page-editor';
 import { ListPageHeader } from './list-page-header';
-import { FavouriteButton } from './list-view/favourite-button';
 
 interface ListPageProps {
   list: ListType;
@@ -61,7 +60,7 @@ export const ListPage = observer(({ list }: ListPageProps) => {
     return (
       <Popover>
         <PopoverTrigger>
-          <div className="relative top-1">{getIcon(list?.icon, 24)}</div>
+          <div className="relative top-1.5">{getIcon(list?.icon, 24)}</div>
         </PopoverTrigger>
         <PopoverContent className="p-2">
           <IconPicker

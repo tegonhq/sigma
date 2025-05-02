@@ -32,4 +32,5 @@ export const tablesToSendMessagesFor = new Map([
 export const tableHooks = new Map([
   [ModelNameEnum.Page, true],
   [ModelNameEnum.Task, true],
+  [ModelNameEnum.Activity, true],
 ]);

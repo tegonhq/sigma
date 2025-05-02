@@ -1,5 +1,5 @@
-import Anthropic from '@anthropic-ai/sdk';
-import { MessageParam } from '@anthropic-ai/sdk/resources';
+import { anthropic } from '@ai-sdk/anthropic';
+import { CoreMessage, LanguageModelV1, streamText } from 'ai';
 
 import { AgentMessageType, Message } from './types';
 
@@ -95,8 +95,10 @@ export async function* processTag(
 }
 
 export async function* generate(
-  messages: MessageParam[],
+  messages: CoreMessage[],
   system?: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onFinish?: (event: any) => void,
 ): AsyncGenerator<string> {
   // Check for API keys
 
@@ -107,31 +109,19 @@ export async function* generate(
     throw new Error('No LLM API key found. Set either ANTHROPIC_API_KEY');
   }
 
+  const modelInstance = anthropic(model);
+
   // Try Anthropic next if key exists
   if (anthropicKey) {
-    const anthropic = new Anthropic({
-      apiKey: anthropicKey,
-    });
-
-    const stream = anthropic.messages.stream({
-      messages,
-      model,
-      max_tokens: 5000,
+    const { textStream } = await streamText({
+      model: modelInstance as LanguageModelV1,
       system,
+      messages,
+      onFinish,
     });
 
-    for await (const chunk of stream) {
-      if (chunk.type === 'content_block_delta') {
-        const content = chunk.delta?.text || '';
-        if (content) {
-          yield content;
-        }
-      } else if (
-        chunk.type === 'content_block_start' &&
-        chunk.content_block?.text
-      ) {
-        yield chunk.content_block.text;
-      }
+    for await (const chunk of textStream) {
+      yield chunk;
     }
     return;
   }

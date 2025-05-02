@@ -220,6 +220,8 @@ export class ConversationHistoryService {
     response.setHeader('Cache-Control', 'no-cache');
     response.setHeader('Connection', 'keep-alive');
 
+    const context = await this.getConversationContext(conversationHistoryId);
+
     // Pass the task type to `trigger()` as a generic argument, giving you full type checking
     const { id } = await tasks.trigger(
       'chat',
@@ -227,6 +229,7 @@ export class ConversationHistoryService {
         conversationHistoryId,
         conversationId: conversationHistory.conversation.id,
         autoMode: true,
+        context,
       },
       { tags: [conversationHistoryId] },
     );

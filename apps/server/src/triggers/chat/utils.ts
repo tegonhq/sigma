@@ -6,7 +6,6 @@ import {
 } from '@prisma/client';
 import { logger } from '@trigger.dev/sdk/v3';
 import axios from 'axios';
-import { tokenizeAndEstimateCost } from 'llm-cost';
 
 import { HistoryStep } from './types';
 
@@ -22,6 +21,9 @@ export interface RunChatPayload {
   conversationId: string;
   conversationHistoryId: string;
   autoMode: string;
+  activityId?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  context: any;
   conversation: Conversation;
   conversationHistory: ConversationHistory;
 }
@@ -287,6 +289,29 @@ export const getExecutionStepsForConversation = async (
   return lastExecutionSteps;
 };
 
+export const createNotificationForActivity = async (
+  activityId: string,
+  workspaceId: string,
+) => {
+  await prisma.notification.create({
+    data: {
+      type: 'NewActivity',
+      modelName: 'Activity',
+      modelId: activityId,
+      workspaceId,
+    },
+  });
+};
+
+export const getContextPage = async (workspaceId: string) => {
+  return await prisma.page.findFirst({
+    where: {
+      workspaceId,
+      type: 'Context',
+    },
+  });
+};
+
 /**
  * Generates a random ID of 6 characters
  * @returns A random string of 6 characters
@@ -306,15 +331,6 @@ export const generateRandomId = (): string => {
   return result.toLowerCase();
 };
 
-export const getCost = async (input: string, output: string) => {
-  const result = await tokenizeAndEstimateCost({
-    model: 'claude-3-7-sonnet-20250219',
-    input,
-    output,
-  });
-
-  return result;
-};
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function flattenObject(obj: Record<string, any>, prefix = ''): string[] {
   return Object.entries(obj).reduce<string[]>((result, [key, value]) => {

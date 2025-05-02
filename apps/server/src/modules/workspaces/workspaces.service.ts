@@ -14,13 +14,13 @@ import supertokens from 'supertokens-node';
 import Session from 'supertokens-node/recipe/session';
 
 import AIRequestsService from 'modules/ai-requests/ai-requests.services';
+import { LoggerService } from 'modules/logger/logger.service';
 
 import {
   CreateInitialResourcesDto,
   CreateWorkspaceInput,
   UpdateWorkspaceInput,
 } from './workspaces.interface';
-import { LoggerService } from 'modules/logger/logger.service';
 
 @Injectable()
 export default class WorkspacesService {

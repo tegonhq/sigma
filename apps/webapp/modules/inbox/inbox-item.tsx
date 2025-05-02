@@ -1,6 +1,5 @@
 import { cn } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
-import { useRouter } from 'next/router';
 import React from 'react';
 import ReactTimeAgo from 'react-time-ago';
 
@@ -10,41 +9,51 @@ import { useContextStore } from 'store/global-context-provider';
 
 interface InboxItemProps {
   notification: NotificationType;
-  nextNotification: NotificationType | undefined;
+  selected: boolean;
+  onSelect: (id: string) => void;
+  nextIsSelected: boolean;
 }
 
 function getNotificationText(): string {
-  return 'New notification';
+  return 'New activity';
 }
 
 export const InboxItem = observer(
-  ({ notification, nextNotification }: InboxItemProps) => {
-    const { push } = useRouter();
+  ({ notification, selected, onSelect, nextIsSelected }: InboxItemProps) => {
+    const { activitesStore } = useContextStore();
+
+    const activity = activitesStore.getActivityById(notification.modelId);
+    // TODO : will fail when issues are from different teams
+    const noBorder = nextIsSelected || selected;
+    console.log(activity);
 
     return (
       <div
         className={cn(
-          'ml-2 p-3 py-0 mr-4 flex gap-1 items-center hover:bg-grayAlpha-200 rounded',
+          'ml-2 p-3 py-0 mr-2 flex gap-1 items-center hover:bg-grayAlpha-100 rounded',
+          selected && 'bg-grayAlpha-200',
         )}
         onClick={() => {
           if (!notification.read) {
           }
+
+          onSelect(notification.id);
         }}
       >
         <div
           className={cn(
             'flex flex-col gap-1 py-2 w-full',
-            !false && 'border-b',
+            !noBorder && 'border-b border-border',
           )}
         >
           <div className="flex justify-between">
             <div
               className={cn(
-                'w-[calc(100%_-_110px)]',
+                'w-[calc(100%_-_40px)]',
                 notification.read ? 'text-muted-foreground' : 'text-foreground',
               )}
             >
-              <div className="truncate">New Notification</div>
+              <div className="truncate"> {activity?.text} </div>
             </div>
             <div className="text-muted-foreground w-[70px] text-right"></div>
           </div>
