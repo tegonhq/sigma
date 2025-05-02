@@ -5,11 +5,13 @@ import { MCP } from './mcp';
 import {
   createConversationHistoryForAgent,
   createNotificationForActivity,
+  getCreditsForUser,
   getPreviousExecutionHistory,
   init,
   RunChatPayload,
   updateConversationHistoryMessage,
   updateExecutionStep,
+  updateUserCredits,
 } from './utils';
 
 // Save context to a JSON file before running the agent
@@ -26,6 +28,13 @@ export const chat = task({
   },
   init,
   run: async (payload: RunChatPayload, { init }) => {
+    const usageCredits = await getCreditsForUser(init.userId);
+
+    if (usageCredits.availableCredits <= 0) {
+      logger.error('No credits found for the user');
+      return;
+    }
+
     const contextFromAPI = payload.context;
     const { previousHistory, userContext, ...otherData } = contextFromAPI;
 
@@ -87,6 +96,7 @@ export const chat = task({
 
     for await (const step of stream) {
       if (step.type === 'STEP') {
+        usageCredits.availableCredits -= 1;
         const stepDetails = JSON.parse(step.message);
 
         await updateExecutionStep(
@@ -107,9 +117,11 @@ export const chat = task({
       }
     }
 
-    if (payload.activityId) {
+    await updateUserCredits(usageCredits.id, usageCredits.availableCredits);
+
+    if (payload.activity) {
       await createNotificationForActivity(
-        payload.activityId,
+        payload.activity,
         init?.conversation.workspaceId,
       );
     }

@@ -21,7 +21,7 @@ export interface RunChatPayload {
   conversationId: string;
   conversationHistoryId: string;
   autoMode: string;
-  activityId?: string;
+  activity?: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   context: any;
   conversation: Conversation;
@@ -308,6 +308,28 @@ export const getContextPage = async (workspaceId: string) => {
     where: {
       workspaceId,
       type: 'Context',
+    },
+  });
+};
+
+export const getCreditsForUser = async (userId: string) => {
+  return await prisma.userUsage.findUnique({
+    where: {
+      userId,
+    },
+  });
+};
+
+export const updateUserCredits = async (
+  userUsageId: string,
+  finalCredits: number,
+) => {
+  return await prisma.userUsage.update({
+    where: {
+      id: userUsageId,
+    },
+    data: {
+      availableCredits: finalCredits,
     },
   });
 };

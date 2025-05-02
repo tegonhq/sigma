@@ -7,11 +7,8 @@ import { EditorContent } from 'novel';
 import { CodeBlockLowlight, Placeholder } from 'novel/extensions';
 import { useState } from 'react';
 import React from 'react';
-import { useHotkeys } from 'react-hotkeys-hook';
-import { Key } from 'ts-key-enum';
 
 import { EditorRoot, lowlight, type EditorT } from 'common/editor';
-import { SCOPES } from 'common/shortcut-scopes';
 
 import { CustomMention, useMentionSuggestions } from './suggestion-extension';
 
@@ -25,24 +22,6 @@ export function ConversationTextarea({ onSend }: ConversationTextareaProps) {
   const [agents, setAgents] = React.useState<string[]>([]);
 
   const suggestion = useMentionSuggestions();
-
-  useHotkeys(
-    [Key.Enter],
-    () => {
-      if (text) {
-        const title = editor.getText();
-
-        onSend(text, agents, title);
-        setText('');
-        editor.commands.clearContent(true);
-      }
-    },
-    {
-      scopes: [SCOPES.AI],
-      enableOnFormTags: true,
-      enableOnContentEditable: true,
-    },
-  );
 
   const onCommentUpdate = (editor: EditorT) => {
     setText(editor.getHTML());
@@ -116,7 +95,23 @@ export function ConversationTextarea({ onSend }: ConversationTextareaProps) {
               handleKeyDown(view, event) {
                 // Block default Enter
                 if (event.key === 'Enter' && !event.shiftKey) {
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  const target = event.target as any;
+
+                  if (target.innerHTML.includes('suggestion')) {
+                    return false;
+                  }
+
                   event.preventDefault();
+
+                  if (text) {
+                    const title = editor.getText();
+
+                    onSend(text, agents, title);
+                    editor.commands.clearContent(true);
+                    setText('');
+                  }
+
                   return true;
                 }
 

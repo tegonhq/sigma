@@ -460,6 +460,20 @@ model User {
   personalAccessToken PersonalAccessToken[]
   Conversation        Conversation[]
   ConversationHistory ConversationHistory[]
+  UserUsage           UserUsage?
+}
+
+model UserUsage {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  availableCredits Int @default(0)
+  usedCredits      Int @default(0)
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @unique
 }
 
 model Workspace {

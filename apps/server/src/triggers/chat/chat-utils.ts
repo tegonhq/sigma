@@ -143,7 +143,7 @@ export async function* run(
     query: message,
     context,
     previousHistory,
-    userMemoryContext: userContext.join(''),
+    userMemoryContext: userContext.join('\n'),
     history: [], // Track the full ReAct history
     completed: false,
     autoMode: true,

@@ -9,12 +9,12 @@ import {
   TaskOccurrence,
   UpdateTaskOccurenceDTO,
 } from '@tegonhq/sigma-sdk';
+import { endOfDay, subDays } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { PrismaService } from 'nestjs-prisma';
 import { RRule } from 'rrule';
 
 import { PagesService } from 'modules/pages/pages.service';
-import { endOfDay, subDays } from 'date-fns';
 
 @Injectable()
 export class TaskOccurenceService {

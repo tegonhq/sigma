@@ -2,9 +2,13 @@ import { Badge, ParentIssueLine } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 
+import { getIcon } from 'common/icon-picker';
 import type { TaskType } from 'common/types';
 import { TaskViewContext } from 'layouts/side-task-view';
 
+import { useApplication } from 'hooks/application';
+
+import { TabViewType } from 'store/application';
 import { useContextStore } from 'store/global-context-provider';
 
 import { ScheduleDropdown } from '../metadata';
@@ -15,9 +19,6 @@ import {
   TaskIntegrationMetadataWrapper,
   TaskIntegrationViewType,
 } from '../task-integration-metadata';
-import { getIcon } from 'common/icon-picker';
-import { useApplication } from 'hooks/application';
-import { TabViewType } from 'store/application';
 
 interface SingleTaskMetadataProps {
   task: TaskType;

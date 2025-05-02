@@ -14,7 +14,7 @@ import React from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { signOut } from 'supertokens-auth-react/recipe/session';
 
-import { Settings, useSettings } from 'modules/settings';
+import { useSettings } from 'modules/settings';
 
 import { SCOPES } from 'common/shortcut-scopes';
 

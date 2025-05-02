@@ -1,7 +1,8 @@
 import { UserTypeEnum } from '@sigma/types';
-import { cn, LoaderLine } from '@tegonhq/ui';
+import { cn, LoaderLine, useToast } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
+
 import type { ConversationHistoryType } from 'common/types';
 import { ScrollAreaWithAutoScroll } from 'common/use-auto-scroll';
 
@@ -23,6 +24,7 @@ import { useConversationContext } from './use-conversation-context';
 
 export const Conversation = observer(() => {
   const { commonStore } = useContextStore();
+  const { toast } = useToast();
 
   const { conversationHistory } = useConversationHistory(
     commonStore.currentConversationId,
@@ -63,6 +65,14 @@ export const Conversation = observer(() => {
               conversationHistoryId: data.id,
             });
           },
+
+          onError: (data) => {
+            const errorMessage = data.response?.data?.message;
+            toast({
+              title: 'Conversation error',
+              description: errorMessage ?? 'Conversation creation failed',
+            });
+          },
         },
       );
     } else {
@@ -79,6 +89,13 @@ export const Conversation = observer(() => {
             commonStore.update({ currentConversationId: data.id });
             streamConversation({
               conversationHistoryId: data.ConversationHistory[0].id,
+            });
+          },
+          onError: (data) => {
+            const errorMessage = data.response?.data?.message;
+            toast({
+              title: 'Conversation error',
+              description: errorMessage ?? 'Conversation creation failed',
             });
           },
         },

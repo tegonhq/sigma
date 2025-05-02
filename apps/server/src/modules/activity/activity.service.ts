@@ -47,6 +47,10 @@ export default class ActivityService {
       false,
     )) as string[];
 
+    if (userContext.length === 0) {
+      return;
+    }
+
     await tasks.trigger(
       'chat',
       {
