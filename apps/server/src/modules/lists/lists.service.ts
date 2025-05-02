@@ -3,7 +3,14 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { List, PageTypeEnum, Task, UpdateListDto } from '@tegonhq/sigma-sdk';
+import { convertTiptapJsonToHtml } from '@sigma/editor-extensions';
+import {
+  List,
+  PageSelect,
+  PageTypeEnum,
+  Task,
+  UpdateListDto,
+} from '@tegonhq/sigma-sdk';
 import { PrismaService } from 'nestjs-prisma';
 
 @Injectable()
@@ -34,9 +41,14 @@ export class ListsService {
         deleted: null,
       },
       include: {
-        page: true,
+        page: { select: PageSelect },
       },
     });
+
+    if (list.page?.description) {
+      const descriptionJson = JSON.parse(list.page.description);
+      list.page.description = convertTiptapJsonToHtml(descriptionJson);
+    }
 
     if (!list) {
       throw new NotFoundException(`List with ID ${listId} not found`);

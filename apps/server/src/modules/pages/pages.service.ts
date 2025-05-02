@@ -213,7 +213,7 @@ export class PagesService {
       );
     }
 
-    return prismaClient.page.update({
+    const page = await prismaClient.page.update({
       where: { id: pageId },
       data: {
         ...pageData,
@@ -221,6 +221,13 @@ export class PagesService {
       },
       select: PageSelect,
     });
+
+    if (page.description) {
+      const descriptionJson = JSON.parse(page.description);
+      page.description = convertTiptapJsonToHtml(descriptionJson);
+    }
+
+    return page;
   }
 
   async deletePage(pageId: string): Promise<PublicPage> {

@@ -15,6 +15,7 @@ import TableCell from '@tiptap/extension-table-cell';
 import TableHeader from '@tiptap/extension-table-header';
 import TableRow from '@tiptap/extension-table-row';
 import { skillExtension } from './skill-extension';
+import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 
 export const defaultExtensions = [
   fileExtension,
@@ -26,6 +27,7 @@ export const defaultExtensions = [
     gapcursor: false,
     codeBlock: false,
   }),
+  CodeBlockLowlight.configure(),
   Link,
   Placeholder,
   Highlight,
