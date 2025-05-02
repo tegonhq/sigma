@@ -3,11 +3,12 @@ import { observer } from 'mobx-react-lite';
 import React from 'react';
 import ReactTimeAgo from 'react-time-ago';
 
+import { getIcon, type IconType } from 'common/icon-utils';
 import { type NotificationType } from 'common/types';
 
-import { useContextStore } from 'store/global-context-provider';
 import { useGetIntegrationDefinitions } from 'services/integration-definition';
-import { getIcon, type IconType } from 'common/icon-utils';
+
+import { useContextStore } from 'store/global-context-provider';
 
 interface InboxItemProps {
   notification: NotificationType;
