@@ -150,7 +150,9 @@ export const init = async (payload: InitChatPayload) => {
 
   const mcp = createMCPConfig(user.mcp, pat?.token);
 
-  logger.info(`Found users, workspace, conversation, ${JSON.stringify(mcp)}`);
+  logger.info(
+    `Found users, workspace, conversation, ${JSON.stringify({ mcpServers: { ...mcp.mcpServers, ...integrationMCPServers } })}`,
+  );
 
   return {
     conversation,
