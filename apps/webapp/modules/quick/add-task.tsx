@@ -51,14 +51,14 @@ export const AddTask = observer(() => {
       <Input
         ref={inputRef}
         placeholder="Check my emails everyday at 9"
-        className="rounded-r-none pr-1"
+        className="rounded-r-none pr-1 h-9"
         onKeyDown={handleInputKeyDown}
       />
       <Button
         variant="secondary"
         isLoading={isLoading}
         size="lg"
-        className="rounded-l-none pl-0 text-sm"
+        className="rounded-l-none pl-0 text-sm h-9"
       >
         Add task
       </Button>

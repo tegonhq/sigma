@@ -4,8 +4,6 @@ import React from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
 
-import { QuickConverstion } from 'modules/conversation';
-
 import { SCOPES } from 'common/shortcut-scopes';
 
 import { useScope } from 'hooks/use-scope';

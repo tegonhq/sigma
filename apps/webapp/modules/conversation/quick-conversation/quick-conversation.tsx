@@ -1,5 +1,5 @@
 import { UserTypeEnum } from '@sigma/types';
-import { Button, cn, LoaderLine, useToast } from '@tegonhq/ui';
+import { cn, LoaderLine, useToast } from '@tegonhq/ui';
 import React from 'react';
 
 import type { ConversationHistoryType } from 'common/types';
@@ -120,7 +120,7 @@ export const QuickConverstion = () => {
 
   return (
     <>
-      <ScrollAreaWithAutoScroll className="relative text-sm border-t border-border mt-4">
+      <ScrollAreaWithAutoScroll className="relative text-sm mt-4">
         {getConversations()}
 
         {isLoading && (

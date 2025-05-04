@@ -74,12 +74,11 @@ export async function handleSchedule(eventBody: any) {
           url = subject.url;
         }
 
-        sourceURL = subject.html_url || url;
-
         if (url) {
           // Fetch the full data from GitHub API
           githubData = await getGithubData(url, integrationConfiguration.access_token);
           sourceId = githubData.id?.toString() || '';
+          sourceURL = githubData.html_url || url;
 
           // Create structured text based on notification reason
           switch (reason) {
