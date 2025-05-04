@@ -1,7 +1,7 @@
 import createLoadRemoteModule, {
   createRequires,
 } from '@paciolan/remote-module-loader';
-import { IntegrationDefinition } from '@tegonhq/sigma-sdk';
+import { IntegrationAccount, IntegrationDefinition } from '@tegonhq/sigma-sdk';
 import { logger, task } from '@trigger.dev/sdk/v3';
 import axios from 'axios';
 
@@ -45,6 +45,8 @@ export const integrationRun = task({
   id: 'integration-run',
   run: async ({
     pat,
+    eventBody,
+    integrationAccount,
     integrationDefinition,
     event,
   }: {
@@ -52,7 +54,10 @@ export const integrationRun = task({
     // This is the event you want to pass to the integration
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     event: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    eventBody?: any;
     integrationDefinition: IntegrationDefinition;
+    integrationAccount?: IntegrationAccount;
   }) => {
     const remoteModuleLoad = await loadRemoteModule(
       getRequires(createAxiosInstance(pat)),
@@ -62,10 +67,21 @@ export const integrationRun = task({
       `${integrationDefinition.url}/${integrationDefinition.version}/backend/index.js`,
     );
 
+    // const integrationFunction = await remoteModuleLoad(
+    //   `${integrationDefinition.url}/${integrationDefinition.version}/backend/index.js`,
+    // );
+
     const integrationFunction = await remoteModuleLoad(
-      `${integrationDefinition.url}/${integrationDefinition.version}/backend/index.js`,
+      `${integrationDefinition.url}`,
     );
 
-    return await integrationFunction.run(event);
+    return await integrationFunction.run({
+      event,
+      eventBody: {
+        ...(eventBody ? eventBody : {}),
+        integrationAccount,
+        integrationDefinition,
+      },
+    });
   },
 });

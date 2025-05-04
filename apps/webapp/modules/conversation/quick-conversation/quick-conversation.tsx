@@ -25,7 +25,6 @@ export const QuickConverstion = () => {
   const [conversationId, setConversationId] = React.useState(undefined);
   const user = React.useContext(UserContext);
   const { conversationHistory } = useConversationHistory(conversationId);
-  console.log(conversationId, conversationHistory);
   const { mutate: createConversation } = useCreateConversationMutation({});
   const { toast } = useToast();
 
@@ -97,8 +96,6 @@ export const QuickConverstion = () => {
       <>
         {conversationHistory.map(
           (ch: ConversationHistoryType, index: number) => {
-            const current = conversationHistoryId === ch.id;
-
             if (reached === true && isLoading) {
               return null;
             }
@@ -106,8 +103,6 @@ export const QuickConverstion = () => {
             if (conversationHistoryId === ch.id) {
               reached = true;
             }
-
-            console.log(current, reached, ch.id);
 
             return (
               <ConversationItem key={index} conversationHistoryId={ch.id} />

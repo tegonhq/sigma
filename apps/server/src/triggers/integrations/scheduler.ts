@@ -39,6 +39,19 @@ export const scheduler = task({
         externalId: integrationAccount.id,
       });
 
+      await prisma.integrationAccount.update({
+        where: {
+          id: integrationAccount.id,
+        },
+        data: {
+          settings: {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            ...(integrationAccount.settings as any),
+            scheduleId: createdSchedule.id,
+          },
+        },
+      });
+
       return createdSchedule;
     }
 

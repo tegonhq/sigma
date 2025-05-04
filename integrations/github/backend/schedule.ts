@@ -7,8 +7,9 @@ export async function handleSchedule(eventBody: any) {
   const { integrationAccount } = eventBody;
   const integrationConfiguration = integrationAccount.integrationConfiguration;
   const settings = integrationAccount.settings;
-
-  const lastSyncTime = settings.lastSyncTime;
+  // If lastSyncTime is not available, default to 1 day ago
+  const lastSyncTime =
+    settings.lastSyncTime || new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 
   const allowedReasons = [
     'assign',

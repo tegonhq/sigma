@@ -12,11 +12,7 @@ export interface IntegrationEventPayload {
 export async function run(eventPayload: IntegrationEventPayload) {
   switch (eventPayload.event) {
     case IntegrationPayloadEventType.INTEGRATION_ACCOUNT_CREATED:
-      return await integrationCreate(
-        eventPayload.userId,
-        eventPayload.workspaceId,
-        eventPayload.eventBody,
-      );
+      return await integrationCreate(eventPayload.eventBody);
 
     case IntegrationPayloadEventType.SCHEDULED_SYNC:
       return handleSchedule(eventPayload.eventBody);
