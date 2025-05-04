@@ -27,12 +27,20 @@ interface RightSideLayoutProps {
   header: React.ReactNode;
 }
 
+export interface ContextType {
+  collapsed: boolean;
+  onOpen: (defaultValue: string) => void;
+  onClose: () => void;
+}
+
+export const RightSideViewContext = React.createContext<ContextType>(undefined);
+
 export const RightSideLayout = observer(
   ({ children, header }: RightSideLayoutProps) => {
     useScope(SCOPES.AI);
 
     const [size, setSize] = useLocalCommonState('panelSize', 15);
-    const [aiCollapsed, setAICollapsed] = React.useState(true);
+    const [defaultValue, setDefaultValue] = React.useState(undefined);
     const [rightSideCollapsed, setRightSideCollapsed] = React.useState(true);
     const { open } = useSidebar();
 
@@ -64,9 +72,6 @@ export const RightSideLayout = observer(
             if (event.metaKey) {
               if (rightSideCollapsed) {
                 setRightSideCollapsed(false);
-                if (aiCollapsed) {
-                  setAICollapsed(false);
-                }
               } else {
                 onClose();
               }
@@ -85,7 +90,12 @@ export const RightSideLayout = observer(
 
     const onClose = () => {
       setRightSideCollapsed(true);
-      setAICollapsed(true);
+      setDefaultValue(undefined);
+    };
+
+    const onOpen = (value: string) => {
+      setRightSideCollapsed(false);
+      setDefaultValue(value);
     };
 
     return (
@@ -111,7 +121,15 @@ export const RightSideLayout = observer(
               {header}
 
               <TabContext.Provider value={{ tabId: firstTab.id }}>
-                {children}
+                <RightSideViewContext.Provider
+                  value={{
+                    collapsed: rightSideCollapsed,
+                    onOpen,
+                    onClose,
+                  }}
+                >
+                  {children}
+                </RightSideViewContext.Provider>
               </TabContext.Provider>
             </ResizablePanel>
             {!rightSideCollapsed && (

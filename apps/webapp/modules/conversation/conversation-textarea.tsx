@@ -55,7 +55,7 @@ export function ConversationTextarea({ onSend }: ConversationTextareaProps) {
 
   return (
     <div className="p-4">
-      <div className="flex flex-col rounded pt-2 bg-background">
+      <div className="flex flex-col rounded pt-2 bg-grayAlpha-100">
         <EditorRoot>
           <EditorContent
             extensions={[

@@ -20,27 +20,16 @@ import { useSearchCommands } from './use-search-commands';
 
 interface CommandComponentProps {
   onClose?: () => void;
-  openConversation: ({
-    conversationId,
-    conversationHistoryId,
-  }: {
-    conversationHistoryId: string;
-    conversationId: string;
-  }) => void;
   fromQuickWindow?: boolean;
 }
 
 export const CommandComponent = observer(
-  ({
-    onClose,
-
-    openConversation,
-  }: CommandComponentProps) => {
+  ({ onClose }: CommandComponentProps) => {
     const { tasksStore, pagesStore } = useContextStore();
     const { selectedTasks } = useApplication();
 
     const [value, setValue] = React.useState('');
-    const commands = useSearchCommands(value, openConversation, onClose);
+    const commands = useSearchCommands(value, onClose);
 
     const defaultCommands = () => {
       const defaultCommands = commands['default'];

@@ -44,7 +44,6 @@ export const TaskMetadata = ({ view, taskExternalLink }: TaskMetadataProps) => {
     if (integrationAccount) {
       refetch();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [integrationAccount]);
 
   function getIcon() {

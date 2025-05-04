@@ -15,10 +15,6 @@ import { useUpdateTaskMutation } from 'services/tasks';
 import { useContextStore } from 'store/global-context-provider';
 
 import { TaskInfo } from './task-info';
-import {
-  TaskIntegrationMetadataWrapper,
-  TaskIntegrationViewType,
-} from './task-integration-metadata';
 
 interface TaskListItemProps {
   taskId: string;
@@ -186,13 +182,6 @@ export const TaskListItem = observer(
                     taskOccurrenceId={
                       task.startTime ? taskOccurrenceId : undefined
                     }
-                  />
-                </div>
-
-                <div className="flex items-center gap-2 flex-wrap pr-1 shrink-0">
-                  <TaskIntegrationMetadataWrapper
-                    task={task}
-                    view={TaskIntegrationViewType.TASK_LIST_ITEM}
                   />
                 </div>
               </div>

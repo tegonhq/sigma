@@ -2,7 +2,6 @@ import { IntegrationPayloadEventType } from '@tegonhq/sigma-sdk';
 
 import { integrationCreate } from './account-create';
 import { handleSchedule } from './schedule';
-import { syncInitialTasks } from './sync-initial-task';
 
 export interface IntegrationEventPayload {
   event: IntegrationPayloadEventType;
@@ -24,9 +23,6 @@ export async function run(eventPayload: IntegrationEventPayload) {
 
     case IntegrationPayloadEventType.REFRESH_ACCESS_TOKEN:
       return eventPayload.eventBody.integrationAccount.integrationConfiguration.access_token;
-
-    case IntegrationPayloadEventType.INITIAL_TASK_SYNC:
-      return {};
 
     default:
       return {
