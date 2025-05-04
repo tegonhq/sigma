@@ -58,10 +58,12 @@ export const integrationRun = task({
       getRequires(createAxiosInstance(pat)),
     );
 
-    logger.info(`${integrationDefinition.url}/backend/index.js`);
+    logger.info(
+      `${integrationDefinition.url}/${integrationDefinition.version}/backend/index.js`,
+    );
 
     const integrationFunction = await remoteModuleLoad(
-      `${integrationDefinition.url}/backend/index.js`,
+      `${integrationDefinition.url}/${integrationDefinition.version}/backend/index.js`,
     );
 
     return await integrationFunction.run(event);

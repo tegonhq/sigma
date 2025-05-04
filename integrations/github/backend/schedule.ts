@@ -8,12 +8,6 @@ export async function handleSchedule(eventBody: any) {
   const integrationConfiguration = integrationAccount.integrationConfiguration;
   const settings = integrationAccount.settings;
 
-  if (!settings?.lastSyncTime) {
-    return {
-      message: `No last sync time in settings of integration account ${integrationAccount.id}`,
-    };
-  }
-
   const lastSyncTime = settings.lastSyncTime;
 
   const allowedReasons = [
@@ -39,7 +33,7 @@ export async function handleSchedule(eventBody: any) {
 
   while (hasMorePages) {
     const notifications = await getGithubData(
-      `https://api.github.com/notifications?page=${page}&per_page=50&all=true&since=${lastSyncTime}`,
+      `https://api.github.com/notifications?page=${page}&per_page=50&since=${lastSyncTime}`,
       integrationConfiguration.access_token,
     );
 
