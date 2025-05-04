@@ -68,7 +68,8 @@ export class IntegrationsService {
       'integration-run',
       {
         ...params,
-        event,
+        event: event.event,
+        eventBody: event.eventBody,
       },
     );
 

@@ -3,8 +3,6 @@ import axios from 'axios';
 import { getGithubData } from './utils';
 
 export async function integrationCreate(
-  userId: string,
-  workspaceId: string,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any,
 ) {
@@ -39,10 +37,8 @@ export async function integrationCreate(
       },
       repositories,
     },
-    userId,
     accountId: user.id.toString(),
     config: integrationConfiguration,
-    workspaceId,
     integrationDefinitionId: integrationDefinition.id,
   };
 

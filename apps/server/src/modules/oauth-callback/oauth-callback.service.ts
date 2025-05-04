@@ -208,8 +208,6 @@ export class OAuthCallbackService {
           integrationDefinition,
           {
             event: IntegrationPayloadEventType.INTEGRATION_ACCOUNT_CREATED,
-            userId: sessionRecord.userId,
-            workspaceId: sessionRecord.workspaceId,
             eventBody: {
               oauthResponse: tokensResponse.token,
               oauthParams: params,

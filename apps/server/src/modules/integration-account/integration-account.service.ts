@@ -7,6 +7,7 @@ import {
   IntegrationPayloadEventType,
   UpdateIntegrationAccountDto,
 } from '@tegonhq/sigma-sdk';
+import { schedules } from '@trigger.dev/sdk/v3';
 import { PrismaService } from 'nestjs-prisma';
 
 import { IntegrationsService } from 'modules/integrations/integrations.service';
@@ -25,11 +26,11 @@ export class IntegrationAccountService {
 
   async createIntegrationAccount(
     workspaceId: string,
+    userId: string,
     createIntegrationAccountDto: CreateIntegrationAccountDto,
   ) {
     const {
       config: integrationConfiguration,
-      userId,
       settings,
       accountId,
       integrationDefinitionId,
@@ -89,21 +90,6 @@ export class IntegrationAccountService {
         workspaceId,
       );
 
-    await this.integrationService.runIntegrationTriggerAsync(
-      integrationDefinition,
-      {
-        event: IntegrationPayloadEventType.INITIAL_TASK_SYNC,
-        userId,
-        workspaceId,
-        eventBody: {
-          integrationAccount,
-          integrationDefinition,
-        },
-      },
-      userId,
-      workspaceId,
-    );
-
     return integrationAccount;
   }
 
@@ -119,7 +105,7 @@ export class IntegrationAccountService {
   async deleteIntegrationAccount(
     integrationAccountRequestIdBody: IntegrationAccountIdDto,
   ) {
-    return await this.prisma.integrationAccount.update({
+    const integrationAccount = await this.prisma.integrationAccount.update({
       where: {
         id: integrationAccountRequestIdBody.integrationAccountId,
       },
@@ -132,6 +118,12 @@ export class IntegrationAccountService {
         workspace: true,
       },
     });
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const scheduleId = (integrationAccount.settings as any).scheduleId;
+    await schedules.del(scheduleId);
+
+    return integrationAccount;
   }
 
   async getIntegrationAccount(

@@ -19,14 +19,22 @@ export const beautifyTask = task({
   run: async (payload: { taskId: string; pat: string }) => {
     const sigmaTask = await prisma.task.findUnique({
       where: { id: payload.taskId },
-      include: { page: true, taskExternalLink: true },
+      select: {
+        id: true,
+        workspaceId: true,
+        listId: true,
+        page: {
+          select: {
+            id: true,
+            title: true,
+            description: true,
+          },
+        },
+        taskExternalLink: true,
+      },
     });
 
     logger.info(JSON.stringify(sigmaTask));
-
-    if (sigmaTask.taskExternalLink.length > 0) {
-      return "Beautify doesn't run for tasks created with integrations";
-    }
 
     const agentWorklog = await prisma.agentWorklog.create({
       data: {
@@ -44,53 +52,53 @@ export const beautifyTask = task({
     });
 
     const lists = listsData.map((list) => `${list.id}_${list.page.title}`);
-
-    // Run both API requests in parallel
-    const [recurrenceData, beautifyOutput] = await Promise.all([
-      axios
-        .post(
-          `${process.env.BACKEND_HOST}/v1/tasks/ai/recurrence`,
-          {
-            text: sigmaTask.page.title,
-            currentTime: new Date().toISOString(),
-            taskIds: [],
-          },
-          { headers: { Authorization: `Bearer ${payload.pat}` } },
-        )
-        .then((response) => response.data),
-      axios
-        .post(
-          `${process.env.BACKEND_HOST}/v1/ai_requests`,
-          {
-            messages: [
-              {
-                role: 'user',
-                content: beautifyPrompt
-                  .replace('{{text}}', sigmaTask.page.title)
-                  .replace('{{lists}}', lists.join('\n')),
-              },
-            ],
-            llmModel: LLMModelEnum.CLAUDESONNET,
-            model: 'beautify',
-          },
-          { headers: { Authorization: `Bearer ${payload.pat}` } },
-        )
-        .then((response) => response.data),
-    ]);
-
-    const outputMatch = beautifyOutput.match(/<output>(.*?)<\/output>/s);
-
-    if (!outputMatch) {
-      logger.error('No output found in recurrence response');
-      await prisma.agentWorklog.update({
-        where: { id: agentWorklog.id },
-        data: { state: AgentWorklogStateEnum.Failed },
-      });
-      throw new Error('Invalid response format from AI');
-    }
-
     let updatedTask;
+
     try {
+      // Run both API requests in parallel
+      const [recurrenceData, beautifyOutput] = await Promise.all([
+        axios
+          .post(
+            `${process.env.BACKEND_HOST}/v1/tasks/ai/recurrence`,
+            {
+              text: sigmaTask.page.title,
+              currentTime: new Date().toISOString(),
+              taskIds: [],
+            },
+            { headers: { Authorization: `Bearer ${payload.pat}` } },
+          )
+          .then((response) => response.data),
+        axios
+          .post(
+            `${process.env.BACKEND_HOST}/v1/ai_requests`,
+            {
+              messages: [
+                {
+                  role: 'user',
+                  content: beautifyPrompt
+                    .replace('{{text}}', sigmaTask.page.title)
+                    .replace('{{lists}}', lists.join('\n')),
+                },
+              ],
+              llmModel: LLMModelEnum.CLAUDESONNET,
+              model: 'beautify',
+            },
+            { headers: { Authorization: `Bearer ${payload.pat}` } },
+          )
+          .then((response) => response.data),
+      ]);
+
+      const outputMatch = beautifyOutput.match(/<output>(.*?)<\/output>/s);
+
+      if (!outputMatch) {
+        logger.error('No output found in recurrence response');
+        await prisma.agentWorklog.update({
+          where: { id: agentWorklog.id },
+          data: { state: AgentWorklogStateEnum.Failed },
+        });
+        throw new Error('Invalid response format from AI');
+      }
+
       const jsonStr = outputMatch[1].trim();
       const beautifyData = JSON.parse(jsonStr);
       const outputData = { ...recurrenceData, ...beautifyData };

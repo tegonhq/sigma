@@ -11,11 +11,11 @@ export interface ActivityCreate {
 export async function createActivity(activity: ActivityCreate[]) {
   for (const act of activity) {
     const existingTask = await getTaskForSource(act.sourceId);
-    const { title, ...otherAct } = act;
+    const { title, url, ...otherAct } = act;
 
     await axios.post('/api/v1/activity', {
       ...otherAct,
-      text: `${title} \n URL: ${act.url}`,
+      text: `${title} \n URL: ${url}`,
       taskId: existingTask ? existingTask.id : null,
     });
   }
