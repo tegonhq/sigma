@@ -6,9 +6,7 @@
     "github"
   ],
   "scripts": {
-    "build": "rimraf dist && npm run build:js && pnpm run build:agent && npm run copy:spec",
-    "build:agent": "ncc build agent/index.ts -o dist/agent",
-    "dev:agent": "ncc build agent/index.ts -o dist/agent --watch",
+    "build": "rimraf dist && npm run build:js && npm run copy:spec",
     "build:watch": "rimraf dist && rollup -c --watch",
     "build:js": "rollup -c",
     "lint": "eslint --ext js,ts,tsx backend/ frontend/ --fix",
