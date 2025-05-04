@@ -1,4 +1,3 @@
-import { UserTypeEnum } from '@sigma/types';
 import {
   AI,
   CalendarLine,
@@ -17,11 +16,10 @@ import { useSettings } from 'modules/settings';
 import { AddTaskDialogContext } from 'modules/tasks/add-task';
 
 import type { ListType } from 'common/types';
+import { RightSideViewContext } from 'layouts/right-side-layout';
 
 import { useApplication } from 'hooks/application';
-import { useIPC } from 'hooks/ipc';
 
-import { useCreateConversationMutation } from 'services/conversations';
 import { useCreateListMutation } from 'services/lists';
 
 import { TabViewType } from 'store/application';
@@ -37,22 +35,13 @@ interface CommandType {
   command: () => void;
 }
 
-export const useSearchCommands = (
-  value: string,
-  openConversation: ({
-    conversationId,
-    conversationHistoryId,
-  }: {
-    conversationHistoryId: string;
-    conversationId: string;
-  }) => void,
-  onClose: () => void,
-) => {
+export const useSearchCommands = (value: string, onClose: () => void) => {
   const { tasksStore, pagesStore, listsStore } = useContextStore();
   const { setDialogOpen } = React.useContext(AddTaskDialogContext);
   const { tabs, updateTabType, selectedTasks } = useApplication();
   const firstTab = tabs[0];
   const { openDialog } = React.useContext(DailogViewsContext);
+  const rightViewContext = React.useContext(RightSideViewContext);
   const { markComplete, deleteTasks } = useTaskOperations();
   const { openSettings } = useSettings();
   const { mutate: createList } = useCreateListMutation({
@@ -60,7 +49,6 @@ export const useSearchCommands = (
       updateTabType(0, TabViewType.LIST, data.id ? { entityId: data.id } : {});
     },
   });
-  const { mutate: createConversation } = useCreateConversationMutation({});
 
   const getTasks = () => {
     if (selectedTasks.length > 0) {
@@ -78,8 +66,9 @@ export const useSearchCommands = (
         Icon: AI,
         text: 'Ask sigma agent about...',
         command: () => {
-          updateTabType(1, TabViewType.AI, {});
-          onClose();
+          if (rightViewContext && rightViewContext.onOpen) {
+            rightViewContext.onOpen('');
+          }
         },
       },
       {
@@ -153,21 +142,9 @@ export const useSearchCommands = (
           Icon: AI,
           text: `${value} ... ask sigma`,
           command: () => {
-            createConversation(
-              {
-                message: value,
-                userType: UserTypeEnum.User,
-                title: value,
-              },
-              {
-                onSuccess: (data) => {
-                  openConversation({
-                    conversationHistoryId: data.ConversationHistory[0].id,
-                    conversationId: data.id,
-                  });
-                },
-              },
-            );
+            if (rightViewContext && rightViewContext.onOpen) {
+              rightViewContext.onOpen(value);
+            }
           },
         },
       ];
@@ -278,93 +255,6 @@ export const useSearchCommands = (
         })
         .filter(Boolean);
     }
-
-    return commands;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value]);
-};
-
-export const useSearchCommandsQuick = (
-  value: string,
-  openConversation: ({
-    conversationId,
-    conversationHistoryId,
-  }: {
-    conversationHistoryId: string;
-    conversationId: string;
-  }) => void,
-  onClose: () => void,
-) => {
-  const { tasksStore, pagesStore, listsStore } = useContextStore();
-  const { mutate: createConversation } = useCreateConversationMutation({});
-
-  const ipc = useIPC();
-
-  return React.useMemo(() => {
-    const commands: Record<string, CommandType[]> = {};
-    commands['default'] = [];
-    if (value) {
-      commands['default'] = [
-        ...commands['default'],
-        {
-          Icon: AI,
-          text: `${value} ... ask sigma`,
-          command: () => {
-            createConversation(
-              {
-                message: value,
-                userType: UserTypeEnum.User,
-                title: value,
-              },
-              {
-                onSuccess: (data) => {
-                  openConversation({
-                    conversationHistoryId: data.ConversationHistory[0].id,
-                    conversationId: data.id,
-                  });
-                },
-              },
-            );
-          },
-        },
-      ];
-    }
-
-    const pages = pagesStore.searchPages(value ?? '');
-
-    commands['Pages'] = pages
-      .map((page) => {
-        const task = tasksStore.getTaskForPage(page.id);
-        const list = listsStore.getListWithPageId(page.id);
-
-        if (task) {
-          return {
-            Icon: IssuesLine,
-            text: page.title,
-            key: task.id,
-            command: () => {
-              ipc.sendToMain({ type: 'Task', id: task.id });
-              onClose();
-            },
-          };
-        }
-
-        if (list) {
-          return {
-            Icon: Project,
-            text: page.title,
-            key: list.id,
-            command: () => {
-              ipc.sendToMain({ type: 'List', id: list.id });
-
-              onClose();
-            },
-          };
-        }
-
-        return undefined;
-      })
-      .filter(Boolean);
 
     return commands;
     // eslint-disable-next-line react-hooks/exhaustive-deps

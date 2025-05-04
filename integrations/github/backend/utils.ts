@@ -1,35 +1,33 @@
 import axios from 'axios';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function createTasks(tasks: any) {
-  const batchSize = 10;
-  const results = [];
-  const batches = [];
+export interface ActivityCreate {
+  url: string;
+  title: string;
+  sourceId: string;
+  sourceURL: string;
+  integrationAccountId: string;
+}
 
-  // Split tasks into batches first
-  for (let i = 0; i < tasks.length; i += batchSize) {
-    batches.push(tasks.slice(i, i + batchSize));
+export async function createActivity(activity: ActivityCreate[]) {
+  for (const act of activity) {
+    const existingTask = await getTaskForSource(act.sourceId);
+    const { title, ...otherAct } = act;
+
+    await axios.post('/api/v1/activity', {
+      ...otherAct,
+      text: `${title} \n URL: ${act.url}`,
+      taskId: existingTask ? existingTask.id : null,
+    });
   }
+}
 
-  // Process all batches concurrently with Promise.all
+export async function getTaskForSource(sourceId: string) {
   try {
-    const responses = await Promise.all(
-      batches.map((batch, index) =>
-        axios.post(`/api/v1/tasks/bulk`, { tasks: batch }).catch((error) => {
-          console.error(`Error processing batch ${index + 1}:`, error);
-          return { data: [] }; // Return empty data on error to continue processing
-        }),
-      ),
-    );
-
-    // Combine all results
-    results.push(...responses.flatMap((response) => response.data));
-  } catch (error) {
-    console.error('Fatal error processing batches');
-    // throw error; // Throw fatal errors
+    return (await axios.get(`/api/v1/tasks/source/${sourceId}`, {})).data;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (e: any) {
+    return null;
   }
-
-  return results;
 }
 
 export async function getGithubData(url: string, accessToken: string) {

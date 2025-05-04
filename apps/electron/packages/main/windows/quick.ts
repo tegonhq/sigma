@@ -15,13 +15,13 @@ export async function createQuickWindow(show = true) {
 
   const smallerWindow = new BrowserWindow({
     show: false, // Use the 'ready-to-show' event to show the instantiated BrowserWindow.
-    width: 500, // Set minimum width
-    height: 400, // Set minimum height
+    width: 400, // Set minimum width
+    height: 600, // Set minimum height
     icon: path.join(__dirname, '/../../../buildResources/icon.png'),
     resizable: false,
-    x: bounds.x + width - 500 - 20,
+    x: bounds.x + width - 20,
     y: 0,
-    movable: false,
+    movable: true,
     minimizable: false,
     maximizable: false,
     fullscreenable: false,
@@ -68,32 +68,14 @@ export async function createQuickWindow(show = true) {
   /**
    * Load the main page of the main window.
    */
-  smallerWindow.loadURL('http://localhost:53081/search');
+  smallerWindow.loadURL('http://localhost:53081/quick');
 
   return smallerWindow;
 }
 
 export function registerQuickStates(window: BrowserWindow) {
-  window.on('blur', () => {
-    window.hide();
-  });
-
   // Listen for events from the renderer process
   ipcMain.on('quick-window-close', () => {
     window.hide();
   });
 }
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const recalculatePositionToDisplay = (position: any, from: any, to: any) => {
-  const normalizedPosition = {
-    x: (position.x - from.bounds.x) / from.bounds.width,
-    y: (position.y - from.bounds.y) / from.bounds.height,
-  };
-
-  const newPosition = {
-    x: Math.floor(to.bounds.x + normalizedPosition.x * to.bounds.width),
-    y: Math.floor(to.bounds.y + normalizedPosition.y * to.bounds.height),
-  };
-  return newPosition;
-};

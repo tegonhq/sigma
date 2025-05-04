@@ -159,6 +159,12 @@ These are table stylings
   -webkit-app-region: drag;
 }
 
+.quick .header {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-app-region: drag;
+}
+
 .editor-container p {
   line-height: 24px;
 }

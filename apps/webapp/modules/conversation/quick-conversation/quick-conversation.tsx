@@ -1,5 +1,5 @@
 import { UserTypeEnum } from '@sigma/types';
-import { cn, LoaderLine } from '@tegonhq/ui';
+import { Button, cn, LoaderLine, useToast } from '@tegonhq/ui';
 import React from 'react';
 
 import type { ConversationHistoryType } from 'common/types';
@@ -9,6 +9,7 @@ import { useConversationHistory } from 'hooks/conversations';
 
 import {
   useCreateConversationHistoryMutation,
+  useCreateConversationMutation,
   useStreamConversationMutation,
 } from 'services/conversations';
 
@@ -18,20 +19,15 @@ import { ConversationItem } from '../conversation-item';
 import { ConversationTextarea } from '../conversation-textarea';
 import { StreamingConversation } from '../streaming-conversation';
 
-interface QuickConversationInterface {
-  defaultConversationHistoryId: string;
-  conversationId: string;
-}
-
-export const QuickConverstion = ({
-  defaultConversationHistoryId,
-  conversationId,
-}: QuickConversationInterface) => {
-  const [conversationHistoryId, setConversationHistoryId] = React.useState(
-    defaultConversationHistoryId,
-  );
+export const QuickConverstion = () => {
+  const [conversationHistoryId, setConversationHistoryId] =
+    React.useState(undefined);
+  const [conversationId, setConversationId] = React.useState(undefined);
   const user = React.useContext(UserContext);
   const { conversationHistory } = useConversationHistory(conversationId);
+  console.log(conversationId, conversationHistory);
+  const { mutate: createConversation } = useCreateConversationMutation({});
+  const { toast } = useToast();
 
   const {
     mutate: streamConversation,
@@ -42,36 +38,56 @@ export const QuickConverstion = ({
   const { mutate: createConversationHistory } =
     useCreateConversationHistoryMutation({});
 
-  React.useEffect(() => {
-    streamConversation({
-      conversationHistoryId,
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const onSend = (text: string, agents: string[]) => {
+  const onSend = (text: string, agents: string[], title: string) => {
     if (isLoading) {
       return;
     }
 
-    createConversationHistory(
-      {
-        message: text,
-        userType: UserTypeEnum.User,
-        userId: user.id,
-        conversationId,
-        context: { agents },
-      },
-      {
-        onSuccess: (data) => {
-          setConversationHistoryId(data.id);
-
-          streamConversation({
-            conversationHistoryId: data.id,
-          });
+    if (conversationId) {
+      createConversationHistory(
+        {
+          message: text,
+          userType: UserTypeEnum.User,
+          userId: user.id,
+          conversationId,
+          context: { agents },
         },
-      },
-    );
+        {
+          onSuccess: (data) => {
+            setConversationHistoryId(data.id);
+
+            streamConversation({
+              conversationHistoryId: data.id,
+            });
+          },
+        },
+      );
+    } else {
+      createConversation(
+        {
+          message: text,
+          userType: UserTypeEnum.User,
+          context: { agents },
+          title,
+        },
+        {
+          onSuccess: (data) => {
+            setConversationId(data.id);
+            setConversationHistoryId(data.ConversationHistory[0].id);
+            streamConversation({
+              conversationHistoryId: data.ConversationHistory[0].id,
+            });
+          },
+          onError: (data) => {
+            const errorMessage = data.response?.data?.message;
+            toast({
+              title: 'Conversation error',
+              description: errorMessage ?? 'Conversation creation failed',
+            });
+          },
+        },
+      );
+    }
   };
 
   const getConversations = () => {
@@ -83,10 +99,6 @@ export const QuickConverstion = ({
           (ch: ConversationHistoryType, index: number) => {
             const current = conversationHistoryId === ch.id;
 
-            if (!reached && !current) {
-              return null;
-            }
-
             if (reached === true && isLoading) {
               return null;
             }
@@ -94,6 +106,8 @@ export const QuickConverstion = ({
             if (conversationHistoryId === ch.id) {
               reached = true;
             }
+
+            console.log(current, reached, ch.id);
 
             return (
               <ConversationItem key={index} conversationHistoryId={ch.id} />
@@ -106,7 +120,7 @@ export const QuickConverstion = ({
 
   return (
     <>
-      <ScrollAreaWithAutoScroll className="h-full max-h-[600px]">
+      <ScrollAreaWithAutoScroll className="relative text-sm border-t border-border mt-4">
         {getConversations()}
 
         {isLoading && (
@@ -114,7 +128,7 @@ export const QuickConverstion = ({
         )}
 
         {isLoading && (
-          <div className="flex flex-wrap p-1 px-3 mt-2 gap-1">
+          <div className="flex flex-wrap p-1 px-1 mt-2 gap-1">
             <div
               className={cn('px-2 py-0 w-full flex flex-col items-start gap-1')}
             >
