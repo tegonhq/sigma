@@ -141,7 +141,7 @@ jobs:
 
             return new Promise((resolve) => {
               try {
-                const stdout = execSync(`gsutil ls gs://integrations/${integration}/${version}`).toString();
+                const stdout = execSync(`gsutil ls gs://sigma-integrations/${integration}/${version}`).toString();
                 if (stdout.trim()) {
                   core.setFailed('Version already exists in bucket');
                   
