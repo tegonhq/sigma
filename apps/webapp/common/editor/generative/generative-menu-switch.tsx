@@ -1,6 +1,5 @@
 import { EditorBubble, useEditor } from 'novel';
-import { removeAIHighlight } from 'novel/extensions';
-import {} from 'novel/plugins';
+import { removeAIHighlight } from 'novel';
 import { Fragment, type ReactNode, useEffect } from 'react';
 
 import { AISelector } from './ai-selector';

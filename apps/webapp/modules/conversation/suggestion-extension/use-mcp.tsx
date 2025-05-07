@@ -53,5 +53,9 @@ export const useMCPServers = () => {
   });
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  return React.useMemo(() => [...getMCPServers(mcp), ...preloadMCPs], [mcp]);
+  return React.useMemo(
+    () => [...getMCPServers(mcp), ...preloadMCPs],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [mcp, integrationAccountsStore.integrationAccounts.length],
+  );
 };

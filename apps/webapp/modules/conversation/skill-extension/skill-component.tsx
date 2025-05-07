@@ -1,18 +1,51 @@
+import {
+  Badge,
+  Button,
+  ChevronDown,
+  ChevronRight,
+  cn,
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@tegonhq/ui';
 import { NodeViewWrapper } from '@tiptap/react';
 import { observer } from 'mobx-react-lite';
+import Image from 'next/image';
+import React from 'react';
 
-import { getIcon, type IconType } from 'common/icon-utils';
+import { getIcon as iconUtil, type IconType } from 'common/icon-utils';
+
+import { useMCPServers } from '../suggestion-extension/use-mcp';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const SkillComponent = observer((props: any) => {
   const id = props.node.attrs.id;
   const name = props.node.attrs.name;
   const agent = props.node.attrs.agent;
-  const Icon = getIcon(agent as IconType);
+  const agents = useMCPServers();
+  const currentAgent = agents.find((ag) => ag.key === agent);
+  const [open, setOpen] = React.useState(false);
 
   if (id === 'undefined' || id === undefined || !name) {
     return null;
   }
+
+  const getIcon = () => {
+    if (agent === 'sigma') {
+      return (
+        <Image
+          src="/logo_light.svg"
+          alt="logo"
+          key={1}
+          width={18}
+          height={18}
+        />
+      );
+    }
+    const Icon = iconUtil(agent as IconType);
+
+    return <Icon size={18} className="rounded-sm" />;
+  };
 
   const snakeToTitleCase = (input: string): string => {
     if (!input) {
@@ -34,13 +67,32 @@ export const SkillComponent = observer((props: any) => {
 
   return (
     <NodeViewWrapper className="inline w-fit">
-      <div className="content">
-        <div className="bg-grayAlpha-100 p-1 w-fit rounded px-2 flex gap-1 items-center">
-          <span className="text-muted-foreground">Executed action: </span>
-          <Icon size={16} className="rounded-sm" />
-          {snakeToTitleCase(name)}
-        </div>
-      </div>
+      <Collapsible
+        className={cn(
+          'content bg-grayAlpha-100 w-fit rounded mb-0.5',
+          open && 'w-full',
+        )}
+        open={open}
+        onOpenChange={setOpen}
+      >
+        <CollapsibleTrigger className="p-1 px-2 h-full flex gap-0 items-center">
+          <div className="px-0">
+            {!open ? <ChevronRight size={16} /> : <ChevronDown size={16} />}
+          </div>
+          <div className="flex gap-2 items-center">
+            {getIcon()}
+            {currentAgent?.name ?? 'Sigma'}
+            <Badge
+              variant="secondary"
+              className="text-muted-foreground font-mono text-xs items-center"
+            >
+              {snakeToTitleCase(name)}
+            </Badge>
+          </div>
+        </CollapsibleTrigger>
+
+        <CollapsibleContent>\</CollapsibleContent>
+      </Collapsible>
     </NodeViewWrapper>
   );
 });

@@ -101,7 +101,9 @@ export default class ReplicationService {
 
       await this.client.query(deleteReplicationSlotQuery);
     } catch (err) {
-      this.logger.error(err);
+      this.logger.error({
+        message: `Drop relication slot: ${JSON.stringify(err)}`,
+      });
     }
   }
 
@@ -195,7 +197,7 @@ export default class ReplicationService {
     service
       .subscribe(plugin, this.replicationSlotName)
       .catch((e) => {
-        this.logger.error(e);
+        this.logger.error({ message: `WAL error: ${JSON.stringify(e)}` });
       })
       .then(() => {
         this.logger.info({

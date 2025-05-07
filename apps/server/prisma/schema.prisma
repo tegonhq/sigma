@@ -146,6 +146,10 @@ model ConversationExecutionStep {
   thought String
   message String
 
+  actionId     String?
+  actionOutput String?
+  actionInput  String?
+
   metadata Json? @default("{}")
 
   conversationHistory   ConversationHistory @relation(fields: [conversationHistoryId], references: [id])

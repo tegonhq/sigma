@@ -50,7 +50,7 @@ export const TaskInfo = observer(
     };
 
     return (
-      <div className="flex flex-col w-fit items-center">
+      <div className="flex flex-col w-fit items-center shrink-0">
         <div
           className="flex gap-2"
           onClick={(e) => {

@@ -40,14 +40,14 @@
     "@sigma/eslint-config": "workspace:*",
     "@sigma/typescript-config": "workspace:*",
     "@types/superagent": "^8.1.4",
-    "rimraf": "^3.0.2",
+    "rimraf": "^6.0.1",
     "tsup": "^8.0.1",
     "typescript": "^5.4.5"
   },
   "dependencies": {
     "@sigma/types": "workspace:*",
     "axios": "^1.6.7",
-    "superagent": "^8.1.2",
+    "superagent": "^10.2.1",
     "zod": "3.23.8"
   },
   "engines": {

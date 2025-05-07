@@ -1,7 +1,8 @@
 import { UserTypeEnum } from '@sigma/types';
-import { AI } from '@tegonhq/ui';
+import { cn } from '@tegonhq/ui';
 import { EditorContent, useEditor } from '@tiptap/react';
 import { observer } from 'mobx-react-lite';
+import Image from 'next/image';
 import React, { useEffect } from 'react';
 
 import { extensionsForConversation } from 'common/editor';
@@ -46,7 +47,15 @@ export const ConversationItem = observer(
         return <UserAvatar user={user} />;
       }
 
-      return <AI size={16} />;
+      return (
+        <Image
+          src="/logo_light.svg"
+          alt="logo"
+          key={1}
+          width={20}
+          height={20}
+        />
+      );
     };
 
     if (!conversationHistory.message) {
@@ -54,8 +63,8 @@ export const ConversationItem = observer(
     }
 
     return (
-      <div className="flex gap-2 border-b border-border py-4 px-5">
-        <div className="shrink-0 relative top-[3px]">{getIcon()}</div>
+      <div className={cn('flex gap-2 py-4 mx-5 border-b border-border')}>
+        <div className="shrink-0 relative top-[2px]">{getIcon()}</div>
 
         <div className="flex flex-col">
           <EditorContent editor={editor} />

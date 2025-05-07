@@ -2,7 +2,7 @@
 import type { Editor } from '@tiptap/core';
 
 import axios from 'axios';
-import { type ImageUploadOptions } from 'novel/plugins';
+import { type ImageUploadOptions } from 'novel';
 
 interface ImageUploadOptionsExtend extends ImageUploadOptions {
   onUpload: (

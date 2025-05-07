@@ -91,4 +91,14 @@ export class ConversationHistoryController {
       params.conversationHistoryId,
     );
   }
+
+  @Get(':conversationHistoryId/steps')
+  @UseGuards(AuthGuard)
+  async getConversationHistorySteps(
+    @Param() params: ConversationHistoryParamsDto,
+  ) {
+    return await this.conversationHistoryService.getConversationHistorySteps(
+      params.conversationHistoryId,
+    );
+  }
 }

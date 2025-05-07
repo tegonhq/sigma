@@ -19,10 +19,17 @@ import { ConversationItem } from '../conversation-item';
 import { ConversationTextarea } from '../conversation-textarea';
 import { StreamingConversation } from '../streaming-conversation';
 
-export const QuickConverstion = () => {
+interface QuickConversationProps {
+  conversationId: string;
+  setConversationId: (value: string) => void;
+}
+
+export const QuickConverstion = ({
+  conversationId,
+  setConversationId,
+}: QuickConversationProps) => {
   const [conversationHistoryId, setConversationHistoryId] =
     React.useState(undefined);
-  const [conversationId, setConversationId] = React.useState(undefined);
   const user = React.useContext(UserContext);
   const { conversationHistory } = useConversationHistory(conversationId);
   const { mutate: createConversation } = useCreateConversationMutation({});
@@ -115,7 +122,12 @@ export const QuickConverstion = () => {
 
   return (
     <>
-      <ScrollAreaWithAutoScroll className="relative text-sm mt-4">
+      <ScrollAreaWithAutoScroll
+        className={cn(
+          'relative text-sm mt-0',
+          conversationId && 'border-t border-border',
+        )}
+      >
         {getConversations()}
 
         {isLoading && (
@@ -123,7 +135,7 @@ export const QuickConverstion = () => {
         )}
 
         {isLoading && (
-          <div className="flex flex-wrap p-1 px-1 mt-2 gap-1">
+          <div className="flex flex-wrap p-1 px-3 mt-2 gap-1">
             <div
               className={cn('px-2 py-0 w-full flex flex-col items-start gap-1')}
             >

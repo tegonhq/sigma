@@ -66,7 +66,6 @@ export const Home = observer(() => {
     <AddTaskDialogProvider>
       <div className="flex flex-col h-full">
         {getComponent(firstTab.type, { entity_id: firstTab.entity_id })}
-        <SearchDialog />
       </div>
     </AddTaskDialogProvider>
   );

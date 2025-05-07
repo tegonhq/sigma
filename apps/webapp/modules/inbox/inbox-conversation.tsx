@@ -122,32 +122,36 @@ export const InboxConversation = observer(
     };
 
     return (
-      <div className="flex flex-col justify-end overflow-hidden h-full">
-        <ScrollAreaWithAutoScroll>
-          {getConversations()}
-          {isLoading && (
-            <StreamingConversation messages={responses} thoughts={thoughts} />
-          )}
-        </ScrollAreaWithAutoScroll>
+      <div className="flex flex-col h-full justify-center w-full items-center">
+        <div className="flex flex-col justify-end overflow-hidden h-full gap-4 max-w-[97ch]">
+          <ScrollAreaWithAutoScroll>
+            {getConversations()}
+            {isLoading && (
+              <StreamingConversation messages={responses} thoughts={thoughts} />
+            )}
+          </ScrollAreaWithAutoScroll>
 
-        {isLoading && (
-          <div className="flex flex-wrap p-1 px-3 mt-2 gap-1">
-            <div
-              className={cn('px-2 py-0 w-full flex flex-col items-start gap-1')}
-            >
+          {isLoading && (
+            <div className="flex flex-wrap p-1 px-3 gap-1">
               <div
                 className={cn(
-                  'w-full flex items-start gap-1 rounded-md text-sm',
+                  'px-2 py-0 w-full flex flex-col items-start gap-1',
                 )}
               >
-                <LoaderLine size={18} className="animate-spin" />
-                <p className="text-sm text-muted-foreground">Generating...</p>
+                <div
+                  className={cn(
+                    'w-full flex items-start gap-1 rounded-md text-sm',
+                  )}
+                >
+                  <LoaderLine size={18} className="animate-spin" />
+                  <p className="text-sm text-muted-foreground">Generating...</p>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        <ConversationTextarea onSend={onSend} />
+          <ConversationTextarea onSend={onSend} />
+        </div>
       </div>
     );
   },

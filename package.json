@@ -31,7 +31,6 @@
       "@prisma/client",
       "@prisma/engines",
       "@sentry/cli",
-      "@swc/core",
       "bcrypt",
       "browser-tabs-lock",
       "core-js",

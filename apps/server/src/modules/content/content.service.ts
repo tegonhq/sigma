@@ -61,7 +61,7 @@ export class ContentService implements OnModuleInit {
       },
     });
 
-    this.server.listen();
+    await this.server.listen();
   }
 
   // Update any page from the server

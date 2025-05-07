@@ -56,7 +56,7 @@ const config = {
         },
         foreground: 'oklch(var(--foreground) / <alpha-value>)',
         primary: {
-          DEFAULT: 'oklch(var(--primary) / <alpha-value>)',
+          DEFAULT: '#3F8EF7',
           foreground: 'oklch(var(--primary-foreground) / <alpha-value>)',
         },
         secondary: {
