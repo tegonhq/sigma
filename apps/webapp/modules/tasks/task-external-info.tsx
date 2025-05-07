@@ -67,7 +67,7 @@ export const TaskExternalInfo = ({
         onClick={onClick}
       >
         <Icon size={16} className="dark:text-background" />
-        <span className="text-sm">{integrationDefinition.name}</span>
+        <span>{integrationDefinition.name}</span>
       </Badge>
     );
   }

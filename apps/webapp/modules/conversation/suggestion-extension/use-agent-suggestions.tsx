@@ -19,7 +19,7 @@ export const useMentionSuggestions = (): any => {
   const mcpServers = useMCPServers();
 
   return {
-    items: ({ query }: { query: string }) => {
+    items: async ({ query }: { query: string }) => {
       return mcpServers
         .filter((item) =>
           item.key.toLowerCase().startsWith(query.toLowerCase()),

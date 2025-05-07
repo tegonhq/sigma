@@ -85,7 +85,7 @@ app.on('web-contents-created', (_, contents) => {
   contents.setWindowOpenHandler(({url}) => {
     const {origin} = new URL(url);
 
-    if (ALLOWED_EXTERNAL_ORIGINS.has(origin as `https://${string}`)) {
+    if (url.startsWith('https://')) {
       // Open url in default browser.
       shell.openExternal(url).catch(console.error);
     } else if (import.meta.env.DEV) {

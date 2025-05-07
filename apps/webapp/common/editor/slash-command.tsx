@@ -9,8 +9,7 @@ import {
   TextLine,
 } from '@tegonhq/ui';
 import { ImageIcon } from 'lucide-react';
-import { createSuggestionItems } from 'novel/extensions';
-import { Command } from 'novel/extensions';
+import { createSuggestionItems, Command } from 'novel';
 
 import { uploadFileFn, uploadFn } from './utils';
 import { renderItems } from './utils/render-items';
@@ -155,42 +154,6 @@ export const suggestionItems = createSuggestionItems([
         }
       };
       input.click();
-    },
-  },
-  {
-    title: 'Date',
-    description: 'Add date to page',
-    searchTerms: ['date'],
-    icon: <CalendarLine size={20} />,
-    command: ({ editor, range }) => {
-      editor.commands.command(({ tr, state }) => {
-        const node = state.schema.nodes['datePageExtension'].create({
-          type: 'inline',
-        });
-
-        tr.replaceWith(range.from, range.to, node);
-
-        return true;
-      });
-    },
-  },
-  {
-    title: 'skill',
-    description: 'Add date to page',
-    searchTerms: ['date'],
-    icon: <CalendarLine size={20} />,
-    command: ({ editor, range }) => {
-      editor.commands.command(({ tr, state }) => {
-        const node = state.schema.nodes['skill'].create({
-          name: 'sample',
-          id: 'smaple',
-          agent: 'sample',
-        });
-
-        tr.replaceWith(range.from, range.to, node);
-
-        return true;
-      });
     },
   },
 ]);

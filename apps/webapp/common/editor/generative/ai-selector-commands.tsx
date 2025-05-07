@@ -1,7 +1,6 @@
 import { CommandItem, CommandList, SubIssue } from '@tegonhq/ui';
 import { StepForward } from 'lucide-react';
-import { useEditor } from 'novel';
-import { getPrevText } from 'novel/utils';
+import { useEditor, getPrevText } from 'novel';
 
 const options = [
   {

@@ -44,13 +44,13 @@ export const WorkspaceStoreInit = observer(
       await applicationStore.load();
       await workspaceStore.load(currentWorkspace.id);
       await pagesStore.load();
+      await integrationAccountsStore.load();
 
       setLoading(false);
 
       await Promise.all([
         tasksStore.load(),
         pagesStore.load(),
-        integrationAccountsStore.load(),
         conversationsStore.load(),
         conversationHistoryStore.load(),
         listsStore.load(),

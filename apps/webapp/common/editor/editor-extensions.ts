@@ -17,7 +17,7 @@ import {
   TaskList,
   CustomKeymap,
   TaskItem,
-} from 'novel/extensions';
+} from 'novel';
 import AutoJoiner from 'tiptap-extension-auto-joiner'; // optional
 // import GlobalDragHandle from 'tiptap-extension-global-drag-handle';
 
@@ -64,6 +64,7 @@ const heading = Heading.extend({
 const starterKit = StarterKit.configure({
   heading: false,
   history: false,
+
   bulletList: {
     HTMLAttributes: {
       class: cx('list-disc list-outside pl-4 leading-1 my-1 mb-1.5'),

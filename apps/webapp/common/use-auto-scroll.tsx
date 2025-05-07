@@ -154,7 +154,7 @@ export const ScrollAreaWithAutoScroll = ({
   });
 
   return (
-    <div ref={scrollRef} className={cn('overflow-y-auto', className)}>
+    <div ref={scrollRef} className={cn('overflow-y-auto grow', className)}>
       {children}
     </div>
   );

@@ -1,7 +1,6 @@
 import { Command, CommandInput, Loader, ScrollArea, AI } from '@tegonhq/ui';
 import { useCompletion } from 'ai/react';
-import { useEditor } from 'novel';
-import { addAIHighlight } from 'novel/extensions';
+import { useEditor, addAIHighlight } from 'novel';
 import { useState } from 'react';
 import Markdown from 'react-markdown';
 

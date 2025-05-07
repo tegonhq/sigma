@@ -115,6 +115,7 @@ export class ConversationHistoryService {
       if (!context.pages) {
         context.pages = [];
       }
+
       if (!context.pages.includes(conversationHistory.conversation.pageId)) {
         context.pages.push(conversationHistory.conversation.pageId);
       }
@@ -220,6 +221,17 @@ export class ConversationHistoryService {
     response.setHeader('Cache-Control', 'no-cache');
     response.setHeader('Connection', 'keep-alive');
 
+    // Set 5-minute timeout (300,000 ms) for the response
+    response.setTimeout(300000, () => {
+      response.write(
+        `data: ${JSON.stringify({
+          status: 'error',
+          error: 'Request timed out after 5 minutes',
+        })}\n\n`,
+      );
+      response.end();
+    });
+
     const context = await this.getConversationContext(conversationHistoryId);
 
     // Pass the task type to `trigger()` as a generic argument, giving you full type checking
@@ -276,5 +288,13 @@ export class ConversationHistoryService {
     }
 
     response.end();
+  }
+
+  async getConversationHistorySteps(conversationHistoryId: string) {
+    return await this.prisma.conversationExecutionStep.findMany({
+      where: {
+        conversationHistoryId,
+      },
+    });
   }
 }

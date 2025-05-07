@@ -32,8 +32,6 @@ export const InboxItem = observer(
       activity?.integrationAccountId,
     );
 
-    console.log(integrationAccount);
-
     const integrationDefinition =
       integrationDefinitions &&
       integrationDefinitions.find(

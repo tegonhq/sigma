@@ -1,4 +1,5 @@
 import {app, BrowserWindow, ipcMain, screen} from 'electron';
+import windowStateKeeper from 'electron-window-state';
 import path, {dirname, join} from 'node:path';
 
 import {fileURLToPath} from 'node:url';
@@ -13,14 +14,20 @@ export async function createQuickWindow(show = true) {
   const {width} = currentDisplay.workArea;
   const {bounds} = currentDisplay; // Use bounds of current display with cursor
 
+  // Load the previous state with fallback to defaults
+  const quickWindowState = windowStateKeeper({
+    defaultWidth: 400,
+    defaultHeight: 600,
+  });
+
   const smallerWindow = new BrowserWindow({
     show: false, // Use the 'ready-to-show' event to show the instantiated BrowserWindow.
     width: 400, // Set minimum width
     height: 600, // Set minimum height
     icon: path.join(__dirname, '/../../../buildResources/icon.png'),
     resizable: false,
-    x: bounds.x + width - 20,
-    y: 0,
+    x: quickWindowState.x ?? bounds.x + width - 500,
+    y: quickWindowState.y ?? 10,
     movable: true,
     minimizable: false,
     maximizable: false,
@@ -44,6 +51,8 @@ export async function createQuickWindow(show = true) {
   smallerWindow.setVisibleOnAllWorkspaces(true, {
     visibleOnFullScreen: true,
   });
+
+  quickWindowState.manage(smallerWindow);
 
   if (app.dock) app.dock.show();
 
@@ -70,7 +79,7 @@ export async function createQuickWindow(show = true) {
    */
   smallerWindow.loadURL('http://localhost:53081/quick');
 
-  return smallerWindow;
+  return {window: smallerWindow, state: quickWindowState};
 }
 
 export function registerQuickStates(window: BrowserWindow) {

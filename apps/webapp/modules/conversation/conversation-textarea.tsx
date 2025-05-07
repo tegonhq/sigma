@@ -3,8 +3,7 @@ import { Document } from '@tiptap/extension-document';
 import HardBreak from '@tiptap/extension-hard-break';
 import { Paragraph } from '@tiptap/extension-paragraph';
 import { Text } from '@tiptap/extension-text';
-import { EditorContent } from 'novel';
-import { CodeBlockLowlight, Placeholder } from 'novel/extensions';
+import { EditorContent, CodeBlockLowlight, Placeholder } from 'novel';
 import { useState } from 'react';
 import React from 'react';
 
@@ -14,9 +13,13 @@ import { CustomMention, useMentionSuggestions } from './suggestion-extension';
 
 interface ConversationTextareaProps {
   onSend: (value: string, agents: string[], title: string) => void;
+  defaultValue?: string;
 }
 
-export function ConversationTextarea({ onSend }: ConversationTextareaProps) {
+export function ConversationTextarea({
+  onSend,
+  defaultValue,
+}: ConversationTextareaProps) {
   const [text, setText] = useState('');
   const [editor, setEditor] = React.useState<EditorT>();
   const [agents, setAgents] = React.useState<string[]>([]);
@@ -54,10 +57,24 @@ export function ConversationTextarea({ onSend }: ConversationTextareaProps) {
   };
 
   return (
-    <div className="p-4">
+    <div className="p-4 pt-0">
       <div className="flex flex-col rounded pt-2 bg-grayAlpha-100">
         <EditorRoot>
           <EditorContent
+            initialContent={{
+              type: 'doc',
+              content: [
+                {
+                  type: 'paragraph',
+                  content: [
+                    {
+                      type: 'text',
+                      text: defaultValue,
+                    },
+                  ],
+                },
+              ],
+            }}
             extensions={[
               Document,
               Paragraph,

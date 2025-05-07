@@ -45,7 +45,7 @@ export class Page {
   title: string | null;
 
   description: string | null;
-  descriptionBinary: Buffer | null;
+  descriptionBinary: Uint8Array<ArrayBufferLike> | null;
 
   sortOrder: string;
   parentId: string | null;

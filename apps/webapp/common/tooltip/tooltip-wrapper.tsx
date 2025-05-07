@@ -25,7 +25,7 @@ export function TooltipWrapper({
   return (
     <Tooltip delayDuration={1000} disableHoverableContent>
       <TooltipTrigger asChild>
-        <div className={cn(className)}>{children}</div>
+        <div className={cn(className, 'flex items-center')}>{children}</div>
       </TooltipTrigger>
       <TooltipContent className={cn('p-2', tooltipClassName)} side="bottom">
         <span>{tooltip}</span>

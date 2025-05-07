@@ -21,17 +21,6 @@ export const StreamingConversation = ({
     return true;
   };
 
-  const thoughtEditor = useEditor({
-    extensions: [
-      ...extensionsForConversation,
-      TaskExtension({ update: onTaskExtensionUpdate }),
-      skillExtension,
-      CustomMention,
-    ],
-    editable: false,
-    content: thoughts.join(''),
-  });
-
   const messagesEditor = useEditor({
     extensions: [
       ...extensionsForConversation,
@@ -44,16 +33,11 @@ export const StreamingConversation = ({
   });
 
   React.useEffect(() => {
-    thoughtEditor?.commands.setContent(thoughts.join(''));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [thoughts.length]);
-
-  React.useEffect(() => {
     messagesEditor?.commands.setContent(messages.join(''));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages.length]);
 
-  if (thoughts.length === 0) {
+  if (messages.length === 0) {
     return null;
   }
 
@@ -64,13 +48,6 @@ export const StreamingConversation = ({
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="flex flex-col gap-1">
-          <EditorContent
-            editor={thoughtEditor}
-            className="text-muted-foreground"
-          />
-        </div>
-
         <div className="flex flex-col gap-1">
           <EditorContent editor={messagesEditor} className="text-foreground" />
         </div>

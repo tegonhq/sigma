@@ -1,4 +1,4 @@
-import {globalShortcut, Menu, nativeImage, Tray, type BrowserWindow, screen} from 'electron';
+import {globalShortcut, Menu, nativeImage, Tray, type BrowserWindow} from 'electron';
 import {createMainWindow} from './main';
 import {createQuickWindow, registerQuickStates} from './quick';
 
@@ -7,6 +7,7 @@ import {fileURLToPath} from 'node:url';
 import {registerDeepLink} from '../src/deeplink';
 import log from 'electron-log';
 import {setupAutoUpdater} from '../src/auto-update';
+import type windowStateKeeper from 'electron-window-state';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -14,12 +15,14 @@ const __dirname = dirname(__filename);
 export interface Windows {
   main: BrowserWindow | null;
   quick: BrowserWindow | null;
+  quickState: windowStateKeeper.State | null;
   tray: Tray | null;
 }
 
 export const appWindows: Windows = {
   main: null,
   quick: null,
+  quickState: null,
   tray: null,
 };
 
@@ -64,7 +67,9 @@ export function registerShortcut() {
  */
 export async function restoreOrCreateQuickWindow(show = false) {
   if (!appWindows.quick || appWindows.quick.isDestroyed()) {
-    appWindows.quick = await createQuickWindow(show);
+    const {window, state} = await createQuickWindow(show);
+    appWindows.quick = window;
+    appWindows.quickState = state;
     registerQuickStates(appWindows.quick);
 
     if (!show) {
@@ -73,13 +78,9 @@ export async function restoreOrCreateQuickWindow(show = false) {
   }
 
   // Reposition window based on current cursor position
-  const cursorPoint = screen.getCursorScreenPoint();
-  const currentDisplay = screen.getDisplayNearestPoint(cursorPoint);
-  const {width} = currentDisplay.workArea;
-  const {bounds} = currentDisplay;
 
-  // Update window position to top-right of current display
-  appWindows.quick.setPosition(bounds.x + width - 500 - 20, bounds.y + 60);
+  // Update window position based on current display bounds
+  appWindows.quick.setPosition(appWindows.quickState.x, appWindows.quickState.y);
 
   // Ensure it remains on top
   appWindows.quick.setAlwaysOnTop(true, 'screen-saver', 2);

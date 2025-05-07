@@ -2,12 +2,15 @@
 import type { Editor as EditorT, Extension, Mark, Node } from '@tiptap/core';
 
 import { cn, Separator } from '@tegonhq/ui';
-import { EditorInstance, EditorContent, EditorBubble, useEditor } from 'novel';
 import {
-  ImageResizer,
-  handleCommandNavigation,
+  EditorInstance,
+  EditorContent,
+  EditorBubble,
+  useEditor,
   type SuggestionItem,
-} from 'novel/extensions';
+  handleCommandNavigation,
+  ImageResizer,
+} from 'novel';
 import * as React from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 

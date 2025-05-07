@@ -70,10 +70,6 @@ export function useStreamConversationMutation() {
                 responses.push(message.message);
               }
 
-              if (message.type.includes('THOUGHT')) {
-                thoughts.push(message.message);
-              }
-
               if (message.type.includes('STREAM_END')) {
                 completed = true;
                 setIsLoading(false);

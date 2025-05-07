@@ -68,6 +68,7 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
         command: () => {
           if (rightViewContext && rightViewContext.onOpen) {
             rightViewContext.onOpen('');
+            onClose();
           }
         },
       },
@@ -144,6 +145,7 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
           command: () => {
             if (rightViewContext && rightViewContext.onOpen) {
               rightViewContext.onOpen(value);
+              onClose();
             }
           },
         },

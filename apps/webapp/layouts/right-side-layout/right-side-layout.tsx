@@ -10,6 +10,7 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
 
 import { Conversation } from 'modules/conversation';
+import { SearchDialog } from 'modules/search';
 
 import { SCOPES } from 'common/shortcut-scopes';
 import { useLocalCommonState } from 'common/use-local-state';
@@ -100,59 +101,61 @@ export const RightSideLayout = observer(
 
     return (
       <main>
-        <div
-          className="flex flex-col"
-          style={{
-            overflow: 'hidden',
-            height: 'calc(100vh - 1rem)',
-            width: open ? 'calc(100vw - 13.5rem)' : 'calc(100vw - 1rem)',
+        <RightSideViewContext.Provider
+          value={{
+            collapsed: rightSideCollapsed,
+            onOpen,
+            onClose,
           }}
         >
-          <ResizablePanelGroup direction="horizontal">
-            <ResizablePanel
-              collapsible={false}
-              className="bg-background-2 rounded-md"
-              style={{
-                height: 'calc(100vh - 1rem)',
-              }}
-              order={1}
-              id="home"
-            >
-              {header}
+          <div
+            className="flex flex-col"
+            style={{
+              overflow: 'hidden',
+              height: 'calc(100vh - 1rem)',
+              width: open ? 'calc(100vw - 13.5rem)' : 'calc(100vw - 1rem)',
+            }}
+          >
+            <ResizablePanelGroup direction="horizontal">
+              <ResizablePanel
+                collapsible={false}
+                className="bg-background-2 rounded-md"
+                style={{
+                  height: 'calc(100vh - 1rem)',
+                }}
+                order={1}
+                id="home"
+              >
+                {header}
 
-              <TabContext.Provider value={{ tabId: firstTab.id }}>
-                <RightSideViewContext.Provider
-                  value={{
-                    collapsed: rightSideCollapsed,
-                    onOpen,
-                    onClose,
-                  }}
-                >
+                <TabContext.Provider value={{ tabId: firstTab.id }}>
                   {children}
-                </RightSideViewContext.Provider>
-              </TabContext.Provider>
-            </ResizablePanel>
-            {!rightSideCollapsed && (
-              <>
-                <ResizableHandle className="w-2.5" />
+                </TabContext.Provider>
+              </ResizablePanel>
+              {!rightSideCollapsed && (
+                <>
+                  <ResizableHandle className="w-2.5" />
 
-                <ResizablePanel
-                  className="bg-background-2 rounded-md"
-                  collapsible={false}
-                  maxSize={50}
-                  minSize={25}
-                  defaultSize={size}
-                  onResize={(size) => setSize(size)}
-                  order={2}
-                  id="rightScreen"
-                >
-                  <RightSideHeader onClose={onClose} />
-                  <Conversation />
-                </ResizablePanel>
-              </>
-            )}
-          </ResizablePanelGroup>
-        </div>
+                  <ResizablePanel
+                    className="bg-background-2 rounded-md"
+                    collapsible={false}
+                    maxSize={50}
+                    minSize={25}
+                    defaultSize={size}
+                    onResize={(size) => setSize(size)}
+                    order={2}
+                    id="rightScreen"
+                  >
+                    <RightSideHeader onClose={onClose} />
+                    <Conversation defaultValue={defaultValue} />
+                  </ResizablePanel>
+                </>
+              )}
+            </ResizablePanelGroup>
+          </div>
+
+          <SearchDialog />
+        </RightSideViewContext.Provider>
       </main>
     );
   },

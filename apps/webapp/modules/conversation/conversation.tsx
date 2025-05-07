@@ -23,7 +23,11 @@ import { ConversationTextarea } from './conversation-textarea';
 import { StreamingConversation } from './streaming-conversation';
 import { useConversationContext } from './use-conversation-context';
 
-export const Conversation = observer(() => {
+interface ConversationProps {
+  defaultValue?: string;
+}
+
+export const Conversation = observer(({ defaultValue }: ConversationProps) => {
   const { commonStore } = useContextStore();
   const { toast } = useToast();
 
@@ -134,9 +138,9 @@ export const Conversation = observer(() => {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh_-_3.5rem)]">
-      <div className="grow overflow-hidden">
-        <div className="flex flex-col h-full justify-end overflow-hidden">
+    <div className="flex flex-col h-[calc(100vh_-_3.5rem)] items-center">
+      <div className="grow overflow-hidden max-w-[97ch] w-full">
+        <div className="flex flex-col h-full justify-start overflow-hidden gap-4">
           <ScrollAreaWithAutoScroll>
             {getConversations()}
             {isLoading && (
@@ -144,26 +148,29 @@ export const Conversation = observer(() => {
             )}
           </ScrollAreaWithAutoScroll>
 
-          {isLoading && (
-            <div className="flex flex-wrap p-1 px-3 mt-2 gap-1">
-              <div
-                className={cn(
-                  'px-2 py-0 w-full flex flex-col items-start gap-1',
-                )}
-              >
+          <div className="flex flex-col">
+            {isLoading && (
+              <div className="flex flex-wrap p-1 px-3 gap-1">
                 <div
                   className={cn(
-                    'w-full flex items-start gap-1 rounded-md text-sm',
+                    'px-2 py-0 w-full flex flex-col items-start gap-1',
                   )}
                 >
-                  <LoaderLine size={18} className="animate-spin" />
-                  <p className="text-sm text-muted-foreground">Generating...</p>
+                  <div
+                    className={cn(
+                      'w-full flex items-start gap-1 rounded-md text-sm',
+                    )}
+                  >
+                    <LoaderLine size={18} className="animate-spin" />
+                    <p className="text-sm text-muted-foreground">
+                      Generating...
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
-
-          <ConversationTextarea onSend={onSend} />
+            )}
+            <ConversationTextarea onSend={onSend} defaultValue={defaultValue} />
+          </div>
         </div>
       </div>
     </div>
