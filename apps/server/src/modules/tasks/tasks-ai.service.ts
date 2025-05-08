@@ -35,6 +35,8 @@ export default class TasksAIService {
 
     const data = await this.recurrence(recurrenceInput, workspaceId);
 
+    console.log(`data: ${JSON.stringify(data)}`);
+
     await this.prisma.taskOccurrence.updateMany({
       where: {
         taskId: {
