@@ -1,26 +1,36 @@
-<br>
-<p align="center">
+<div align="center">
   <a href="https://mysigma.ai">
     <img src="https://github.com/user-attachments/assets/5cb0e4f6-32d1-40e2-bed6-be551c901d93" width="200px" alt="Sigma logo" />
   </a>
 
-<h2 align="center" >sigma: the to-do list app that works as your assistant. </h3>
+### Sigma: Your Personal AI Assistant now in a todo app.
 
-<p align="center"><a href="https://www.mysigma.ai"> website</a> · <a href="https://docs.mysigma.ai"> documentation</a> ·  <a href="https://discord.gg/dVTC3BmgEq"> join discord community</a>
-<br />
+<p align="center">
+    <a href="https://www.mysigma.ai"><b>Website</b></a> •
+    <a href="https://github.com/tegonhq/sigma/wiki"><b>Documentation</b></a> •
+    <a href="https://discord.gg/dVTC3BmgEq"><b>Discord</b></a> •
+    <a href="https://github.com/tegonhq/sigma/releases"><b>Releases</b></a>
+</p>
+</div>
 
-the way we work is changing — no more starting from scratch on mundane tasks. with intelligent ai agents transforming our workflows, automations are taking over, and how we plan our days is getting a major upgrade.
+## About Sigma
 
-imagine a todo app that doesn’t just track your tasks, but actually gets things done for you. **sigma** is that all-in-one workspace for notes, tasks, and projects, built for the modern era.
+Sigma is your AI command center that turn plans into action. It has a personal AI assistant that learns your style, grab context from other tools (like github, slack, email, jira etc.) and helps you track and manage your work and automate the mundane tasks for you.
 
-## features
+### Key Features
 
-- tasks
-- daily planner
-- lists
-- command centre
-- browser agent
-- sigma chat
-- coding agent (coming soon)
+- Tasks & Notes
+- Daily Planner
+- Lists
+- Signals
+- AI automation workflows
+- Sigma chat
 
 ## Quickstart
+The quickest way to get started is to download our [desktop app](https://github.com/tegonhq/sigma/releases/tag/0.1.13) and follow the instructions in the onboarding. Create your first task and ai workflow and start managing your day better.
+
+## Meet the Amazing People Behind This Project:
+
+<a href="https://github.com/tegonhq/sigma/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=tegonhq/sigma" />
+</a>
