@@ -6,7 +6,7 @@ export default function Document() {
   return (
     <Html lang="en" className={`${GeistMono.variable} ${GeistSans.variable}`}>
       <Head />
-      <body className="font-sans">
+      <body className="font-sans bg-transparent">
         <Main />
         <NextScript />
       </body>

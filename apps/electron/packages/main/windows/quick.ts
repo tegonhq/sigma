@@ -16,14 +16,14 @@ export async function createQuickWindow(show = true) {
 
   // Load the previous state with fallback to defaults
   const quickWindowState = windowStateKeeper({
-    defaultWidth: 400,
-    defaultHeight: 600,
+    defaultWidth: 500,
+    defaultHeight: 500,
   });
 
   const smallerWindow = new BrowserWindow({
     show: false, // Use the 'ready-to-show' event to show the instantiated BrowserWindow.
-    width: 400, // Set minimum width
-    height: 600, // Set minimum height
+    width: quickWindowState.width, // Set minimum width
+    height: quickWindowState.height, // Set minimum height
     icon: path.join(__dirname, '/../../../buildResources/icon.png'),
     resizable: false,
     x: quickWindowState.x ?? bounds.x + width - 500,
@@ -37,7 +37,7 @@ export async function createQuickWindow(show = true) {
     transparent: true,
     useContentSize: true,
     skipTaskbar: true,
-    hasShadow: false,
+    hasShadow: true,
     type: process.platform === 'darwin' ? 'panel' : 'toolbar',
     alwaysOnTop: true,
     center: false,
@@ -45,9 +45,12 @@ export async function createQuickWindow(show = true) {
       nodeIntegration: true,
       preload: join(app.getAppPath(), 'packages/preload/dist/index.mjs'),
     },
+
+    vibrancy: 'fullscreen-ui',
   });
 
   smallerWindow.setAlwaysOnTop(true, 'screen-saver', 2);
+  smallerWindow.setVibrancy('fullscreen-ui');
   smallerWindow.setVisibleOnAllWorkspaces(true, {
     visibleOnFullScreen: true,
   });

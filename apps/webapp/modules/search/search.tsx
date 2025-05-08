@@ -31,7 +31,7 @@ export const SearchDialog = observer(() => {
       open={open}
       onOpenChange={setOpen}
       commandProps={{
-        className: 'border-border border w-[600px]',
+        className: 'border-none w-[600px]',
       }}
     >
       <CommandComponent onClose={() => setOpen(false)} />

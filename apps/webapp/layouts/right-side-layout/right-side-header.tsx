@@ -10,17 +10,14 @@ interface RightSideHeaderProps {
 
 export const RightSideHeader = observer(({ onClose }: RightSideHeaderProps) => {
   return (
-    <header className="flex h-[38px] shrink-0 items-center justify-between gap-2 border-border border-b">
-      <div className="flex items-center justify-between gap-2 px-2 w-full">
+    <header className="flex h-[38px] shrink-0 items-center justify-between gap-2">
+      <div className="flex items-center justify-end gap-2 px-2 w-full">
         <div className="flex gap-1 items-center">
+          <ConversationHeaderActions />
           <Button size="sm" variant="ghost" onClick={onClose}>
             <Close size={16} />
           </Button>
-
-          <div className="flex gap-2 items-center">Sigma AI</div>
         </div>
-
-        <ConversationHeaderActions />
       </div>
     </header>
   );

@@ -14,10 +14,11 @@ interface AppLayoutProps {
 export function AppLayout({ children }: AppLayoutProps) {
   return (
     <SidebarProvider
-      className={cn('!bg-transparent', GeistSans.variable, GeistMono.variable)}
+      className={cn('sidebar', GeistSans.variable, GeistMono.variable)}
       style={{
         '--sidebar-width': '13rem',
         '--sidebar-width-mobile': '13rem',
+        backgroundColor: 'oklch(var(--background)) !important',
       }}
     >
       <SettingsProvider>

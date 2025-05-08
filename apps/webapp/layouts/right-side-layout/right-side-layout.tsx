@@ -137,7 +137,7 @@ export const RightSideLayout = observer(
                   <ResizableHandle className="w-2.5" />
 
                   <ResizablePanel
-                    className="bg-background-2 rounded-md"
+                    className="rounded-md"
                     collapsible={false}
                     maxSize={50}
                     minSize={25}

@@ -1,4 +1,4 @@
-import { Button, cn, SendLine } from '@tegonhq/ui';
+import { Button, cn } from '@tegonhq/ui';
 import { Document } from '@tiptap/extension-document';
 import HardBreak from '@tiptap/extension-hard-break';
 import { Paragraph } from '@tiptap/extension-paragraph';
@@ -14,11 +14,15 @@ import { CustomMention, useMentionSuggestions } from './suggestion-extension';
 interface ConversationTextareaProps {
   onSend: (value: string, agents: string[], title: string) => void;
   defaultValue?: string;
+  isLoading?: boolean;
+  className?: string;
 }
 
 export function ConversationTextarea({
   onSend,
   defaultValue,
+  isLoading = false,
+  className,
 }: ConversationTextareaProps) {
   const [text, setText] = useState('');
   const [editor, setEditor] = React.useState<EditorT>();
@@ -57,8 +61,10 @@ export function ConversationTextarea({
   };
 
   return (
-    <div className="p-4 pt-0">
-      <div className="flex flex-col rounded pt-2 bg-grayAlpha-100">
+    <div className="px-1">
+      <div
+        className={cn('flex flex-col rounded pt-2 bg-background-2', className)}
+      >
         <EditorRoot>
           <EditorContent
             initialContent={{
@@ -147,16 +153,18 @@ export function ConversationTextarea({
             }}
             immediatelyRender={false}
             className={cn(
-              'editor-container w-full min-w-full text-base sm:rounded-lg px-3 max-h-[400px] overflow-auto',
+              'editor-container w-full min-w-full text-base sm:rounded-lg px-3 max-h-[400px] min-h-[40px] overflow-auto',
             )}
           ></EditorContent>
         </EditorRoot>
 
         <div className={cn('flex justify-end p-2 pt-0 pb-2 items-center')}>
           <Button
-            variant="ghost"
-            className="transition-all duration-500 ease-in-out"
+            variant="default"
+            className="transition-all duration-500 ease-in-out gap-1"
             type="submit"
+            size="lg"
+            isLoading={isLoading}
             onClick={() => {
               if (text) {
                 const title = editor.getText();
@@ -167,7 +175,7 @@ export function ConversationTextarea({
               }
             }}
           >
-            <SendLine size={20} />
+            {isLoading ? <>Generating...</> : <>Chat ↵</>}
           </Button>
         </div>
       </div>

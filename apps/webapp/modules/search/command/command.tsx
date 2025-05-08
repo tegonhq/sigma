@@ -181,11 +181,13 @@ export const CommandComponent = observer(
         <CommandInput
           placeholder="Search/Ask anything..."
           className="rounded-md h-10"
+          containerClassName="border-none"
           value={value}
+          icon
           autoFocus
           onValueChange={(value: string) => setValue(value)}
         />
-        <CommandList className="p-2 flex-1 max-h-[100%]">
+        <CommandList className="p-2 pt-0 flex-1 max-h-[100%]">
           <CommandEmpty>No results found.</CommandEmpty>
           {defaultCommands()}
           {settingsCommands()}

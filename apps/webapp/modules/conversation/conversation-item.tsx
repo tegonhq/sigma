@@ -2,14 +2,11 @@ import { UserTypeEnum } from '@sigma/types';
 import { cn } from '@tegonhq/ui';
 import { EditorContent, useEditor } from '@tiptap/react';
 import { observer } from 'mobx-react-lite';
-import Image from 'next/image';
 import React, { useEffect } from 'react';
 
 import { extensionsForConversation } from 'common/editor';
-import { UserAvatar } from 'common/user-avatar';
 
 import { useContextStore } from 'store/global-context-provider';
-import { UserContext } from 'store/user-context';
 
 import { skillExtension } from './skill-extension';
 import { CustomMention } from './suggestion-extension';
@@ -21,12 +18,12 @@ interface AIConversationItemProps {
 export const ConversationItem = observer(
   ({ conversationHistoryId }: AIConversationItemProps) => {
     const { conversationHistoryStore } = useContextStore();
-    const user = React.useContext(UserContext);
 
     const conversationHistory =
       conversationHistoryStore.getConversationHistoryForId(
         conversationHistoryId,
       );
+    const isUser = conversationHistory.userType === UserTypeEnum.User;
 
     const id = `a${conversationHistory.id.replace(/-/g, '')}`;
 
@@ -42,31 +39,18 @@ export const ConversationItem = observer(
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id, conversationHistory.message]);
 
-    const getIcon = () => {
-      if (conversationHistory.userType === UserTypeEnum.User) {
-        return <UserAvatar user={user} />;
-      }
-
-      return (
-        <Image
-          src="/logo_light.svg"
-          alt="logo"
-          key={1}
-          width={20}
-          height={20}
-        />
-      );
-    };
-
     if (!conversationHistory.message) {
       return null;
     }
 
     return (
-      <div className={cn('flex gap-2 py-4 mx-5 border-b border-border')}>
-        <div className="shrink-0 relative top-[2px]">{getIcon()}</div>
-
-        <div className="flex flex-col">
+      <div className={cn('flex gap-2 py-0 mx-5', isUser && 'justify-end my-4')}>
+        <div
+          className={cn(
+            'flex flex-col',
+            isUser && 'bg-primary/20 p-3 max-w-[500px] rounded-md',
+          )}
+        >
           <EditorContent editor={editor} />
         </div>
       </div>

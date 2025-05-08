@@ -42,7 +42,7 @@ export const StreamingConversation = ({
   }
 
   return (
-    <div className="flex gap-2 border-b border-border py-4 px-5">
+    <div className="flex gap-2 py-4 px-5">
       <div className="shrink-0 relative top-[3px]">
         <AI size={16} />
       </div>

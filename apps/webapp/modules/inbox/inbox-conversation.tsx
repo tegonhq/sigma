@@ -1,5 +1,5 @@
 import { UserTypeEnum } from '@sigma/types';
-import { cn, LoaderLine, useToast } from '@tegonhq/ui';
+import { useToast } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 
@@ -131,26 +131,11 @@ export const InboxConversation = observer(
             )}
           </ScrollAreaWithAutoScroll>
 
-          {isLoading && (
-            <div className="flex flex-wrap p-1 px-3 gap-1">
-              <div
-                className={cn(
-                  'px-2 py-0 w-full flex flex-col items-start gap-1',
-                )}
-              >
-                <div
-                  className={cn(
-                    'w-full flex items-start gap-1 rounded-md text-sm',
-                  )}
-                >
-                  <LoaderLine size={18} className="animate-spin" />
-                  <p className="text-sm text-muted-foreground">Generating...</p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          <ConversationTextarea onSend={onSend} />
+          <ConversationTextarea
+            onSend={onSend}
+            className="bg-grayAlpha-100 m-4"
+            isLoading={isLoading}
+          />
         </div>
       </div>
     );

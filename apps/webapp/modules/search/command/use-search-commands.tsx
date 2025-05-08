@@ -19,6 +19,7 @@ import type { ListType } from 'common/types';
 import { RightSideViewContext } from 'layouts/right-side-layout';
 
 import { useApplication } from 'hooks/application';
+import { useIPC } from 'hooks/ipc';
 
 import { useCreateListMutation } from 'services/lists';
 
@@ -257,6 +258,66 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
         })
         .filter(Boolean);
     }
+
+    return commands;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
+};
+
+export const useSearchCommandsQuick = (value: string, onClose: () => void) => {
+  const { tasksStore, pagesStore, listsStore } = useContextStore();
+
+  const ipc = useIPC();
+
+  return React.useMemo(() => {
+    const commands: Record<string, CommandType[]> = {};
+    commands['default'] = [];
+    if (value) {
+      commands['default'] = [
+        ...commands['default'],
+        {
+          Icon: AI,
+          text: `${value} ... ask sigma`,
+          command: () => {},
+        },
+      ];
+    }
+
+    const pages = pagesStore.searchPages(value ?? '');
+
+    commands['Pages'] = pages
+      .map((page) => {
+        const task = tasksStore.getTaskForPage(page.id);
+        const list = listsStore.getListWithPageId(page.id);
+
+        if (task) {
+          return {
+            Icon: IssuesLine,
+            text: page.title,
+            key: task.id,
+            command: () => {
+              ipc.sendToMain({ type: 'Task', id: task.id });
+              onClose();
+            },
+          };
+        }
+
+        if (list) {
+          return {
+            Icon: Project,
+            text: page.title,
+            key: list.id,
+            command: () => {
+              ipc.sendToMain({ type: 'List', id: list.id });
+
+              onClose();
+            },
+          };
+        }
+
+        return undefined;
+      })
+      .filter(Boolean);
 
     return commands;
     // eslint-disable-next-line react-hooks/exhaustive-deps

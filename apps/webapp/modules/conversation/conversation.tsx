@@ -1,5 +1,5 @@
 import { UserTypeEnum } from '@sigma/types';
-import { cn, Loader, LoaderLine, useToast } from '@tegonhq/ui';
+import { Loader, useToast } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 
@@ -139,8 +139,8 @@ export const Conversation = observer(({ defaultValue }: ConversationProps) => {
 
   return (
     <div className="flex flex-col h-[calc(100vh_-_3.5rem)] items-center">
-      <div className="grow overflow-hidden max-w-[97ch] w-full">
-        <div className="flex flex-col h-full justify-start overflow-hidden gap-4">
+      <div className="grow overflow-hidden w-full">
+        <div className="flex flex-col h-full justify-start overflow-hidden">
           <ScrollAreaWithAutoScroll>
             {getConversations()}
             {isLoading && (
@@ -149,27 +149,11 @@ export const Conversation = observer(({ defaultValue }: ConversationProps) => {
           </ScrollAreaWithAutoScroll>
 
           <div className="flex flex-col">
-            {isLoading && (
-              <div className="flex flex-wrap p-1 px-3 gap-1">
-                <div
-                  className={cn(
-                    'px-2 py-0 w-full flex flex-col items-start gap-1',
-                  )}
-                >
-                  <div
-                    className={cn(
-                      'w-full flex items-start gap-1 rounded-md text-sm',
-                    )}
-                  >
-                    <LoaderLine size={18} className="animate-spin" />
-                    <p className="text-sm text-muted-foreground">
-                      Generating...
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-            <ConversationTextarea onSend={onSend} defaultValue={defaultValue} />
+            <ConversationTextarea
+              onSend={onSend}
+              defaultValue={defaultValue}
+              isLoading={isLoading}
+            />
           </div>
         </div>
       </div>
