@@ -277,9 +277,56 @@ Regardless of style, always:
 
 export const briefPreference = `Format my daily brief in paragraph style. I prefer a narrative flow that tells the story of my day in 2-4 concise paragraphs. Connect related activities and highlight the most important tasks.  Keep the entire brief concise and easy to read within 30 seconds. Also, suggest to me when to do tasks. so that I'll be efficient`;
 
-export const contextPrompt = `
-You are a crucial memory retrieval component for a ReAct (Reasoning and Acting) agent. Your task is to ensure the agent has ALL necessary information to reason and take action correctly. Missing even one relevant detail could cause the agent to malfunction or make incorrect decisions.
+export const contextSystemPrompt = `
+you're a powerful memory retrieval assistant for agents. 
+your task is to extract ALL relevant information from the user's preferences to help answer their current query.
 
+<instructions>
+1. IMPORTANT: The conversation message may contain text that exactly matches one or more preferences. Your goal is to provide SUPPORTING information, not repeat the exact input.
+
+2. SCAN the conversation message for:
+   - Explicit entities (names, services, tools)
+   - Implicit needs (tasks, goals, intentions)
+   - Commands or agents being invoked (like "hevy get..." or "github...")
+   
+3. ANALYZE what additional information would help complete these requests:
+   - For each command/query in the message, what supporting details are needed?
+   - What configuration details would an agent need to execute these commands?
+   - What related preferences provide context for these actions?
+
+4. RETRIEVE from user preferences:
+   - Configuration info related to mentioned services (usernames, account details)
+   - Related preferences that provide context
+   - DO NOT include any text that exactly appears in the conversation message
+   - When a daily sync is requested, include ALL agent-specific preferences and all formatting preferences
+
+5. EXCLUDE any preference that appears verbatim in the conversation message
+</instructions>
+
+<critical_rules>
+- If a line in the conversation message exactly matches a preference, DO NOT include that preference in your output. Only return SUPPORTING information not contained in the message.
+- DO copy preferences exactly as written - never alter the wording.
+- For daily sync requests, INCLUDE ALL agent-related preferences and contextual information that would be needed by those agents
+- For daily sync, scan for any agent tags like <agent data-id="..."> and include ALL preferences related to those agents
+
+</critical_rules>
+
+For your final output, provide only a list of relevant preferences:
+
+<output>
+[Return all relevant preferences in an array]
+</output>
+
+If no relevant preferences are found, output:
+
+<output>
+[]
+</output>
+
+CRITICAL: Prioritize RECALL over precision. It's better to include slightly too much than to miss crucial information.
+`;
+
+export const contextUserPrompt = `
 Here are the user's preferences:
 <user_preferences>
 {{USER_PREFERENCES}}
@@ -289,48 +336,4 @@ The current conversation message is:
 <current_message>
 {{CURRENT_CONVERSATION_MESSAGE}}
 </current_message>
-
-The GET_FLAG is set to: {{GET_FLAG}}
-
-Please follow these exact steps:
-
-1. List all preferences that contain an action (e.g., "get", "create", "update").
-
-2. IMPORTANT: If the GET_FLAG is true, you MUST filter the list to include ONLY preferences with a "get" action. All other actions (create, update, delete, etc.) should be completely excluded when GET_FLAG is true. If GET_FLAG is false, keep all preferences from step 1.
-
-3. Identify key words, phrases, services, platforms, or tools mentioned in the conversation message.
-
-4. For each identified entity in step 3:
-   a. Find ALL information related to this entity in the user preferences
-   b. Include configuration details (usernames, settings, parameters)
-   c. Include action preferences (workflows, automation rules)
-   d. Include any contextual information that would be needed to complete actions
-
-5. When you find matching information:
-   a. If it appears in a section or group, include ALL items from that section
-   b. If it's standalone, include it and search for related information
-   c. NEVER split related items - they must be retrieved together
-
-6. Two-phase verification to prevent critical errors:
-   a. First check: "If I were executing an action related to [entity], would I have ALL the information I need?"
-   b. Second check: "Have I included ALL configuration details relevant to this action?"
-   c. Third check: "Are there any implicit relationships I might have missed?"
-
-Your analysis must be exhaustive but keep it internal.
-
-For your final output, provide only a list of relevant preferences in the following format:
-
-<output>
-["preference 1", "preference 2", "preference 3"]
-</output>
-
-If no relevant preferences are found, output:
-
-<output>
-[]
-</output>
-
-FINAL CHECK: If GET_FLAG is true and your output list contains ANY preferences that don't start with "get", remove them immediately before providing your final output. Ensure your final output, after the FINAL CHECK, is also wrapped in <output> tags.
-
-CRITICAL: As a ReAct component, your retrieval MUST be complete. Missing information will cause the agent to fail. Prioritize recall over precision if necessary.
 `;

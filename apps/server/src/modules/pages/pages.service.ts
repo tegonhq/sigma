@@ -107,22 +107,7 @@ export class PagesService {
 
     // Update task extensions if needed
     if (taskIds?.length > 0) {
-      const tasks = await this.prisma.task.findMany({
-        where: { id: { in: taskIds } },
-        include: { page: true },
-      });
-
-      // Get existing task lists
-      const taskLists = getTaskListsInPage(page);
-
-      // Update task lists with new tasks
-      const updatedTaskLists = upsertTasksInPage(taskLists, tasks);
-
-      // Update the page description with the updated task lists
-      const description = updateTaskListsInPage(page, updatedTaskLists);
-
-      // Update the page with new description in the same transaction
-      await this.contentService.updateContentForDocument(page.id, description);
+      await this.upsertTasksInPageById(page.id, taskIds);
     }
 
     // Convert description to HTML if it exists
@@ -281,9 +266,9 @@ export class PagesService {
     return tasks;
   }
 
-  async removeTaskFromPageByTitle(title: string, taskIds: string[]) {
-    const page = await this.prisma.page.findFirst({
-      where: { title, deleted: null },
+  async removeTaskFromPageById(pageId: string, taskIds: string[]) {
+    const page = await this.prisma.page.findUnique({
+      where: { id: pageId, deleted: null },
     });
 
     // Remove specified tasks
@@ -295,6 +280,26 @@ export class PagesService {
     );
 
     return page;
+  }
+
+  async upsertTasksInPageById(pageId: string, taskIds: string[]) {
+    const page = await this.prisma.page.findUnique({ where: { id: pageId } });
+    const tasks = await this.prisma.task.findMany({
+      where: { id: { in: taskIds } },
+      include: { page: true },
+    });
+
+    // Get existing task lists
+    const taskLists = getTaskListsInPage(page);
+
+    // Update task lists with new tasks
+    const updatedTaskLists = upsertTasksInPage(taskLists, tasks);
+
+    // Update the page description with the updated task lists
+    const description = updateTaskListsInPage(page, updatedTaskLists);
+
+    // Update the page with new description in the same transaction
+    await this.contentService.updateContentForDocument(page.id, description);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

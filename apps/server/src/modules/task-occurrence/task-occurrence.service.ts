@@ -96,7 +96,6 @@ export class TaskOccurenceService {
   async createTaskOccurence(
     createTaskOccurenceData: CreateTaskOccurrenceDTO,
     workspaceId: string,
-    modifyPage?: boolean,
   ): Promise<TaskOccurrence[]> {
     const { taskIds, startTime, endTime } = createTaskOccurenceData;
     let pageId = createTaskOccurenceData.pageId;
@@ -106,7 +105,7 @@ export class TaskOccurenceService {
     const timezone = (workspace.preferences as Preferences).timezone;
 
     let page: PublicPage;
-    if (!pageId || modifyPage) {
+    if (!pageId) {
       const formattedDate = formatInTimeZone(
         new Date(startTime),
         timezone,
@@ -115,7 +114,6 @@ export class TaskOccurenceService {
       page = await this.pagesService.getOrCreatePageByTitle(workspaceId, {
         title: formattedDate,
         type: PageTypeEnum.Daily,
-        taskIds,
       });
       pageId = page.id;
     }
@@ -147,11 +145,9 @@ export class TaskOccurenceService {
   async updateTaskOccurence(
     updateTaskOccurenceDto: UpdateTaskOccurenceDTO,
     workspaceId: string,
-    modifyPage?: boolean,
   ): Promise<TaskOccurrence[]> {
     const deletedTaskOccurences = await this.deleteTaskOccurence(
       updateTaskOccurenceDto.taskOccurrenceIds,
-      modifyPage,
     );
 
     // Extract taskIds from deleted occurrences and add them to updateTaskOccurenceDto
@@ -162,7 +158,6 @@ export class TaskOccurenceService {
     return await this.createTaskOccurence(
       { ...updateTaskOccurenceDto, taskIds: deletedTaskIds },
       workspaceId,
-      modifyPage,
     );
   }
 
@@ -202,10 +197,9 @@ export class TaskOccurenceService {
       await this.createTaskOccurence(
         { ...updateTaskOccurenceDto, taskIds: [taskOccurrence.task.id] },
         workspaceId,
-        true,
       );
 
-      return (await this.deleteTaskOccurence([taskOccurrenceId], true))[0];
+      return (await this.deleteTaskOccurence([taskOccurrenceId]))[0];
     }
 
     // If date isn't changing, just update the times and status
@@ -225,7 +219,6 @@ export class TaskOccurenceService {
 
   async deleteTaskOccurence(
     taskOccurrenceIds: string[],
-    modifyPage?: boolean,
   ): Promise<TaskOccurrence[]> {
     // Mark all occurrences as deleted
     await this.prisma.taskOccurrence.updateMany({
@@ -237,29 +230,6 @@ export class TaskOccurenceService {
       where: { id: { in: taskOccurrenceIds } },
       include: { page: true, task: true },
     });
-
-    // Remove tasks from their respective pages
-    const pageTaskMap = new Map<string, string[]>();
-
-    // Group tasks by page title for efficient updates
-    taskOccurences.forEach((occurrence) => {
-      if (occurrence.pageId && occurrence.task?.id) {
-        const pageTitle = occurrence.page.title;
-        if (!pageTaskMap.has(pageTitle)) {
-          pageTaskMap.set(pageTitle, []);
-        }
-        pageTaskMap.get(pageTitle).push(occurrence.task.id);
-      }
-    });
-
-    if (modifyPage) {
-      // Remove tasks from each page
-      await Promise.all(
-        Array.from(pageTaskMap.entries()).map(async ([pageTitle, taskIds]) => {
-          await this.pagesService.removeTaskFromPageByTitle(pageTitle, taskIds);
-        }),
-      );
-    }
 
     return taskOccurences;
   }
@@ -357,7 +327,6 @@ export class TaskOccurenceService {
           {
             title: formattedDate,
             type: PageTypeEnum.Daily,
-            taskIds: [taskId],
           },
         );
 
@@ -412,6 +381,7 @@ export class TaskOccurenceService {
           startTime: data.startTime,
           endTime: data.endTime,
           status: data.status,
+          deleted: null,
         },
         update: {
           deleted: null,
@@ -426,18 +396,6 @@ export class TaskOccurenceService {
   }
 
   async updateTaskOccurenceByTask(taskId: string, workspaceId: string) {
-    await this.deleteTaskOccurenceByTask(taskId, workspaceId);
-
-    return await this.createTaskOccurenceByTask(taskId, workspaceId);
-  }
-
-  async deleteTaskOccurenceByTask(taskId: string, workspaceId: string) {
-    const workspace = await this.prisma.workspace.findUnique({
-      where: { id: workspaceId },
-    });
-    const timezone = (workspace.preferences as Preferences).timezone;
-
-    // Mark occurrences as deleted (including today and future occurrences)
     const yesterday = endOfDay(subDays(new Date(), 1));
     await this.prisma.taskOccurrence.updateMany({
       where: {
@@ -449,32 +407,58 @@ export class TaskOccurenceService {
       data: { deleted: new Date().toISOString() },
     });
 
-    // First get all future occurrences to know which pages to update
-    const futureOccurrences = await this.prisma.taskOccurrence.findMany({
+    return await this.createTaskOccurenceByTask(taskId, workspaceId);
+  }
+
+  async deleteTaskOccurenceByTask(taskId: string) {
+    // Mark occurrences as deleted (including today and future occurrences)
+    const yesterday = endOfDay(subDays(new Date(), 1));
+    await this.prisma.task.update({
+      where: { id: taskId },
+      data: {
+        recurrence: [],
+        scheduleText: null,
+        startTime: null,
+        endTime: null,
+      },
+    });
+    return await this.prisma.taskOccurrence.updateMany({
       where: {
         taskId,
         startTime: {
-          gte: new Date(),
+          gte: yesterday,
         },
       },
-      select: {
-        startTime: true,
-        workspaceId: true,
-      },
+      data: { deleted: new Date().toISOString() },
+    });
+  }
+
+  async handleHooks(taskOccurenceId: string, action: string) {
+    const taskOccurence = await this.prisma.taskOccurrence.findUnique({
+      where: { id: taskOccurenceId },
     });
 
-    // Remove task from each daily page
-    await Promise.all(
-      futureOccurrences.map(async (occurrence) => {
-        const formattedDate = formatInTimeZone(
-          occurrence.startTime,
-          timezone,
-          'dd-MM-yyyy',
-        );
-        await this.pagesService.removeTaskFromPageByTitle(formattedDate, [
-          taskId,
+    console.log(taskOccurence.taskId, action);
+    switch (action) {
+      case 'create':
+        await this.pagesService.upsertTasksInPageById(taskOccurence.pageId, [
+          taskOccurence.taskId,
         ]);
-      }),
-    );
+        break;
+
+      case 'update':
+        if (!taskOccurence.deleted) {
+          await this.pagesService.upsertTasksInPageById(taskOccurence.pageId, [
+            taskOccurence.taskId,
+          ]);
+        }
+        break;
+
+      case 'delete':
+        await this.pagesService.removeTaskFromPageById(taskOccurence.pageId, [
+          taskOccurence.taskId,
+        ]);
+        break;
+    }
   }
 }
