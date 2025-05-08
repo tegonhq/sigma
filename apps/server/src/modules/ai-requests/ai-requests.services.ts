@@ -108,6 +108,9 @@ export default class AIRequestsService {
       case LLMModelEnum.GPT35TURBO:
       case LLMModelEnum.GPT4TURBO:
       case LLMModelEnum.GPT4O:
+      case LLMModelEnum.GPT41:
+      case LLMModelEnum.GPT41MINI:
+      case LLMModelEnum.GPT41NANO:
         finalModel = LLMMappings[model];
         this.logger.info({
           message: `Sending request to OpenAI with model: ${finalModel}`,

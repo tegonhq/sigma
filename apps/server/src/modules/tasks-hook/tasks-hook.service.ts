@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import {
-  OutlinkType,
   PageTypeEnum,
   Task,
   TaskHookAction,
@@ -76,29 +75,6 @@ export class TaskHooksService {
           where: { taskId: task.id },
           data: { deleted: new Date().toISOString() },
         });
-
-        const referencingPages = await this.prisma.page.findMany({
-          where: {
-            outlinks: {
-              array_contains: [
-                {
-                  type: OutlinkType.Task,
-                  id: task.id,
-                },
-              ],
-            },
-          },
-        });
-
-        if (referencingPages.length > 0) {
-          await Promise.all(
-            referencingPages.map(async (page) => {
-              await this.pagesService.removeTaskFromPageByTitle(page.title, [
-                task.id,
-              ]);
-            }),
-          );
-        }
       }
 
       if (task.subIssue.length > 0) {
@@ -137,10 +113,7 @@ export class TaskHooksService {
 
       case 'delete':
         if (task.recurrence || task.startTime || task.endTime) {
-          await this.taskOccurenceService.deleteTaskOccurenceByTask(
-            task.id,
-            task.workspaceId,
-          );
+          await this.taskOccurenceService.deleteTaskOccurenceByTask(task.id);
         }
         return { message: 'Handled schedule delete' };
     }
@@ -263,9 +236,7 @@ export class TaskHooksService {
         },
       });
 
-      await this.pagesService.removeTaskFromPageByTitle(list.page.title, [
-        task.id,
-      ]);
+      await this.pagesService.removeTaskFromPageById(list.page.id, [task.id]);
     };
 
     switch (context.action) {
@@ -331,10 +302,9 @@ export class TaskHooksService {
       });
 
       if (parentTask && parentTask.page) {
-        await this.pagesService.removeTaskFromPageByTitle(
-          parentTask.page.title,
-          [task.id],
-        );
+        await this.pagesService.removeTaskFromPageById(parentTask.page.id, [
+          task.id,
+        ]);
       }
     };
 

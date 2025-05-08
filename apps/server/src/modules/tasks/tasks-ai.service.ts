@@ -35,6 +35,8 @@ export default class TasksAIService {
 
     const data = await this.recurrence(recurrenceInput, workspaceId);
 
+    console.log(`data: ${JSON.stringify(data)}`);
+
     await this.prisma.taskOccurrence.updateMany({
       where: {
         taskId: {
@@ -54,7 +56,6 @@ export default class TasksAIService {
           endTime: endOfDay(data.startTime).toISOString(),
         },
         workspaceId,
-        true,
       );
     } else {
       await this.prisma.task.updateMany({

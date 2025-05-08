@@ -1,7 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { convertTiptapJsonToHtml } from '@sigma/editor-extensions';
 import {
-  contextPrompt,
+  contextSystemPrompt,
+  contextUserPrompt,
   LLMModelEnum,
   PageTypeEnum,
   Workspace,
@@ -211,8 +212,12 @@ export default class WorkspacesService {
         {
           messages: [
             {
+              role: 'system',
+              content: contextSystemPrompt,
+            },
+            {
               role: 'user',
-              content: contextPrompt
+              content: contextUserPrompt
                 .replace('{{USER_PREFERENCES}}', userContextPageHTML)
                 .replace('{{CURRENT_CONVERSATION_MESSAGE}}', query)
                 .replace('{{GET_FLAG}}', getFlag.toString()),

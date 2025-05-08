@@ -68,7 +68,6 @@ export class TaskOccurenceController {
     return await this.taskOccurenceService.createTaskOccurence(
       createTaskOccurencesData,
       workspaceId,
-      true,
     );
   }
 
@@ -81,7 +80,6 @@ export class TaskOccurenceController {
     return await this.taskOccurenceService.updateTaskOccurence(
       updateTaskOccurenceDto,
       workspaceId,
-      true,
     );
   }
 
@@ -94,7 +92,6 @@ export class TaskOccurenceController {
 
     return await this.taskOccurenceService.deleteTaskOccurence(
       taskOccurrenceIds,
-      true,
     );
   }
 
@@ -124,13 +121,7 @@ export class TaskOccurenceController {
 
   @Delete('task/:taskId')
   @UseGuards(AuthGuard)
-  async deleteTaskOccurenceByTask(
-    @Param('taskId') taskId: string,
-    @Workspace() workspaceId: string,
-  ) {
-    return await this.taskOccurenceService.deleteTaskOccurenceByTask(
-      taskId,
-      workspaceId,
-    );
+  async deleteTaskOccurenceByTask(@Param('taskId') taskId: string) {
+    return await this.taskOccurenceService.deleteTaskOccurenceByTask(taskId);
   }
 }
