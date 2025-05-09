@@ -8,10 +8,7 @@
   },
   "mcp": {
     "command": "npx",
-    "args": [
-      "-y",
-      "@modelcontextprotocol/server-slack"
-    ],
+    "args": ["-y", "@modelcontextprotocol/server-slack"],
     "env": {
       "SLACK_BOT_TOKEN": "${config:access_token}",
       "SLACK_TEAM_ID": "${config:team_id}",
@@ -25,7 +22,16 @@
       "scopes": [
         "stars:read",
         "team:read",
-        "stars:write"
+        "stars:write",
+        "users:read",
+        "channels:read",
+        "groups:read",
+        "im:read",
+        "mpim:read",
+        "channels:history",
+        "chat:write",
+        "reactions:write",
+        "users.profile:read"
       ],
       "scope_identifier": "user_scope",
       "scope_separator": ","
