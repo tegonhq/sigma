@@ -1,5 +1,4 @@
 import {
-  Badge,
   ChevronDown,
   ChevronRight,
   cn,
@@ -101,12 +100,9 @@ export const SkillComponent = observer((props: any) => {
             <div className="flex gap-2 items-center">
               Action:
               {getIcon()}
-              <Badge
-                variant="default"
-                className="text-muted-foreground font-mono text-xs items-center bg-transparent shadow-none relative top-[1px] px-0"
-              >
+              <span className="text-muted-foreground font-mono text-sm">
                 {snakeToTitleCase(name)}
-              </Badge>
+              </span>
             </div>
           </CollapsibleTrigger>
 
