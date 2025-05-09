@@ -9,9 +9,7 @@
   "mcp": {
     "command": "npx",
     "args": [ "-y", "@gongrzhe/server-gmail-autoauth-mcp" ],
-    "env": {
-
-    }
+    "env": { }
   },
   "auth": {
     "OAuth2": {
