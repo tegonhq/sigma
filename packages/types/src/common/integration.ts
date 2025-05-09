@@ -20,21 +20,10 @@ export enum IntegrationPayloadEventType {
   INTEGRATION_DATA_RECEIVED = 'integration_data_received',
 
   /**
-   * Request to refresh/get latest access token for the integration
-   */
-  REFRESH_ACCESS_TOKEN = 'refresh_access_token',
-
-  /**
    * For integrations without webhook support, this event is triggered at the
    * configured frequency to sync data
    */
   SCHEDULED_SYNC = 'scheduled_sync',
-
-  /**
-   * Initial sync event triggered when integration is first installed to import
-   * existing tasks
-   */
-  INITIAL_TASK_SYNC = 'initial_task_sync',
 
   /**
    * When a task created by this integration is updated or deleted

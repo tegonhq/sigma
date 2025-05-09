@@ -1,0 +1,31 @@
+{
+  "name": "Gmail extension",
+  "key": "gmail",
+  "description": "Connect to your gmail",
+  "icon": "gmail",
+  "schedule": {
+    "frequency": "*/5 * * * *"
+  },
+  "mcp": {
+    "command": "npx",
+    "args": [ "-y", "@gongrzhe/server-gmail-autoauth-mcp" ],
+    "env": {
+
+    }
+  },
+  "auth": {
+    "OAuth2": {
+      "token_url": "https://oauth2.googleapis.com/token",
+      "authorization_url": "https://accounts.google.com/o/oauth2/auth",
+      "authorization_params": {
+        "response_type": "code",
+        "access_type": "offline",
+        "prompt": "consent"
+      },
+      "scopes": [
+        "https://www.googleapis.com/auth/gmail.modify"
+      ],
+      "scope_separator": " "
+    }
+  }
+}

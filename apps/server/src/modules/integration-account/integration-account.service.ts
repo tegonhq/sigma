@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import {
   CreateIntegrationAccountDto,
   InputJsonValue,
-  IntegrationAccount,
   IntegrationAccountIdDto,
   IntegrationPayloadEventType,
   UpdateIntegrationAccountDto,
@@ -12,10 +11,7 @@ import { PrismaService } from 'nestjs-prisma';
 
 import { IntegrationsService } from 'modules/integrations/integrations.service';
 
-import {
-  IntegrationAccountSelect,
-  IntegrationAccountSelectByNames,
-} from './integration-account.interface';
+import { IntegrationAccountSelect } from './integration-account.interface';
 
 @Injectable()
 export class IntegrationAccountService {
@@ -141,40 +137,6 @@ export class IntegrationAccountService {
     return integrationAccount;
   }
 
-  async getIntegrationAccountWithToken(
-    integrationAccountId: string,
-    workspaceId: string,
-  ) {
-    const integrationAccount =
-      await this.prisma.integrationAccount.findUniqueOrThrow({
-        where: {
-          workspaceId,
-          id: integrationAccountId,
-        },
-        include: {
-          integrationDefinition: true,
-        },
-      });
-
-    const accessToken = await this.integrationService.runIntegrationTrigger(
-      integrationAccount.integrationDefinition,
-      {
-        event: IntegrationPayloadEventType.REFRESH_ACCESS_TOKEN,
-        workspaceId,
-        eventBody: {
-          integrationAccount,
-        },
-      },
-      integrationAccount.integratedById,
-      workspaceId,
-    );
-
-    return {
-      ...integrationAccount,
-      token: accessToken,
-    };
-  }
-
   async getIntegrationAccountsForWorkspace(workspaceId: string) {
     return await this.prisma.integrationAccount.findMany({
       where: {
@@ -212,46 +174,6 @@ export class IntegrationAccountService {
       where: { accountId, deleted: null },
       select: IntegrationAccountSelect,
     });
-  }
-
-  async getIntegrationAccountsByName(
-    integrations: string,
-    workspaceId: string,
-  ) {
-    const accounts = await this.prisma.integrationAccount.findMany({
-      where: {
-        workspaceId,
-        integrationDefinition: {
-          slug: {
-            in: integrations.split(','),
-          },
-        },
-        deleted: null,
-      },
-      select: IntegrationAccountSelectByNames,
-    });
-
-    const accountsWithTokens = await Promise.all(
-      accounts.map(async (account: IntegrationAccount) => {
-        const accountWithToken = await this.getIntegrationAccountWithToken(
-          account.id,
-          account.workspaceId,
-        );
-        return {
-          ...account,
-          integrationConfiguration: { access_token: accountWithToken.token },
-        };
-      }),
-    );
-
-    return accountsWithTokens.reduce(
-      (acc, account) => {
-        acc[account.integrationDefinition.slug] = account;
-        return acc;
-      },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      {} as Record<string, any>,
-    );
   }
 
   async getIntegrationAccounts(workspaceId: string) {

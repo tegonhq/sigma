@@ -212,7 +212,10 @@ export class OAuthCallbackService {
             event: IntegrationPayloadEventType.INTEGRATION_ACCOUNT_CREATED,
             eventBody: {
               oauthResponse: tokensResponse.token,
-              oauthParams: params,
+              oauthParams: {
+                ...params,
+                redirect_uri: this.CALLBACK_URL,
+              },
               integrationDefinition,
             },
           },

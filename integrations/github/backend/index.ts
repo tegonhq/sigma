@@ -15,10 +15,7 @@ export async function run(eventPayload: IntegrationEventPayload) {
       return await integrationCreate(eventPayload.eventBody);
 
     case IntegrationPayloadEventType.SCHEDULED_SYNC:
-      return handleSchedule(eventPayload.eventBody);
-
-    case IntegrationPayloadEventType.REFRESH_ACCESS_TOKEN:
-      return eventPayload.eventBody.integrationAccount.integrationConfiguration.access_token;
+      return handleSchedule(eventPayload.integrationAccount);
 
     default:
       return {

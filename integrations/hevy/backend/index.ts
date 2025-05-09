@@ -17,9 +17,6 @@ export async function run(eventPayload: IntegrationEventPayload) {
         eventPayload.eventBody,
       );
 
-    case IntegrationPayloadEventType.REFRESH_ACCESS_TOKEN:
-      return undefined;
-
     default:
       return {
         message: `The event payload type is ${eventPayload.event}`,

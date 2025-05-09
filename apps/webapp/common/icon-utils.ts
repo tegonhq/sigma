@@ -1,7 +1,7 @@
 import { RiDiscordFill, RiGithubFill, RiMailFill } from '@remixicon/react';
 import { Actions, SlackIcon, StackLine } from '@tegonhq/ui';
 
-import { Hevy } from 'icons';
+import { Gmail, Hevy } from 'icons';
 
 export const ICON_MAPPING = {
   slack: SlackIcon,
@@ -9,6 +9,7 @@ export const ICON_MAPPING = {
   discord: RiDiscordFill,
   github: RiGithubFill,
   hevy: Hevy,
+  gmail: Gmail,
 
   // Default icon
   integration: StackLine,
