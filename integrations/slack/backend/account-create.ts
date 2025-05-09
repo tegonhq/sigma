@@ -1,8 +1,6 @@
 import { IntegrationDefinition } from '@tegonhq/sigma-sdk';
 import axios from 'axios';
 
-import { getSlackTeamInfo } from './utils';
-
 export async function integrationCreate(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any,
@@ -16,8 +14,6 @@ export async function integrationCreate(
     userId: oauthResponse.authed_user.id,
     scope: oauthResponse.authed_user.scope,
   };
-
-  await getSlackTeamInfo(integrationConfiguration.teamId, integrationConfiguration.access_token);
 
   const payload = {
     settings: {},

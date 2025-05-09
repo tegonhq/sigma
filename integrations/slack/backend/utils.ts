@@ -18,3 +18,25 @@ export async function getSlackTeamInfo(slackTeamId: string, accessToken: string)
 
   return response.data;
 }
+
+export async function getChannelDetails(channelId: string, accessToken: string) {
+  const channelResponse = (
+    await axios.get(`https://slack.com/api/conversations.info?channel=${channelId}`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    })
+  ).data;
+  return channelResponse.channel;
+}
+
+export async function getUserDetails(userIds: string[], accessToken: string) {
+  return await Promise.all(
+    userIds.map(async (userId) => {
+      const userResponse = (
+        await axios.get(`https://slack.com/api/users.info?user=${userId}`, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        })
+      ).data;
+      return userResponse.user;
+    }),
+  );
+}
