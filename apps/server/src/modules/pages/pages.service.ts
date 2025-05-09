@@ -173,6 +173,11 @@ export class PagesService {
       return page;
     });
 
+    if (page?.description) {
+      const descriptionJson = JSON.parse(page.description);
+      page.description = convertTiptapJsonToHtml(descriptionJson);
+    }
+
     return page;
   }
 
@@ -207,17 +212,27 @@ export class PagesService {
       select: PageSelect,
     });
 
+    if (page?.description) {
+      const descriptionJson = JSON.parse(page.description);
+      page.description = convertTiptapJsonToHtml(descriptionJson);
+    }
+
     return page;
   }
 
   async deletePage(pageId: string): Promise<PublicPage> {
-    return this.prisma.page.update({
+    const page = await this.prisma.page.update({
       where: { id: pageId },
       data: {
         deleted: new Date(),
       },
       select: PageSelect,
     });
+    if (page?.description) {
+      const descriptionJson = JSON.parse(page.description);
+      page.description = convertTiptapJsonToHtml(descriptionJson);
+    }
+    return page;
   }
 
   async enhancePage(pageId: string): Promise<EnhancePageResponse[]> {
