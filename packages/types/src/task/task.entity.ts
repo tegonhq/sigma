@@ -3,7 +3,7 @@ import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { JsonValue } from '../common';
 import { Conversation } from '../conversation';
 import { List } from '../list';
-import { Page } from '../page';
+import { Page, PublicPage } from '../page';
 import { TaskExternalLink } from '../task-external-link';
 import { TaskOccurrence } from '../task-occurrence/task-occurrence.entity';
 import { Workspace } from '../workspace';
@@ -71,7 +71,7 @@ export class Task {
 
   source?: any;
 
-  page?: Page;
+  page?: Page | PublicPage;
   pageId: string;
 
   workspace?: Workspace;

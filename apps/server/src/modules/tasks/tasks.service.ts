@@ -1,10 +1,11 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Prisma } from '@prisma/client';
+import { convertTiptapJsonToHtml } from '@sigma/editor-extensions';
 import {
-  CreateBulkTasksDto,
   CreateTaskDto,
   JsonObject,
+  PageSelect,
   PageTypeEnum,
   Task,
   UpdateTaskDto,
@@ -52,55 +53,24 @@ export class TasksService {
     return task || null;
   }
 
-  async getTaskById(taskId: string): Promise<Task | null> {
+  async getTaskById(taskId: string) {
     const task = await this.prisma.task.findUnique({
       where: {
         id: taskId,
         deleted: null,
       },
+      include: {
+        page: { select: PageSelect },
+      },
     });
     return task;
-  }
-
-  async createBulkTasks(
-    tasksDto: CreateBulkTasksDto,
-    workspaceId: string,
-  ): Promise<Task[]> {
-    const tasksData = tasksDto.tasks;
-    if (!tasksData.length) {
-      throw new BadRequestException('No tasks provided');
-    }
-
-    if (tasksData.length > 100) {
-      throw new BadRequestException('Too many tasks in bulk request');
-    }
-
-    return await this.prisma.$transaction(
-      async (tx: TransactionClient) => {
-        const createdTasks: Task[] = [];
-
-        for (const taskData of tasksData) {
-          const task =
-            taskData.source && taskData.integrationAccountId
-              ? await this.upsertTaskBySource(taskData, workspaceId, tx)
-              : await this.createTask(taskData, workspaceId, tx);
-
-          createdTasks.push(task);
-        }
-
-        return createdTasks;
-      },
-      {
-        timeout: 10000,
-      },
-    );
   }
 
   async upsertTaskBySource(
     createTaskDto: CreateTaskDto,
     workspaceId: string,
     tx?: TransactionClient,
-  ): Promise<Task> {
+  ) {
     const { source, integrationAccountId } = createTaskDto;
 
     if (!source || !integrationAccountId) {
@@ -124,7 +94,7 @@ export class TasksService {
     createTaskDto: CreateTaskDto,
     workspaceId: string,
     tx?: TransactionClient,
-  ): Promise<Task> {
+  ) {
     const prismaClient = tx || this.prisma;
     const {
       title,
@@ -158,7 +128,7 @@ export class TasksService {
           source: source ? { ...source } : undefined,
         },
         include: {
-          page: true,
+          page: { select: PageSelect },
         },
       });
 
@@ -168,6 +138,7 @@ export class TasksService {
           task.pageId,
           tx,
         );
+        task.page.description = pageDescription;
       }
 
       return task;
@@ -226,7 +197,7 @@ export class TasksService {
     taskId: string,
     updateTaskDto: UpdateTaskDto,
     tx?: TransactionClient,
-  ): Promise<Task> {
+  ) {
     const prismaClient = tx || this.prisma;
     const {
       title,
@@ -265,7 +236,7 @@ export class TasksService {
       where: { id: taskId },
       data: updateData,
       include: {
-        page: true,
+        page: { select: PageSelect },
       },
     });
 
@@ -275,6 +246,8 @@ export class TasksService {
         updatedTask.pageId,
         tx,
       );
+
+      updatedTask.page.description = pageDescription;
     }
 
     return updatedTask;
@@ -284,11 +257,17 @@ export class TasksService {
     // Get task and update in a single transaction
     const task = await this.prisma.task.findUnique({
       where: { id: taskId },
-      include: { page: true },
+      include: { page: { select: PageSelect } },
     });
 
     if (!task) {
       throw new Error('Task not found');
+    }
+
+    if (task.page.description) {
+      task.page.description = convertTiptapJsonToHtml(
+        JSON.parse(task.page.description),
+      );
     }
 
     if (task.deleted) {
@@ -358,7 +337,7 @@ export class TasksService {
     const tasks = await this.prisma.task.findMany({
       where: whereClause,
       include: {
-        page: true,
+        page: { select: PageSelect },
       },
       take: 10,
     });

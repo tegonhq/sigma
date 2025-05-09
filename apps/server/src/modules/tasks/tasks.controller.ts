@@ -8,7 +8,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { CreateTaskDto, Task } from '@tegonhq/sigma-sdk';
+import { CreateTaskDto } from '@tegonhq/sigma-sdk';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
 import { UserId, Workspace } from 'modules/auth/session.decorator';
@@ -27,13 +27,13 @@ export class TasksController {
   async searchTasks(
     @Query('query') query: string,
     @Workspace() workspaceId: string,
-  ): Promise<Task[]> {
+  ) {
     return await this.tasksService.searchTasks(query, workspaceId);
   }
 
   @Get(':taskId')
   @UseGuards(AuthGuard)
-  async getTaskById(@Param('taskId') taskId: string): Promise<Task> {
+  async getTaskById(@Param('taskId') taskId: string) {
     return await this.tasksService.getTaskById(taskId);
   }
 
@@ -42,7 +42,7 @@ export class TasksController {
   async getTaskBySource(
     @Param('sourceId') sourceId: string,
     @Workspace() workspaceId: string,
-  ): Promise<Task> {
+  ) {
     return await this.tasksService.getTaskBySourceId(sourceId, workspaceId);
   }
 
@@ -51,7 +51,7 @@ export class TasksController {
   async createTask(
     @Workspace() workspaceId: string,
     @Body() taskData: CreateTaskDto,
-  ): Promise<Task> {
+  ) {
     return await this.tasksService.createTask(taskData, workspaceId);
   }
 
@@ -60,7 +60,7 @@ export class TasksController {
   async upsertTaskBySource(
     @Workspace() workspaceId: string,
     @Body() taskData: CreateTaskDto,
-  ): Promise<Task> {
+  ) {
     return await this.tasksService.upsertTaskBySource(taskData, workspaceId);
   }
 
@@ -69,7 +69,7 @@ export class TasksController {
   async updateTask(
     @Param('taskId') taskId: string,
     @Body() taskData: Partial<CreateTaskDto>,
-  ): Promise<Task> {
+  ) {
     return await this.tasksService.updateTask(taskId, taskData);
   }
 

@@ -40,6 +40,9 @@ export class ListsService {
           },
         },
       },
+      include: {
+        page: { select: PageSelect },
+      },
     });
 
     if (defaultPageContent) {
@@ -49,6 +52,8 @@ export class ListsService {
         },
         list.pageId,
       );
+
+      list.page.description = defaultPageContent;
     }
 
     return list;
