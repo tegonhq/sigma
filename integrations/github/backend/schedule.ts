@@ -1,12 +1,13 @@
+import { IntegrationAccount } from '@tegonhq/sigma-sdk';
 import axios from 'axios';
 
 import { createActivity, getGithubData, ActivityCreate } from './utils';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function handleSchedule(eventBody: any) {
-  const { integrationAccount } = eventBody;
-  const integrationConfiguration = integrationAccount.integrationConfiguration;
-  const settings = integrationAccount.settings;
+export async function handleSchedule(integrationAccount: IntegrationAccount) {
+  const integrationConfiguration = integrationAccount.integrationConfiguration as {
+    access_token: string;
+  };
+  const settings = integrationAccount.settings as { lastSyncTime: string };
   // If lastSyncTime is not available, default to 1 day ago
   const lastSyncTime =
     settings.lastSyncTime || new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();

@@ -12,7 +12,6 @@ import {
   CreateIntegrationAccountDto,
   IntegrationAccount,
   IntegrationAccountIdDto,
-  IntegrationAccountWithToken,
   UpdateIntegrationAccountDto,
 } from '@tegonhq/sigma-sdk';
 
@@ -48,34 +47,6 @@ export class IntegrationAccountController {
   ): Promise<IntegrationAccount> {
     return await this.integrationAccountService.getIntegrationAccountByAccountId(
       accountId,
-    );
-  }
-
-  @Get('/names')
-  @UseGuards(AuthGuard)
-  async getIntegrationAccountsByName(
-    @Query('integrations') integrations: string,
-    @Workspace() workspaceId: string,
-  ) {
-    return await this.integrationAccountService.getIntegrationAccountsByName(
-      integrations,
-      workspaceId,
-    );
-  }
-
-  /**
-   * Get a integration accounts in a workspace
-   */
-  @Get(':integrationAccountId/token')
-  @UseGuards(AuthGuard)
-  async getIntegrationAccountToken(
-    @Workspace() workspaceId: string,
-    @Param()
-    integrationAccountIdRequestIdBody: IntegrationAccountIdDto,
-  ): Promise<IntegrationAccountWithToken> {
-    return await this.integrationAccountService.getIntegrationAccountWithToken(
-      integrationAccountIdRequestIdBody.integrationAccountId,
-      workspaceId,
     );
   }
 
