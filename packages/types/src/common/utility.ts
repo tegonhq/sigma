@@ -34,6 +34,7 @@ export type JsonValue =
  * Unlike `JsonObject`, this type allows undefined and read-only properties.
  */
 export type InputJsonObject = {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   readonly [Key in string]?: InputJsonValue | null;
 };
 
