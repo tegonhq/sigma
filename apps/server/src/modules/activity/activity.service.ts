@@ -53,7 +53,6 @@ export default class ActivityService {
     const userContext = (await this.workspace.getRelevantContext(
       conversation.workspaceId,
       conversationHistory.message,
-      false,
     )) as string[];
 
     if (userContext.length === 0) {

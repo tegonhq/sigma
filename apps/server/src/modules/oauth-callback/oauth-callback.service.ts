@@ -32,7 +32,9 @@ export class OAuthCallbackService {
     private configService: ConfigService,
     private integrationService: IntegrationsService,
   ) {
-    this.CALLBACK_URL = this.configService.get<string>('OAUTH_CALLBACK_URL');
+    // this.CALLBACK_URL = this.configService.get<string>('OAUTH_CALLBACK_URL');
+    this.CALLBACK_URL =
+      'https://0779-49-206-6-106.ngrok-free.app/v1/oauth/callback';
   }
 
   async getRedirectURL(
@@ -90,9 +92,11 @@ export class OAuthCallbackService {
         ...(template.default_scopes || []),
       ];
 
+      const scopeIdentifier = externalConfig.scope_identifier ?? 'scope';
+
       const authorizationUri = simpleOAuthClient.authorizeURL({
         redirect_uri: this.CALLBACK_URL,
-        scope: scopes.join(template.scope_separator || ' '),
+        [scopeIdentifier]: scopes.join(template.scope_separator || ' '),
         state: uniqueId,
         ...additionalAuthParams,
       });

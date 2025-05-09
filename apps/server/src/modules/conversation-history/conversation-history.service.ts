@@ -99,7 +99,6 @@ export class ConversationHistoryService {
     const userContext = (await this.workspace.getRelevantContext(
       conversationHistory.conversation.workspaceId,
       conversationHistory.message,
-      false,
     )) as string[];
 
     if (!conversationHistory) {

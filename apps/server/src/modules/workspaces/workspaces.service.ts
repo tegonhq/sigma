@@ -192,11 +192,7 @@ export default class WorkspacesService {
     });
   }
 
-  async getRelevantContext(
-    workspaceId: string,
-    query: string,
-    getFlag: boolean,
-  ) {
+  async getRelevantContext(workspaceId: string, query: string) {
     const userContextPage = await this.prisma.page.findFirst({
       where: {
         workspaceId,
@@ -219,11 +215,10 @@ export default class WorkspacesService {
               role: 'user',
               content: contextUserPrompt
                 .replace('{{USER_PREFERENCES}}', userContextPageHTML)
-                .replace('{{CURRENT_CONVERSATION_MESSAGE}}', query)
-                .replace('{{GET_FLAG}}', getFlag.toString()),
+                .replace('{{CURRENT_CONVERSATION_MESSAGE}}', query),
             },
           ],
-          llmModel: LLMModelEnum.GEMINI20FLASHLITE,
+          llmModel: LLMModelEnum.GPT41MINI,
           model: 'context',
         },
         workspaceId,

@@ -11,7 +11,7 @@ import WebhookService from './webhook.service';
 export class WebhookController {
   constructor(private webhookService: WebhookService) {}
 
-  @Post(':sourceName/:integrationAccountId')
+  @Post(':sourceName')
   async webhookEvents(
     @Headers() eventHeaders: EventHeaders,
     @Param('sourceName') sourceName: string,

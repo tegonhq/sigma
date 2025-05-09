@@ -27,15 +27,24 @@ export const SkillComponent = observer((props: any) => {
   const name = props.node.attrs.name;
   const agent = props.node.attrs.agent;
   const [open, setOpen] = React.useState(false);
-  const { conversationHistoryId } = React.useContext(ConversationContext);
-  const { data: actionData, isLoading } = useGetConversationHistoryAction(
-    conversationHistoryId,
+  const conversationContext = React.useContext(ConversationContext);
+  const {
+    data: actionData,
+    isLoading,
+    refetch,
+  } = useGetConversationHistoryAction(
+    conversationContext?.conversationHistoryId,
     id,
   );
 
   if (id === 'undefined' || id === undefined || !name) {
     return null;
   }
+
+  React.useEffect(() => {
+    refetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [conversationContext?.conversationHistoryId]);
 
   const getIcon = () => {
     if (agent === 'sigma') {
@@ -107,7 +116,7 @@ export const SkillComponent = observer((props: any) => {
               <div className="">
                 <JSONEditor
                   autoFocus
-                  defaultValue={actionData[0].actionInput}
+                  defaultValue={actionData[0]?.actionInput}
                   readOnly
                   basicSetup
                   showClearButton={false}
@@ -124,7 +133,7 @@ export const SkillComponent = observer((props: any) => {
               <div className="">
                 <JSONEditor
                   autoFocus
-                  defaultValue={actionData[0].actionOutput}
+                  defaultValue={actionData[0]?.actionOutput}
                   readOnly
                   basicSetup
                   showClearButton={false}

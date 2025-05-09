@@ -62,11 +62,7 @@ export class WorkspacesController {
     @WorkspaceDecorator() workspaceId: string,
     @Query('query') query: string,
   ) {
-    return await this.workspacesService.getRelevantContext(
-      workspaceId,
-      query,
-      false,
-    );
+    return await this.workspacesService.getRelevantContext(workspaceId, query);
   }
 
   @Get(':workspaceId')

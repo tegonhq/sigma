@@ -24,7 +24,7 @@ export async function createActivity(activity: ActivityCreate[]) {
 export async function getTaskForSource(sourceId: string) {
   try {
     return (await axios.get(`/api/v1/tasks/source/${sourceId}`, {})).data;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
   } catch (e: any) {
     return null;
   }

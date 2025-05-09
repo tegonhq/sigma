@@ -76,11 +76,11 @@ export const integrationRun = task({
     );
 
     return await integrationFunction.run({
+      integrationAccount,
+      integrationDefinition,
       event,
       eventBody: {
         ...(eventBody ? eventBody : {}),
-        integrationAccount,
-        integrationDefinition,
       },
     });
   },

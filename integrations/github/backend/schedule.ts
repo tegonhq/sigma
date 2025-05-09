@@ -103,20 +103,8 @@ export async function handleSchedule(eventBody: any) {
               title = `New comment by ${githubData.user?.login} in ${repository.full_name}: ${githubData.body}`;
               break;
 
-            case 'ci_activity':
-              title = `GitHub Actions workflow completed: ${repository.full_name}`;
-              break;
-
-            case 'invitation':
-              title = `You accepted invitation to ${repository.full_name}`;
-              break;
-
             case 'manual':
               title = `You subscribed to: #${githubData.number} - ${githubData.title}`;
-              break;
-
-            case 'member_feature_requested':
-              title = `Feature request for ${repository.full_name}`;
               break;
 
             case 'mention':
@@ -125,14 +113,6 @@ export async function handleSchedule(eventBody: any) {
 
             case 'review_requested':
               title = `PR review requested in ${repository.full_name}: #${githubData.number} - ${githubData.title}`;
-              break;
-
-            case 'security_alert':
-              title = `Security vulnerability detected in ${repository.full_name}`;
-              break;
-
-            case 'security_advisory_credit':
-              title = `Security advisory credit in ${repository.full_name}`;
               break;
 
             case 'state_change': {

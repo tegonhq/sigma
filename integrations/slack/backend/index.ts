@@ -1,6 +1,7 @@
 import { IntegrationPayloadEventType } from '@tegonhq/sigma-sdk';
 
 import { integrationCreate } from './account-create';
+import { createActivityEvent } from './create-activity';
 
 export interface IntegrationEventPayload {
   event: IntegrationPayloadEventType;
@@ -11,10 +12,16 @@ export interface IntegrationEventPayload {
 export async function run(eventPayload: IntegrationEventPayload) {
   switch (eventPayload.event) {
     case IntegrationPayloadEventType.INTEGRATION_ACCOUNT_CREATED:
-      return await integrationCreate(eventPayload.eventBody);
+      return await integrationCreate(eventPayload.eventBody, eventPayload.integrationDefinition);
+
+    case IntegrationPayloadEventType.IDENTIFY_WEBHOOK_ACCOUNT:
+      return eventPayload.eventBody.event.user;
+
+    case IntegrationPayloadEventType.INTEGRATION_DATA_RECEIVED:
+      return createActivityEvent(eventPayload.eventBody, eventPayload.integrationAccount);
 
     case IntegrationPayloadEventType.REFRESH_ACCESS_TOKEN:
-      return eventPayload.eventBody.integrationAccount.integrationConfiguration.access_token;
+      return eventPayload.integrationAccount.integrationConfiguration.access_token;
 
     default:
       return {

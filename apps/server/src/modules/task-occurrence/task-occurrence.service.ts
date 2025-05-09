@@ -438,7 +438,6 @@ export class TaskOccurenceService {
       where: { id: taskOccurenceId },
     });
 
-    console.log(taskOccurence.taskId, action);
     switch (action) {
       case 'create':
         await this.pagesService.upsertTasksInPageById(taskOccurence.pageId, [

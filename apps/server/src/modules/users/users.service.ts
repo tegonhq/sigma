@@ -139,7 +139,7 @@ export class UsersService {
       where: { token, deleted: null },
     });
 
-    return pat.jwt;
+    return pat?.jwt;
   }
 
   // Authorization code
