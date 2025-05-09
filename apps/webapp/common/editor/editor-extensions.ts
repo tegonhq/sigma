@@ -64,7 +64,6 @@ const heading = Heading.extend({
 const starterKit = StarterKit.configure({
   heading: false,
   history: false,
-
   bulletList: {
     HTMLAttributes: {
       class: cx('list-disc list-outside pl-4 leading-1 my-1 mb-1.5'),
@@ -202,6 +201,16 @@ export const contextExtensions = [
   AIHighlight,
   TaskItem,
   TaskList,
+  imageExtension,
+  HighlightExtension,
+];
+
+export const plainExtensions = [
+  starterKit,
+  tiptapLink,
+  horizontalRule,
+  heading,
+  AIHighlight,
   imageExtension,
   HighlightExtension,
 ];

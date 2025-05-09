@@ -133,4 +133,13 @@ export class UsersController {
 
     return user;
   }
+
+  @Get('sync/:date')
+  @UseGuards(AuthGuard)
+  async getDailySync(
+    @Param() { date }: { date: string },
+    @Workspace() workspaceId: string,
+  ) {
+    return this.users.getDailySync(date, workspaceId);
+  }
 }
