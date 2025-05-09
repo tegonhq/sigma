@@ -28,7 +28,6 @@ strong {
   a,
   button {
     cursor: default;
-    user-select: none;
   }
 
   @supports (scrollbar-width: auto) {
