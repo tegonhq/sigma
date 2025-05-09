@@ -1,8 +1,9 @@
 import { DocumentLine } from '@tegonhq/ui';
+import { RefreshCcw } from 'lucide-react';
+
 import { Header } from './header';
 import { Hero } from './hero';
 import { Section, TaskItem } from './utils';
-import { RefreshCcw } from 'lucide-react';
 
 const Personalisation = () => {
   return (
