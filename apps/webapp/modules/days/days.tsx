@@ -5,9 +5,9 @@ import { Virtuoso } from 'react-virtuoso';
 
 import { RightSideLayout } from 'layouts/right-side-layout';
 
+import { DailySync } from './daily-sync';
 import { DayEditor } from './day-editor';
 import { Header } from './header';
-import { DailySync } from './daily-sync';
 
 const INITIAL_RANGE = 10; // Days to load initially
 const LOAD_MORE_COUNT = 10; // Number of days to load when reaching edges

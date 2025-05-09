@@ -1,9 +1,9 @@
 {
-  "name": "@sigma/github",
+  "name": "@sigma/slack",
   "version": "0.1.2",
-  "description": "github extension for Sigma",
+  "description": "slack extension for Sigma",
   "files": [
-    "github"
+    "slack"
   ],
   "scripts": {
     "build": "rimraf dist && npm run build:js && npm run copy:spec",
