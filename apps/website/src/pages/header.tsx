@@ -18,9 +18,23 @@ export const Header = () => {
               <Button variant="ghost"> Features </Button>
             </PopoverTrigger>
 
-            <PopoverContent>
-              <div className="flex gap-1">
-                <Button variant="ghost"> Personalization </Button>
+            <PopoverContent className="p-2 w-30">
+              <div className="flex flex-col gap-1 w-full">
+                <Button variant="ghost" className="w-full">
+                  Personalization
+                </Button>
+
+                <Button variant="ghost" className="w-full">
+                  Task management
+                </Button>
+
+                <Button variant="ghost" className="w-full">
+                  Chat
+                </Button>
+
+                <Button variant="ghost" className="w-full">
+                  Opensource
+                </Button>
               </div>
             </PopoverContent>
           </Popover>
