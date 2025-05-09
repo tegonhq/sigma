@@ -12,3 +12,5 @@ certs/
 .trigger
 
 combined.log
+
+src/triggers/agents/

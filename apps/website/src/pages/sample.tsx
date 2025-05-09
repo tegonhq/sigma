@@ -1,6 +1,3 @@
-import { Button, Badge, cn } from '@tegonhq/ui';
-import Image from 'next/image';
-import useSWR from 'swr';
 import {
   RiDiscordFill,
   RiGithubFill,
@@ -10,7 +7,10 @@ import {
   RiListCheck2,
   RiCalendar2Fill,
 } from '@remixicon/react';
+import { Badge, cn } from '@tegonhq/ui';
+import Image from 'next/image';
 import React from 'react';
+import useSWR from 'swr';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -366,7 +366,7 @@ export default function Index() {
   );
   const stars: number | undefined = data?.stargazers_count;
   const formatStars = (n: number) =>
-    n >= 1000 ? (n / 1000).toFixed(1).replace(/\.0$/, '') + 'k' : n.toString();
+    n >= 1000 ? `${(n / 1000).toFixed(1).replace(/\.0$/, '')}k` : n.toString();
 
   return (
     <div className="w-full min-h-screen bg-background-2 flex flex-col items-center overflow-x-hidden font-sans h-full">

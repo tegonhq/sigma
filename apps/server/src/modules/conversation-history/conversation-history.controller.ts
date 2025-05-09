@@ -92,13 +92,13 @@ export class ConversationHistoryController {
     );
   }
 
-  @Get(':conversationHistoryId/steps')
+  @Get(':conversationHistoryId/action/:actionId')
   @UseGuards(AuthGuard)
-  async getConversationHistorySteps(
-    @Param() params: ConversationHistoryParamsDto,
+  async getConversationHistoryForAction(
+    @Param() params: { conversationHistoryId: string; actionId: string },
   ) {
-    return await this.conversationHistoryService.getConversationHistorySteps(
-      params.conversationHistoryId,
+    return await this.conversationHistoryService.getConversationHistoryForAction(
+      params,
     );
   }
 }

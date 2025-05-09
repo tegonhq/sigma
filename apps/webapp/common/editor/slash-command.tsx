@@ -1,6 +1,5 @@
 import {
   BulletListLine,
-  CalendarLine,
   CodingLine,
   HeadingLine,
   IssuesLine,

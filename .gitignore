@@ -37,8 +37,6 @@ yarn-error.log*
 certificate.*
 .vscode
 
-apps/server/src/triggers/chat/
-apps/server/src/triggers/daily-sync/
 
 
 # Agent things 

@@ -8,6 +8,7 @@ import { extensionsForConversation } from 'common/editor';
 
 import { useContextStore } from 'store/global-context-provider';
 
+import { ConversationContext } from './conversation-context';
 import { skillExtension } from './skill-extension';
 import { CustomMention } from './suggestion-extension';
 
@@ -51,7 +52,9 @@ export const ConversationItem = observer(
             isUser && 'bg-primary/20 p-3 max-w-[500px] rounded-md',
           )}
         >
-          <EditorContent editor={editor} />
+          <ConversationContext.Provider value={{ conversationHistoryId }}>
+            <EditorContent editor={editor} />
+          </ConversationContext.Provider>
         </div>
       </div>
     );

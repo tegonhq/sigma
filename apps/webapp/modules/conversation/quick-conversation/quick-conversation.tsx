@@ -1,5 +1,6 @@
 import { UserTypeEnum } from '@sigma/types';
-import { ArrowLeft, Button, cn, LoaderLine, useToast } from '@tegonhq/ui';
+import { ArrowLeft, Button, cn, useToast } from '@tegonhq/ui';
+import { observer } from 'mobx-react-lite';
 import React from 'react';
 
 import type { ConversationHistoryType } from 'common/types';
@@ -18,7 +19,6 @@ import { UserContext } from 'store/user-context';
 import { ConversationItem } from '../conversation-item';
 import { ConversationTextarea } from '../conversation-textarea';
 import { StreamingConversation } from '../streaming-conversation';
-import { observer } from 'mobx-react-lite';
 
 interface QuickConverstionProps {
   onClose: () => void;

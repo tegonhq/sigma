@@ -290,10 +290,17 @@ export class ConversationHistoryService {
     response.end();
   }
 
-  async getConversationHistorySteps(conversationHistoryId: string) {
+  async getConversationHistoryForAction({
+    conversationHistoryId,
+    actionId,
+  }: {
+    conversationHistoryId: string;
+    actionId: string;
+  }) {
     return await this.prisma.conversationExecutionStep.findMany({
       where: {
         conversationHistoryId,
+        actionId,
       },
     });
   }

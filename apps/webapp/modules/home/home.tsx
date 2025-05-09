@@ -5,7 +5,6 @@ import { Conversation } from 'modules/conversation';
 import { Days } from 'modules/days';
 import { Inbox } from 'modules/inbox';
 import { Lists } from 'modules/lists';
-import { SearchDialog } from 'modules/search';
 import { Tasks } from 'modules/tasks';
 import { AddTaskDialogProvider } from 'modules/tasks/add-task';
 import { initIntegrations } from 'modules/tasks/utils';

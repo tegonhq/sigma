@@ -1,7 +1,9 @@
-import type { TaskType } from 'common/types';
 import { Dot } from 'lucide-react';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
+
+import type { TaskType } from 'common/types';
+
 import { useContextStore } from 'store/global-context-provider';
 import { UserContext } from 'store/user-context';
 
