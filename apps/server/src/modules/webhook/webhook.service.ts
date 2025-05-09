@@ -31,6 +31,14 @@ export default class WebhookService {
       where: `WebhookService.handleEvents`,
     });
 
+    // Check if the event is a URL verification challenge
+    if (eventBody.type === 'url_verification') {
+      this.logger.log({
+        message: 'Responding to Slack URL verification challenge',
+      });
+      response.status(200).send({ challenge: eventBody.challenge });
+    }
+
     response.status(200).send({ status: 'acknowleged' });
 
     let integrationAccount;
@@ -75,9 +83,10 @@ export default class WebhookService {
         integrationAccount.integrationDefinition,
         {
           event: IntegrationPayloadEventType.INTEGRATION_DATA_RECEIVED,
+          integrationAccount,
           eventBody: {
-            integrationAccount,
-            eventData: { eventBody, eventHeaders },
+            eventHeaders,
+            eventData: { ...eventBody },
           },
         },
         integrationAccount.integratedById,

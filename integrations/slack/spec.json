@@ -23,15 +23,11 @@
       "token_url": "https://slack.com/api/oauth.v2.access",
       "authorization_url": "https://slack.com/oauth/v2/authorize",
       "scopes": [
-        "channels:read",
-        "users:read",
-        "users:read.email",
+        "stars:read",
         "team:read",
-        "im:history",
-        "im:read",
-        "channels:history",
-        "bookmarks:read"
+        "stars:write"
       ],
+      "scope_identifier": "user_scope",
       "scope_separator": ","
     }
   }

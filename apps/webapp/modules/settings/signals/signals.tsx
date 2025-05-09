@@ -20,15 +20,16 @@ import {
   lowlight,
   suggestionItems,
 } from 'common/editor';
+import type { PageType } from 'common/types';
 import { SocketContext } from 'common/wrappers';
 
 import { useContextStore } from 'store/global-context-provider';
 
 import { SettingSection } from '../setting-section';
+import { useGetIntegrationDefinitions } from 'services/integration-definition';
+import { Loader } from '@tegonhq/ui';
 
-export const Signals = observer(() => {
-  const { pagesStore } = useContextStore();
-  const page = pagesStore.getContextPage();
+export const SignalsEditor = observer(({ page }: { page: PageType }) => {
   const [provider, setProvider] = React.useState(undefined);
   const [doc, setDoc] = React.useState(undefined);
   const socket = React.useContext(SocketContext);
@@ -44,6 +45,8 @@ export const Signals = observer(() => {
   if (!page) {
     return null;
   }
+
+  const onDescriptionChange = () => {};
 
   const initPageSocket = async () => {
     setDoc(undefined);
@@ -65,10 +68,43 @@ export const Signals = observer(() => {
     setProvider(provider);
   };
 
-  const onDescriptionChange = () => {};
-
   if (!provider) {
     return null;
+  }
+
+  return (
+    <EditorContextProvider source={{}}>
+      <Editor
+        onChange={onDescriptionChange}
+        extensions={[
+          Collaboration.configure({
+            document: doc,
+          }),
+          ...contextExtensions,
+          CodeBlockLowlight.configure({
+            lowlight,
+          }),
+          CustomMention.configure({
+            suggestion,
+          }),
+        ]}
+        placeholder="Write your preferences."
+        autoFocus
+        className="px-2"
+      >
+        <EditorExtensions suggestionItems={suggestionItems}></EditorExtensions>
+      </Editor>
+    </EditorContextProvider>
+  );
+});
+
+export const Signals = observer(() => {
+  const { pagesStore } = useContextStore();
+  const page = pagesStore.getContextPage();
+  const { isLoading } = useGetIntegrationDefinitions();
+
+  if (isLoading) {
+    return <Loader />;
   }
 
   return (
@@ -77,30 +113,7 @@ export const Signals = observer(() => {
         title="Context"
         description="Edit user preferences/memory"
       >
-        <EditorContextProvider source={{}}>
-          <Editor
-            onChange={onDescriptionChange}
-            extensions={[
-              Collaboration.configure({
-                document: doc,
-              }),
-              ...contextExtensions,
-              CodeBlockLowlight.configure({
-                lowlight,
-              }),
-              CustomMention.configure({
-                suggestion,
-              }),
-            ]}
-            placeholder="Write your preferences."
-            autoFocus
-            className="px-2"
-          >
-            <EditorExtensions
-              suggestionItems={suggestionItems}
-            ></EditorExtensions>
-          </Editor>
-        </EditorContextProvider>
+        <SignalsEditor page={page} />
       </SettingSection>
     </div>
   );

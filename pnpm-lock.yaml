@@ -187,8 +187,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/editor-extensions
       '@tegonhq/sigma-sdk':
-        specifier: 0.1.26
-        version: 0.1.26
+        specifier: 0.1.28
+        version: 0.1.28
       '@trigger.dev/sdk':
         specifier: 3.3.17
         version: 3.3.17(zod@3.23.8)
@@ -286,8 +286,8 @@ importers:
         specifier: ^4.8.1
         version: 4.8.1
       supertokens-node:
-        specifier: ^22.1.0
-        version: 22.1.0(encoding@0.1.13)
+        specifier: ^21.1.1
+        version: 21.1.1(encoding@0.1.13)
       uuid:
         specifier: ^10.0.0
         version: 10.0.0
@@ -730,7 +730,7 @@ importers:
         version: 4.6.0(react@18.3.1)
       '@tegonhq/ui':
         specifier: 0.2.40
-        version: 0.2.40(@opentelemetry/api@1.9.0)(@tiptap/extension-code-block@3.0.0-beta.3(@tiptap/core@2.11.9(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0))(@types/react-dom@18.3.6(@types/react@18.3.20))(@types/react@18.3.20)(encoding@0.1.13)(highlight.js@11.11.1)(javascript-time-ago@2.5.11)(lowlight@3.3.0)(react-dom@18.3.1(react@18.3.1))(react-hook-form@7.49.3(react@18.3.1))(react@18.3.1)(sswr@2.2.0(svelte@5.28.2))(svelte@5.28.2)(tailwindcss@3.4.17(ts-node@10.9.2(@swc/core@1.11.22(@swc/helpers@0.5.17))(@types/node@20.16.11)(typescript@5.8.3)))(zod@3.23.8)
+        version: 0.2.40(@opentelemetry/api@1.9.0)(@types/react-dom@18.3.6(@types/react@18.3.20))(@types/react@18.3.20)(highlight.js@11.11.1)(javascript-time-ago@2.5.11)(react-dom@18.3.1(react@18.3.1))(react-hook-form@7.49.3(react@18.3.1))(react@18.3.1)(sswr@2.2.0(svelte@5.28.2))(svelte@5.28.2)(tailwindcss@3.4.17(ts-node@10.9.2(@swc/core@1.11.22(@swc/helpers@0.5.17))(@types/node@20.16.11)(typescript@5.8.3)))(zod@3.23.8)
       '@typeform/embed-react':
         specifier: ^3.17.0
         version: 3.20.0(react@18.3.1)
@@ -4708,8 +4708,8 @@ packages:
     resolution: {integrity: sha512-ldZXEhOBb8Is7xLs01fR3YEc3DERiz5silj8tnGkFZytt1abEvl/GhUmCE0PMLaMPTa3Jk4HbKmRlHmu+gCftg==}
     engines: {node: '>=12'}
 
-  '@tegonhq/sigma-sdk@0.1.26':
-    resolution: {integrity: sha512-pOp5OmfhJW9HA+e3vQSL79rzJXkln314A4oFECTR9ZL4QR+yx9lsYo143nTZQX09KNSA8H/8wpz+v2uEw2KIAA==}
+  '@tegonhq/sigma-sdk@0.1.28':
+    resolution: {integrity: sha512-rAIdiTMCbPYbqv8/xcoSVyAHOUFG5IFJ8b7ATFFRvYctye0ZQ1HaeTZSH8ZXK2Z0nglLEDWt+xiZMsmFCWWzyg==}
     engines: {node: '>=18.0.0'}
 
   '@tegonhq/ui@0.2.40':
@@ -4764,12 +4764,6 @@ packages:
     peerDependencies:
       '@tiptap/core': ^2.7.0
       '@tiptap/pm': ^2.7.0
-
-  '@tiptap/extension-code-block@3.0.0-beta.3':
-    resolution: {integrity: sha512-cPJ1uZYMta6bw6nLIIA2B/vcJAIlUvReqoZyPxKp/BDVQWczaIjALbVL9oXxuKo9DgmYQ9PLB1ITG5m1nqmk9Q==}
-    peerDependencies:
-      '@tiptap/core': 3.0.0-beta.3
-      '@tiptap/pm': 3.0.0-beta.3
 
   '@tiptap/extension-code@2.11.7':
     resolution: {integrity: sha512-VpPO1Uy/eF4hYOpohS/yMOcE1C07xmMj0/D989D9aS1x95jWwUVrSkwC+PlWMUBx9PbY2NRsg1ZDwVvlNKZ6yQ==}
@@ -12018,8 +12012,8 @@ packages:
   supertokens-js-override@0.0.4:
     resolution: {integrity: sha512-r0JFBjkMIdep3Lbk3JA+MpnpuOtw4RSyrlRAbrzMcxwiYco3GFWl/daimQZ5b1forOiUODpOlXbSOljP/oyurg==}
 
-  supertokens-node@22.1.0:
-    resolution: {integrity: sha512-ZdjiXfPCaZYYCNFHBin5wvHAP0gfYCzegKcroLAWfZCzFOdf4Rxso/rd8NOBN5B4qxs1lcs8nEinNFJqNazxHg==}
+  supertokens-node@21.1.1:
+    resolution: {integrity: sha512-xOfrlwz/ZLpt0aU1o3vy7lcJsuaatQRQg/ZW63HtCarvCF9VFERiDxZ56zH7Q4bR5VC3k50Lymo7C3+fzS/yuQ==}
 
   supertokens-web-js@0.8.0:
     resolution: {integrity: sha512-kkvuPbdy1I0e7nejVJAhpPJhR5h7EUHdn7Fh1YqfSjZfSJh46J3JU2qWGCgSDVZuD1hSuUKb6skF9CQnltHWrQ==}
@@ -17965,7 +17959,7 @@ snapshots:
 
   '@tanstack/table-core@8.21.3': {}
 
-  '@tegonhq/sigma-sdk@0.1.26': {}
+  '@tegonhq/sigma-sdk@0.1.28': {}
 
   '@tegonhq/ui@0.2.40(@opentelemetry/api@1.9.0)(@tiptap/extension-code-block@2.11.9(@tiptap/core@2.11.9(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0))(@types/react-dom@18.3.6(@types/react@18.3.20))(@types/react@18.3.20)(encoding@0.1.13)(highlight.js@11.11.1)(javascript-time-ago@2.5.11)(lowlight@3.3.0)(react-dom@18.3.1(react@18.3.1))(react-hook-form@7.49.3(react@18.3.1))(react@18.3.1)(sswr@2.2.0(svelte@5.28.2))(svelte@5.28.2)(tailwindcss@3.4.17(ts-node@10.9.2(@swc/core@1.11.22(@swc/helpers@0.5.17))(@types/node@20.16.11)(typescript@5.8.3)))(vue@3.5.13(typescript@5.8.3))(zod@3.23.8)':
     dependencies:
@@ -18043,7 +18037,7 @@ snapshots:
       - vue
       - zod
 
-  '@tegonhq/ui@0.2.40(@opentelemetry/api@1.9.0)(@tiptap/extension-code-block@3.0.0-beta.3(@tiptap/core@2.11.9(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0))(@types/react-dom@18.3.6(@types/react@18.3.20))(@types/react@18.3.20)(encoding@0.1.13)(highlight.js@11.11.1)(javascript-time-ago@2.5.11)(lowlight@3.3.0)(react-dom@18.3.1(react@18.3.1))(react-hook-form@7.49.3(react@18.3.1))(react@18.3.1)(sswr@2.2.0(svelte@5.28.2))(svelte@5.28.2)(tailwindcss@3.4.17(ts-node@10.9.2(@swc/core@1.11.22(@swc/helpers@0.5.17))(@types/node@20.16.11)(typescript@5.8.3)))(zod@3.23.8)':
+  '@tegonhq/ui@0.2.40(@opentelemetry/api@1.9.0)(@types/react-dom@18.3.6(@types/react@18.3.20))(@types/react@18.3.20)(highlight.js@11.11.1)(javascript-time-ago@2.5.11)(react-dom@18.3.1(react@18.3.1))(react-hook-form@7.49.3(react@18.3.1))(react@18.3.1)(sswr@2.2.0(svelte@5.28.2))(svelte@5.28.2)(tailwindcss@3.4.17(ts-node@10.9.2(@swc/core@1.11.22(@swc/helpers@0.5.17))(@types/node@20.16.11)(typescript@5.8.3)))(zod@3.23.8)':
     dependencies:
       '@hello-pangea/dnd': 16.6.0(@types/react-dom@18.3.6(@types/react@18.3.20))(@types/react@18.3.20)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@radix-ui/react-accordion': 1.2.8(@types/react-dom@18.3.6(@types/react@18.3.20))(@types/react@18.3.20)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -18078,8 +18072,8 @@ snapshots:
       markdown-it: 14.1.0
       next: 14.1.0(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       next-themes: 0.2.1(next@14.1.0(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      next-video: 1.4.0(@types/react-dom@18.3.6(@types/react@18.3.20))(@types/react@18.3.20)(encoding@0.1.13)(next@14.1.0(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      novel: 0.5.0(@tiptap/extension-code-block@3.0.0-beta.3(@tiptap/core@2.11.9(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0))(@types/react@18.3.20)(highlight.js@11.11.1)(lowlight@3.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      next-video: 1.4.0(@types/react-dom@18.3.6(@types/react@18.3.20))(@types/react@18.3.20)(next@14.1.0(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      novel: 0.5.0(@tiptap/extension-code-block@2.11.9(@tiptap/core@2.11.9(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0))(@types/react@18.3.20)(highlight.js@11.11.1)(lowlight@3.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react: 18.3.1
       react-day-picker: 8.10.1(date-fns@3.6.0)(react@18.3.1)
       react-hook-form: 7.49.3(react@18.3.1)
@@ -18154,20 +18148,7 @@ snapshots:
       highlight.js: 11.11.1
       lowlight: 3.3.0
 
-  '@tiptap/extension-code-block-lowlight@2.11.9(@tiptap/core@2.11.9(@tiptap/pm@2.12.0))(@tiptap/extension-code-block@3.0.0-beta.3(@tiptap/core@2.11.9(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0)(highlight.js@11.11.1)(lowlight@3.3.0)':
-    dependencies:
-      '@tiptap/core': 2.11.9(@tiptap/pm@2.12.0)
-      '@tiptap/extension-code-block': 3.0.0-beta.3(@tiptap/core@2.11.9(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0)
-      '@tiptap/pm': 2.12.0
-      highlight.js: 11.11.1
-      lowlight: 3.3.0
-
   '@tiptap/extension-code-block@2.11.9(@tiptap/core@2.11.9(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0)':
-    dependencies:
-      '@tiptap/core': 2.11.9(@tiptap/pm@2.12.0)
-      '@tiptap/pm': 2.12.0
-
-  '@tiptap/extension-code-block@3.0.0-beta.3(@tiptap/core@2.11.9(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0)':
     dependencies:
       '@tiptap/core': 2.11.9(@tiptap/pm@2.12.0)
       '@tiptap/pm': 2.12.0
@@ -25392,6 +25373,33 @@ snapshots:
       - aws-crt
       - encoding
 
+  next-video@1.4.0(@types/react-dom@18.3.6(@types/react@18.3.20))(@types/react@18.3.20)(next@14.1.0(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      '@aws-sdk/client-s3': 3.797.0
+      '@inquirer/prompts': 4.3.3
+      '@mux/mux-node': 8.8.0(encoding@0.1.13)
+      '@mux/mux-player-react': 2.9.0(@types/react-dom@18.3.6(@types/react@18.3.20))(@types/react@18.3.20)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@mux/mux-video-react': 0.11.2(@types/react-dom@18.3.6(@types/react@18.3.20))(@types/react@18.3.20)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@next/env': 15.3.1
+      '@paralleldrive/cuid2': 2.2.2
+      '@vercel/blob': 0.23.4
+      chalk: 4.1.2
+      chokidar: 3.6.0
+      magicast: 0.3.5
+      next: 14.1.0(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      resolve: 1.22.10
+      symlink-dir: 5.2.1
+      undici: 5.29.0
+      yargs: 17.7.2
+    optionalDependencies:
+      '@types/react': 18.3.20
+      '@types/react-dom': 18.3.6(@types/react@18.3.20)
+    transitivePeerDependencies:
+      - aws-crt
+      - encoding
+
   next@14.1.0(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@next/env': 14.1.0
@@ -25555,48 +25563,6 @@ snapshots:
       '@tiptap/core': 2.11.9(@tiptap/pm@2.12.0)
       '@tiptap/extension-character-count': 2.11.7(@tiptap/core@2.11.9(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0)
       '@tiptap/extension-code-block-lowlight': 2.11.9(@tiptap/core@2.11.9(@tiptap/pm@2.12.0))(@tiptap/extension-code-block@2.11.9(@tiptap/core@2.11.9(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0)(highlight.js@11.11.1)(lowlight@3.3.0)
-      '@tiptap/extension-color': 2.11.7(@tiptap/core@2.11.9(@tiptap/pm@2.12.0))(@tiptap/extension-text-style@2.11.7(@tiptap/core@2.11.9(@tiptap/pm@2.12.0)))
-      '@tiptap/extension-highlight': 2.11.9(@tiptap/core@2.11.9(@tiptap/pm@2.12.0))
-      '@tiptap/extension-horizontal-rule': 2.11.9(@tiptap/core@2.11.9(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0)
-      '@tiptap/extension-image': 2.11.9(@tiptap/core@2.11.9(@tiptap/pm@2.12.0))
-      '@tiptap/extension-link': 2.11.9(@tiptap/core@2.11.9(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0)
-      '@tiptap/extension-placeholder': 2.0.3(@tiptap/core@2.11.9(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0)
-      '@tiptap/extension-task-item': 2.11.9(@tiptap/core@2.11.9(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0)
-      '@tiptap/extension-task-list': 2.11.9(@tiptap/core@2.11.9(@tiptap/pm@2.12.0))
-      '@tiptap/extension-text-style': 2.11.7(@tiptap/core@2.11.9(@tiptap/pm@2.12.0))
-      '@tiptap/extension-underline': 2.11.9(@tiptap/core@2.11.9(@tiptap/pm@2.12.0))
-      '@tiptap/extension-youtube': 2.11.7(@tiptap/core@2.11.9(@tiptap/pm@2.12.0))
-      '@tiptap/pm': 2.12.0
-      '@tiptap/react': 2.11.9(@tiptap/core@2.11.9(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@tiptap/starter-kit': 2.11.7
-      '@tiptap/suggestion': 2.11.7(@tiptap/core@2.11.9(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0)
-      '@types/node': 18.15.3
-      cmdk: 0.2.1(@types/react@18.3.20)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      jotai: 2.12.3(@types/react@18.3.20)(react@18.3.1)
-      katex: 0.16.22
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-      react-markdown: 8.0.7(@types/react@18.3.20)(react@18.3.1)
-      react-moveable: 0.56.0
-      react-tweet: 3.2.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      tippy.js: 6.3.7
-      tiptap-extension-global-drag-handle: 0.1.18
-      tiptap-markdown: 0.8.10(@tiptap/core@2.11.9(@tiptap/pm@2.12.0))
-      tunnel-rat: 0.1.2(@types/react@18.3.20)(react@18.3.1)
-    transitivePeerDependencies:
-      - '@tiptap/extension-code-block'
-      - '@types/react'
-      - highlight.js
-      - immer
-      - lowlight
-      - supports-color
-
-  novel@0.5.0(@tiptap/extension-code-block@3.0.0-beta.3(@tiptap/core@2.11.9(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0))(@types/react@18.3.20)(highlight.js@11.11.1)(lowlight@3.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-    dependencies:
-      '@radix-ui/react-slot': 1.2.0(@types/react@18.3.20)(react@18.3.1)
-      '@tiptap/core': 2.11.9(@tiptap/pm@2.12.0)
-      '@tiptap/extension-character-count': 2.11.7(@tiptap/core@2.11.9(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0)
-      '@tiptap/extension-code-block-lowlight': 2.11.9(@tiptap/core@2.11.9(@tiptap/pm@2.12.0))(@tiptap/extension-code-block@3.0.0-beta.3(@tiptap/core@2.11.9(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0)(highlight.js@11.11.1)(lowlight@3.3.0)
       '@tiptap/extension-color': 2.11.7(@tiptap/core@2.11.9(@tiptap/pm@2.12.0))(@tiptap/extension-text-style@2.11.7(@tiptap/core@2.11.9(@tiptap/pm@2.12.0)))
       '@tiptap/extension-highlight': 2.11.9(@tiptap/core@2.11.9(@tiptap/pm@2.12.0))
       '@tiptap/extension-horizontal-rule': 2.11.9(@tiptap/core@2.11.9(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0)
@@ -27808,7 +27774,7 @@ snapshots:
 
   supertokens-js-override@0.0.4: {}
 
-  supertokens-node@22.1.0(encoding@0.1.13):
+  supertokens-node@21.1.1(encoding@0.1.13):
     dependencies:
       buffer: 6.0.3
       content-type: 1.0.5

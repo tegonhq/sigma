@@ -7,6 +7,7 @@ export class OAuth2Params {
   authorization_params?: Record<string, string>;
   default_scopes?: string[];
   scope_separator?: string;
+  scope_identifier?: string;
   token_url: string;
   token_params?: Record<string, string>;
   redirect_uri_metadata?: string[];
