@@ -2,7 +2,7 @@
   "name": "Github extension",
   "key": "github",
   "description": "Plan, track, and manage your agile and software development projects in Github. Customize your workflow, collaborate, and release great software.",
-  "icon": "Github",
+  "icon": "github",
   "schedule": {
     "frequency": "*/5 * * * *"
   },
@@ -13,7 +13,7 @@
       "@modelcontextprotocol/server-github"
     ],
     "env": {
-      "GITHUB_PERSONAL_ACCESS_TOKEN": "${config:github_token}"
+      "GITHUB_PERSONAL_ACCESS_TOKEN": "${config:access_token}"
     }
   },
   "auth": {

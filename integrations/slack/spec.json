@@ -1,0 +1,38 @@
+{
+  "name": "Slack extension",
+  "key": "slack",
+  "description": "Connect your workspace to Slack. Run your workflows from slack bookmarks",
+  "icon": "slack",
+  "schedule": {
+    "frequency": "*/5 * * * *"
+  },
+  "mcp": {
+    "command": "npx",
+    "args": [
+      "-y",
+      "@modelcontextprotocol/server-slack"
+    ],
+    "env": {
+      "SLACK_BOT_TOKEN": "${config:access_token}",
+      "SLACK_TEAM_ID": "${config:team_id}",
+      "SLACK_CHANNEL_IDS": "${config:channel_ids}"
+    }
+  },
+  "auth": {
+    "OAuth2": {
+      "token_url": "https://slack.com/api/oauth.v2.access",
+      "authorization_url": "https://slack.com/oauth/v2/authorize",
+      "scopes": [
+        "channels:read",
+        "users:read",
+        "users:read.email",
+        "team:read",
+        "im:history",
+        "im:read",
+        "channels:history",
+        "bookmarks:read"
+      ],
+      "scope_separator": ","
+    }
+  }
+}
