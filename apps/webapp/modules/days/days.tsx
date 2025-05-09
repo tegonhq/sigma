@@ -7,6 +7,7 @@ import { RightSideLayout } from 'layouts/right-side-layout';
 
 import { DayEditor } from './day-editor';
 import { Header } from './header';
+import { DailySync } from './daily-sync';
 
 const INITIAL_RANGE = 10; // Days to load initially
 const LOAD_MORE_COUNT = 10; // Number of days to load when reaching edges
@@ -72,8 +73,9 @@ export const Days = observer(() => {
       return (
         <div className="flex w-full justify-center items-center mb-10">
           <div className="flex flex-col ml-2 max-w-[97ch] w-full justify-center">
-            <h3 className="text-2xl mb-2 flex gap-1 font-medium">
+            <h3 className="text-2xl mb-2 flex gap-1 font-medium items-center">
               {format(date, 'EE, MMM do, yyyy')} {getDayLabel(date)}
+              <DailySync date={format(date, 'dd-MM-yyyy')} />
             </h3>
             <div className="min-h-[400px]">
               <DayEditor date={date} onChange={() => {}} />

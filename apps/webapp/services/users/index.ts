@@ -3,3 +3,4 @@ export * from './update-user';
 export * from './delete-pat';
 export * from './authorize';
 export * from './create-auth-code';
+export * from './daily-sync';

@@ -1,4 +1,3 @@
-import { AI } from '@tegonhq/ui';
 import { EditorContent, useEditor } from '@tiptap/react';
 import React from 'react';
 
@@ -43,10 +42,6 @@ export const StreamingConversation = ({
 
   return (
     <div className="flex gap-2 py-4 px-5">
-      <div className="shrink-0 relative top-[3px]">
-        <AI size={16} />
-      </div>
-
       <div className="flex flex-col gap-2">
         <div className="flex flex-col gap-1">
           <EditorContent editor={messagesEditor} className="text-foreground" />

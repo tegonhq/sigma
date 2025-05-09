@@ -305,7 +305,7 @@ model Sync {
   deleted   DateTime?
   title     String
   content   String
-  date      DateTime
+  date      String
 
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
   workspaceId String

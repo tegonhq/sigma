@@ -326,4 +326,13 @@ export class UsersService {
 
     return userUsage.availableCredits > 0;
   }
+
+  async getDailySync(date: string, workspaceId: string) {
+    return this.prisma.sync.findFirst({
+      where: {
+        date,
+        workspaceId,
+      },
+    });
+  }
 }
