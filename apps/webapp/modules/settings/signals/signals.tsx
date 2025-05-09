@@ -1,4 +1,5 @@
 import { HocuspocusProvider } from '@hocuspocus/provider';
+import { Loader } from '@tegonhq/ui';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import Collaboration from '@tiptap/extension-collaboration';
 import { observer } from 'mobx-react-lite';
@@ -23,11 +24,11 @@ import {
 import type { PageType } from 'common/types';
 import { SocketContext } from 'common/wrappers';
 
+import { useGetIntegrationDefinitions } from 'services/integration-definition';
+
 import { useContextStore } from 'store/global-context-provider';
 
 import { SettingSection } from '../setting-section';
-import { useGetIntegrationDefinitions } from 'services/integration-definition';
-import { Loader } from '@tegonhq/ui';
 
 export const SignalsEditor = observer(({ page }: { page: PageType }) => {
   const [provider, setProvider] = React.useState(undefined);

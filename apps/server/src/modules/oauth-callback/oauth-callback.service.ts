@@ -32,9 +32,7 @@ export class OAuthCallbackService {
     private configService: ConfigService,
     private integrationService: IntegrationsService,
   ) {
-    // this.CALLBACK_URL = this.configService.get<string>('OAUTH_CALLBACK_URL');
-    this.CALLBACK_URL =
-      'https://0779-49-206-6-106.ngrok-free.app/v1/oauth/callback';
+    this.CALLBACK_URL = this.configService.get<string>('OAUTH_CALLBACK_URL');
   }
 
   async getRedirectURL(

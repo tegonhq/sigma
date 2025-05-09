@@ -7,6 +7,7 @@
  * Matches a JSON object.
  * This type can be useful to enforce some input to be JSON-compatible or as a super-type to be extended from.
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export type JsonObject = { [Key in string]?: JsonValue };
 
 /**

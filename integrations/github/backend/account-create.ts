@@ -16,18 +16,6 @@ export async function integrationCreate(
     'https://api.github.com/user',
     integrationConfiguration.access_token,
   );
-  const allRepos = await getGithubData(
-    'https://api.github.com/user/repos',
-    integrationConfiguration.access_token,
-  );
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const repositories = allRepos.map((repo: any) => ({
-    id: repo.id.toString(),
-    name: repo.name,
-    private: repo.private,
-    fullName: repo.full_name,
-  }));
 
   const payload = {
     settings: {
@@ -35,7 +23,6 @@ export async function integrationCreate(
       schedule: {
         frequency: '*/5 * * * *',
       },
-      repositories,
     },
     accountId: user.id.toString(),
     config: integrationConfiguration,
