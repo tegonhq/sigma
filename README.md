@@ -27,7 +27,8 @@ Sigma is your AI command center that turn plans into action. It has a personal A
 - Sigma chat
 
 ## Quickstart
-The quickest way to get started is to download our [desktop app](https://github.com/tegonhq/sigma/releases/tag/0.1.13) and follow the instructions in the onboarding. Create your first task and ai workflow and start managing your day better.
+
+The quickest way to get started is to download our [desktop app](https://github.com/tegonhq/sigma/releases/tag/0.1.14) and follow the instructions in the onboarding. Create your first task and ai workflow and start managing your day better.
 
 ## Meet the Amazing People Behind This Project:
 
