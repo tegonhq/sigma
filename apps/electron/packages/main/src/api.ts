@@ -3,7 +3,6 @@ import {app, type App} from 'electron';
 
 import Fastify from 'fastify';
 import path from 'node:path';
-import fs from 'node:fs';
 import fastifyStatic from '@fastify/static';
 
 const isDev = process.env.NODE_ENV === 'development';
@@ -15,25 +14,6 @@ const fastify = Fastify();
 const startFastifyServer = async () => {
   fastify.listen({port: 53081});
 };
-
-// Add new route for local file access
-fastify.get('/local/*', async (request, reply) => {
-  try {
-    // Extract the path parameter after /local/
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const filePath = (request.params as any)['*'];
-
-    // Ensure the path is safe and absolute
-    const absolutePath = path.join('/', filePath);
-
-    // Read and return the file contents
-    const content = fs.readFileSync(absolutePath, 'utf-8');
-    return content;
-  } catch (error) {
-    reply.code(500).send({error: `Failed to read file: ${error}`});
-    return undefined;
-  }
-});
 
 fastify.register(fastifyHttpProxy, {
   upstream: apiBaseUrl,

@@ -29,6 +29,7 @@
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^15.3.0",
     "@rollup/plugin-replace": "^5.0.7",
+    "@types/node": "^22.15.17",
     "@types/react": "^18.0.20",
     "@types/react-dom": "^18.0.8",
     "eslint": "^9.24.0",

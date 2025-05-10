@@ -8,8 +8,13 @@
   },
   "mcp": {
     "command": "npx",
-    "args": [ "-y", "@gongrzhe/server-gmail-autoauth-mcp" ],
-    "env": { }
+    "args": [ "-y", "@tegonhq/gmail-mcp" ],
+    "env": {
+      "GMAIL_CLIENT_ID": "${integrationConfig:clientId}",
+      "GMAIL_CLIENT_SECRET": "${integrationConfig:clientSecret}",
+      "GMAIL_REFRESH_TOKEN": "${config:refresh_token}",
+      "GMAIL_REDIRECT_URI": "${config:redirect_uri}"
+    }
   },
   "auth": {
     "OAuth2": {
