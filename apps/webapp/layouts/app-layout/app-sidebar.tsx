@@ -55,7 +55,7 @@ export const AppSidebar = observer(
       (event) => {
         switch (event.key) {
           case 'i':
-            navigate(TabViewType.SYNC);
+            navigate(TabViewType.NOTIFICATIONS);
             return;
           case 'm':
             navigate(TabViewType.MY_TASKS);

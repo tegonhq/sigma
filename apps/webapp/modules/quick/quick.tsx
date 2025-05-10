@@ -24,7 +24,7 @@ export const Quick = () => {
   useHotkeys(
     Key.Escape,
     () => {
-      if (conversationId) {
+      if (conversationId || AI) {
         setConversationId(undefined);
         setAI(false);
       } else {

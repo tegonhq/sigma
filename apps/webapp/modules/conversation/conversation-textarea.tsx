@@ -24,7 +24,7 @@ export function ConversationTextarea({
   isLoading = false,
   className,
 }: ConversationTextareaProps) {
-  const [text, setText] = useState('');
+  const [text, setText] = useState(defaultValue ?? '');
   const [editor, setEditor] = React.useState<EditorT>();
   const [agents, setAgents] = React.useState<string[]>([]);
 
