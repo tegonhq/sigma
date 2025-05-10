@@ -51,6 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GH_TOKEN: ${{ secrets.REPO_TOKEN }}
+      PORT: 53081
 
     steps:
       - name: Check out Git repository
@@ -97,6 +98,7 @@ jobs:
       TEAM_ID: ${{ secrets.TEAM_ID }}
       CSC_LINK: ${{ secrets.CERTIFICATE }}
       CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+      PORT: 53081
 
     steps:
       - name: Check out Git repository
