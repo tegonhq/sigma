@@ -8,16 +8,20 @@ import {
 } from '@tegonhq/ui';
 import { EditorContent, useEditor } from '@tiptap/react';
 import { RefreshCcw, Zap } from 'lucide-react';
-
 import { Gmail } from 'src/icons';
 
-import { DailyPlanner } from './features/daily-planner';
-import { Lists } from './features/lists';
-import { Tasks } from './features/task';
-import { Footer } from './footer';
-import { Header } from './header';
-import { Hero } from './hero';
-import { CONTENT, contextExtensions, Section, TaskItem } from './utils';
+import {
+  Footer,
+  Header,
+  Hero,
+  CONTENT,
+  contextExtensions,
+  Section,
+  TaskItem,
+} from '../components';
+import { DailyPlanner } from '../features/daily-planner';
+import { Lists } from '../features/lists';
+import { Tasks } from '../features/task';
 
 const Personalisation = () => {
   const editor = useEditor({
