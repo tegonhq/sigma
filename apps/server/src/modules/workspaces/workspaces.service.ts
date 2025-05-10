@@ -8,6 +8,7 @@ import {
   Workspace,
   WorkspaceRequestParamsDto,
 } from '@tegonhq/sigma-sdk';
+import { schedules } from '@trigger.dev/sdk/v3';
 import { format } from 'date-fns';
 import { Request, Response } from 'express';
 import { PrismaService } from 'nestjs-prisma';
@@ -24,7 +25,6 @@ import {
   UpdateWorkspaceInput,
 } from './workspaces.interface';
 import { ListsService } from '../lists/lists.service';
-import { schedules } from '@trigger.dev/sdk/v3';
 
 @Injectable()
 export default class WorkspacesService {

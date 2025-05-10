@@ -8,12 +8,13 @@ import {
   useToast,
 } from '@tegonhq/ui';
 import { useTheme } from 'next-themes';
+import React from 'react';
 
 import { SettingSection } from 'modules/settings/setting-section';
 
 import { useToggleDailySyncMutation } from 'services/workspace';
+
 import { UserContext } from 'store/user-context';
-import React from 'react';
 
 export function Preferences() {
   const { theme, setTheme } = useTheme();

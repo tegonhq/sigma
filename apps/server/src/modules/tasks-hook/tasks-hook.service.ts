@@ -6,6 +6,7 @@ import {
   TaskHookContext,
 } from '@tegonhq/sigma-sdk';
 import { tasks } from '@trigger.dev/sdk/v3';
+import { endOfDay, subDays } from 'date-fns';
 import { PrismaService } from 'nestjs-prisma';
 import { beautifyTask } from 'triggers/task/beautify-task';
 import { generateSummaryTask } from 'triggers/task/generate-summary';
@@ -16,7 +17,6 @@ import { TaskOccurenceService } from 'modules/task-occurrence/task-occurrence.se
 import { UsersService } from 'modules/users/users.service';
 
 import { getSummaryData, handleCalendarTask } from '../tasks/tasks.utils';
-import { endOfDay, subDays } from 'date-fns';
 
 @Injectable()
 export class TaskHooksService {

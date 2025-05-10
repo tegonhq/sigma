@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useMutation, useQueryClient } from 'react-query';
+
 import { GetUserQuery } from 'services/users';
 
 export function toggleDailySync(value: boolean) {
