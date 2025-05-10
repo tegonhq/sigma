@@ -2,6 +2,7 @@ import {app, BrowserWindow} from 'electron';
 import path, {dirname, join} from 'node:path';
 import log from 'electron-log';
 import {fileURLToPath} from 'node:url';
+import {PORT} from '../utils';
 
 // Initialize Fastify
 const __filename = fileURLToPath(import.meta.url);
@@ -48,7 +49,7 @@ export async function createMainWindow() {
   /**
    * Load the main page of the main window.
    */
-  browserWindow.loadURL('http://localhost:53081');
+  browserWindow.loadURL(`http://localhost:${PORT}`);
 
   return browserWindow;
 }

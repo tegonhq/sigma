@@ -3,6 +3,7 @@ import windowStateKeeper from 'electron-window-state';
 import path, {dirname, join} from 'node:path';
 
 import {fileURLToPath} from 'node:url';
+import {PORT} from '../utils';
 
 // Initialize Fastify
 const __filename = fileURLToPath(import.meta.url);
@@ -80,7 +81,7 @@ export async function createQuickWindow(show = true) {
   /**
    * Load the main page of the main window.
    */
-  smallerWindow.loadURL('http://localhost:53081/quick');
+  smallerWindow.loadURL(`http://localhost:${PORT}/quick`);
 
   return {window: smallerWindow, state: quickWindowState};
 }

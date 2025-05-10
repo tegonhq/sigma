@@ -3,12 +3,9 @@
   "key": "slack",
   "description": "Connect your workspace to Slack. Run your workflows from slack bookmarks",
   "icon": "slack",
-  "schedule": {
-    "frequency": "*/5 * * * *"
-  },
   "mcp": {
     "command": "npx",
-    "args": ["-y", "@modelcontextprotocol/server-slack"],
+    "args": [ "-y", "@modelcontextprotocol/server-slack" ],
     "env": {
       "SLACK_BOT_TOKEN": "${config:access_token}",
       "SLACK_TEAM_ID": "${config:team_id}",

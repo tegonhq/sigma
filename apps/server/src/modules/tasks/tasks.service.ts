@@ -279,6 +279,10 @@ export class TasksService {
       where: { id: taskId },
       data: {
         deleted: new Date().toISOString(),
+        recurrence: [],
+        scheduleText: null,
+        startTime: null,
+        endTime: null,
       },
     });
   }

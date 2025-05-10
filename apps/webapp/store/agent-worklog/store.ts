@@ -1,4 +1,5 @@
 import { type IAnyStateTreeNode, types, flow } from 'mobx-state-tree';
+import { subMinutes, isAfter, parseISO, isBefore } from 'date-fns';
 
 import type { AgentWorklogType } from 'common/types';
 
@@ -43,13 +44,15 @@ export const AgentWorklogsStore: IAnyStateTreeNode = types
       const agentWorklogs = yield sigmaDatabase.agentWorklogs.toArray();
 
       // Get current time and calculate 10 minutes ago
+
       const now = new Date();
-      const tenMinutesAgo = new Date(now.getTime() - 10 * 60 * 1000);
+      const tenMinutesAgo = subMinutes(now, 10);
 
       // Filter logs created in the last 10 minutes
       const recentLogs = agentWorklogs.filter((log: AgentWorklogType) => {
-        const createdAt = new Date(log.createdAt);
-        return createdAt >= tenMinutesAgo;
+        const createdAt = parseISO(log.createdAt);
+
+        return isAfter(createdAt, tenMinutesAgo);
       });
 
       // Sort the recent logs by updatedAt (newest first)
@@ -59,9 +62,11 @@ export const AgentWorklogsStore: IAnyStateTreeNode = types
 
       // Delete logs older than 10 minutes from the database
       const oldLogIds = agentWorklogs
-        .filter(
-          (log: AgentWorklogType) => new Date(log.createdAt) < tenMinutesAgo,
-        )
+        .filter((log: AgentWorklogType) => {
+          const createdAt = parseISO(log.createdAt);
+
+          return isBefore(createdAt, tenMinutesAgo);
+        })
         .map((log: AgentWorklogType) => log.id);
 
       if (oldLogIds.length > 0) {

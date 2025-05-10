@@ -49,6 +49,7 @@ export function Auth() {
       setLoading(false);
     },
   });
+
   const isElectron = useIsElectron();
   const ipc = useIPC();
 
@@ -58,12 +59,18 @@ export function Auth() {
 
   async function googleSignInClicked() {
     try {
+      // Store redirectToPath in localStorage if it exists
+      if (redirectToPath) {
+        localStorage.removeItem('redirectToPath');
+        localStorage.setItem('redirectToPath', redirectToPath as string);
+      }
+
       const authUrl = await getAuthorisationURLWithQueryParamsAndSetState({
         thirdPartyId: 'google',
 
         // This is where Google should redirect the user back after login or error.
         // This URL goes on the Google's dashboard as well.
-        frontendRedirectURI: `https://app.mysigma.ai/auth/google${redirectToPath ? `?redirectToPath=${redirectToPath}` : ''}`,
+        frontendRedirectURI: `https://app.mysigma.ai/auth/google`,
       });
 
       /*

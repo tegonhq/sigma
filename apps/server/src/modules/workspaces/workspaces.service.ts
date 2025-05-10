@@ -24,6 +24,7 @@ import {
   UpdateWorkspaceInput,
 } from './workspaces.interface';
 import { ListsService } from '../lists/lists.service';
+import { schedules } from '@trigger.dev/sdk/v3';
 
 @Injectable()
 export default class WorkspacesService {
@@ -242,5 +243,45 @@ export default class WorkspacesService {
     }
 
     return [];
+  }
+
+  async toggleDailySync(workspaceId: string, value: boolean) {
+    const workspace = await this.prisma.workspace.findUnique({
+      where: { id: workspaceId },
+    });
+
+    if (!value) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const scheduleId = (workspace.preferences as any).scheduleId;
+      if (scheduleId) {
+        await schedules.del(scheduleId);
+      }
+
+      return;
+    }
+
+    const createdSchedule = await schedules.create({
+      // The id of the scheduled task you want to attach to.
+      task: 'daily-run-schedule',
+      // The schedule in cron format.
+      cron: '0 5 * * *',
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      timezone: (workspace.preferences as any).timezone,
+      // this is required, it prevents you from creating duplicate schedules. It will update the schedule if it already exists.
+      deduplicationKey: workspace.id,
+      externalId: workspace.id,
+    });
+
+    await this.prisma.workspace.update({
+      where: {
+        id: workspace.id,
+      },
+      data: {
+        preferences: {
+          ...(workspace.preferences as Record<string, string>),
+          scheduleId: createdSchedule.id,
+        },
+      },
+    });
   }
 }

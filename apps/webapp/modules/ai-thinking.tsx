@@ -7,6 +7,7 @@ export const AIThinking = observer(() => {
   const { agentWorklogsStore } = useContextStore();
   const agentWorking = agentWorklogsStore.agentWorklogs.length > 0;
 
+  console.log(agentWorklogsStore.agentWorklogs);
   if (!agentWorking) {
     return null;
   }

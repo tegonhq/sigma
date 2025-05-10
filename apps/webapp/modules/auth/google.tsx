@@ -1,19 +1,21 @@
 import { Loader, useToast } from '@tegonhq/ui';
-import { useRouter } from 'next/router';
 import React from 'react';
 import { signInAndUp } from 'supertokens-auth-react/recipe/thirdparty';
 
 export function Google() {
   const { toast } = useToast();
-  const {
-    query: { redirectToPath },
-  } = useRouter();
 
   async function handleGoogleCallback() {
     try {
       const response = await signInAndUp();
 
       if (response.status === 'OK') {
+        const redirectToPath = localStorage.getItem('redirectToPath');
+
+        if (redirectToPath) {
+          localStorage.removeItem('redirectToPath');
+        }
+
         window.location.assign(
           redirectToPath ? (redirectToPath as string) : '/',
         );

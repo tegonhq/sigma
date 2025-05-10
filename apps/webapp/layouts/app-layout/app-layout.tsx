@@ -1,9 +1,12 @@
 import { cn, SidebarInset, SidebarProvider } from '@tegonhq/ui';
 import { GeistMono } from 'geist/font/mono';
 import { GeistSans } from 'geist/font/sans';
+import Image from 'next/image';
 
 import { AIThinking } from 'modules/ai-thinking';
 import { SettingsProvider } from 'modules/settings';
+
+import { useIPC } from 'hooks/ipc';
 
 import { AppSidebar } from './app-sidebar';
 
@@ -12,6 +15,23 @@ interface AppLayoutProps {
 }
 
 export function AppLayout({ children }: AppLayoutProps) {
+  const ipc = useIPC();
+
+  if (!ipc) {
+    return (
+      <div className="flex gap-2">
+        <Image
+          src="/logo_light.svg"
+          alt="logo"
+          key={1}
+          width={20}
+          height={20}
+        />
+        You can access in the App
+      </div>
+    );
+  }
+
   return (
     <SidebarProvider
       className={cn('sidebar', GeistSans.variable, GeistMono.variable)}

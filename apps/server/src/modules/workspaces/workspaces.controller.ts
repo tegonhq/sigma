@@ -65,6 +65,18 @@ export class WorkspacesController {
     return await this.workspacesService.getRelevantContext(workspaceId, query);
   }
 
+  @Post('daily-sync')
+  @UseGuards(AuthGuard)
+  async toggleDailySync(
+    @WorkspaceDecorator() workspaceId: string,
+    @Body() body: { value: boolean },
+  ) {
+    return await this.workspacesService.toggleDailySync(
+      workspaceId,
+      body.value,
+    );
+  }
+
   @Get(':workspaceId')
   @UseGuards(AuthGuard)
   async getWorkspace(

@@ -50,15 +50,12 @@ const Personalisation = () => {
             <p className="text-muted-foreground text-sm"> Today </p>
             <p className="flex flex-col gap-2 mt-4">
               <p>
-                Good morning! It&apos;s Thursday, May 8th, and today looks like
-                an ideal day for a compound workout followed by focused
-                development work. Based on your recent workout history (Lower on
-                May 8th, Pull on May 6th, and Push on May 5th), I recommend
-                trying the <strong>Balanced Push Routine</strong> this morning
-                to maintain your training balance. This routine features
-                compound movements like Bench Press and focuses on chest,
-                shoulders, and triceps - perfect for your preference for
-                compound exercises.
+                Good morning! It&apos;s Friday, May 9th—ideal for a compound
+                workout. Based on your recent sessions (Lower on May 8th, Pull
+                on May 6th, Push on May 5th), go for the{' '}
+                <strong>Balanced Push Routine</strong> today. It targets chest,
+                shoulders, and triceps with compound lifts like the Bench
+                Press—perfect for your training balance and preferences.
               </p>
 
               <p>

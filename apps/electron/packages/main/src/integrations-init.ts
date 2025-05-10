@@ -3,6 +3,7 @@ import axios from 'axios';
 import path from 'node:path';
 import fs from 'fs';
 import log from 'electron-log';
+import {PORT} from '../utils';
 
 async function getAccessToken(): Promise<string | null> {
   const keyName = 'sAccessToken';
@@ -25,7 +26,7 @@ async function getAccessToken(): Promise<string | null> {
 
 export const integrationsInit = async () => {
   const accessToken = await getAccessToken();
-  const {data} = await axios.get('http://localhost:53081/api/v1/integration_definition', {
+  const {data} = await axios.get(`http://localhost:${PORT}/api/v1/integration_definition`, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },

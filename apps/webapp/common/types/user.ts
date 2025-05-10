@@ -5,6 +5,7 @@ interface Workspace {
   id: string;
   preferences?: {
     timezone?: string;
+    scheduleId?: string;
   };
 }
 

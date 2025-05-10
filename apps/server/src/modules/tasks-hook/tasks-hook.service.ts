@@ -16,6 +16,7 @@ import { TaskOccurenceService } from 'modules/task-occurrence/task-occurrence.se
 import { UsersService } from 'modules/users/users.service';
 
 import { getSummaryData, handleCalendarTask } from '../tasks/tasks.utils';
+import { endOfDay, subDays } from 'date-fns';
 
 @Injectable()
 export class TaskHooksService {
@@ -70,6 +71,7 @@ export class TaskHooksService {
       const taskOccurences = await this.prisma.taskOccurrence.findMany({
         where: { taskId: task.id },
       });
+
       if (taskOccurences.length) {
         await this.prisma.taskOccurrence.updateMany({
           where: { taskId: task.id },
@@ -113,7 +115,17 @@ export class TaskHooksService {
 
       case 'delete':
         if (task.recurrence || task.startTime || task.endTime) {
-          await this.taskOccurenceService.deleteTaskOccurenceByTask(task.id);
+          const yesterday = endOfDay(subDays(new Date(), 1));
+
+          await this.prisma.taskOccurrence.updateMany({
+            where: {
+              taskId: task.id,
+              startTime: {
+                gte: yesterday,
+              },
+            },
+            data: { deleted: new Date().toISOString() },
+          });
         }
         return { message: 'Handled schedule delete' };
     }

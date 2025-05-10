@@ -7,7 +7,7 @@ import { useContextStore } from 'store/global-context-provider';
 
 export const useConversationContext = () => {
   const { tabs } = useApplication();
-  const { listsStore, tasksStore, pagesStore } = useContextStore();
+  const { listsStore, tasksStore } = useContextStore();
   const firstTab = tabs[0];
 
   const getPageId = () => {
@@ -17,13 +17,6 @@ export const useConversationContext = () => {
 
     if (firstTab.type === TabViewType.MY_TASKS) {
       return tasksStore.getTaskWithId(firstTab.entity_id)?.pageId;
-    }
-
-    if (firstTab.type === TabViewType.DAYS) {
-      const { date = new Date() } = firstTab.data;
-
-      const page = pagesStore.getDailyPageWithDate(date);
-      return page.id;
     }
 
     return undefined;

@@ -157,7 +157,7 @@ export const getCookies = async (code: string) => {
   const indexResult = await pRetry(() => getPersonalAccessToken(code), {
     // this means we're polling, same distance between each attempt
     factor: 1,
-    retries: 60,
+    retries: 100,
     minTimeout: 1000,
   });
 

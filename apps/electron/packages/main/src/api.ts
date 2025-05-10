@@ -4,6 +4,7 @@ import {app, type App} from 'electron';
 import Fastify from 'fastify';
 import path from 'node:path';
 import fastifyStatic from '@fastify/static';
+import {PORT} from '../utils';
 
 const isDev = process.env.NODE_ENV === 'development';
 const apiBaseUrl = isDev ? 'http://localhost:3001' : 'https://server.mysigma.ai';
@@ -12,7 +13,7 @@ const fastify = Fastify();
 
 // Start Fastify server
 const startFastifyServer = async () => {
-  fastify.listen({port: 53081});
+  fastify.listen({port: PORT});
 };
 
 fastify.register(fastifyHttpProxy, {

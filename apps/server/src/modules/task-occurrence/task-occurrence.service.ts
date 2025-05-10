@@ -422,6 +422,7 @@ export class TaskOccurenceService {
         endTime: null,
       },
     });
+
     return await this.prisma.taskOccurrence.updateMany({
       where: {
         taskId,
