@@ -45,7 +45,7 @@ export function Section({
   return (
     <Container id={id} className={className}>
       <div className="flex flex-col">
-        <h2 className="text-lg font-medium text-left mb-2" style={{ color }}>
+        <h2 className="text-lg font-medium text-left" style={{ color }}>
           {name}
         </h2>
 
@@ -91,11 +91,13 @@ export const TaskItemBig = ({
   title,
   github,
   google,
+  checked,
 }: {
   number: string;
   title: string;
   github?: boolean;
   google?: boolean;
+  checked?: boolean;
 }) => {
   return (
     <button
@@ -103,13 +105,24 @@ export const TaskItemBig = ({
         'inline-flex max-w-[300px] h-7 items-center text-left mr-1 hover:bg-grayAlpha-100 p-1 text-sm rounded-sm relative top-[2px]',
       )}
     >
-      <Checkbox className="shrink-0 h-[16px] w-[16px] ml-1 mr-1 rounded-[6px]" />
+      <Checkbox
+        className="shrink-0 h-[16px] w-[16px] ml-1 mr-1 rounded-[6px]"
+        checked={checked}
+      />
       <span className="text-muted-foreground font-mono shrink-0 mr-1">
         T-{number}
       </span>
 
       <div className="inline-flex items-center justify-start shrink min-w-[0px] min-h-[24px]">
-        <div className={cn('text-left truncate text-sm')}>{title}</div>
+        <div
+          className={cn(
+            'text-left truncate text-sm',
+            checked &&
+              'line-through opacity-60 decoration-[1px] decoration-muted-foreground',
+          )}
+        >
+          {title}
+        </div>
         {github && <RiGithubFill size={14} className="ml-1 shrink-0" />}
         {google && <Gmail size={14} className="ml-1 shrink-0" />}
       </div>
@@ -212,7 +225,7 @@ export const DownloadButton = () => {
     <Button
       size="xl"
       variant="default"
-      className="gap-2 items-center"
+      className="gap-2 items-center w-fit"
       onClick={handleDownload}
     >
       <RiAppleFill size={14} />

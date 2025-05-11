@@ -15,7 +15,7 @@ export const Hero = () => {
           </span>{' '}
           <br /> now in a todo app
         </h1>
-        <p className="text-lg text-left max-w-[500px] mb-8 font-normal text-muted-foreground">
+        <p className="text-lg text-left max-w-[800px] mb-8 font-normal text-muted-foreground">
           Sigma is your AI command center that turns plans into action. It
           learns your style, grabs context from GitHub / Slack / email, and
           clears the busywork so you stay in flow.
@@ -41,13 +41,13 @@ export const Hero = () => {
       </Container>
 
       <Container className="gap-2">
-        <div className="flex gap-2">
+        <div className="flex flex-col md:flex-row gap-2">
           <DownloadButton />
 
           <Button
             size="xl"
             variant="secondary"
-            className="gap-2 items-center"
+            className="gap-2 items-center w-fit"
             onClick={() =>
               window.open('https://github.com/tegonhq/sigma', '_blank')
             }
@@ -55,12 +55,12 @@ export const Hero = () => {
             <RiGithubFill size={16} />
             Star us
           </Button>
-        </div>
-        <div className="flex items-center gap-1">
-          Backed by{' '}
-          <Badge className="bg-[#FF6600] text-white text-base font-mono">
-            Y
-          </Badge>
+          <div className="flex items-center ml-1 gap-1">
+            Backed by{' '}
+            <Badge className="bg-[#FF6600] text-white text-base font-mono">
+              Y
+            </Badge>
+          </div>
         </div>
       </Container>
     </section>

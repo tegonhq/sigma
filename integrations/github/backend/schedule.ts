@@ -35,7 +35,7 @@ export async function handleSchedule(integrationAccount: IntegrationAccount) {
 
   while (hasMorePages) {
     const notifications = await getGithubData(
-      `https://api.github.com/notifications?page=${page}&per_page=50&since=${lastSyncTime}`,
+      `https://api.github.com/notifications?page=${page}&per_page=50&all=true&since=${lastSyncTime}`,
       integrationConfiguration.access_token,
     );
 
