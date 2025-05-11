@@ -24,7 +24,17 @@ export default class ActivityService {
   async runActivity(activityId: string) {
     const activity = await this.prisma.activity.findUnique({
       where: { id: activityId },
+      include: {
+        integrationAccount: {
+          include: {
+            integrationDefinition: true,
+          },
+        },
+      },
     });
+
+    const integrationDefinition =
+      activity.integrationAccount?.integrationDefinition;
 
     const workspace = await this.prisma.workspace.findFirst({
       where: { id: activity.workspaceId },
@@ -39,7 +49,7 @@ export default class ActivityService {
         ConversationHistory: {
           create: {
             userId: workspace.userId,
-            message: `Activity: ${activity.text}`,
+            message: `Activity from ${integrationDefinition.name} \n Content: ${activity.text}`,
             userType: UserTypeEnum.User,
           },
         },

@@ -15,8 +15,8 @@ export const Header = () => {
   };
 
   return (
-    <header className="sticky z-1000 transition-all duration-300 ease-out top-0 translate-y-none">
-      <div className="pt-3 pb-6 md:pb-2 mx-auto max-w-5xl w-full flex gap-2 justify-between items-center bg-background">
+    <header className="sticky z-1000 transition-all duration-300 ease-out top-0 translate-y-none bg-background-2">
+      <div className="pt-3 pb-6 md:pb-2 mx-auto max-w-5xl w-full flex gap-2 justify-between items-center bg-background-2">
         {/* Logo */}
         <div className="flex items-center gap-2">
           <Image src="/logo_light.svg" alt="logo" width={30} height={30} />

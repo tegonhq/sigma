@@ -3,8 +3,7 @@ import { Button, Project } from '@tegonhq/ui';
 export const Lists = () => {
   return (
     <div className="flex flex-col flex-1">
-      <h3 className="text-lg font-semibold text-foreground mb-1 text-left flex gap-1 items-center">
-        <Project size={18} />
+      <h3 className="text-xl font-semibold text-foreground mb-1 text-left flex gap-1 items-center">
         Lists
       </h3>
       <p className="text-base text-muted-foreground text-left">

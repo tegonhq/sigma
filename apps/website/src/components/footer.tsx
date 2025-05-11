@@ -2,7 +2,7 @@ import { RiDiscordFill, RiGithubFill } from '@remixicon/react';
 
 export function Footer() {
   return (
-    <footer className="w-full bg-background py-10 flex flex-col items-center border-t border-gray-200">
+    <footer className="w-full bg-background-2 py-10 flex flex-col items-center border-t border-gray-200">
       <div className="flex gap-4 mb-4">
         <a
           href="https://discord.gg/dVTC3BmgEq"

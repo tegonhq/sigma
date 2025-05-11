@@ -90,6 +90,9 @@ export const beautifyTask = task({
 
       const outputMatch = beautifyOutput.match(/<output>(.*?)<\/output>/s);
 
+      logger.info(`Recurrence data: ${JSON.stringify(recurrenceData)}`);
+      logger.info(`Beautify data: ${JSON.stringify(beautifyOutput)}`);
+
       if (!outputMatch) {
         logger.error('No output found in recurrence response');
         await prisma.agentWorklog.update({
@@ -139,7 +142,7 @@ export const beautifyTask = task({
         data: { state: AgentWorklogStateEnum.Done },
       });
     } catch (error) {
-      logger.error('Failed to parse recurrence JSON output');
+      logger.error(`Beautify failed: ${JSON.stringify(error)}`);
 
       await prisma.agentWorklog.update({
         where: { id: agentWorklog.id },
