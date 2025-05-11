@@ -8,7 +8,7 @@ export function Footer() {
           href="https://discord.gg/dVTC3BmgEq"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-gray-700 hover:text-black focus-visible:ring-2 focus-visible:ring-[#5865F2]"
+          className=""
         >
           <RiDiscordFill size={24} />
         </a>
@@ -16,7 +16,7 @@ export function Footer() {
           href="https://github.com/tegonhq/sigma"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-gray-700 hover:text-black focus-visible:ring-2 focus-visible:ring-[#23272f]"
+          className=""
         >
           <RiGithubFill size={24} />
         </a>

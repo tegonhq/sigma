@@ -1,22 +1,11 @@
-import { DocumentLine } from '@tegonhq/ui';
-import { useEditor } from '@tiptap/react';
-import { RefreshCcw, Zap } from 'lucide-react';
-
-import { CONTENT, contextExtensions, Section, TaskItem } from '../components';
+import { Section, TaskItem } from '../components';
 
 export const Personalisation = () => {
-  const editor = useEditor({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    extensions: contextExtensions as any,
-    editable: true,
-    content: CONTENT,
-  });
-
   return (
     <Section name="Personalisation" color="#4187C0" id="personalisation">
       <div className="flex flex-col">
         <h3 className="text-[40px] font-semibold text-foreground mb-1 text-left flex gap-1 items-center">
-          Your work, <span className="text-primary">your way</span>
+          Your workflow, <span className="text-primary">your way</span>
         </h3>
         <p className="text-md text-muted-foreground text-left">
           Write a rule or instruction in plain English and let Sigma take care
@@ -34,6 +23,23 @@ export const Personalisation = () => {
           automations based on emails or meetings, Signals helps you work
           smarter—on your terms
         </p>
+
+        <div className="w-full mt-4 overflow-hidden rounded-lg">
+          <video
+            className="w-full h-auto"
+            autoPlay
+            loop
+            muted
+            playsInline
+            controls={false}
+          >
+            <source
+              src="https://integrations.mysigma.ai/videos/signal.mp4"
+              type="video/mp4"
+            />
+            Your browser does not support the video tag.
+          </video>
+        </div>
 
         {/* <div className="flex flex-col md:flex-row mt-4 gap-4">
           <Card className="flex-1">

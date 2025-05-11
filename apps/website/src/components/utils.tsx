@@ -106,7 +106,7 @@ export const TaskItemBig = ({
       )}
     >
       <Checkbox
-        className="shrink-0 h-[16px] w-[16px] ml-1 mr-1 rounded-[6px]"
+        className="shrink-0 h-[18px] w-[18px] ml-1 mr-2 rounded-[6px]"
         checked={checked}
       />
       <span className="text-muted-foreground font-mono shrink-0 mr-1">

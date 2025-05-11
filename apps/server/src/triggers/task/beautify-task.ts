@@ -4,6 +4,7 @@ import {
   beautifyPrompt,
   LLMModelEnum,
   ModelNameEnum,
+  Preferences,
 } from '@tegonhq/sigma-sdk';
 import { logger, task } from '@trigger.dev/sdk/v3';
 import axios from 'axios';
@@ -23,6 +24,7 @@ export const beautifyTask = task({
         id: true,
         workspaceId: true,
         listId: true,
+        workspace: true,
         page: {
           select: {
             id: true,
@@ -55,6 +57,9 @@ export const beautifyTask = task({
     let updatedTask;
 
     try {
+      const timezone = (sigmaTask.workspace.preferences as Preferences)
+        .timezone;
+
       // Run both API requests in parallel
       const [recurrenceData, beautifyOutput] = await Promise.all([
         axios
@@ -62,7 +67,9 @@ export const beautifyTask = task({
             `${process.env.BACKEND_HOST}/v1/tasks/ai/recurrence`,
             {
               text: sigmaTask.page.title,
-              currentTime: new Date().toISOString(),
+              currentTime: new Date().toLocaleString('en-US', {
+                timeZone: timezone,
+              }),
               taskIds: [],
             },
             { headers: { Authorization: `Bearer ${payload.pat}` } },
@@ -106,6 +113,12 @@ export const beautifyTask = task({
       const beautifyData = JSON.parse(jsonStr);
       const outputData = { ...recurrenceData, ...beautifyData };
       if (outputData) {
+        if (outputData.listId) {
+          outputData.listId = outputData.listId.includes('_')
+            ? outputData.listId.split('_')[0]
+            : outputData.listId;
+        }
+
         const updateData = {
           // Basic task fields
           ...(outputData.startTime && {

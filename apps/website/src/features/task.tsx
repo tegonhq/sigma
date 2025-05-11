@@ -1,5 +1,3 @@
-import { IssuesLine } from '@tegonhq/ui';
-
 import { TaskItemBig } from '../components/utils';
 
 export const Tasks = () => {
