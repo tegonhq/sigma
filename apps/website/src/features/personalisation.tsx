@@ -5,23 +5,29 @@ export const Personalisation = () => {
     <Section name="Personalisation" color="#4187C0" id="personalisation">
       <div className="flex flex-col">
         <h3 className="text-[40px] font-semibold text-foreground mb-1 text-left flex gap-1 items-center">
-          Your workflow, <span className="text-primary">your way</span>
+          Tell sigma how you work;
+          <span className="text-primary">it does the work.</span>
         </h3>
         <p className="text-md text-muted-foreground text-left">
           Write a rule or instruction in plain English and let Sigma take care
           of the rest. For example:
+          <ul className="list-disc ml-6 mt-2">
+            <li>When a GitHub pull request or issue is assigned to me, automatically add a task in Sigma.</li>
+            <li>Turn each bookmarked Slack message into a Sigma task for its action items.</li>
+            <li>Post a comment on every new issue opened in tegonhq/sigma.</li>
+          </ul>
         </p>
 
         <h3 className="text-xl font-semibold text-foreground mb-1 mt-7 text-left flex gap-1 items-center">
           Signals
         </h3>
         <p className="text-base text-muted-foreground text-left">
-          Signals is your source of truth—where context meets action. It
-          remembers what matters to you (like <i>“You prefer Airbnb”</i> or{' '}
-          <i>“You’re a developer at Suse”</i>) and turns that memory into
-          intelligent workflows. From updating your preferences to triggering
-          automations based on emails or meetings, Signals helps you work
-          smarter—on your terms
+        It is your editable profile that learns your preferences and automates tasks.
+        <ul className="list-disc ml-6 mt-2">
+            <li>Remembers what matters: <i>"No meetings after 6 pm"</i>, <i>"Reply in a direct tone"</i>, <i>"I prefer Airbnbs."</i></li>
+            <li>Acts on simple rules: "When a GitHub issue is assigned to me, create a task."</li>
+            <li>Keeps you in control: edit or erase anything—Sigma stores only what you approve.</li>
+        </ul>
         </p>
 
         <div className="w-full mt-4 overflow-hidden rounded-lg">
@@ -68,10 +74,6 @@ export const Personalisation = () => {
           </Card>
         </div> */}
 
-        <p className="text-base text-muted-foreground text-lef mt-2">
-          Note: Most agents hoard data in the dark. Signals lets you decide what
-          user info to be stored—edit, add, or wipe anything anytime.
-        </p>
       </div>
 
       <div className="flex flex-col mt-7">
@@ -79,54 +81,41 @@ export const Personalisation = () => {
           Daily Sync
         </h3>
         <p className="text-base text-muted-foreground text-left">
-          Wake up to a brief summary of today&apos;s top priorities, deadlines,
-          meetings pulled from all tools you use. With the help of daily
-          sync—plan your day in 30 secs, then go back to building.
+          Kick start your day with a 30-second summary of today&apos;s top priorities, deadlines - plan fast, then get back to work.
         </p>
 
         <div className="flex justify-center w-full py-7 lg:py-9">
           <div className="flex w-full max-w-[600px] mx-auto shrink-0 flex-col overflow-hidden rounded p-4 bg-background-3">
             <h3 className="text-md font-semibold">
-              Morning Workout & Task Planning for May 8th
+              Today&apos;s Key Priorities - Friday, May 9th
             </h3>
-            <p className="text-muted-foreground text-xs"> Today </p>
-            <p className="flex flex-col gap-2 mt-4 text-sm">
-              <p>
-                Good morning! It&apos;s Friday, May 9th—ideal for a compound
-                workout. Based on your recent sessions (Lower on May 8th, Pull
-                on May 6th, Push on May 5th), go for the{' '}
-                <strong>Balanced Push Routine</strong> today.
+            <div className="flex flex-col gap-2 mt-4 text-sm">
+              <p><strong>8:30 AM – 11:30 AM</strong><br />
+              <TaskItem title="Feat: Daily Sync" number="26" github />— knock out the cluster of related tasks while energy is high.
               </p>
-
-              <p>
-                The morning, after your workout (around 8:30 AM), would be ideal
-                for working on{' '}
-                <TaskItem title="Feat: Daily Sync" number="26" github />
-                since you have multiple related tasks on this feature. Your day
-                has one time-sensitive task:{' '}
-                <TaskItem
+              <p><strong>2:00 – 4:00 PM</strong><br />
+              <TaskItem
                   title="Ordered/unordered list when selected in a page to
                       convert to task should get converted to task"
                   number="12"
                 />
-                due by 6:30 PM. I suggest tackling this after lunch around 2:00
-                PM when you&apos;ll have several focused hours before the
-                deadline.
+              — due 6:30 PM; start right after lunch for an uninterrupted work block.
               </p>
-
-              <p>
-                In the afternoon, group related dev tasks to reduce context
-                switching. Around 4:00 PM, work on{' '}
-                <TaskItem
+              <p><strong>4:00 – 6:00 PM</strong><br />
+              <TaskItem
                   title="Improve: Task extension in pages"
                   number="41"
                   github
                 />{' '}
-                to complement your earlier list-to-task work. If done,{' '}
-                <TaskItem title="Reply: to GCP support" number="18" google /> is
-                a good task for tomorrow morning when you&apos;re fresh.
+              — follows naturally from the earlier list-to-task work and keeps dev context consistent.
               </p>
-            </p>
+              <p><strong>Defer to tomorrow morning:</strong><br />
+              <TaskItem title="Reply: to GCP support" number="18" google />  — best tackled fresh.
+              </p>
+              <p>
+              Stay focused on these four windows and you'll clear today's must-dos with time to spare.
+              </p>
+            </div>
           </div>
         </div>
       </div>

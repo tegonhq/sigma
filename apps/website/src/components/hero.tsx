@@ -16,9 +16,7 @@ export const Hero = () => {
           <br /> now in a todo app
         </h1>
         <p className="text-lg text-left max-w-[800px] mb-8 font-normal text-muted-foreground">
-          Sigma is your AI command center that turns plans into action. It
-          learns your style, grabs context from GitHub / Slack / email, and
-          clears the busywork so you stay in flow.
+        Sigma learns your style, organizes your day, and sweeps up the busywork—auto-creating tasks, drafting replies, and running routine workflows—so you can focus on what truly matters.
         </p>
 
         <Container className="!pt-0 pb-7">

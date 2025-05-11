@@ -1,6 +1,5 @@
 import { Button, Popover, PopoverContent, PopoverTrigger } from '@tegonhq/ui';
 import Image from 'next/image';
-
 import { DownloadButton } from './utils';
 
 export const Header = () => {
@@ -73,6 +72,15 @@ export const Header = () => {
             }
           >
             Github
+          </Button>
+
+          <Button
+            variant="ghost"
+            onClick={() =>
+              window.open('https://discord.gg/dVTC3BmgEq', '_blank')
+            }
+          >
+            Discord
           </Button>
         </nav>
         {/* Right Side: Download only */}
