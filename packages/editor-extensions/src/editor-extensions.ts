@@ -45,4 +45,4 @@ export const defaultExtensions = [
   AgentMention,
 ];
 
-export const getSchema = () => fetchSchema(defaultExtensions);
+export const getSchema = () => fetchSchema(defaultExtensions as any);

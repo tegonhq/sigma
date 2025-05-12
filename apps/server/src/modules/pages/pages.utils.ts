@@ -263,3 +263,10 @@ export function serializePages(
   }
   return pages.map(serializePage);
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const dataChanged = (changedData: any, key: string) => {
+  return (
+    changedData[key] && changedData[key].oldValue !== changedData[key].newValue
+  );
+};

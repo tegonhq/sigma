@@ -1,7 +1,9 @@
-import { cn, SidebarInset, SidebarProvider } from '@tegonhq/ui';
+import { Button, cn, SidebarInset, SidebarProvider } from '@tegonhq/ui';
 import { GeistMono } from 'geist/font/mono';
 import { GeistSans } from 'geist/font/sans';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
+import { signOut } from 'supertokens-auth-react/recipe/session';
 
 import { AIThinking } from 'modules/ai-thinking';
 import { SettingsProvider } from 'modules/settings';
@@ -16,18 +18,33 @@ interface AppLayoutProps {
 
 export function AppLayout({ children }: AppLayoutProps) {
   const ipc = useIPC();
+  const { replace } = useRouter();
 
   if (!ipc) {
     return (
-      <div className="flex gap-2">
-        <Image
-          src="/logo_light.svg"
-          alt="logo"
-          key={1}
-          width={20}
-          height={20}
-        />
-        You can access in the App
+      <div className="flex flex-col">
+        <div className="flex gap-2">
+          <Image
+            src="/logo_light.svg"
+            alt="logo"
+            key={1}
+            width={20}
+            height={20}
+          />
+          You can access in the App
+        </div>
+        <div className="flex justify-center mt-2">
+          <Button
+            variant="secondary"
+            onClick={async () => {
+              await signOut();
+
+              replace('/auth');
+            }}
+          >
+            Log out
+          </Button>
+        </div>
       </div>
     );
   }
