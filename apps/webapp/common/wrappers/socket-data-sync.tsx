@@ -62,6 +62,8 @@ export const SocketDataSyncWrapper: React.FC<Props> = observer(
           userId: user.id,
         },
         withCredentials: true,
+
+        // Add reconnection
       });
       setSocket(socket);
 
@@ -89,6 +91,23 @@ export const SocketDataSyncWrapper: React.FC<Props> = observer(
           `lastSequenceId_${hash(hashKey)}`,
           `${data.sequenceId}`,
         );
+      });
+
+      // Add connection event handlers
+      socket.on('connect', () => {
+        console.log('Socket connected');
+      });
+
+      socket.on('disconnect', (reason) => {
+        console.log('Socket disconnected:', reason);
+      });
+
+      socket.on('reconnect', (attemptNumber) => {
+        console.log('Socket reconnected after', attemptNumber, 'attempts');
+      });
+
+      socket.on('reconnect_error', (error) => {
+        console.log('Socket reconnection error:', error);
       });
     }
 

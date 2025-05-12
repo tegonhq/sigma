@@ -30,6 +30,7 @@ import { ContentService } from 'modules/content/content.service';
 import { TransactionClient } from 'modules/tasks/tasks.utils';
 
 import {
+  dataChanged,
   getOutlinksTaskId,
   getTaskItemContent,
   getTaskListsInPage,
@@ -320,7 +321,14 @@ export class PagesService {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async storeOutlinks(pageId: string) {
     const page = await this.prisma.page.findUnique({ where: { id: pageId } });
-    const tiptapJson = JSON.parse(page.description);
+    let tiptapJson;
+
+    try {
+      tiptapJson = JSON.parse(page.description);
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
 
     // Parse outlinks from string to JSON
     const pageOutlinks = page.outlinks ? page.outlinks : [];
@@ -443,6 +451,7 @@ export class PagesService {
         const list = await this.prisma.list.findFirst({
           where: { pageId: page.id, deleted: null },
         });
+
         if (addedTaskIds.length) {
           await this.prisma.task.updateMany({
             where: {
@@ -450,7 +459,7 @@ export class PagesService {
               deleted: null,
             },
             data: {
-              listId: list.id,
+              listId: list?.id,
             },
           });
         }
@@ -578,7 +587,15 @@ export class PagesService {
 
   async createTasks(pageId: string) {
     const page = await this.prisma.page.findUnique({ where: { id: pageId } });
-    const tiptapJson = JSON.parse(page.description);
+    let tiptapJson;
+
+    try {
+      tiptapJson = JSON.parse(page.description);
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
+
     let tasksCreated = false;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -695,12 +712,21 @@ export class PagesService {
   }
 
   async handleHooks(payload: { pageId: string; changedData: JsonObject }) {
-    if (payload.changedData.description) {
-      await this.createTasks(payload.pageId);
-      await this.storeOutlinks(payload.pageId);
+    if (dataChanged(payload.changedData, 'description')) {
+      const pageDescription = (
+        payload.changedData.description as {
+          oldValue: string;
+          newValue: string;
+        }
+      ).newValue;
+
+      if (pageDescription) {
+        await this.createTasks(payload.pageId);
+        await this.storeOutlinks(payload.pageId);
+      }
     }
 
-    if (payload.changedData.title) {
+    if (dataChanged(payload.changedData, 'title')) {
       await this.handleTitleChange(payload.pageId, payload.changedData);
     }
   }
