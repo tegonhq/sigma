@@ -1,5 +1,6 @@
 import { Button, Popover, PopoverContent, PopoverTrigger } from '@tegonhq/ui';
 import Image from 'next/image';
+
 import { DownloadButton } from './utils';
 
 export const Header = () => {
