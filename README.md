@@ -36,13 +36,17 @@ Write a rule or instruction in plain English in the signals page and let Sigma t
 - Turn each bookmarked Slack message into a Sigma task for its action items.
 - Post a comment on every new issue opened in tegonhq/sigma.
 
+![signals](https://github.com/user-attachments/assets/a1e64858-5180-43bb-b15b-35c176ba7a32)
+
+
 ### Task Management
 Let sigma plan and organise your day. Keep tasks, notes, lists, and priorities in one clear view—so you can focus on what matters, without the clutter.
 - **Task & Notes** : Capture tasks and notes together in the same space—no tab-hopping.
 - **Lists** : Your Swiss-army doc for everything—code snippets, side-projects, grocery runs.
 - **Today** : One focused view of today's priorities, meetings, and quick notes.
   
-![task_management](https://github.com/user-attachments/assets/d6f4c83e-1fbe-4681-bee1-e03094922848)
+![Task Management](https://github.com/user-attachments/assets/a29e0de7-027b-4d25-b231-c40df734ebe2)
+
 
 
 ### Sigma Chat
@@ -50,6 +54,9 @@ Let sigma plan and organise your day. Keep tasks, notes, lists, and priorities i
 Sigma connectes to your tools (like github, slack, jira, gmail etc.) via MCP servers and get any insights or answers from the chat. Few examples:
 1. **Walk into 1-1s fully briefed** : "_Show me Harshith's last-month GitHub + Jira work_."  ->  Sigma drops ticket counts, PRs, and DORA metrics straight onto your 1-1 page.
 2. **Audit outreach in seconds** : "_Score my outbound emails from the past two weeks, 1-10._" ->  Sigma rates each email, highlights wins, and suggests fixes.
+
+![chat](https://github.com/user-attachments/assets/dbd14864-52c4-498b-99e2-7aa8c4d3fab7)
+
 
 ### Daily Sync
 Kick start your day with a 30-second summary of today's top priorities, deadlines - plan fast, then get back to work.
