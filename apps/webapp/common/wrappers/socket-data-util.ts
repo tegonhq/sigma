@@ -22,7 +22,7 @@ export async function saveSocketData(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   MODEL_STORE_MAP: Record<string, any>,
 ) {
-  return runInAction(async () => {
+  return await runInAction(async () => {
     // Pre-initialize the accumulator object with known model names
     const groupedRecords: Record<string, SyncActionRecord[]> = Object.values(
       MODELS,
@@ -59,7 +59,7 @@ export async function saveSocketData(
     };
 
     // Process records using the handler map
-    return Promise.all(
+    return await Promise.all(
       Object.entries(groupedRecords)
         .map(([modelName, records]) => {
           if (records.length === 0) {

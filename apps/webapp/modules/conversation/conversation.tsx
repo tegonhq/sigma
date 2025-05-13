@@ -1,5 +1,5 @@
-import { UserTypeEnum } from '@sigma/types';
 import { Loader, useToast } from '@tegonhq/ui';
+import { sort } from 'fast-sort';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 
@@ -8,15 +8,10 @@ import { ScrollAreaWithAutoScroll } from 'common/use-auto-scroll';
 
 import { useConversationHistory } from 'hooks/conversations';
 
-import {
-  useCreateConversationHistoryMutation,
-  useCreateConversationMutation,
-  useStreamConversationMutation,
-} from 'services/conversations';
+import { useCreateConversationMutation } from 'services/conversations';
 import { useGetIntegrationDefinitions } from 'services/integration-definition';
 
 import { useContextStore } from 'store/global-context-provider';
-import { UserContext } from 'store/user-context';
 
 import { ConversationItem } from './conversation-item';
 import { ConversationTextarea } from './conversation-textarea';
@@ -35,95 +30,69 @@ export const Conversation = observer(({ defaultValue }: ConversationProps) => {
     commonStore.currentConversationId,
   );
   const { isLoading: integrationsLoading } = useGetIntegrationDefinitions();
+  const [conversationResponse, setConversationResponse] =
+    React.useState(undefined);
 
-  const user = React.useContext(UserContext);
-  const {
-    mutate: streamConversation,
-    isLoading,
-    thoughts,
-    responses,
-  } = useStreamConversationMutation();
-  const {
-    mutate: createConversationHistory,
-    data: conversationHistoryCreated,
-  } = useCreateConversationHistoryMutation({});
   const { mutate: createConversation } = useCreateConversationMutation({});
 
   const pageId = useConversationContext();
 
   const onSend = (text: string, agents: string[], title: string) => {
-    if (isLoading) {
+    if (conversationResponse) {
       return;
     }
 
-    if (commonStore.currentConversationId) {
-      createConversationHistory(
-        {
-          message: text,
-          userType: UserTypeEnum.User,
-          userId: user.id,
-          conversationId: commonStore.currentConversationId,
-          context: { agents },
+    createConversation(
+      {
+        message: text,
+        pageId,
+        context: { agents },
+        title,
+        conversationId: commonStore.currentConversationId,
+      },
+      {
+        onSuccess: (data) => {
+          commonStore.update({ currentConversationId: data.conversationId });
+          setConversationResponse(data);
         },
-        {
-          onSuccess: (data) => {
-            streamConversation({
-              conversationHistoryId: data.id,
-            });
-          },
-
-          onError: (data) => {
-            const errorMessage = data.response?.data?.message;
-            toast({
-              title: 'Conversation error',
-              description: errorMessage ?? 'Conversation creation failed',
-            });
-          },
+        onError: (data) => {
+          const errorMessage = data.response?.data?.message;
+          toast({
+            title: 'Conversation error',
+            description: errorMessage ?? 'Conversation creation failed',
+          });
         },
-      );
-    } else {
-      createConversation(
-        {
-          message: text,
-          userType: UserTypeEnum.User,
-          pageId,
-          context: { agents },
-          title,
-        },
-        {
-          onSuccess: (data) => {
-            commonStore.update({ currentConversationId: data.id });
-            streamConversation({
-              conversationHistoryId: data.ConversationHistory[0].id,
-            });
-          },
-          onError: (data) => {
-            const errorMessage = data.response?.data?.message;
-            toast({
-              title: 'Conversation error',
-              description: errorMessage ?? 'Conversation creation failed',
-            });
-          },
-        },
-      );
-    }
+      },
+    );
   };
 
   const getConversations = () => {
-    let reached = false;
+    const lastConversationHistoryId =
+      conversationResponse?.conversationHistoryId;
+
+    // First sort the conversation history by creation time
+    const sortedConversationHistory = sort(conversationHistory).asc(
+      (ch) => ch.createdAt,
+    );
+
+    const lastIndex = sortedConversationHistory.findIndex(
+      (item) => item.id === lastConversationHistoryId,
+    );
+
+    // Filter out any conversation history items that come after the lastConversationHistoryId
+    const filteredConversationHistory = lastConversationHistoryId
+      ? sortedConversationHistory.filter((_ch, currentIndex: number) => {
+          // Find the index of the last conversation history
+
+          // Only keep items that come before or are the last conversation history
+          return currentIndex <= lastIndex;
+        })
+      : sortedConversationHistory;
 
     return (
       <>
-        {conversationHistory.map(
+        {filteredConversationHistory.map(
           (ch: ConversationHistoryType, index: number) => {
-            if (reached === true && isLoading) {
-              return null;
-            }
-
-            if (conversationHistoryCreated?.id === ch.id) {
-              reached = true;
-            }
-
             return (
               <ConversationItem key={index} conversationHistoryId={ch.id} />
             );
@@ -143,8 +112,12 @@ export const Conversation = observer(({ defaultValue }: ConversationProps) => {
         <div className="flex flex-col h-full justify-start overflow-hidden">
           <ScrollAreaWithAutoScroll>
             {getConversations()}
-            {isLoading && (
-              <StreamingConversation messages={responses} thoughts={thoughts} />
+            {conversationResponse && (
+              <StreamingConversation
+                runId={conversationResponse.id}
+                token={conversationResponse.token}
+                afterStreaming={() => setConversationResponse(undefined)}
+              />
             )}
           </ScrollAreaWithAutoScroll>
 
@@ -152,7 +125,7 @@ export const Conversation = observer(({ defaultValue }: ConversationProps) => {
             <ConversationTextarea
               onSend={onSend}
               defaultValue={defaultValue}
-              isLoading={isLoading}
+              isLoading={conversationResponse}
             />
           </div>
         </div>

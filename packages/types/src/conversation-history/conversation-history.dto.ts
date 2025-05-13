@@ -23,5 +23,4 @@ export class ConversationContext {
   page: Array<Partial<Page>>;
   task: Array<Partial<Task>>;
   previousHistory: PreviousHistory[];
-  userContext: string[];
 }

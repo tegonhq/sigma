@@ -1,21 +1,12 @@
-import { IsEnum, IsObject, IsOptional, IsString } from 'class-validator';
-
-import { UserTypeEnum } from '../conversation-history';
+import { IsObject, IsOptional, IsString } from 'class-validator';
 
 export class CreateConversationDto {
   @IsString()
   message: string;
 
-  @IsEnum(UserTypeEnum)
-  userType: UserTypeEnum;
-
   @IsObject()
   @IsOptional()
   context?: Record<string, any>;
-
-  @IsObject()
-  @IsOptional()
-  thoughts?: Record<string, any>;
 
   @IsString()
   @IsOptional()
@@ -23,9 +14,9 @@ export class CreateConversationDto {
 
   @IsString()
   @IsOptional()
-  taskId?: string;
+  title?: string;
 
   @IsString()
   @IsOptional()
-  title?: string;
+  conversationId?: string;
 }

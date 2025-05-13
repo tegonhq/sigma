@@ -2,7 +2,7 @@ import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { CreateActivityDto } from '@tegonhq/sigma-sdk';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
-import { Workspace } from 'modules/auth/session.decorator';
+import { UserId, Workspace } from 'modules/auth/session.decorator';
 
 import ActivityService from './activity.service';
 
@@ -13,18 +13,17 @@ import ActivityService from './activity.service';
 export class ActivityController {
   constructor(private activityService: ActivityService) {}
 
-  /**
-   * Get all integration definitions in a workspace
-   */
   @Post()
   @UseGuards(AuthGuard)
-  async createActivity(
+  async pushActivity(
     @Workspace() workspaceId: string,
+    @UserId() userId: string,
     @Body() createActivityDto: CreateActivityDto,
   ) {
     return await this.activityService.createActivity(
       createActivityDto,
       workspaceId,
+      userId,
     );
   }
 }

@@ -1,5 +1,5 @@
-import { UserTypeEnum } from '@sigma/types';
 import { useToast } from '@tegonhq/ui';
+import { sort } from 'fast-sort';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 
@@ -12,14 +12,9 @@ import { ScrollAreaWithAutoScroll } from 'common/use-auto-scroll';
 
 import { useConversationHistory } from 'hooks/conversations';
 
-import {
-  useCreateConversationHistoryMutation,
-  useCreateConversationMutation,
-  useStreamConversationMutation,
-} from 'services/conversations';
+import { useCreateConversationMutation } from 'services/conversations';
 
 import { useContextStore } from 'store/global-context-provider';
-import { UserContext } from 'store/user-context';
 
 interface InboxConversationProps {
   activityId: string;
@@ -31,87 +26,69 @@ export const InboxConversation = observer(
     const conversation = conversationsStore.conversations.find(
       (conversation) => conversation.activityId === activityId,
     );
+    const [conversationResponse, setConversationResponse] =
+      React.useState(undefined);
+
     const { mutate: createConversation } = useCreateConversationMutation({});
     const { toast } = useToast();
 
     const { conversationHistory } = useConversationHistory(conversation?.id);
 
-    const user = React.useContext(UserContext);
-    const {
-      mutate: streamConversation,
-      isLoading,
-      thoughts,
-      responses,
-    } = useStreamConversationMutation();
-    const {
-      mutate: createConversationHistory,
-      data: conversationHistoryCreated,
-    } = useCreateConversationHistoryMutation({});
-
     const onSend = (text: string, agents: string[]) => {
-      if (isLoading) {
+      if (!!conversationResponse) {
         return;
       }
 
-      if (conversation) {
-        createConversationHistory(
-          {
-            message: text,
-            userType: UserTypeEnum.User,
-            userId: user.id,
-            conversationId: conversation?.id,
-            context: { agents },
+      createConversation(
+        {
+          message: text,
+          context: { agents },
+          title: text,
+          conversationId: conversation?.id,
+        },
+        {
+          onSuccess: (data) => {
+            commonStore.update({ currentConversationId: data.id });
+            setConversationResponse(data);
           },
-          {
-            onSuccess: (data) => {
-              streamConversation({
-                conversationHistoryId: data.id,
-              });
-            },
+          onError: (data) => {
+            const errorMessage = data.response?.data?.message;
+            toast({
+              title: 'Conversation error',
+              description: errorMessage ?? 'Conversation creation failed',
+            });
           },
-        );
-      } else {
-        createConversation(
-          {
-            message: text,
-            userType: UserTypeEnum.User,
-            context: { agents },
-            title: text,
-          },
-          {
-            onSuccess: (data) => {
-              commonStore.update({ currentConversationId: data.id });
-              streamConversation({
-                conversationHistoryId: data.ConversationHistory[0].id,
-              });
-            },
-            onError: (data) => {
-              const errorMessage = data.response?.data?.message;
-              toast({
-                title: 'Conversation error',
-                description: errorMessage ?? 'Conversation creation failed',
-              });
-            },
-          },
-        );
-      }
+        },
+      );
     };
 
     const getConversations = () => {
-      let reached = false;
+      const lastConversationHistoryId =
+        conversationResponse?.conversationHistoryId;
+
+      // First sort the conversation history by creation time
+      const sortedConversationHistory = sort(conversationHistory).asc(
+        (ch) => ch.createdAt,
+      );
+
+      const lastIndex = sortedConversationHistory.findIndex(
+        (item) => item.id === lastConversationHistoryId,
+      );
+
+      // Filter out any conversation history items that come after the lastConversationHistoryId
+      const filteredConversationHistory = lastConversationHistoryId
+        ? sortedConversationHistory.filter((_ch, currentIndex: number) => {
+            // Find the index of the last conversation history
+
+            // Only keep items that come before or are the last conversation history
+            return currentIndex <= lastIndex;
+          })
+        : sortedConversationHistory;
 
       return (
         <>
-          {conversationHistory.map(
+          {filteredConversationHistory.map(
             (ch: ConversationHistoryType, index: number) => {
-              if (reached === true && isLoading) {
-                return null;
-              }
-
-              if (conversationHistoryCreated?.id === ch.id) {
-                reached = true;
-              }
-
               return (
                 <ConversationItem key={index} conversationHistoryId={ch.id} />
               );
@@ -123,18 +100,22 @@ export const InboxConversation = observer(
 
     return (
       <div className="flex flex-col h-full justify-center w-full items-center">
-        <div className="flex flex-col justify-end overflow-hidden h-full gap-4 max-w-[97ch]">
+        <div className="flex flex-col justify-end overflow-hidden h-full max-w-[97ch]">
           <ScrollAreaWithAutoScroll>
             {getConversations()}
-            {isLoading && (
-              <StreamingConversation messages={responses} thoughts={thoughts} />
+            {conversationResponse && (
+              <StreamingConversation
+                runId={conversationResponse.id}
+                token={conversationResponse.token}
+                afterStreaming={() => setConversationResponse(undefined)}
+              />
             )}
           </ScrollAreaWithAutoScroll>
 
           <ConversationTextarea
             onSend={onSend}
-            className="bg-grayAlpha-100 m-4"
-            isLoading={isLoading}
+            className="bg-grayAlpha-100 m-4 mt-0"
+            isLoading={!!conversationResponse}
           />
         </div>
       </div>

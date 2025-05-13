@@ -12,7 +12,55 @@ export default class ActivityService {
     private workspace: WorkspacesService,
   ) {}
 
-  async createActivity(createActivity: CreateActivityDto, workspaceId: string) {
+  async createActivity(
+    createActivity: CreateActivityDto,
+    workspaceId: string,
+    userId: string,
+  ) {
+    const exisitingActivity = await this.prisma.activity.findFirst({
+      where: {
+        sourceId: createActivity.sourceId,
+      },
+      include: {
+        Conversation: true,
+        integrationAccount: {
+          include: {
+            integrationDefinition: true,
+          },
+        },
+      },
+    });
+
+    if (exisitingActivity) {
+      // Create just conversation history for the existing conversation and add a new message to that
+      const conversation = exisitingActivity.Conversation[0];
+      const integrationDefinition =
+        exisitingActivity.integrationAccount?.integrationDefinition;
+
+      const conversationHistory = await this.prisma.conversationHistory.create({
+        data: {
+          conversationId: conversation.id,
+          userId,
+          message: `Activity from ${integrationDefinition.name} \n Content: ${createActivity.text}`,
+          userType: UserTypeEnum.User,
+        },
+      });
+
+      await tasks.trigger(
+        'chat',
+        {
+          conversationHistoryId: conversationHistory.id,
+          conversationId: conversation.id,
+          autoMode: true,
+          activity: exisitingActivity.id,
+          context: {},
+        },
+        { tags: [conversationHistory.id, workspaceId, exisitingActivity.id] },
+      );
+
+      return exisitingActivity;
+    }
+
     return await this.prisma.activity.create({
       data: {
         ...createActivity,
