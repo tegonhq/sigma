@@ -1,9 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { convertTiptapJsonToHtml } from '@sigma/editor-extensions';
 import {
-  contextSystemPrompt,
-  contextUserPrompt,
-  LLMModelEnum,
   PageTypeEnum,
   Workspace,
   WorkspaceRequestParamsDto,
@@ -191,58 +187,6 @@ export default class WorkspacesService {
         id: WorkspaceIdRequestBody.workspaceId,
       },
     });
-  }
-
-  async getRelevantContext(workspaceId: string, query: string) {
-    const userContextPage = await this.prisma.page.findFirst({
-      where: {
-        workspaceId,
-        type: 'Context',
-      },
-    });
-    const userContextPageHTML = userContextPage.description
-      ? convertTiptapJsonToHtml(JSON.parse(userContextPage.description))
-      : '';
-
-    try {
-      const contextResponse = await this.aiRequestsService.getLLMRequest(
-        {
-          messages: [
-            {
-              role: 'system',
-              content: contextSystemPrompt,
-            },
-            {
-              role: 'user',
-              content: contextUserPrompt
-                .replace('{{USER_PREFERENCES}}', userContextPageHTML)
-                .replace('{{CURRENT_CONVERSATION_MESSAGE}}', query),
-            },
-          ],
-          llmModel: LLMModelEnum.GPT41MINI,
-          model: 'context',
-        },
-        workspaceId,
-      );
-
-      const outputRegex = /<output>\s*(.*?)\s*<\/output>/s;
-      const match = contextResponse.match(outputRegex);
-
-      if (match && match[1]) {
-        try {
-          return JSON.parse(match[1]);
-        } catch (e) {
-          this.logger.error({
-            message: `Failed to parse context response: ${e}`,
-          });
-          return [];
-        }
-      }
-    } catch (e) {
-      this.logger.error(e);
-    }
-
-    return [];
   }
 
   async toggleDailySync(workspaceId: string, value: boolean) {

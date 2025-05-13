@@ -5,7 +5,6 @@ import {
   Get,
   Param,
   Post,
-  Query,
   Req,
   Res,
   UseGuards,
@@ -54,15 +53,6 @@ export class WorkspacesController {
     @Param('workspaceSlug') workspaceSlug: string,
   ): Promise<Workspace> {
     return await this.workspacesService.getWorkspaceBySlug(workspaceSlug);
-  }
-
-  @Get('relevant-context')
-  @UseGuards(AuthGuard)
-  async getRelevantContext(
-    @WorkspaceDecorator() workspaceId: string,
-    @Query('query') query: string,
-  ) {
-    return await this.workspacesService.getRelevantContext(workspaceId, query);
   }
 
   @Post('daily-sync')

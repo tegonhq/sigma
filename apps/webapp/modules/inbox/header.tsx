@@ -34,7 +34,7 @@ interface HeaderProps {
   notificationId?: string;
 }
 
-export const Header = observer(({ actions, notificationId }: HeaderProps) => {
+export const Header = observer(({ notificationId }: HeaderProps) => {
   const [deleteAlert, setDeleteAlert] = React.useState(false);
   const [deleteReadAlert, setDeleteReadAlert] = React.useState(false);
   const { mutate: deleteNotification } = useDeleteNotificationMutation({});

@@ -3,14 +3,9 @@ import { CreateActivityDto, UserTypeEnum } from '@tegonhq/sigma-sdk';
 import { tasks } from '@trigger.dev/sdk/v3';
 import { PrismaService } from 'nestjs-prisma';
 
-import WorkspacesService from 'modules/workspaces/workspaces.service';
-
 @Injectable()
 export default class ActivityService {
-  constructor(
-    private prisma: PrismaService,
-    private workspace: WorkspacesService,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
   async createActivity(
     createActivity: CreateActivityDto,
@@ -108,14 +103,6 @@ export default class ActivityService {
     });
 
     const conversationHistory = conversation.ConversationHistory[0];
-    const userContext = (await this.workspace.getRelevantContext(
-      conversation.workspaceId,
-      conversationHistory.message,
-    )) as string[];
-
-    if (userContext.length === 0) {
-      return;
-    }
 
     await tasks.trigger(
       'chat',
@@ -124,9 +111,7 @@ export default class ActivityService {
         conversationId: conversation.id,
         autoMode: true,
         activity: activity.id,
-        context: {
-          userContext,
-        },
+        context: {},
       },
       { tags: [conversationHistory.id, activity.workspaceId, activity.id] },
     );
