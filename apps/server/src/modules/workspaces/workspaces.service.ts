@@ -11,9 +11,6 @@ import { PrismaService } from 'nestjs-prisma';
 import supertokens from 'supertokens-node';
 import Session from 'supertokens-node/recipe/session';
 
-import AIRequestsService from 'modules/ai-requests/ai-requests.services';
-import { LoggerService } from 'modules/logger/logger.service';
-
 import { OnboardingContent } from './constants';
 import {
   CreateInitialResourcesDto,
@@ -24,14 +21,9 @@ import { ListsService } from '../lists/lists.service';
 
 @Injectable()
 export default class WorkspacesService {
-  private readonly logger: LoggerService = new LoggerService(
-    'WorkspaceService',
-  );
-
   constructor(
     private prisma: PrismaService,
     private listsService: ListsService,
-    private aiRequestsService: AIRequestsService,
   ) {}
 
   async createOnboardingListAndTasks(workspaceId: string) {
