@@ -2,43 +2,42 @@ import { EditorContent, useEditor } from '@tiptap/react';
 import React from 'react';
 
 import { extensionsForConversation } from 'common/editor';
-import { TaskExtension } from 'common/editor/task-extension';
 
 import { skillExtension } from './skill-extension';
 import { CustomMention } from './suggestion-extension';
+import { useTriggerStream } from './use-trigger-stream';
 
 interface StreamingConversationProps {
-  thoughts: string[];
-  messages: string[];
+  runId: string;
+  token: string;
+  afterStreaming: () => void;
 }
 
 export const StreamingConversation = ({
-  thoughts,
-  messages,
+  runId,
+  token,
+  afterStreaming,
 }: StreamingConversationProps) => {
-  const onTaskExtensionUpdate = () => {
-    return true;
-  };
+  const { message, isEnd } = useTriggerStream(runId, token);
 
   const messagesEditor = useEditor({
-    extensions: [
-      ...extensionsForConversation,
-      TaskExtension({ update: onTaskExtensionUpdate }),
-      skillExtension,
-      CustomMention,
-    ],
+    extensions: [...extensionsForConversation, skillExtension, CustomMention],
     editable: false,
-    content: thoughts.join(''),
+    content: '',
   });
 
   React.useEffect(() => {
-    messagesEditor?.commands.setContent(messages.join(''));
+    messagesEditor?.commands.setContent(message);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [messages.length]);
+  }, [message]);
 
-  if (messages.length === 0) {
-    return null;
-  }
+  React.useEffect(() => {
+    if (isEnd) {
+      afterStreaming();
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEnd]);
 
   return (
     <div className="flex gap-2 py-4 px-5">

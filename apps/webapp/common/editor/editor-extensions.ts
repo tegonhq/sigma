@@ -176,12 +176,9 @@ export const extensionsForConversation = [
   heading,
   AIHighlight,
   fileExtension,
-  TaskItem,
-  TaskList,
   imageExtension,
   HighlightExtension,
   datePageExtension,
-  LinkTaskExtension,
   Table.configure({
     resizable: true,
   }),

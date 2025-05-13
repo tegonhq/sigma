@@ -11,6 +11,8 @@ import { RightSideLayout } from 'layouts/right-side-layout';
 
 import { useScope } from 'hooks/use-scope';
 
+import { useReadNotificationtMutation } from 'services/notifications';
+
 import { useContextStore } from 'store/global-context-provider';
 
 import { Header } from './header';
@@ -23,15 +25,23 @@ export const Inbox = observer(() => {
 
   const [currentNotification, setCurrentNotification] =
     React.useState(undefined);
+  const notification = notificationsStore.getNotification(currentNotification);
+
+  const { mutate: readNotification } = useReadNotificationtMutation({});
 
   const getActivityId = () => {
-    const notification =
-      notificationsStore.getNotification(currentNotification);
-    return notification.modelId;
+    return notification?.modelId;
   };
 
+  React.useEffect(() => {
+    if (notification && !notification?.read) {
+      readNotification(currentNotification);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [notification]);
+
   return (
-    <RightSideLayout header={<Header />}>
+    <RightSideLayout header={<Header notificationId={notification?.id} />}>
       <ResizablePanelGroup direction="horizontal">
         <ResizablePanel
           maxSize={50}
@@ -54,9 +64,7 @@ export const Inbox = observer(() => {
           collapsedSize={0}
           className="flex flex-col w-full h-[calc(100vh_-_54px)]"
         >
-          {currentNotification && (
-            <InboxConversation activityId={getActivityId()} />
-          )}
+          {notification && <InboxConversation activityId={getActivityId()} />}
         </ResizablePanel>
       </ResizablePanelGroup>
     </RightSideLayout>

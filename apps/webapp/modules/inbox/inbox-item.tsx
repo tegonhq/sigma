@@ -87,7 +87,7 @@ export const InboxItem = observer(
 
             <div className="text-muted-foreground">
               <ReactTimeAgo
-                date={new Date(notification.updatedAt)}
+                date={new Date(notification.createdAt)}
                 timeStyle="twitter"
               />
             </div>

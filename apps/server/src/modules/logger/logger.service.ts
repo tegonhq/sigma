@@ -168,6 +168,7 @@ export class LoggerService {
   }
 
   error(input: LogInput) {
+    console.log(input);
     this.logger.error(input);
   }
 

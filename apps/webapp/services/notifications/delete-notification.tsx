@@ -1,16 +1,17 @@
-import { createConversationHistory } from '@sigma/services';
+import axios from 'axios';
 import { useMutation } from 'react-query';
-
-import type { ConversationHistoryType } from 'common/types';
 
 interface MutationParams {
   onMutate?: () => void;
-  onSuccess?: (data: ConversationHistoryType) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onError?: (error: any) => void;
+  onSuccess?: () => void;
+  onError?: (error: string) => void;
 }
 
-export function useCreateConversationHistoryMutation({
+const deleteNotification = async (notificationId: string) => {
+  return axios.delete(`/api/v1/notifications/${notificationId}`);
+};
+
+export function useDeleteNotificationMutation({
   onMutate,
   onSuccess,
   onError,
@@ -26,11 +27,11 @@ export function useCreateConversationHistoryMutation({
     onError && onError(errorText);
   };
 
-  const onMutationSuccess = (data: ConversationHistoryType) => {
-    onSuccess && onSuccess(data);
+  const onMutationSuccess = () => {
+    onSuccess && onSuccess();
   };
 
-  return useMutation(createConversationHistory, {
+  return useMutation(deleteNotification, {
     onError: onMutationError,
     onMutate: onMutationTriggered,
     onSuccess: onMutationSuccess,

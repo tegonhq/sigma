@@ -1,5 +1,5 @@
-import { UserTypeEnum } from '@sigma/types';
 import { ArrowLeft, Button, cn, useToast } from '@tegonhq/ui';
+import { sort } from 'fast-sort';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 
@@ -8,13 +8,7 @@ import { ScrollAreaWithAutoScroll } from 'common/use-auto-scroll';
 
 import { useConversationHistory } from 'hooks/conversations';
 
-import {
-  useCreateConversationHistoryMutation,
-  useCreateConversationMutation,
-  useStreamConversationMutation,
-} from 'services/conversations';
-
-import { UserContext } from 'store/user-context';
+import { useCreateConversationMutation } from 'services/conversations';
 
 import { ConversationItem } from '../conversation-item';
 import { ConversationTextarea } from '../conversation-textarea';
@@ -34,89 +28,67 @@ export const QuickConverstion = observer(
     setConversationId,
     defaultValue,
   }: QuickConverstionProps) => {
-    const [conversationHistoryId, setConversationHistoryId] =
-      React.useState(undefined);
-    const user = React.useContext(UserContext);
     const { conversationHistory } = useConversationHistory(conversationId);
     const { mutate: createConversation } = useCreateConversationMutation({});
     const { toast } = useToast();
-
-    const {
-      mutate: streamConversation,
-      isLoading,
-      thoughts,
-      responses,
-    } = useStreamConversationMutation();
-    const { mutate: createConversationHistory } =
-      useCreateConversationHistoryMutation({});
+    const [conversationResponse, setConversationResponse] =
+      React.useState(undefined);
 
     const onSend = (text: string, agents: string[], title: string) => {
-      if (isLoading) {
+      if (!!conversationResponse) {
         return;
       }
 
-      if (conversationId) {
-        createConversationHistory(
-          {
-            message: text,
-            userType: UserTypeEnum.User,
-            userId: user.id,
-            conversationId,
-            context: { agents },
+      createConversation(
+        {
+          message: text,
+          context: { agents },
+          title,
+          conversationId,
+        },
+        {
+          onSuccess: (data) => {
+            setConversationId(data.conversationId);
+            setConversationResponse(data);
           },
-          {
-            onSuccess: (data) => {
-              setConversationHistoryId(data.id);
-
-              streamConversation({
-                conversationHistoryId: data.id,
-              });
-            },
+          onError: (data) => {
+            const errorMessage = data.response?.data?.message;
+            toast({
+              title: 'Conversation error',
+              description: errorMessage ?? 'Conversation creation failed',
+            });
           },
-        );
-      } else {
-        createConversation(
-          {
-            message: text,
-            userType: UserTypeEnum.User,
-            context: { agents },
-            title,
-          },
-          {
-            onSuccess: (data) => {
-              setConversationId(data.id);
-              setConversationHistoryId(data.ConversationHistory[0].id);
-              streamConversation({
-                conversationHistoryId: data.ConversationHistory[0].id,
-              });
-            },
-            onError: (data) => {
-              const errorMessage = data.response?.data?.message;
-              toast({
-                title: 'Conversation error',
-                description: errorMessage ?? 'Conversation creation failed',
-              });
-            },
-          },
-        );
-      }
+        },
+      );
     };
 
     const getConversations = () => {
-      let reached = false;
+      const lastConversationHistoryId =
+        conversationResponse?.conversationHistoryId;
+
+      // First sort the conversation history by creation time
+      const sortedConversationHistory = sort(conversationHistory).asc(
+        (ch) => ch.createdAt,
+      );
+
+      const lastIndex = sortedConversationHistory.findIndex(
+        (item) => item.id === lastConversationHistoryId,
+      );
+
+      // Filter out any conversation history items that come after the lastConversationHistoryId
+      const filteredConversationHistory = lastConversationHistoryId
+        ? sortedConversationHistory.filter((_ch, currentIndex: number) => {
+            // Find the index of the last conversation history
+
+            // Only keep items that come before or are the last conversation history
+            return currentIndex <= lastIndex;
+          })
+        : sortedConversationHistory;
 
       return (
         <>
-          {conversationHistory.map(
+          {filteredConversationHistory.map(
             (ch: ConversationHistoryType, index: number) => {
-              if (reached === true && isLoading) {
-                return null;
-              }
-
-              if (conversationHistoryId === ch.id) {
-                reached = true;
-              }
-
               return (
                 <ConversationItem key={index} conversationHistoryId={ch.id} />
               );
@@ -136,15 +108,19 @@ export const QuickConverstion = observer(
         <ScrollAreaWithAutoScroll className={cn('relative mt-0')}>
           {getConversations()}
 
-          {isLoading && (
-            <StreamingConversation messages={responses} thoughts={thoughts} />
+          {conversationResponse && (
+            <StreamingConversation
+              runId={conversationResponse.id}
+              token={conversationResponse.token}
+              afterStreaming={() => setConversationResponse(undefined)}
+            />
           )}
         </ScrollAreaWithAutoScroll>
         <ConversationTextarea
           onSend={onSend}
           defaultValue={defaultValue}
           className="m-2 mt-0 mb-3 bg-background-3"
-          isLoading={isLoading}
+          isLoading={!!conversationResponse}
         />
       </>
     );

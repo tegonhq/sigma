@@ -32,7 +32,7 @@ export class ConversationController {
     @Workspace() workspaceId: string,
     @UserId() userId: string,
     @Body() conversationData: CreateConversationDto,
-  ): Promise<Conversation> {
+  ) {
     return await this.conversationService.createConversation(
       workspaceId,
       userId,
