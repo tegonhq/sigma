@@ -28,6 +28,7 @@ import {
   DeleteAllNotificationTaskAlert,
   DeleteNotificationTaskAlert,
 } from './delete-notification-alert';
+import { Shortcut } from 'common/shortcut';
 
 interface HeaderProps {
   actions?: React.ReactNode;
@@ -88,7 +89,12 @@ export const Header = observer(({ notificationId }: HeaderProps) => {
       </div>
       <div className="pr-2">
         {notificationId && (
-          <Button variant="secondary" onClick={() => setDeleteAlert(true)}>
+          <Button
+            variant="secondary"
+            onClick={() => setDeleteAlert(true)}
+            className="gap-1 items-center"
+          >
+            <Shortcut shortcut="⌫" className="top-[1px] relative" />
             Delete notification
           </Button>
         )}

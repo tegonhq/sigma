@@ -1,0 +1,101 @@
+{
+  "$schema": "https://mintlify.com/schema.json",
+  "name": "Docs",
+  "logo": {
+    "dark": "/logo/dark.svg",
+    "light": "/logo/light.svg"
+  },
+  "openapi": [ "/openapi.yml" ],
+  "theme": "quill",
+  "layout": "sidenav",
+  "favicon": "/favicon.svg",
+  "colors": {
+    "primary": "#4b61d5",
+    "light": "#4b61d5",
+    "dark": "#4b61d5",
+    "anchors": {
+      "from": "#4b61d5",
+      "to": "#4b61d5"
+    },
+    "background": {
+      "light": "#fff",
+      "dark": "#191919"
+    }
+  },
+  "rounded": "default",
+  "api": {
+    "playground": {
+      "mode": "simple"
+    },
+    "maintainOrder": true
+  },
+  "feedback": {
+    "suggestEdit": true,
+    "raiseIssue": true,
+    "thumbsRating": true
+  },
+  "topbarLinks": [
+    {
+      "name": "Discord",
+      "url": "https://discord.gg/dVTC3BmgEq"
+    }
+  ],
+  "topbarCtaButton": {
+    "type": "github",
+    "url": "https://github.com/tegonhq/sigma"
+  },
+  "redirects": [
+    {
+      "source": "/fundamentals/actions",
+      "destination": "/actions/overview"
+    },
+    {
+      "source": "/fundamentals/issues",
+      "destination": "/guides/issues"
+    },
+    {
+      "source": "/fundamentals/triage",
+      "destination": "/guides/triage"
+    },
+    {
+      "source": "/fundamentals/cycles",
+      "destination": "/guides/cycles"
+    }
+  ],
+  "anchors": [
+    {
+      "name": "API",
+      "icon": "brackets-curly",
+      "url": "api-reference"
+    }
+  ],
+  "navigation": [
+    {
+      "group": "Get Started",
+      "pages": [
+        "introduction",
+        "quickstart",
+        "changelog"
+      ]
+    },
+    {
+      "group": "Getting started",
+      "pages": [
+        "actions/overview",
+        "actions/core-concepts",
+        "actions/config"
+      ]
+    },
+    {
+      "group": "Open source",
+      "pages": [
+        "oss/local-setup",
+        "oss/self-deployment"
+      ]
+    }
+  ],
+  "footerSocials": {
+    "twitter": "https://x.com/tegonhq",
+    "linkedin": "https://www.linkedin.com/company/tegon-ai"
+  }
+}
