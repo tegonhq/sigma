@@ -95,8 +95,14 @@ export const AppSidebar = observer(
       <Sidebar variant="inset" {...props}>
         <SidebarHeader className="pl-0">
           <SidebarMenu>
-            <SidebarMenuItem>
-              <WorkspaceDropdown />
+            <SidebarMenuItem className="pl-2">
+              <Image
+                src="/logo_light.svg"
+                alt="logo"
+                key={1}
+                width={20}
+                height={20}
+              />
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarHeader>
@@ -244,16 +250,9 @@ export const AppSidebar = observer(
             </SidebarMenu>
           </SidebarGroup>
         </SidebarContent>
-        <SidebarFooter>
+        <SidebarFooter className="pl-0">
           <div className="text-sm text-muted-foreground flex items-center justify-between gap-2">
-            <Image
-              src="/logo_light.svg"
-              alt="logo"
-              key={1}
-              width={20}
-              height={20}
-            />
-            v{publicRuntimeConfig.NEXT_PUBLIC_VERSION}
+            <WorkspaceDropdown />v{publicRuntimeConfig.NEXT_PUBLIC_VERSION}
           </div>
           <Updates />
         </SidebarFooter>

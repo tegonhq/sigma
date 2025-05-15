@@ -62,7 +62,6 @@ export const SignalsEditor = observer(({ page }: { page: PageType }) => {
       url: getSocketURL(),
       name: page.id,
       document: ydoc,
-
       websocketProvider: socket,
     });
     setDoc(ydoc);
