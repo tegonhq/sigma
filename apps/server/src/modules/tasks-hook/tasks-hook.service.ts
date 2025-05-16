@@ -14,6 +14,7 @@ import { generateSummaryTask } from 'triggers/task/generate-summary';
 import { IntegrationsService } from 'modules/integrations/integrations.service';
 import { PagesService } from 'modules/pages/pages.service';
 import { TaskOccurenceService } from 'modules/task-occurrence/task-occurrence.service';
+import { TaskVectorService } from 'modules/tasks/tasks-vector.service';
 import { UsersService } from 'modules/users/users.service';
 
 import { getSummaryData, handleCalendarTask } from '../tasks/tasks.utils';
@@ -26,6 +27,7 @@ export class TaskHooksService {
     private prisma: PrismaService,
     private taskOccurenceService: TaskOccurenceService,
     private integrationService: IntegrationsService,
+    private taskVectorService: TaskVectorService,
   ) {}
 
   async executeHookWithId(
@@ -61,6 +63,7 @@ export class TaskHooksService {
       this.handleScheduleTask(task, context),
       this.handleListTask(task, context),
       this.handleParentPageTask(task, context),
+      this.handleTaskVector(task, context),
       // this.handleCalendarTask(task, context),
       // this.handleGenerateSummary(task, context),
     ]);
@@ -352,6 +355,19 @@ export class TaskHooksService {
         }
 
         return { message: 'Handled parent page task delete' };
+    }
+  }
+
+  async handleTaskVector(task: Task, context: TaskHookContext) {
+    switch (context.action) {
+      case 'create':
+      case 'update':
+        await this.taskVectorService.indexTask(task.id);
+        return { message: 'Upsert task vector' };
+
+      case 'delete':
+        await this.taskVectorService.deleteTaskIndex(task.id);
+        return { message: 'task vector is deleted' };
     }
   }
 }

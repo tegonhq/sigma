@@ -8,11 +8,12 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { CreateTaskDto } from '@tegonhq/sigma-sdk';
+import { CreateTaskDto, UnifiedSearchOptionsDto } from '@tegonhq/sigma-sdk';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
 import { UserId, Workspace } from 'modules/auth/session.decorator';
 
+import { TaskVectorService } from './tasks-vector.service';
 import { TasksService } from './tasks.service';
 
 @Controller({
@@ -20,15 +21,21 @@ import { TasksService } from './tasks.service';
   path: 'tasks',
 })
 export class TasksController {
-  constructor(private tasksService: TasksService) {}
+  constructor(
+    private tasksService: TasksService,
+    private tasksVectorService: TaskVectorService,
+  ) {}
 
   @Get('search')
   @UseGuards(AuthGuard)
   async searchTasks(
-    @Query('query') query: string,
+    @Query() searchOptions: UnifiedSearchOptionsDto,
     @Workspace() workspaceId: string,
   ) {
-    return await this.tasksService.searchTasks(query, workspaceId);
+    return await this.tasksVectorService.searchTasks(
+      workspaceId,
+      searchOptions,
+    );
   }
 
   @Get(':taskId')

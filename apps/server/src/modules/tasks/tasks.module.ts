@@ -9,9 +9,11 @@ import { PagesService } from 'modules/pages/pages.service';
 import { TaskOccurenceModule } from 'modules/task-occurrence/task-occurrence.model';
 import { TaskOccurenceService } from 'modules/task-occurrence/task-occurrence.service';
 import { UsersService } from 'modules/users/users.service';
+import { VectorStoreModule } from 'modules/vector/vector.module';
 
 import { TasksAIController } from './tasks-ai.controller';
 import TasksAIService from './tasks-ai.service';
+import { TaskVectorService } from './tasks-vector.service';
 import { TasksController } from './tasks.controller';
 import { TasksService } from './tasks.service';
 
@@ -21,6 +23,7 @@ import { TasksService } from './tasks.service';
     ConversationModule,
     ContentModule,
     TaskOccurenceModule,
+    VectorStoreModule,
   ],
   controllers: [TasksController, TasksAIController],
   providers: [
@@ -32,6 +35,7 @@ import { TasksService } from './tasks.service';
     AIRequestsService,
     IntegrationsService,
     PagesService,
+    TaskVectorService,
   ],
   exports: [TasksService],
 })

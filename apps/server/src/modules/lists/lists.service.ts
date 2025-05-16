@@ -70,13 +70,13 @@ export class ListsService {
       },
     });
 
+    if (!list) {
+      throw new NotFoundException(`List with ID ${listId} not found`);
+    }
+
     if (list.page?.description) {
       const descriptionJson = JSON.parse(list.page.description);
       list.page.description = convertTiptapJsonToHtml(descriptionJson);
-    }
-
-    if (!list) {
-      throw new NotFoundException(`List with ID ${listId} not found`);
     }
 
     return list;

@@ -63,6 +63,12 @@ export class TasksService {
         page: { select: PageSelect },
       },
     });
+
+    if (task.page.description) {
+      task.page.description = convertTiptapJsonToHtml(
+        JSON.parse(task.page.description),
+      );
+    }
     return task;
   }
 

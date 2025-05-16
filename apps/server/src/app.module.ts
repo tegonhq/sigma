@@ -33,6 +33,7 @@ import { TasksModule } from 'modules/tasks/tasks.module';
 import { TasksHookModule } from 'modules/tasks-hook/tasks-hooks.module';
 import { TriggerdevModule } from 'modules/triggerdev/triggerdev.module';
 import { UsersModule } from 'modules/users/users.module';
+import { VectorStoreModule } from 'modules/vector/vector.module';
 import { WebhookModule } from 'modules/webhook/webhook.module';
 import { WorkspacesModule } from 'modules/workspaces/workspaces.module';
 
@@ -116,6 +117,7 @@ import { AppService } from './app.service';
     PromptsModule,
     ActivityModule,
     NotificationsModule,
+    VectorStoreModule,
   ],
   controllers: [AppController],
   providers: [
