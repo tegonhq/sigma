@@ -72,6 +72,11 @@ export class TaskVectorService implements OnModuleInit {
         field_name: 'parentId',
         field_schema: 'keyword',
       });
+
+      await this.vectorStore.getQdrantClient().createPayloadIndex('tasks', {
+        field_name: 'unplanned',
+        field_schema: 'bool',
+      });
     }
   }
 
@@ -82,6 +87,8 @@ export class TaskVectorService implements OnModuleInit {
     });
     const taskContent = `id:${task.id} number:#${task.number} status:${task.status || ''} title:${task.page.title}`;
     const embedding = await this.vectorStore.generateEmbedding(taskContent);
+
+    const isPlanned = !!task.startTime || !!task.recurrence;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const payload: Record<string, any> = {
@@ -95,6 +102,7 @@ export class TaskVectorService implements OnModuleInit {
       tags: task.tags,
       dueDate: task.dueDate ? task.dueDate.getTime() : undefined,
       parentId: task.parentId,
+      unplanned: isPlanned,
     };
 
     // Upsert into Qdrant
@@ -170,11 +178,20 @@ export class TaskVectorService implements OnModuleInit {
       });
     }
 
+    if (parsedQuery.filters.isUnplanned) {
+      filter.must.push({
+        key: 'unplanned',
+        match: { value: true },
+      });
+    }
+
+    const limit = Number(options.limit) || 20;
+    const page = Number(options.page) || 0;
     // Search parameters
     const searchParams = {
       filter,
-      limit: options.limit || 20,
-      offset: options.offset || 0,
+      limit,
+      offset: page * limit,
       with_payload: true,
     };
 
@@ -197,21 +214,24 @@ export class TaskVectorService implements OnModuleInit {
         score: point.score,
       }));
     } else {
-      const scrollResults = await this.vectorStore
+      const { points } = await this.vectorStore
         .getQdrantClient()
         .scroll('tasks', searchParams);
-      taskIds = scrollResults.points.map((point) => ({
+
+      taskIds = points.map((point) => ({
         id: point.payload.id,
         score: 1.0, // Default score for non-vector searches
       }));
     }
 
-    return await Promise.all(
+    const tasks = await Promise.all(
       taskIds.map(async ({ id, score }) => {
         const task = await this.tasksService.getTaskById(id);
         return { ...task, relevanceScore: score };
       }),
     );
+
+    return { tasks };
   }
 
   /**

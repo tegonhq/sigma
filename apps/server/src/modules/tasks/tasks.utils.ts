@@ -168,6 +168,10 @@ export function parseSearchQuery(query: string): ParsedQuery {
           if (value.toLowerCase() === 'subtask') {
             result.filters.isSubtask = true;
           }
+
+          if (value.toLowerCase() === 'unplanned') {
+            result.filters.isUnplanned = true;
+          }
           break;
 
         case 'number':

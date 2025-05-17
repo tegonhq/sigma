@@ -1,16 +1,16 @@
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 export class UnifiedSearchOptionsDto {
   @IsString()
   query: string;
 
   @IsOptional()
-  @IsNumber()
-  limit?: number;
+  @IsString()
+  limit?: string;
 
   @IsOptional()
-  @IsNumber()
-  offset?: number;
+  @IsString()
+  page?: string;
 }
 
 export interface ParsedQuery {
@@ -22,5 +22,6 @@ export interface ParsedQuery {
     dueDate?: { before?: Date; after?: Date };
     isSubtask?: boolean;
     number?: string;
+    isUnplanned?: boolean;
   };
 }
