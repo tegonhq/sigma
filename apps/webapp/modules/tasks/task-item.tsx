@@ -22,7 +22,8 @@ interface TaskListItemProps {
 
 export const TaskListItem = observer(
   ({ taskId: taskIdWithOccurrence }: TaskListItemProps) => {
-    const { tasksStore, pagesStore, taskOccurrencesStore } = useContextStore();
+    const { tasksStore, pagesStore, taskOccurrencesStore, agentWorklogsStore } =
+      useContextStore();
     const { openTask } = React.useContext(TaskViewContext);
     const {
       selectedTasks,
@@ -33,6 +34,9 @@ export const TaskListItem = observer(
     } = useApplication();
     const taskId = taskIdWithOccurrence.split('__')[0];
     const taskOccurrenceId = taskIdWithOccurrence.split('__')[1];
+    const agentWorklogForTask =
+      agentWorklogsStore.getAgentWorklogForTask(taskId);
+
     const taskOccurrence = taskOccurrencesStore.getTaskOccurrenceWithTaskAndId(
       taskId,
       taskOccurrenceId,
@@ -183,6 +187,15 @@ export const TaskListItem = observer(
                       task.startTime ? taskOccurrenceId : undefined
                     }
                   />
+
+                  {agentWorklogForTask && (
+                    <span
+                      className="text-sm font-medium text-muted-foreground bg-gradient-to-r from-[#F48FD7] via-[#6528FD] to-[#F48FD7] 
+            bg-[length:200%_100%] bg-clip-text text-transparent animate-gradient-slide"
+                    >
+                      Thinking...
+                    </span>
+                  )}
                 </div>
               </div>
             </div>

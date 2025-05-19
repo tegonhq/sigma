@@ -46,6 +46,8 @@ export async function restoreOrCreateWindow() {
 
   appWindows.main.focus();
 
+  //Getting user devices:
+
   return appWindows.main;
 }
 

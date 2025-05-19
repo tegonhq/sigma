@@ -69,7 +69,7 @@ export class PagesController {
 
   @Post(':pageId')
   @UseGuards(AuthGuard)
-  async updateIssue(
+  async updatePage(
     @Param() pageParams: PageRequestParamsDto,
     @Body() pageData: UpdatePageDto,
   ): Promise<PublicPage> {

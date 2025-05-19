@@ -27,8 +27,9 @@ export class ListsController {
   async createList(
     @Workspace() workspaceId: string,
     @Body('title') title?: string,
+    @Body('favourite') favourite?: boolean,
   ): Promise<List> {
-    return await this.lists.createList(workspaceId, title, '');
+    return await this.lists.createList(workspaceId, title, favourite, '');
   }
 
   @Post(':listId')

@@ -83,6 +83,9 @@ export const AgentWorklogsStore: IAnyStateTreeNode = types
     get getAgentWorklogs() {
       return self.agentWorklogs;
     },
+    getAgentWorklogForTask(taskId: string) {
+      return self.agentWorklogs.find((ag) => ag.modelId === taskId);
+    },
   }));
 
 export interface AgentWorklogStoreType {
@@ -94,4 +97,5 @@ export interface AgentWorklogStoreType {
   load: () => Promise<void>;
 
   getAgentWorklogs: AgentWorklogType[];
+  getAgentWorklogForTask: (taskId: string) => AgentWorklogType[];
 }

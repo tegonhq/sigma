@@ -17,7 +17,10 @@ export async function createMainWindow() {
     minWidth: 700, // Set minimum width
     minHeight: 700, // Set minimum height
     resizable: true,
+    transparent: true,
+    titleBarStyle: 'hiddenInset',
     movable: true,
+    hasShadow: true,
     skipTaskbar: true, // Hides it from the taskbar
     icon: path.join(__dirname, '/../../../buildResources/icon.png'),
     frame: true,

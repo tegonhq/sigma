@@ -20,7 +20,7 @@ export const Header = observer(({ actions }: HeaderProps) => {
         <Breadcrumb>
           <BreadcrumbList className="gap-1">
             <BreadcrumbItem>
-              <BreadcrumbPage className="text-base">Days</BreadcrumbPage>
+              <BreadcrumbPage className="text-base">Today</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>

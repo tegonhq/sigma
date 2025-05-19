@@ -152,6 +152,7 @@ export const Editor = ({
           JSON.stringify({
             json,
             text: editor.getText(),
+            html: editor.getHTML(),
           }),
         );
     },

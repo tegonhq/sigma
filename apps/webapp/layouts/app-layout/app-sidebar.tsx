@@ -49,22 +49,55 @@ export const AppSidebar = observer(
       },
     });
 
+    // Use a ref to track if 'g' was pressed
+    const gKeyPressed = React.useRef(false);
+    const gKeyTimeout = React.useRef<NodeJS.Timeout | null>(null);
+
+    // Handle the 'g' key press
     useHotkeys(
-      [`g+i`, `g+m`, `g+t`, `g+l`],
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      'g',
+      () => {
+        gKeyPressed.current = true;
+
+        // Reset the g key state after a short delay
+        if (gKeyTimeout.current) {
+          clearTimeout(gKeyTimeout.current);
+        }
+
+        gKeyTimeout.current = setTimeout(() => {
+          gKeyPressed.current = false;
+        }, 1000); // Reset after 1 second
+      },
+      {
+        scopes: [SCOPES.Global],
+        keyup: false,
+        keydown: true,
+      },
+    );
+
+    // Handle the individual shortcut keys after 'g'
+    useHotkeys(
+      ['i', 'm', 't', 'l'],
       (event) => {
-        switch (event.key) {
-          case 'i':
-            navigate(TabViewType.NOTIFICATIONS);
-            return;
-          case 'm':
-            navigate(TabViewType.MY_TASKS);
-            return;
-          case 't':
-            navigate(TabViewType.DAYS);
-            return;
-          case 'l':
-            navigate(TabViewType.LIST);
+        if (gKeyPressed.current) {
+          switch (event.key) {
+            case 'i':
+              navigate(TabViewType.NOTIFICATIONS);
+              break;
+            case 'm':
+              navigate(TabViewType.MY_TASKS);
+              break;
+            case 't':
+              navigate(TabViewType.DAYS);
+              break;
+            case 'l':
+              navigate(TabViewType.LIST);
+              break;
+          }
+          gKeyPressed.current = false;
+          if (gKeyTimeout.current) {
+            clearTimeout(gKeyTimeout.current);
+          }
         }
       },
       {
@@ -95,7 +128,7 @@ export const AppSidebar = observer(
       <Sidebar variant="inset" {...props}>
         <SidebarHeader className="pl-0">
           <SidebarMenu>
-            <SidebarMenuItem className="pl-2">
+            <SidebarMenuItem className="pl-2 flex justify-end w-full">
               <Image
                 src="/logo_light.svg"
                 alt="logo"
@@ -199,7 +232,7 @@ export const AppSidebar = observer(
                 size="xs"
                 variant="ghost"
                 onClick={() => {
-                  createList();
+                  createList(true);
                 }}
               >
                 <AddLine size={12} />

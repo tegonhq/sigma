@@ -25,11 +25,13 @@ export class ListsService {
   async createList(
     workspaceId: string,
     title?: string,
+    favourite?: boolean,
     defaultPageContent?: string,
   ) {
     const list = await this.prisma.list.create({
       data: {
         workspace: { connect: { id: workspaceId } },
+        favourite,
         page: {
           create: {
             sortOrder: '',

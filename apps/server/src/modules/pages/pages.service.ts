@@ -214,8 +214,10 @@ export class PagesService {
     });
 
     if (page?.description) {
-      const descriptionJson = JSON.parse(page.description);
-      page.description = convertTiptapJsonToHtml(descriptionJson);
+      try {
+        const descriptionJson = JSON.parse(page.description);
+        page.description = convertTiptapJsonToHtml(descriptionJson);
+      } catch (e) {}
     }
 
     return page;

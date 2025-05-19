@@ -31,6 +31,7 @@ export default class WorkspacesService {
     const list = await this.listsService.createList(
       workspaceId,
       'Getting started with Sigma',
+      true,
       JSON.stringify(OnboardingContent),
     );
 
