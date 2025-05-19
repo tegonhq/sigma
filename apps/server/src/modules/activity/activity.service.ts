@@ -32,12 +32,15 @@ export default class ActivityService {
       const integrationDefinition =
         exisitingActivity.integrationAccount?.integrationDefinition;
 
+      const context = { agents: [integrationDefinition.slug] };
+
       const conversationHistory = await this.prisma.conversationHistory.create({
         data: {
           conversationId: conversation.id,
           userId,
           message: `Activity from ${integrationDefinition.name} \n Content: ${createActivity.text}`,
           userType: UserTypeEnum.User,
+          context,
         },
       });
 
@@ -48,7 +51,7 @@ export default class ActivityService {
           conversationId: conversation.id,
           autoMode: true,
           activity: exisitingActivity.id,
-          context: {},
+          context,
         },
         { tags: [conversationHistory.id, workspaceId, exisitingActivity.id] },
       );
@@ -83,6 +86,7 @@ export default class ActivityService {
       where: { id: activity.workspaceId },
     });
 
+    const context = { agents: [integrationDefinition.slug] };
     const conversation = await this.prisma.conversation.create({
       data: {
         workspaceId: activity.workspaceId,
@@ -94,6 +98,7 @@ export default class ActivityService {
             userId: workspace.userId,
             message: `Activity from ${integrationDefinition.name} \n Content: ${activity.text}`,
             userType: UserTypeEnum.User,
+            context,
           },
         },
       },
@@ -111,7 +116,7 @@ export default class ActivityService {
         conversationId: conversation.id,
         autoMode: true,
         activity: activity.id,
-        context: {},
+        context,
       },
       { tags: [conversationHistory.id, activity.workspaceId, activity.id] },
     );
