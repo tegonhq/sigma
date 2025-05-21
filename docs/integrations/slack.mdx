@@ -1,31 +1,24 @@
 ---
-title: 'Slack'
+title: "Slack"
 sidebarTitle: "Slack"
 ---
 
-## Overview
+#### Overview
 
-Effortlessly integrate Tegon with Slack to transform your project communication and management:
+Bring Sigma into Slack and turn bookmarked messages into actionable tasks—so casual pings never slip through the cracks.
 
-1. Create Issues from Slack Messages:
-    - Use the "..." menu on any Slack message to effortlessly create a Tegon issue.
+#### What it does
 
-2. Automate Issue Creation with Emoji 👀:
-    - Assign 👀 emoji to a Slack thread to automatically trigger Tegon AI to create a triage issue.
-    - This feature empowers even non-Tegon users to easily report issues.
+**Bookmark** → **Task** : Star any Slack message. Sigma fetches it through Slack’s bookmarks API and (optionally) auto-creates a task with the full message text and a link back to the thread.
 
-3. Synchronized Conversation Threads:
-    - When issues are reported in Slack, a synced comment thread is automatically created within the corresponding Tegon issue.
-    - Tegon comments are automatically reflected in the Slack thread, keeping everyone in the loop and vice versa.
-    - Both the Slack thread and the Tegon comments update in real-time, ensuring everyone stays on the same page regardless of their chosen platform.
+#### Why it helps
 
+Ad-hoc requests land in Slack all day—“Can you review this deck?” or “Please update the roadmap slide.” Bookmark them, and Sigma captures the details, adds them to your queue, and reminds you later. Nothing gets lost in the scroll.
 
-## Configure - cloud version
+#### Configure
 
-1. Navigate to Settings -> Workspace -> Integrations -> Slack
-2. Connect your slack workspace by clicking on  the Connect Organization Account button.
-3. Grant Permissions: Follow the on-screen prompts to grant Tegon the necessary permissions to connect with your Slack workspace.
-4. Configure Emoji-based Issue Creation
-    1. Select the Slack channel where you want to enable automatic issue creation using emojis.
-    2. Choose the Tegon team where issues created from this Slack channel should be automatically added to the triage queue. This ensures issues land in the right place for your team.
+1. Navigate to Settings -> Integrations -> Slack
+2. Connect your slack workspace by clicking on the Connect button.
+3. Grant Permissions: Follow the on-screen prompts to grant Sigma the necessary permissions to connect with your Slack workspace.
 
+That’s it. Add an automation rule—“Create a Sigma task for every new Slack bookmark”—and every star you drop becomes a to-do you won’t forget.
