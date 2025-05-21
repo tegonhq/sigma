@@ -46,8 +46,8 @@
   },
   "redirects": [
     {
-      "source": "/fundamentals/actions",
-      "destination": "/actions/overview"
+      "source": "/fundamentals/todo",
+      "destination": "/fundamentals/todo"
     },
     {
       "source": "/fundamentals/issues",
@@ -64,9 +64,9 @@
   ],
   "anchors": [
     {
-      "name": "API",
+      "name": "Integrations",
       "icon": "brackets-curly",
-      "url": "api-reference"
+      "url": "integrations"
     }
   ],
   "navigation": [
@@ -74,28 +74,35 @@
       "group": "Get Started",
       "pages": [
         "introduction",
-        "quickstart",
         "changelog"
       ]
     },
     {
-      "group": "Getting started",
+      "group": "Fundamentals",
       "pages": [
-        "actions/overview",
-        "actions/core-concepts",
-        "actions/config"
+        "fundamentals/todo",
+        "fundamentals/chat",
+        "fundamentals/shortcuts"
       ]
     },
     {
-      "group": "Open source",
+      "group": "Personalisation",
       "pages": [
-        "oss/local-setup",
-        "oss/self-deployment"
+        "personalisation/automations",
+        "personalisation/memory",
+        "personalisation/sync"
+      ]
+    },
+    {
+      "group": "Integrations",
+      "pages": [
+        "integrations/overview"
       ]
     }
+
   ],
   "footerSocials": {
-    "twitter": "https://x.com/tegonhq",
-    "linkedin": "https://www.linkedin.com/company/tegon-ai"
+    "twitter": "https://x.com/mysigmahq",
+    "linkedin": "https://www.linkedin.com/company/sigmahq"
   }
 }
