@@ -23,5 +23,6 @@ export interface ParsedQuery {
     isSubtask?: boolean;
     number?: string;
     isUnplanned?: boolean;
+    sourceURL?: string;
   };
 }

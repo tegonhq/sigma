@@ -1,7 +1,7 @@
 // apps/server/src/modules/vector-store/task-vector.service.ts
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { UnifiedSearchOptionsDto } from '@tegonhq/sigma-sdk';
+import { Source, UnifiedSearchOptionsDto } from '@tegonhq/sigma-sdk';
 import { CohereClientV2 } from 'cohere-ai';
 import { PrismaService } from 'nestjs-prisma';
 
@@ -77,6 +77,13 @@ export class TaskVectorService implements OnModuleInit {
         field_name: 'unplanned',
         field_schema: 'bool',
       });
+
+      await this.vectorStore.getQdrantClient().createPayloadIndex('tasks', {
+        field_name: 'sourceURL',
+        field_schema: 'keyword',
+      });
+
+      await this.reindexTasks();
     }
   }
 
@@ -103,6 +110,7 @@ export class TaskVectorService implements OnModuleInit {
       dueDate: task.dueDate ? task.dueDate.getTime() : undefined,
       parentId: task.parentId,
       unplanned: isPlanned,
+      sourceURL: (task.source as Source).url,
     };
 
     // Upsert into Qdrant
@@ -185,6 +193,20 @@ export class TaskVectorService implements OnModuleInit {
       });
     }
 
+    if (parsedQuery.filters.isUnplanned) {
+      filter.must.push({
+        key: 'unplanned',
+        match: { value: true },
+      });
+    }
+
+    if (parsedQuery.filters.sourceURL) {
+      filter.must.push({
+        key: 'sourceURL',
+        match: { value: true },
+      });
+    }
+
     const limit = Number(options.limit) || 20;
     const page = Number(options.page) || 0;
     // Search parameters
@@ -246,10 +268,10 @@ export class TaskVectorService implements OnModuleInit {
   /**
    * Re-index all tasks for a workspace
    */
-  async reindexWorkspaceTasks(workspaceId: string) {
+  async reindexTasks() {
     // Process in batches to avoid overwhelming the API
     const tasks = await this.prisma.task.findMany({
-      where: { workspaceId, deleted: null },
+      where: { deleted: null },
       select: { id: true },
     });
     const batchSize = 50;
