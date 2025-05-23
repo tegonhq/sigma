@@ -49,7 +49,7 @@ export const Automation = observer(
 
           <Button
             variant="ghost"
-            onClick={() => deleteAutomation(automationId)}
+            onClick={() => deleteAutomation({ automationId })}
           >
             <Trash2 size={14} />
           </Button>

@@ -112,7 +112,7 @@ export const EditorWithPage = observer(
     if (page && doc) {
       return (
         <EditorContext.Provider
-          value={{ source: { type: SourceType.PAGE, id: page.id }, date }}
+          value={{ source: { type: SourceType.PAGE, url: page.id }, date }}
         >
           <Editor
             onChange={onDescriptionChange}

@@ -7,8 +7,8 @@ export async function deleteTask({ taskId }: TaskDto) {
   return response.data;
 }
 
-export async function deleteTaskBySourceId({ sourceId }: TaskBySourceDto) {
-  const response = await axios.delete(`/api/v1/tasks/source/${sourceId}`);
+export async function deleteTaskBySourceURL({ sourceURL }: TaskBySourceDto) {
+  const response = await axios.delete(`/api/v1/tasks/source/${sourceURL}`);
 
   return response.data;
 }

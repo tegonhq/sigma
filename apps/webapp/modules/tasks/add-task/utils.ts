@@ -29,11 +29,11 @@ export const getCreateTaskPropsOnSource = (
   let createTaskProps;
 
   if (source.type === SourceType.TASK) {
-    return { parentId: source.id, source, status: 'Todo' };
+    return { parentId: source.url, source, status: 'Todo' };
   }
 
   if (source.type === SourceType.LIST) {
-    return { source, status: 'Todo', listId: source.id };
+    return { source, status: 'Todo', listId: source.url };
   }
 
   if (date) {

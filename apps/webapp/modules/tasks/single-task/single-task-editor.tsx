@@ -94,7 +94,7 @@ export function SingleTaskEditor({
   return (
     <div className="flex flex-col min-h-[calc(100vh_-_30vh)]">
       <EditorContext.Provider
-        value={{ source: { type: SourceType.TASK, id: task.id } }}
+        value={{ source: { type: SourceType.TASK, url: task.id } }}
       >
         <Editor
           onChange={onDescriptionChange}
