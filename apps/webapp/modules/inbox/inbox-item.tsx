@@ -59,14 +59,13 @@ export const InboxItem = observer(
             <div
               className={cn(
                 activity ? 'w-[calc(100%_-_25px)]' : 'w-[calc(100%_-_10px)]',
-                !conversationData.unread
-                  ? 'text-muted-foreground'
-                  : 'text-foreground',
               )}
             >
               <div className="truncate"> {conversationData?.title} </div>
             </div>
-
+            <div className="text-foreground text-right">
+              {Icon && <Icon size={16} className="dark:text-background" />}
+            </div>
             <div className="text-foreground text-right">
               {Icon && <Icon size={16} className="dark:text-background" />}
             </div>

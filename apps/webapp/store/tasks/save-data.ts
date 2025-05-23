@@ -15,10 +15,9 @@ export async function saveTaskData(
         createdAt: record.data.createdAt,
         updatedAt: record.data.updatedAt,
 
-        source: record.data.source,
+        source: JSON.stringify(record.data.source),
         completedAt: record.data.completedAt,
         number: record.data.number,
-        url: record.data.url,
         status: record.data.status,
         startTime: record.data.startTime,
         endTime: record.data.endTime,
