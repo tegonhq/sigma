@@ -12,12 +12,18 @@ import {
   Task,
 } from '@tegonhq/sigma-sdk';
 import { generateHTML } from '@tiptap/html';
-import { tasks } from '@trigger.dev/sdk/v3';
+import { auth, runs, tasks } from '@trigger.dev/sdk/v3';
 import { PrismaService } from 'nestjs-prisma';
+import { createConversationTitle } from 'triggers/conversation/create-conversation-title';
+
+import { UsersService } from 'modules/users/users.service';
 
 @Injectable()
 export class ConversationService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private users: UsersService,
+  ) {}
 
   async createConversation(
     workspaceId: string,
@@ -54,7 +60,7 @@ export class ConversationService {
           autoMode: true,
           context,
         },
-        { tags: [conversationHistory.id] },
+        { tags: [conversationHistory.id, workspaceId, conversationId] },
       );
 
       return {
@@ -89,6 +95,19 @@ export class ConversationService {
     const conversationHistory = conversation.ConversationHistory[0];
     const context = await this.getConversationContext(conversationHistory.id);
 
+    const pat = await this.users.getOrCreatePat(userId, workspaceId);
+
+    // Trigger conversation title task
+    await tasks.trigger<typeof createConversationTitle>(
+      createConversationTitle.id,
+      {
+        conversationId: conversation.id,
+        message: conversationData.message,
+        pat,
+      },
+      { tags: [conversation.id, workspaceId] },
+    );
+
     const handler = await tasks.trigger(
       'chat',
       {
@@ -97,7 +116,7 @@ export class ConversationService {
         autoMode: true,
         context,
       },
-      { tags: [conversationHistory.id] },
+      { tags: [conversationHistory.id, workspaceId, conversation.id] },
     );
 
     return {
@@ -123,7 +142,7 @@ export class ConversationService {
     const context =
       (conversationHistory.context as ConversationContextData) || {};
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { pages, tasks, ...otherContextData } = context;
+    const { pages, tasks, agents = [], ...otherContextData } = context;
 
     // Add page/task from conversation if they exist
     if (conversationHistory.conversation.pageId) {
@@ -191,6 +210,7 @@ export class ConversationService {
 
     // Get previous conversation history message and response
     let previousHistory = null;
+    const uniqueAgents = new Set(agents);
     if (conversationHistory.conversationId) {
       previousHistory = await this.prisma.conversationHistory.findMany({
         where: {
@@ -204,13 +224,65 @@ export class ConversationService {
           createdAt: 'asc',
         },
       });
+
+      // Add agents from previous conversations to uniqueAgents set
+      previousHistory.forEach((history) => {
+        const historyContext = history.context as ConversationContextData;
+        if (historyContext?.agents?.length) {
+          historyContext.agents.forEach((agent) => uniqueAgents.add(agent));
+        }
+      });
     }
 
     return {
       page,
       task,
       previousHistory,
+      agents: Array.from(uniqueAgents),
       ...otherContextData,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any;
+  }
+
+  async getCurrentConversationRun(conversationId: string, workspaceId: string) {
+    const conversationHistory = await this.prisma.conversationHistory.findFirst(
+      {
+        where: {
+          conversationId,
+          conversation: {
+            workspaceId,
+          },
+        },
+        orderBy: {
+          updatedAt: 'desc',
+        },
+      },
+    );
+
+    const response = await runs.list({
+      tag: [conversationId, conversationHistory.id],
+      status: ['QUEUED', 'EXECUTING'],
+      limit: 1,
+    });
+
+    const run = response.data[0];
+    if (!run) {
+      return undefined;
+    }
+
+    const publicToken = await auth.createPublicToken({
+      scopes: {
+        read: {
+          runs: [run.id],
+        },
+      },
+    });
+
+    return {
+      id: run.id,
+      token: publicToken,
+      conversationId,
+      conversationHistoryId: conversationHistory.id,
     };
   }
 
@@ -226,6 +298,13 @@ export class ConversationService {
       data: {
         deleted: new Date().toISOString(),
       },
+    });
+  }
+
+  async readConversation(conversationId: string): Promise<Conversation> {
+    return this.prisma.conversation.update({
+      where: { id: conversationId },
+      data: { unread: false },
     });
   }
 }

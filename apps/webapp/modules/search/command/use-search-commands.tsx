@@ -2,13 +2,12 @@ import {
   AI,
   CalendarLine,
   DeleteLine,
-  DocumentLine,
   Fire,
   IssuesLine,
   Project,
   SettingsLine,
 } from '@tegonhq/ui';
-import { Check } from 'lucide-react';
+import { Brain, Check, Workflow } from 'lucide-react';
 import React from 'react';
 
 import { DailogViewsContext, DialogType } from 'modules/dialog-views-provider';
@@ -131,7 +130,7 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
         text: 'Create list',
 
         command: () => {
-          createList();
+          createList(false);
           onClose();
         },
       },
@@ -154,10 +153,18 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
 
       commands['settings'] = [
         {
-          Icon: DocumentLine,
-          text: 'Signals',
+          Icon: Workflow,
+          text: 'Automations',
           command: () => {
-            openSettings('Signals');
+            openSettings('Automations');
+            onClose();
+          },
+        },
+        {
+          Icon: Brain,
+          text: 'Memory',
+          command: () => {
+            openSettings('Memory');
             onClose();
           },
         },

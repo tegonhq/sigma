@@ -12,6 +12,8 @@ export interface ConversationType {
 
   pageId?: string;
   taskId?: string;
+
+  unread: boolean;
 }
 
 export interface ConversationHistoryType {

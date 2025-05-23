@@ -337,3 +337,50 @@ The current conversation message is:
 {{CURRENT_CONVERSATION_MESSAGE}}
 </current_message>
 `;
+
+export const conversationTitlePrompt = `You are an AI assistant specialized in generating concise and informative conversation titles. Your task is to analyze the given message and context to create an appropriate title.
+
+Here is the message:
+<message>
+{{message}}
+</message>
+
+Here is the context:
+<context>
+{{isActivity}}
+{{activitySource}} // e.g. "GitHub", "Jira" etc. (only present if isActivity is true)
+</context>
+
+Please follow these steps:
+
+1. Determine if this is an activity-based conversation or general conversation based on the context.
+
+2. For activity-based conversations:
+   - Create a title that clearly indicates the source and action
+   - Format: "[Source Action] · Brief context"
+   - Example: "GitHub Issue · Sarah commented: 'Needs API check'"
+   - Keep it actionable and informative
+   - Include relevant actor names and key details
+   - Maximum length: 100 characters
+
+3. For general conversations:
+   - Extract the core topic/intent from the message
+   - Create a clear, concise title
+   - Focus on the main subject or action
+   - Avoid unnecessary words
+   - Maximum length: 60 characters
+
+Before providing output, analyze in <title_analysis> tags:
+- Key elements from message
+- Main topic/action
+- Relevant actors/context
+- Your title formation process
+
+Provide final output in this format:
+<output>
+{
+  "title": "Your generated title"
+}
+</output>
+
+If message is empty or contains no meaningful content, return {"title": "New Conversation"}`;

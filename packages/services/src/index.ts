@@ -8,3 +8,4 @@ export * from './tasks';
 export * from './user';
 export * from './lists';
 export * from './activity';
+export * from './automation';

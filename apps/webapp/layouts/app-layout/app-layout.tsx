@@ -11,6 +11,7 @@ import { SettingsProvider } from 'modules/settings';
 import { useIPC } from 'hooks/ipc';
 
 import { AppSidebar } from './app-sidebar';
+import { Navigation } from './navigation';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -53,8 +54,8 @@ export function AppLayout({ children }: AppLayoutProps) {
     <SidebarProvider
       className={cn('sidebar', GeistSans.variable, GeistMono.variable)}
       style={{
-        '--sidebar-width': '13rem',
-        '--sidebar-width-mobile': '13rem',
+        '--sidebar-width': '4rem',
+        '--sidebar-width-icon': '4rem',
         backgroundColor: 'oklch(var(--background)) !important',
       }}
     >
@@ -66,6 +67,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       </SettingsProvider>
 
       <AIThinking />
+      <Navigation />
     </SidebarProvider>
   );
 }

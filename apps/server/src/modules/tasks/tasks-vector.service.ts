@@ -195,7 +195,6 @@ export class TaskVectorService implements OnModuleInit {
       with_payload: true,
     };
 
-    console.log(JSON.stringify(searchParams));
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let taskIds: Array<Record<string, any>> = [];
     // If we have text to search, do a vector search, otherwise just filter

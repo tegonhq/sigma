@@ -43,7 +43,7 @@ export function Authorize() {
     <SessionAuth>
       <div className="p-6 container flex items-center flex-col gap-2">
         <Logo width={100} height={100} />
-        You have successfully authorised, now you can return back to the cli.
+        You have successfully authorised, now you can return back to the app.
       </div>
     </SessionAuth>
   );

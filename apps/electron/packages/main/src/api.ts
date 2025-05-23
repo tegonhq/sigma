@@ -5,6 +5,7 @@ import Fastify from 'fastify';
 import path from 'node:path';
 import fastifyStatic from '@fastify/static';
 import {PORT} from '../utils';
+import fs from 'fs';
 
 const isDev = process.env.NODE_ENV === 'development';
 const apiBaseUrl = isDev ? 'http://localhost:3001' : 'https://server.mysigma.ai';
@@ -15,6 +16,25 @@ const fastify = Fastify();
 const startFastifyServer = async () => {
   fastify.listen({port: PORT});
 };
+
+// Add new route for local file access
+fastify.get('/local/*', async (request, reply) => {
+  try {
+    // Extract the path parameter after /local/
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const filePath = (request.params as any)['*'];
+
+    // Ensure the path is safe and absolute
+    const absolutePath = path.join('/', filePath);
+
+    // Read and return the file contents
+    const content = fs.readFileSync(absolutePath, 'utf-8');
+    return content;
+  } catch (error) {
+    reply.code(500).send({error: `Failed to read file: ${error}`});
+    return undefined;
+  }
+});
 
 fastify.register(fastifyHttpProxy, {
   upstream: apiBaseUrl,

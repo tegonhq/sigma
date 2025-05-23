@@ -1,11 +1,18 @@
 import { Injectable } from '@nestjs/common';
+import { convertTiptapJsonToHtml } from '@sigma/editor-extensions';
 import { CreateActivityDto, UserTypeEnum } from '@tegonhq/sigma-sdk';
 import { tasks } from '@trigger.dev/sdk/v3';
 import { PrismaService } from 'nestjs-prisma';
+import { createConversationTitle } from 'triggers/conversation/create-conversation-title';
+
+import { UsersService } from 'modules/users/users.service';
 
 @Injectable()
 export default class ActivityService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private users: UsersService,
+  ) {}
 
   async createActivity(
     createActivity: CreateActivityDto,
@@ -14,7 +21,7 @@ export default class ActivityService {
   ) {
     const exisitingActivity = await this.prisma.activity.findFirst({
       where: {
-        sourceId: createActivity.sourceId,
+        sourceURL: createActivity.sourceURL,
       },
       include: {
         Conversation: true,
@@ -25,6 +32,8 @@ export default class ActivityService {
         },
       },
     });
+
+    const pat = await this.users.getOrCreatePat(userId, workspaceId);
 
     if (exisitingActivity) {
       // Create just conversation history for the existing conversation and add a new message to that
@@ -43,6 +52,17 @@ export default class ActivityService {
           context,
         },
       });
+
+      // Trigger conversation title task
+      await tasks.trigger<typeof createConversationTitle>(
+        createConversationTitle.id,
+        {
+          conversationId: conversation.id,
+          message: createActivity.text,
+          pat,
+        },
+        { tags: [conversation.id, workspaceId] },
+      );
 
       await tasks.trigger(
         'chat',
@@ -69,56 +89,37 @@ export default class ActivityService {
 
   async runActivity(activityId: string) {
     const activity = await this.prisma.activity.findUnique({
-      where: { id: activityId },
+      where: {
+        id: activityId,
+      },
       include: {
-        integrationAccount: {
-          include: {
-            integrationDefinition: true,
-          },
-        },
+        workspace: true,
       },
     });
-
-    const integrationDefinition =
-      activity.integrationAccount?.integrationDefinition;
-
-    const workspace = await this.prisma.workspace.findFirst({
-      where: { id: activity.workspaceId },
-    });
-
-    const context = { agents: [integrationDefinition.slug] };
-    const conversation = await this.prisma.conversation.create({
-      data: {
+    const userContextPage = await this.prisma.page.findFirst({
+      where: {
         workspaceId: activity.workspaceId,
-        userId: workspace.userId,
-        activityId: activity.id,
-        title: activity.text.substring(0, 100),
-        ConversationHistory: {
-          create: {
-            userId: workspace.userId,
-            message: `Activity from ${integrationDefinition.name} \n Content: ${activity.text}`,
-            userType: UserTypeEnum.User,
-            context,
-          },
-        },
-      },
-      include: {
-        ConversationHistory: true,
+        type: 'Context',
       },
     });
 
-    const conversationHistory = conversation.ConversationHistory[0];
+    const userContextPageHTML = userContextPage.description
+      ? convertTiptapJsonToHtml(JSON.parse(userContextPage.description))
+      : '';
+
+    const pat = await this.users.getOrCreatePat(
+      activity.workspace.userId,
+      activity.workspaceId,
+    );
 
     await tasks.trigger(
-      'chat',
+      'activity',
       {
-        conversationHistoryId: conversationHistory.id,
-        conversationId: conversation.id,
-        autoMode: true,
-        activity: activity.id,
-        context,
+        activityId,
+        userContextPage: userContextPageHTML,
+        pat,
       },
-      { tags: [conversationHistory.id, activity.workspaceId, activity.id] },
+      { tags: [activityId, activity.workspaceId, activity.id] },
     );
   }
 }

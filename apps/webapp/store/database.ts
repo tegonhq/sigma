@@ -5,14 +5,13 @@ import Dexie from 'dexie';
 import type {
   ActivityType,
   AgentWorklogType,
+  AutomationType,
   ConversationHistoryType,
   ConversationType,
   IntegrationAccountType,
   ListType,
-  NotificationType,
   PageType,
   StatusType,
-  TaskExternalLinkType,
   TaskOccurrenceType,
   TaskType,
 } from 'common/types';
@@ -31,29 +30,26 @@ export class SigmaDatabase extends Dexie {
   conversationHistory: Dexie.Table<ConversationHistoryType, string>;
   lists: Dexie.Table<ListType, string>;
   taskOccurrences: Dexie.Table<TaskOccurrenceType, string>;
-  taskExternalLinks: Dexie.Table<TaskExternalLinkType, string>;
   agentWorklogs: Dexie.Table<AgentWorklogType, string>;
   activities: Dexie.Table<ActivityType, string>;
-  notifications: Dexie.Table<NotificationType, string>;
+  automations: Dexie.Table<AutomationType, string>;
 
   constructor(databaseName: string) {
     super(databaseName);
 
-    this.version(32).stores({
+    this.version(36).stores({
       [MODELS.Workspace]: 'id,createdAt,updatedAt,name,slug,userId',
       [MODELS.IntegrationAccount]:
         'id,createdAt,updatedAt,accountId,settings,integratedById,integrationDefinitionId,workspaceId',
       [MODELS.Page]:
         'id,createdAt,updatedAt,archived,title,description,parentId,sortOrder,workspaceId,tags,type',
       [MODELS.Task]:
-        'id,createdAt,updatedAt,sourceId,url,status,metadata,workspaceId,pageId,integrationAccountId,startTime,endTime,recurrence,number,completedAt,listId,dueDate,remindAt,scheduleText,parentId',
+        'id,createdAt,updatedAt,source,status,metadata,workspaceId,pageId,integrationAccountId,startTime,endTime,recurrence,number,completedAt,listId,dueDate,remindAt,scheduleText,parentId',
       [MODELS.TaskOccurrence]:
         'id,createdAt,updatedAt,workspaceId,pageId,taskId,startTime,endTime,status',
-      [MODELS.TaskExternalLink]:
-        'id,createdAt,updatedAt,taskId,integrationAccountId,url,sourceId',
 
       [MODELS.Conversation]:
-        'id,createdAt,updatedAt,title,userId,workspaceId,pageId,taskId,activityId',
+        'id,createdAt,updatedAt,title,userId,workspaceId,pageId,taskId,activityId,unread',
       [MODELS.ConversationHistory]:
         'id,createdAt,updatedAt,message,userType,context,thoughts,userId,conversationId',
       [MODELS.List]: 'id,createdAt,updatedAt,pageId,icon,favourite',
@@ -61,8 +57,8 @@ export class SigmaDatabase extends Dexie {
         'id,createdAt,updatedAt,modelName,modelId,state,type,workspaceId',
       [MODELS.Activity]:
         'id,createdAt,updatedAt,text,sourceId,sourceURL,taskId,integrationAccountId,workspaceId',
-      [MODELS.Notification]:
-        'id,createdAt,updatedAt,type,read,modelName,modelId,workspaceId',
+      [MODELS.Automation]:
+        'id,createdAt,updatedAt,text,usedCount,mcps,integrationAccountIds,workspaceId',
 
       Application: 'id,sidebarCollapsed,tabGroups,activeTabGroupId',
     });
@@ -75,11 +71,10 @@ export class SigmaDatabase extends Dexie {
     this.conversationHistory = this.table(MODELS.ConversationHistory);
     this.lists = this.table(MODELS.List);
     this.taskOccurrences = this.table(MODELS.TaskOccurrence);
-    this.taskExternalLinks = this.table(MODELS.TaskExternalLink);
     this.application = this.table('Application');
     this.agentWorklogs = this.table(MODELS.AgentWorklog);
     this.activities = this.table(MODELS.Activity);
-    this.notifications = this.table(MODELS.Notification);
+    this.automations = this.table(MODELS.Automation);
   }
 }
 

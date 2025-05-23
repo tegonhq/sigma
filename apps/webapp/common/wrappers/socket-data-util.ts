@@ -4,14 +4,13 @@ import type { SyncActionRecord } from 'common/types';
 
 import { saveActivityData } from 'store/activity';
 import { saveAgentWorklog } from 'store/agent-worklog';
+import { saveAutomationData } from 'store/automation';
 import { saveConversationHistorytData } from 'store/conversation-history';
 import { saveConversationData } from 'store/conversations';
 import { saveIntegrationAccountData } from 'store/integration-accounts';
 import { saveListData } from 'store/lists';
 import { MODELS } from 'store/models';
-import { saveNotificationData } from 'store/notification';
 import { savePageData } from 'store/pages';
-import { saveTaskExternalLinkData } from 'store/task-external-links';
 import { saveTaskOccurrencesData } from 'store/task-occurrences';
 import { saveTaskData } from 'store/tasks';
 import { saveWorkspaceData } from 'store/workspace';
@@ -52,10 +51,10 @@ export async function saveSocketData(
       [MODELS.Task]: saveTaskData,
       [MODELS.TaskOccurrence]: saveTaskOccurrencesData,
       [MODELS.List]: saveListData,
-      [MODELS.TaskExternalLink]: saveTaskExternalLinkData,
+
       [MODELS.AgentWorklog]: saveAgentWorklog,
-      [MODELS.Notification]: saveNotificationData,
       [MODELS.Activity]: saveActivityData,
+      [MODELS.Automation]: saveAutomationData,
     };
 
     // Process records using the handler map

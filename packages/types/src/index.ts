@@ -14,7 +14,6 @@ export * from './prompt';
 export * from './summary';
 export * from './sync-action';
 export * from './task';
-export * from './task-external-link';
 export * from './task-occurrence';
 export * from './template';
 export * from './user';

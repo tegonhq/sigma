@@ -44,13 +44,13 @@ export class TasksController {
     return await this.tasksService.getTaskById(taskId);
   }
 
-  @Get('source/:sourceId')
+  @Get('source/:sourceURL')
   @UseGuards(AuthGuard)
   async getTaskBySource(
-    @Param('sourceId') sourceId: string,
+    @Param('sourceURL') sourceURL: string,
     @Workspace() workspaceId: string,
   ) {
-    return await this.tasksService.getTaskBySourceId(sourceId, workspaceId);
+    return await this.tasksService.getTaskBySourceURL(sourceURL, workspaceId);
   }
 
   @Post()
@@ -86,15 +86,15 @@ export class TasksController {
     return await this.tasksService.deleteTask(taskId);
   }
 
-  @Delete('source/:sourceId')
+  @Delete('source/:sourceURL')
   @UseGuards(AuthGuard)
   async deleteTaskBySourceId(
-    @Param('sourceId') sourceId: string,
+    @Param('sourceURL') sourceURL: string,
     @Workspace() workspaceId: string,
     @UserId() userId: string,
   ) {
-    return await this.tasksService.deleteTaskBySourceId(
-      sourceId,
+    return await this.tasksService.deleteTaskBySourceURL(
+      sourceURL,
       workspaceId,
       userId,
     );

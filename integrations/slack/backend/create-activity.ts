@@ -3,6 +3,23 @@ import axios from 'axios';
 
 import { getChannelDetails, getUserDetails } from './utils';
 
+async function getMessage(accessToken: string, channel: string, ts: string) {
+  const result = await axios.get('https://slack.com/api/conversations.history', {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+    },
+    params: {
+      channel,
+      latest: ts,
+      inclusive: true,
+      limit: 1,
+    },
+  });
+
+  return result.data.messages?.[0];
+}
+
 export const createActivityEvent = async (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   eventBody: any,
@@ -10,7 +27,7 @@ export const createActivityEvent = async (
 ) => {
   const { eventData } = eventBody;
 
-  if (eventData.event.type === 'star_added') {
+  if (eventData.event.type === 'reaction_added' && eventData.event.reaction === 'eyes') {
     const event = eventData.event;
 
     const integrationConfiguration = integrationAccount.integrationConfiguration as Record<
@@ -21,9 +38,15 @@ export const createActivityEvent = async (
     if (!integrationConfiguration) {
       throw new Error('Integration configuration not found');
     }
-    const eventMessage = event.item.message;
 
-    const mentionedUsers = getMentionUsers(event.item.message.text);
+    const accessToken = integrationConfiguration.access_token;
+    const channel = event.item.channel;
+    const ts = event.item.ts;
+
+    const eventMessage = await getMessage(accessToken, channel, ts);
+
+    const mentionedUsers = getMentionUsers(eventMessage.text);
+
     const [userDetails, channelDetails] = await Promise.all([
       getUserDetails([eventMessage.user, ...mentionedUsers], integrationConfiguration.access_token),
       getChannelDetails(event.item.channel, integrationConfiguration.access_token),
@@ -38,10 +61,16 @@ export const createActivityEvent = async (
     });
 
     const text = `Message from user ${userIdMap.get(eventMessage.user)?.real_name}(${eventMessage.user}) in channel ${channelDetails.name}(${channelDetails.id}) at ${eventMessage.ts}. Content: '${eventMessageText}'`;
+    // Get permalink from Slack API
+    const permalinkResponse = await axios.get(
+      `https://slack.com/api/chat.getPermalink?channel=${channel}&message_ts=${ts}`,
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      },
+    );
 
     const activity = {
-      sourceURL: eventMessage.permalink,
-      sourceId: eventMessage.ts,
+      sourceURL: permalinkResponse.data.permalink,
       text,
       integrationAccountId: integrationAccount.id,
       taskId: null,

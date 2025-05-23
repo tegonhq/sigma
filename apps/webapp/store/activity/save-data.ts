@@ -19,6 +19,7 @@ export async function saveActivityData(
         sourceURL: record.data.sourceURL,
         taskId: record.data.taskId,
         workspaceId: record.data.workspaceId,
+        rejectionReason: record.data.rejectionReason,
         integrationAccountId: record.data.integrationAccountId,
       };
 

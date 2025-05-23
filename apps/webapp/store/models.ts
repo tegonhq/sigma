@@ -4,7 +4,7 @@ export enum MODELS {
   IntegrationAccount = 'IntegrationAccount',
   Page = 'Page',
   Task = 'Task',
-  TaskExternalLink = 'TaskExternalLink',
+  Automation = 'Automation',
   TaskOccurrence = 'TaskOccurrence',
   Conversation = 'Conversation',
   ConversationHistory = 'ConversationHistory',
@@ -12,5 +12,4 @@ export enum MODELS {
 
   AgentWorklog = 'AgentWorklog',
   Activity = 'Activity',
-  Notification = 'Notification',
 }

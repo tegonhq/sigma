@@ -1,0 +1,17 @@
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'nestjs-prisma';
+
+@Injectable()
+export default class AutomationService {
+  constructor(private prisma: PrismaService) {}
+
+  async createAutomation(text: string, mcps: string[], workspaceId: string) {
+    await this.prisma.automation.create({
+      data: {
+        text,
+        mcps,
+        workspaceId,
+      },
+    });
+  }
+}

@@ -4,7 +4,6 @@ import { JsonValue } from '../common';
 import { Conversation } from '../conversation';
 import { List } from '../list';
 import { Page, PublicPage } from '../page';
-import { TaskExternalLink } from '../task-external-link';
 import { TaskOccurrence } from '../task-occurrence/task-occurrence.entity';
 import { Workspace } from '../workspace';
 
@@ -16,10 +15,6 @@ export enum SourceType {
 }
 
 export class Source {
-  @IsString()
-  @IsOptional()
-  id?: string;
-
   @IsOptional()
   @IsEnum(SourceType)
   type?: SourceType;
@@ -84,7 +79,8 @@ export class Task {
   parentId?: string;
   subIssue?: Task[];
 
+  integrationAccountId?: string;
+
   taskOccurrence?: TaskOccurrence[];
-  taskExternalLink?: TaskExternalLink[];
   conversation?: Conversation[];
 }

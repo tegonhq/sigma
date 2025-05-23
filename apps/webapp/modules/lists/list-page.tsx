@@ -11,7 +11,6 @@ import { PageTitle } from 'modules/tasks/single-task/single-task-title';
 import { getIcon } from 'common/icon-picker';
 import { IconPicker } from 'common/icon-picker/icon-picker';
 import type { ListType } from 'common/types';
-import { RightSideLayout } from 'layouts/right-side-layout';
 
 import { useUpdateListMutation } from 'services/lists';
 import { useUpdatePageMutation } from 'services/pages';
@@ -19,7 +18,6 @@ import { useUpdatePageMutation } from 'services/pages';
 import { useContextStore } from 'store/global-context-provider';
 
 import { ListPageEditor } from './list-page-editor';
-import { ListPageHeader } from './list-page-header';
 
 interface ListPageProps {
   list: ListType;
@@ -74,21 +72,19 @@ export const ListPage = observer(({ list }: ListPageProps) => {
   };
 
   return (
-    <RightSideLayout header={<ListPageHeader list={list} />}>
-      <ScrollArea className="w-full h-full flex justify-center p-4 px-6 h-[calc(100vh_-_54px)]">
-        <div className="flex h-full justify-center w-full">
-          <div className="grow flex flex-col gap-2 h-full max-w-[97ch]">
-            <div className="flex gap-2 items-start">
-              {getIconComponent()}
-              <PageTitle value={page?.title} onChange={onChange} />
-            </div>
+    <ScrollArea className="w-full h-full flex justify-center p-4 px-6 h-full">
+      <div className="flex h-full justify-center w-full">
+        <div className="grow flex flex-col gap-2 h-full max-w-[97ch]">
+          <div className="flex gap-2 items-start">
+            {getIconComponent()}
+            <PageTitle value={page?.title} onChange={onChange} />
+          </div>
 
-            <div className="flex flex-col gap-0">
-              {page && <ListPageEditor page={page} list={list} />}
-            </div>
+          <div className="flex flex-col gap-0">
+            {page && <ListPageEditor page={page} list={list} />}
           </div>
         </div>
-      </ScrollArea>
-    </RightSideLayout>
+      </div>
+    </ScrollArea>
   );
 });

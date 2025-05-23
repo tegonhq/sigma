@@ -1,8 +1,4 @@
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from '@tegonhq/ui';
+import { ResizablePanel, ResizablePanelGroup } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 
@@ -11,60 +7,70 @@ import { RightSideLayout } from 'layouts/right-side-layout';
 
 import { useScope } from 'hooks/use-scope';
 
-import { useReadNotificationtMutation } from 'services/notifications';
-
 import { useContextStore } from 'store/global-context-provider';
 
 import { Header } from './header';
 import { InboxConversation } from './inbox-conversation';
 import { InboxList } from './inbox-list';
+import { NewConversation } from './new-conversation';
 
 export const Inbox = observer(() => {
   useScope(SCOPES.INBOX);
-  const { notificationsStore } = useContextStore();
+  const { conversationsStore } = useContextStore();
 
-  const [currentNotification, setCurrentNotification] =
+  const [currentConversation, setCurrentConversation] =
     React.useState(undefined);
-  const notification = notificationsStore.getNotification(currentNotification);
+  const conversation =
+    conversationsStore.getConversationWithId(currentConversation);
 
-  const { mutate: readNotification } = useReadNotificationtMutation({});
+  // const getActivityId = () => {
+  //   return conversation?.modelId;
+  // };
 
-  const getActivityId = () => {
-    return notification?.modelId;
+  // React.useEffect(() => {
+  //   if (conversation && !conversation?.read) {
+  //     readNotification(currentNotification);
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [conversation]);
+
+  const startConversation = (conversationId: string) => {
+    setCurrentConversation(conversationId);
   };
 
-  React.useEffect(() => {
-    if (notification && !notification?.read) {
-      readNotification(currentNotification);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [notification]);
-
   return (
-    <RightSideLayout header={<Header notificationId={notification?.id} />}>
+    <RightSideLayout header={<></>}>
       <ResizablePanelGroup direction="horizontal">
         <ResizablePanel
-          maxSize={50}
-          defaultSize={24}
-          minSize={16}
+          maxSize={20}
+          defaultSize={20}
+          minSize={20}
           collapsible
-          collapsedSize={16}
-          className="h-[calc(100vh_-_54px)]"
+          collapsedSize={20}
+          className="h-[calc(100vh)] border-r-1 border-border"
         >
+          <Header
+            conversationId={conversation?.id}
+            newConversation={() => setCurrentConversation(undefined)}
+          />
           <div className="flex flex-col h-full">
             <InboxList
-              currentNotification={currentNotification}
-              setCurrentNotification={setCurrentNotification}
+              currentConversation={currentConversation}
+              setCurrentConversation={setCurrentConversation}
             />
           </div>
         </ResizablePanel>
-        <ResizableHandle className="border-border border-[0.5px] h-full" />
+
         <ResizablePanel
           collapsible
           collapsedSize={0}
-          className="flex flex-col w-full h-[calc(100vh_-_54px)]"
+          className="flex flex-col w-full h-[calc(100vh_-_1rem)]"
         >
-          {notification && <InboxConversation activityId={getActivityId()} />}
+          {conversation ? (
+            <InboxConversation conversationId={conversation.id} />
+          ) : (
+            <NewConversation startConversation={startConversation} />
+          )}
         </ResizablePanel>
       </ResizablePanelGroup>
     </RightSideLayout>

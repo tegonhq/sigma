@@ -7,8 +7,6 @@ import {
 } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 
-import { Navigation } from 'layouts/app-layout';
-
 import { useApplication } from 'hooks/application';
 
 import { TabViewType } from 'store/application';
@@ -28,8 +26,7 @@ export const Header = observer(({ actions }: HeaderProps) => {
 
   return (
     <header className="flex h-[38px] shrink-0 items-center justify-between gap-2 border-border border-b">
-      <div className="flex items-center gap-2 px-2">
-        <Navigation />
+      <div className="flex items-center gap-2 px-4">
         <Breadcrumb>
           <BreadcrumbList className="gap-1">
             <BreadcrumbItem

@@ -24,6 +24,8 @@ model Activity {
   task   Task?   @relation(fields: [taskId], references: [id])
   taskId String?
 
+  rejectionReason String?
+
   workspace    Workspace      @relation(fields: [workspaceId], references: [id])
   workspaceId  String
   Conversation Conversation[]
@@ -93,11 +95,27 @@ model AuthorizationCode {
   code                  String
 }
 
+model Automation {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  text                  String
+  usedCount             Int      @default(0)
+  integrationAccountIds String[]
+  mcps                  String[]
+
+  workspaceId String
+}
+
 model Conversation {
   id        String    @id @default(uuid())
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deleted   DateTime?
+
+  unread Boolean @default(false)
 
   title  String?
   user   User    @relation(fields: [userId], references: [id])
@@ -113,6 +131,8 @@ model Conversation {
   activity   Activity? @relation(fields: [activityId], references: [id])
   activityId String?
 
+  status String @default("pending") // Can be "pending", "running", "completed", "failed"
+
   ConversationHistory ConversationHistory[]
 }
 
@@ -123,7 +143,6 @@ model ConversationHistory {
   deleted   DateTime?
 
   message  String
-  thought  String   @default("")
   userType UserType
 
   context Json?
@@ -173,8 +192,9 @@ model IntegrationAccount {
   integrationDefinitionId String
   workspace               Workspace               @relation(references: [id], fields: [workspaceId])
   workspaceId             String
-  TaskExternalLink        TaskExternalLink[]
   Activity                Activity[]
+  Task                    Task[]
+  automationId            String?
 
   @@unique([accountId, integrationDefinitionId, workspaceId])
 }
@@ -217,22 +237,6 @@ model List {
   workspaceId String?
 
   Task Task[]
-}
-
-model Notification {
-  id        String    @id @default(uuid())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deleted   DateTime?
-
-  type String
-  read Boolean @default(false)
-
-  modelName String
-  modelId   String
-
-  workspace   Workspace @relation(fields: [workspaceId], references: [id])
-  workspaceId String
 }
 
 model Page {
@@ -380,28 +384,13 @@ model Task {
   parentId String?
   subIssue Task[]  @relation("SubIssue")
 
-  taskOccurrence   TaskOccurrence[]
-  taskExternalLink TaskExternalLink[]
-  conversation     Conversation[]
-  summary          Summary[]
-  Activity         Activity[]
-}
+  integrationAccount   IntegrationAccount? @relation(fields: [integrationAccountId], references: [id])
+  integrationAccountId String?
 
-model TaskExternalLink {
-  id        String    @id @default(uuid())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deleted   DateTime?
-
-  taskId   String
-  task     Task   @relation(fields: [taskId], references: [id])
-  metadata Json   @default("{}")
-
-  sourceId String?
-  url      String
-
-  integrationAccount   IntegrationAccount @relation(fields: [integrationAccountId], references: [id])
-  integrationAccountId String
+  taskOccurrence TaskOccurrence[]
+  conversation   Conversation[]
+  summary        Summary[]
+  Activity       Activity[]
 }
 
 model TaskOccurrence {
@@ -511,25 +500,23 @@ model Workspace {
   List                  List[]
   agentWorklog          AgentWorklog[]
   Activity              Activity[]
-  Notification          Notification[]
   Sync                  Sync[]
 }
 
 enum ModelName {
   Activity
   AgentWorklog
+  Automation
   Attachment
   Conversation
   ConversationHistory
   IntegrationAccount
   IntegrationDefinitionV2
   List
-  Notification
   Page
   SyncAction
   Task
   TaskOccurrence
-  TaskExternalLink
   User
   Workspace
 }

@@ -7,7 +7,7 @@ export class TaskDto {
 
 export class TaskBySourceDto {
   @IsString()
-  sourceId: string;
+  sourceURL: string;
 }
 
 export class ReccurenceInput {

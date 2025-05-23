@@ -37,10 +37,6 @@ yarn-error.log*
 certificate.*
 .vscode
 
-<<<<<<< HEAD
-=======
-apps/server/src/triggers/agents/
->>>>>>> 1d38890 (Fix: changes for agent support)
 
 
 # Agent things 

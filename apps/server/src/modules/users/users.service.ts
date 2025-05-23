@@ -1,4 +1,5 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { convertTiptapJsonToHtml } from '@sigma/editor-extensions';
 import { CodeDto, User } from '@tegonhq/sigma-sdk';
 import { PrismaService } from 'nestjs-prisma';
 
@@ -327,12 +328,18 @@ export class UsersService {
     return userUsage.availableCredits > 0;
   }
 
-  async getDailySync(date: string, workspaceId: string) {
-    return this.prisma.sync.findFirst({
+  async getUserContext(workspaceId: string) {
+    const userContextPage = await this.prisma.page.findFirst({
       where: {
-        date,
         workspaceId,
+        type: 'Context',
       },
     });
+
+    const userContextPageHTML = userContextPage.description
+      ? convertTiptapJsonToHtml(JSON.parse(userContextPage.description))
+      : '';
+
+    return userContextPageHTML;
   }
 }

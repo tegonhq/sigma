@@ -13,6 +13,7 @@ export interface TaskType {
   metadata: string;
   workspaceId: string;
   pageId: string;
+  source: string;
   listId?: string;
   parentId?: string;
   integrationAccountId?: string;

@@ -49,6 +49,12 @@ export class UsersController {
     return user;
   }
 
+  @Get('context')
+  @UseGuards(AuthGuard)
+  async getUserContext(@Workspace() workspaceId: string) {
+    return await this.users.getUserContext(workspaceId);
+  }
+
   @Post('pat')
   @UseGuards(AuthGuard)
   async createPersonalAccessToken(
@@ -132,14 +138,5 @@ export class UsersController {
     const user = await this.users.updateUser(userIdBody.userId, updateUserBody);
 
     return user;
-  }
-
-  @Get('sync/:date')
-  @UseGuards(AuthGuard)
-  async getDailySync(
-    @Param() { date }: { date: string },
-    @Workspace() workspaceId: string,
-  ) {
-    return this.users.getDailySync(date, workspaceId);
   }
 }

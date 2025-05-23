@@ -10,6 +10,7 @@ export const Activity = types.model({
   sourceURL: types.union(types.undefined, types.null, types.string),
   taskId: types.union(types.undefined, types.null, types.string),
   integrationAccountId: types.union(types.undefined, types.null, types.string),
+  rejectReason: types.union(types.undefined, types.null, types.string),
 
   workspaceId: types.string,
 });

@@ -1,3 +1,4 @@
+import { sort } from 'fast-sort';
 import { type IAnyStateTreeNode, types, flow } from 'mobx-state-tree';
 
 import type { ConversationType } from 'common/types';
@@ -48,6 +49,11 @@ export const ConversationsStore: IAnyStateTreeNode = types
     return { update, deleteById, load };
   })
   .views((self) => ({
+    get getConversations() {
+      return sort(self.conversations).desc(
+        (conversation) => conversation.updatedAt,
+      );
+    },
     getConversationWithId(id: string) {
       return self.conversations.find(
         (conversation: ConversationType) => conversation.id === id,

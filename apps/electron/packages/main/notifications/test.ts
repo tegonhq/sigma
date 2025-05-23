@@ -3,8 +3,8 @@ import {Notification} from 'electron';
 export const sendTestNotification = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const payload: any = {
-    title: 'acreom s',
-    body: 'This is how you will be notified.',
+    title: 'SAmple',
+    body: 'This is how you will be notified as.',
     hasReply: true,
     silent: false,
   };

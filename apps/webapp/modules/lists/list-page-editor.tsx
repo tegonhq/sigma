@@ -109,7 +109,7 @@ export function ListPageEditor({
 
   return (
     <div className="flex flex-col min-h-[calc(100vh_-_30vh)]">
-      <EditorContextProvider source={{ type: SourceType.LIST, id: list.id }}>
+      <EditorContextProvider source={{ type: SourceType.LIST, url: list.id }}>
         <Editor
           onChange={onDescriptionChange}
           extensions={[

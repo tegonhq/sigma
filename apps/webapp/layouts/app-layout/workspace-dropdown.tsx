@@ -6,36 +6,21 @@ import {
   DropdownMenuTrigger,
   Button,
   AvatarText,
-  useSidebar,
 } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import { useRouter } from 'next/router';
 import React from 'react';
-import { useHotkeys } from 'react-hotkeys-hook';
 import { signOut } from 'supertokens-auth-react/recipe/session';
 
 import { useSettings } from 'modules/settings';
-
-import { SCOPES } from 'common/shortcut-scopes';
 
 import { useContextStore } from 'store/global-context-provider';
 
 export const WorkspaceDropdown = observer(() => {
   const { workspaceStore } = useContextStore();
   const { replace } = useRouter();
-  const { toggleSidebar } = useSidebar();
-  const { openSettings } = useSettings();
 
-  useHotkeys(
-    ['['],
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    () => {
-      toggleSidebar();
-    },
-    {
-      scopes: [SCOPES.Global],
-    },
-  );
+  const { openSettings } = useSettings();
 
   return (
     <DropdownMenu>

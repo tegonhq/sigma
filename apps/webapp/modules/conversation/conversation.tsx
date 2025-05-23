@@ -108,7 +108,7 @@ export const Conversation = observer(({ defaultValue }: ConversationProps) => {
 
   return (
     <div className="flex flex-col h-[calc(100vh_-_3.5rem)] items-center">
-      <div className="grow overflow-hidden w-full">
+      <div className="overflow-hidden w-full grow">
         <div className="flex flex-col h-full justify-start overflow-hidden">
           <ScrollAreaWithAutoScroll>
             {getConversations()}

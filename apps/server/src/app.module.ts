@@ -14,6 +14,7 @@ import { AIRequestsModule } from 'modules/ai-requests/ai-requests.module';
 import { ALSModule } from 'modules/als/als.module';
 import { AttachmentModule } from 'modules/attachments/attachments.module';
 import { AuthModule } from 'modules/auth/auth.module';
+import { AutomationModule } from 'modules/automation/automation.module';
 import { ContentModule } from 'modules/content/content.module';
 import { ConversationModule } from 'modules/conversation/conversation.module';
 import { ConversationHistoryModule } from 'modules/conversation-history/conversation-history.module';
@@ -21,7 +22,6 @@ import { IntegrationAccountModule } from 'modules/integration-account/integratio
 import { IntegrationDefinitionModule } from 'modules/integration-definition/integration-definition.module';
 import { IntegrationsModule } from 'modules/integrations/integrations.module';
 import { ListsModule } from 'modules/lists/lists.module';
-import { NotificationsModule } from 'modules/notifications/notifications.module';
 import { OAuthCallbackModule } from 'modules/oauth-callback/oauth-callback.module';
 import { PagesModule } from 'modules/pages/pages.module';
 import { PromptsModule } from 'modules/prompts/prompts.module';
@@ -113,8 +113,9 @@ import { AppService } from './app.service';
     AIRequestsModule,
     PromptsModule,
     ActivityModule,
-    NotificationsModule,
     VectorStoreModule,
+
+    AutomationModule,
   ],
   controllers: [AppController],
   providers: [

@@ -31,12 +31,11 @@ export async function getChannelDetails(channelId: string, accessToken: string) 
 export async function getUserDetails(userIds: string[], accessToken: string) {
   return await Promise.all(
     userIds.map(async (userId) => {
-      const userResponse = (
-        await axios.get(`https://slack.com/api/users.info?user=${userId}`, {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        })
-      ).data;
-      return userResponse.user;
+      const userResponse = await axios.get(`https://slack.com/api/users.info?user=${userId}`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+
+      return userResponse.data.user;
     }),
   );
 }

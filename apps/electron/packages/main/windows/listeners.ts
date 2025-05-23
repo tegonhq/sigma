@@ -1,5 +1,5 @@
 import type {BrowserWindow} from 'electron';
-import {app, desktopCapturer, ipcMain, shell} from 'electron';
+import {app, ipcMain, shell} from 'electron';
 import path from 'node:path';
 import log from 'electron-log';
 import {integrationsInit} from '../src/integrations-init';
@@ -15,16 +15,25 @@ export function listeners(window: BrowserWindow) {
     await integrationsInit();
   });
 
-  ipcMain.handle('get-integrations-folder', () => {
+  ipcMain.handle('get-integauto-updaterations-folder', () => {
     return path.join(app.getPath('userData'), 'integrations');
   });
 
-  ipcMain.handle('get-sources', async () => {
-    const sources = await desktopCapturer.getSources({
-      types: ['screen'],
-    });
+  // Window Fullscreen events
+  window.on('enter-full-screen', () => {
+    window.webContents.send('fullscreen-changed', true);
+  });
 
-    return sources;
+  window.on('leave-full-screen', () => {
+    window.webContents.send('fullscreen-changed', false);
+  });
+
+  // Instead of closing, hide the window when Cmd+W is pressed
+  window.on('close', event => {
+    if (process.platform === 'darwin') {
+      event.preventDefault(); // Prevent the default close behavior
+      window.hide(); // Hide the window instead
+    }
   });
 
   // Main window communication

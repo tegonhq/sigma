@@ -35,7 +35,7 @@ function getComponent(componentType: string, props: any) {
     return <Lists {...props} />;
   }
 
-  if (componentType === TabViewType.NOTIFICATIONS) {
+  if (componentType === TabViewType.ASSISTANT) {
     return <Inbox {...props} />;
   }
 

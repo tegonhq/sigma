@@ -1,4 +1,5 @@
 import { format, addDays, isTomorrow, isToday, isYesterday } from 'date-fns'; // For date formatting
+import { Dot } from 'lucide-react';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { Virtuoso } from 'react-virtuoso';
@@ -56,11 +57,11 @@ export const Days = observer(() => {
     }
 
     if (isToday(date)) {
-      return '- Today';
+      return 'Today';
     } else if (isTomorrow(date)) {
-      return '- Tomorrow';
+      return 'Tomorrow';
     } else if (isYesterday(date)) {
-      return '- Yesterday';
+      return 'Yesterday';
     }
 
     return '';
@@ -70,11 +71,19 @@ export const Days = observer(() => {
   const ItemRenderer = React.useCallback(
     (index: number) => {
       const date = days[index];
+      const label = getDayLabel(date);
       return (
         <div className="flex w-full justify-center items-center mb-10">
           <div className="flex flex-col ml-2 max-w-[97ch] w-full justify-center">
             <h3 className="text-2xl mb-2 flex gap-1 font-medium items-center">
-              {format(date, 'EE, MMM do, yyyy')} {getDayLabel(date)}
+              {format(date, 'EE, MMM do, yyyy')}
+              {label && (
+                <span className="text-primary text-xl inline-flex items-center font-normal">
+                  <Dot />
+
+                  {label}
+                </span>
+              )}
               <DailySync date={format(date, 'dd-MM-yyyy')} />
             </h3>
             <div className="min-h-[400px]">
@@ -92,7 +101,7 @@ export const Days = observer(() => {
 
   return (
     <RightSideLayout header={<Header />}>
-      <div className="flex h-full justify-center w-full">
+      <div className="flex flex-col h-full justify-center w-full">
         <div className="grow h-full mt-2 px-3 overflow-auto" ref={scrollRef}>
           <Virtuoso
             ref={virtuosoRef}

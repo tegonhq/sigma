@@ -1,7 +1,7 @@
 import {app} from 'electron';
 import './security-restrictions';
 
-import {registerShortcut, restoreOrCreateQuickWindow, restoreOrCreateWindow} from '../windows';
+import {restoreOrCreateWindow} from '../windows';
 import {platform} from 'node:process';
 import updater from 'electron-updater';
 import {startAPI} from './api';
@@ -46,9 +46,7 @@ app
   .then(async () => {
     registerStore();
     const window = await restoreOrCreateWindow();
-    restoreOrCreateQuickWindow(false);
     listeners(window);
-    registerShortcut();
     // setTray();
   })
   .catch(e => log.error('Failed create window:', e));

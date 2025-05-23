@@ -4,20 +4,10 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   Button,
-  DeleteLine,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  MoreLine,
+  CreateIssueLine,
 } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
-import { useHotkeys } from 'react-hotkeys-hook';
-import { Key } from 'ts-key-enum';
-
-import { SCOPES } from 'common/shortcut-scopes';
-import { Navigation } from 'layouts/app-layout';
 
 import {
   useDeleteNotificationMutation,
@@ -28,44 +18,43 @@ import {
   DeleteAllNotificationTaskAlert,
   DeleteNotificationTaskAlert,
 } from './delete-notification-alert';
-import { Shortcut } from 'common/shortcut';
 
 interface HeaderProps {
   actions?: React.ReactNode;
-  notificationId?: string;
+  conversationId?: string;
+  newConversation: () => void;
 }
 
-export const Header = observer(({ notificationId }: HeaderProps) => {
+export const Header = observer(({ newConversation }: HeaderProps) => {
   const [deleteAlert, setDeleteAlert] = React.useState(false);
   const [deleteReadAlert, setDeleteReadAlert] = React.useState(false);
   const { mutate: deleteNotification } = useDeleteNotificationMutation({});
   const { mutate: deleteNotifications } = useDeleteNotificationsMutation({});
 
-  useHotkeys(
-    Key.Backspace,
-    () => {
-      setDeleteAlert(true);
-    },
-    {
-      scopes: [SCOPES.INBOX],
-      enabled: !!notificationId,
-      preventDefault: true,
-    },
-  );
+  // useHotkeys(
+  //   Key.Backspace,
+  //   () => {
+  //     setDeleteAlert(true);
+  //   },
+  //   {
+  //     scopes: [SCOPES.INBOX],
+  //     enabled: !!conversationId,
+  //     preventDefault: true,
+  //   },
+  // );
 
   return (
     <header className="flex h-[38px] shrink-0 items-center justify-between gap-2 border-border border-b">
-      <div className="flex items-center gap-2 px-2">
-        <Navigation />
+      <div className="flex items-center gap-2 px-4">
         <Breadcrumb>
           <BreadcrumbList className="gap-1">
             <BreadcrumbItem>
-              <BreadcrumbPage>Inbox</BreadcrumbPage>
+              <BreadcrumbPage>Assistant</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
 
-        <DropdownMenu>
+        {/* <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
@@ -85,23 +74,17 @@ export const Header = observer(({ notificationId }: HeaderProps) => {
               </div>
             </DropdownMenuItem>
           </DropdownMenuContent>
-        </DropdownMenu>
+        </DropdownMenu> */}
       </div>
-      <div className="pr-2">
-        {notificationId && (
-          <Button
-            variant="secondary"
-            onClick={() => setDeleteAlert(true)}
-            className="gap-1 items-center"
-          >
-            <Shortcut shortcut="⌫" className="top-[1px] relative" />
-            Delete notification
-          </Button>
-        )}
+
+      <div className="pr-2 flex gap-2">
+        <Button variant="secondary" size="sm" onClick={newConversation}>
+          <CreateIssueLine />
+        </Button>
       </div>
 
       <DeleteNotificationTaskAlert
-        deleteTask={() => deleteNotification(notificationId)}
+        deleteTask={() => deleteNotification('asd')}
         open={deleteAlert}
         setOpen={setDeleteAlert}
       />

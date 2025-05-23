@@ -32,7 +32,6 @@ export const beautifyTask = task({
             description: true,
           },
         },
-        taskExternalLink: true,
       },
     });
 

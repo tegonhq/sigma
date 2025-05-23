@@ -1,4 +1,6 @@
 import {
+  AI,
+  Button,
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
@@ -66,7 +68,7 @@ export const RightSideLayout = observer(
       (event) => {
         switch (event.key) {
           case 'l':
-            if (firstTab.type === TabViewType.NOTIFICATIONS) {
+            if (firstTab.type === TabViewType.ASSISTANT) {
               return;
             }
 
@@ -100,63 +102,72 @@ export const RightSideLayout = observer(
     };
 
     return (
-      <main>
-        <RightSideViewContext.Provider
-          value={{
-            collapsed: rightSideCollapsed,
-            onOpen,
-            onClose,
+      <RightSideViewContext.Provider
+        value={{
+          collapsed: rightSideCollapsed,
+          onOpen,
+          onClose,
+        }}
+      >
+        <div
+          className="flex flex-col"
+          style={{
+            overflow: 'hidden',
+            height: 'calc(100vh - 1rem)',
+            width: open ? 'calc(100vw - 4.5rem)' : 'calc(100vw - 1rem)',
           }}
         >
-          <div
-            className="flex flex-col"
-            style={{
-              overflow: 'hidden',
-              height: 'calc(100vh - 1rem)',
-              width: open ? 'calc(100vw - 13.5rem)' : 'calc(100vw - 1rem)',
-            }}
+          <ResizablePanelGroup direction="horizontal">
+            <ResizablePanel
+              collapsible={false}
+              className="bg-background-2 rounded-md"
+              style={{
+                height: 'calc(100vh - 1rem)',
+              }}
+              order={1}
+              id="home"
+            >
+              {header}
+
+              <TabContext.Provider value={{ tabId: firstTab.id }}>
+                {children}
+              </TabContext.Provider>
+            </ResizablePanel>
+            {!rightSideCollapsed && (
+              <>
+                <ResizableHandle className="w-2.5" />
+
+                <ResizablePanel
+                  className="rounded-md"
+                  collapsible={false}
+                  maxSize={50}
+                  minSize={25}
+                  defaultSize={size}
+                  onResize={(size) => setSize(size)}
+                  order={2}
+                  id="rightScreen"
+                >
+                  <RightSideHeader onClose={onClose} />
+                  <Conversation defaultValue={defaultValue} />
+                </ResizablePanel>
+              </>
+            )}
+          </ResizablePanelGroup>
+        </div>
+
+        <SearchDialog />
+        {rightSideCollapsed && firstTab.type !== TabViewType.ASSISTANT && (
+          <Button
+            className="fixed bottom-4 right-4 gap-2 bg-background"
+            size="lg"
+            variant="secondary"
+            onClick={() => setRightSideCollapsed(false)}
           >
-            <ResizablePanelGroup direction="horizontal">
-              <ResizablePanel
-                collapsible={false}
-                className="bg-background-2 rounded-md"
-                style={{
-                  height: 'calc(100vh - 1rem)',
-                }}
-                order={1}
-                id="home"
-              >
-                {header}
-
-                <TabContext.Provider value={{ tabId: firstTab.id }}>
-                  {children}
-                </TabContext.Provider>
-              </ResizablePanel>
-              {!rightSideCollapsed && (
-                <>
-                  <ResizableHandle className="w-2.5" />
-
-                  <ResizablePanel
-                    className="rounded-md"
-                    collapsible={false}
-                    maxSize={50}
-                    minSize={25}
-                    defaultSize={size}
-                    onResize={(size) => setSize(size)}
-                    order={2}
-                    id="rightScreen"
-                  >
-                    <RightSideHeader onClose={onClose} />
-                    <Conversation defaultValue={defaultValue} />
-                  </ResizablePanel>
-                </>
-              )}
-            </ResizablePanelGroup>
-          </div>
-
-          <SearchDialog />
-        </RightSideViewContext.Provider>
-      </main>
+            <AI />
+            Chat
+          </Button>
+        )}
+      </RightSideViewContext.Provider>
     );
   },
 );

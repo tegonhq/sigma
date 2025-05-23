@@ -11,6 +11,7 @@ import {
   defaultApplicationStoreValue,
   type ApplicationStoreType,
 } from './application';
+import { AutomationStore, type AutomationStoreType } from './automation';
 import {
   CommonStore,
   defaultCommonStoreValue,
@@ -29,15 +30,7 @@ import {
   type IntegrationAccountsStoreType,
 } from './integration-accounts';
 import { ListsStore, type ListsStoreType } from './lists';
-import {
-  NotificationsStore,
-  type NotificationsStoreType,
-} from './notification';
 import { PagesStore, type PagesStoreType } from './pages';
-import {
-  TaskExternalLinksStore,
-  type TaskExternalLinksStoreType,
-} from './task-external-links';
 import {
   TaskOccurrencesStore,
   type TaskOccurrencesStoreType,
@@ -57,10 +50,9 @@ const StoreContextModel = types.model({
   tasksStore: TasksStore,
   listsStore: ListsStore,
   taskOccurrencesStore: TaskOccurrencesStore,
-  taskExternalLinksStore: TaskExternalLinksStore,
   agentWorklogsStore: AgentWorklogsStore,
   activitesStore: ActivityStore,
-  notificationsStore: NotificationsStore,
+  automationsStore: AutomationStore,
 });
 
 export const storeContextStore = StoreContextModel.create({
@@ -98,17 +90,14 @@ export const storeContextStore = StoreContextModel.create({
     lists: [],
   },
   commonStore: defaultCommonStoreValue,
-  taskExternalLinksStore: {
-    taskExternalLinks: {},
-  },
   agentWorklogsStore: {
     agentWorklogs: [],
   },
   activitesStore: {
     activities: [],
   },
-  notificationsStore: {
-    notifications: [],
+  automationsStore: {
+    automations: [],
   },
 });
 
@@ -123,10 +112,9 @@ export interface StoreContextInstanceType {
   commonStore: CommonStoreType;
   listsStore: ListsStoreType;
   taskOccurrencesStore: TaskOccurrencesStoreType;
-  taskExternalLinksStore: TaskExternalLinksStoreType;
   agentWorklogsStore: AgentWorklogStoreType;
   activitesStore: ActivityStoreType;
-  notificationsStore: NotificationsStoreType;
+  automationsStore: AutomationStoreType;
 }
 export const StoreContext =
   React.createContext<null | StoreContextInstanceType>(null);

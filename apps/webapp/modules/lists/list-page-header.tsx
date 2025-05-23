@@ -1,5 +1,4 @@
 import {
-  AddLine,
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
@@ -18,17 +17,9 @@ import { observer } from 'mobx-react-lite';
 import React from 'react';
 
 import type { ListType } from 'common/types';
-import { Navigation } from 'layouts/app-layout';
 
-import { useApplication } from 'hooks/application';
+import { useDeleteListMutation, useUpdateListMutation } from 'services/lists';
 
-import {
-  useCreateListMutation,
-  useDeleteListMutation,
-  useUpdateListMutation,
-} from 'services/lists';
-
-import { TabViewType } from 'store/application';
 import { useContextStore } from 'store/global-context-provider';
 
 import { DeleteListAlert } from './delete-list-alert';
@@ -37,23 +28,6 @@ import { FavouriteButton } from './list-view/favourite-button';
 interface ListPageHeaderProps {
   list?: ListType;
 }
-
-export const HeaderActions = () => {
-  const { updateTabType } = useApplication();
-
-  const { mutate: createList } = useCreateListMutation({
-    onSuccess: (data: ListType) => {
-      updateTabType(0, TabViewType.LIST, { entityId: data.id });
-    },
-  });
-
-  return (
-    <Button className="gap-1" variant="secondary" onClick={() => createList()}>
-      <AddLine size={14} />
-      New list
-    </Button>
-  );
-};
 
 export const ListPageHeader = observer(({ list }: ListPageHeaderProps) => {
   const { pagesStore } = useContextStore();
@@ -88,8 +62,7 @@ export const ListPageHeader = observer(({ list }: ListPageHeaderProps) => {
 
   return (
     <header className="flex h-[38px] shrink-0 items-center justify-between gap-2 border-border border-b">
-      <div className="flex items-center gap-2 px-2">
-        <Navigation />
+      <div className="flex items-center gap-2 px-4">
         <Breadcrumb>
           <BreadcrumbList className="gap-1">
             <BreadcrumbItem>
@@ -142,9 +115,6 @@ export const ListPageHeader = observer(({ list }: ListPageHeaderProps) => {
         )}
       </div>
 
-      <div className="pr-2">
-        <HeaderActions />
-      </div>
       {deleteListDialog && (
         <DeleteListAlert
           open={deleteListDialog}

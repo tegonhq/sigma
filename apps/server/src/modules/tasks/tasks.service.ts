@@ -29,8 +29,8 @@ export class TasksService {
     private configService: ConfigService,
   ) {}
 
-  async getTaskBySourceId(
-    sourceId: string,
+  async getTaskBySourceURL(
+    sourceURL: string,
     workspaceId: string,
   ): Promise<Task | null> {
     const task = await this.prisma.task.findFirst({
@@ -41,8 +41,8 @@ export class TasksService {
         },
         AND: {
           source: {
-            path: ['id'],
-            equals: sourceId,
+            path: ['url'],
+            equals: sourceURL,
           },
         },
         deleted: null,
@@ -85,7 +85,7 @@ export class TasksService {
       );
     }
 
-    const externalTask = await this.getTaskBySourceId(source.id, workspaceId);
+    const externalTask = await this.getTaskBySourceURL(source.url, workspaceId);
 
     // If we found a task, update it
     if (externalTask) {
@@ -170,23 +170,14 @@ export class TasksService {
           },
         },
         source: source ? { ...source } : undefined,
+        ...(integrationAccountId && {
+          integrationAccount: { connect: { id: integrationAccountId } },
+        }),
       },
       include: {
         page: true,
       },
     });
-
-    // Then create external link and connect it to the task
-    if (source && integrationAccountId) {
-      await prismaClient.taskExternalLink.create({
-        data: {
-          sourceId: source.id,
-          url: source.url || '',
-          integrationAccount: { connect: { id: integrationAccountId } },
-          task: { connect: { id: task.id } },
-        },
-      });
-    }
 
     if (pageDescription) {
       await this.pageService.updatePage(
@@ -217,7 +208,7 @@ export class TasksService {
     // Build update data object
     const updateData: JsonObject = {
       ...otherTaskData,
-      ...(source && { source: { id: source.id, type: source.type } }),
+      ...(source && { source: { url: source.url, type: source.type } }),
       ...(taskStatus && {
         status: taskStatus,
         ...(taskStatus === 'Done' || taskStatus === 'Canceled'
@@ -293,13 +284,13 @@ export class TasksService {
     });
   }
 
-  async deleteTaskBySourceId(
-    sourceId: string,
+  async deleteTaskBySourceURL(
+    sourceURL: string,
     workspaceId: string,
     userId: string,
   ) {
     return await this.prisma.$transaction(async (tx: TransactionClient) => {
-      const task = await this.getTaskBySourceId(sourceId, workspaceId);
+      const task = await this.getTaskBySourceURL(sourceURL, workspaceId);
       if (!task || task.deleted) {
         return task;
       }
@@ -308,7 +299,10 @@ export class TasksService {
       await Promise.all([
         // Delete task occurrences if it's recurring
         task.recurrence &&
-          this.taskOccurenceService.deleteTaskOccurenceByTask(task.id),
+          this.taskOccurenceService.deleteTaskOccurenceByTask(
+            task.id,
+            workspaceId,
+          ),
 
         // Update calendar if task has dates
         (task.startTime || task.endTime) &&

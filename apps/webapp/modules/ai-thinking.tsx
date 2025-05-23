@@ -12,8 +12,8 @@ export const AIThinking = observer(() => {
   }
 
   return (
-    <div className="fixed bottom-4 right-4 z-50">
-      <div className="flex items-center gap-2 bg-background-2 shadow-1 border-border border-1 rounded-md px-3 py-2 shadow-sm">
+    <div className="fixed top-4 right-4 z-50">
+      <div className="flex items-center gap-2 bg-background-3 shadow-1 rounded-md px-3 py-2">
         <Image
           src="/logo_light.svg"
           alt="logo"

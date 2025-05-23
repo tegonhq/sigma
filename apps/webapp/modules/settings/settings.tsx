@@ -15,15 +15,16 @@ import {
   SettingsLine,
   Button,
   AI,
-  DocumentLine,
 } from '@tegonhq/ui';
+import { Brain, Workflow } from 'lucide-react';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 
+import { Automations } from './automations';
 import { Integrations } from './integrations';
 import { MCP } from './mcp';
+import { Memory } from './memory';
 import { Preferences } from './preferences';
-import { Signals } from './signals';
 import { Workspace } from './workspace';
 
 interface SettingsProps {
@@ -37,7 +38,8 @@ const COMPONENTS_MAP = {
   Integrations,
   Preferences,
   MCP,
-  Signals,
+  Memory,
+  Automations,
 };
 
 export const Settings = observer(
@@ -53,7 +55,8 @@ export const Settings = observer(
       ],
       ai: [
         { name: 'MCP', icon: AI },
-        { name: 'Signals', icon: DocumentLine },
+        { name: 'Memory', icon: Brain },
+        { name: 'Automations', icon: Workflow },
       ],
     };
 

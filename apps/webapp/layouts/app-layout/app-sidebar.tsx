@@ -1,9 +1,7 @@
 import {
-  AddLine,
+  AI,
   Button,
   CalendarLine,
-  cn,
-  Inbox,
   IssuesLine,
   Project,
   Sidebar,
@@ -15,39 +13,26 @@ import {
   SidebarMenuItem,
 } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
-import getConfig from 'next/config';
 import Image from 'next/image';
 import * as React from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 
 import { Updates } from 'modules/updates/updates';
 
-import { getIcon } from 'common/icon-picker';
 import { Shortcut } from 'common/shortcut';
 import { SCOPES } from 'common/shortcut-scopes';
 import { TooltipWrapper } from 'common/tooltip';
-import type { ListType } from 'common/types';
 
 import { useApplication } from 'hooks/application';
-import { useLists, type ListTypeWithCount } from 'hooks/list';
-
-import { useCreateListMutation } from 'services/lists';
 
 import { TabViewType } from 'store/application';
 
 import { WorkspaceDropdown } from './workspace-dropdown';
-const { publicRuntimeConfig } = getConfig();
 
 export const AppSidebar = observer(
   ({ ...props }: React.ComponentProps<typeof Sidebar>) => {
     const { updateTabType, closeRightScreen, tabs } = useApplication();
     const firstTab = tabs[0];
-    const lists = useLists();
-    const { mutate: createList } = useCreateListMutation({
-      onSuccess: (data: ListType) => {
-        navigate(TabViewType.LIST, data.id);
-      },
-    });
 
     // Use a ref to track if 'g' was pressed
     const gKeyPressed = React.useRef(false);
@@ -77,12 +62,12 @@ export const AppSidebar = observer(
 
     // Handle the individual shortcut keys after 'g'
     useHotkeys(
-      ['i', 'm', 't', 'l'],
+      ['a', 'm', 't', 'l'],
       (event) => {
         if (gKeyPressed.current) {
           switch (event.key) {
-            case 'i':
-              navigate(TabViewType.NOTIFICATIONS);
+            case 'a':
+              navigate(TabViewType.ASSISTANT);
               break;
             case 'm':
               navigate(TabViewType.MY_TASKS);
@@ -125,10 +110,15 @@ export const AppSidebar = observer(
     };
 
     return (
-      <Sidebar variant="inset" {...props}>
-        <SidebarHeader className="pl-0">
+      <Sidebar
+        collapsible="icon"
+        className="!w-[calc(var(--sidebar-width-icon)_+_1px)]"
+        variant="inset"
+        {...props}
+      >
+        <SidebarHeader className="pl-0" style={{ marginTop: '0.1rem' }}>
           <SidebarMenu>
-            <SidebarMenuItem className="pl-2 flex justify-end w-full">
+            <SidebarMenuItem className="pl-2 flex justify-center w-full">
               <Image
                 src="/logo_light.svg"
                 alt="logo"
@@ -141,8 +131,8 @@ export const AppSidebar = observer(
         </SidebarHeader>
         <SidebarContent>
           <SidebarGroup>
-            <SidebarMenu className="gap-0.5">
-              <SidebarMenuItem>
+            <SidebarMenu className="gap-2">
+              <SidebarMenuItem className="flex w-full justify-center">
                 <TooltipWrapper
                   tooltip={
                     <>
@@ -153,16 +143,15 @@ export const AppSidebar = observer(
                   <Button
                     variant="secondary"
                     className="flex gap-1 w-fit"
-                    isActive={firstTab.type === TabViewType.NOTIFICATIONS}
-                    onClick={() => navigate(TabViewType.NOTIFICATIONS)}
+                    isActive={firstTab.type === TabViewType.ASSISTANT}
+                    onClick={() => navigate(TabViewType.ASSISTANT)}
                   >
-                    <Inbox className="h-4 w-4" />
-                    Inbox
+                    <AI size={18} />
                   </Button>
                 </TooltipWrapper>
               </SidebarMenuItem>
 
-              <SidebarMenuItem>
+              <SidebarMenuItem className="flex w-full justify-center">
                 <TooltipWrapper
                   tooltip={
                     <>
@@ -176,12 +165,11 @@ export const AppSidebar = observer(
                     isActive={firstTab.type === TabViewType.DAYS}
                     onClick={() => navigate(TabViewType.DAYS)}
                   >
-                    <CalendarLine className="h-4 w-4" />
-                    Today
+                    <CalendarLine size={18} />
                   </Button>
                 </TooltipWrapper>
               </SidebarMenuItem>
-              <SidebarMenuItem>
+              <SidebarMenuItem className="flex w-full justify-center">
                 <TooltipWrapper
                   tooltip={
                     <>
@@ -195,13 +183,12 @@ export const AppSidebar = observer(
                     isActive={firstTab.type === TabViewType.MY_TASKS}
                     onClick={() => navigate(TabViewType.MY_TASKS)}
                   >
-                    <IssuesLine className="h-4 w-4" />
-                    Tasks
+                    <IssuesLine size={18} />
                   </Button>
                 </TooltipWrapper>
               </SidebarMenuItem>
 
-              <SidebarMenuItem>
+              <SidebarMenuItem className="flex w-full justify-center">
                 <TooltipWrapper
                   tooltip={
                     <>
@@ -212,80 +199,19 @@ export const AppSidebar = observer(
                   <Button
                     variant="secondary"
                     className="flex gap-1 w-fit"
-                    isActive={
-                      firstTab.type === TabViewType.LIST && !firstTab.entity_id
-                    }
+                    isActive={firstTab.type === TabViewType.LIST}
                     onClick={() => navigate(TabViewType.LIST)}
                   >
-                    <Project className="h-4 w-4" />
-                    Lists
+                    <Project size={18} />
                   </Button>
                 </TooltipWrapper>
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroup>
-
-          <SidebarGroup>
-            <h3 className="text-sm text-muted-foreground mb-1 flex justify-between items-center">
-              <p>Favourites</p>
-              <Button
-                size="xs"
-                variant="ghost"
-                onClick={() => {
-                  createList(true);
-                }}
-              >
-                <AddLine size={12} />
-              </Button>
-            </h3>
-            <SidebarMenu className="gap-0.5">
-              {lists.map((list: ListTypeWithCount) => {
-                if (!list.favourite) {
-                  return null;
-                }
-
-                const isActive =
-                  firstTab.type === TabViewType.LIST &&
-                  firstTab.entity_id === list.id;
-                return (
-                  <SidebarMenuItem key={list.id}>
-                    <Button
-                      variant="secondary"
-                      className={cn(
-                        'flex gap-1 w-fit min-w-0 justify-start',
-                        list.name?.length > 10 && 'w-full',
-                      )}
-                      isActive={isActive}
-                      onClick={() => navigate(TabViewType.LIST, list.id)}
-                    >
-                      {getIcon(
-                        list?.icon,
-                        15,
-                        isActive && 'text-accent-foreground',
-                      )}
-                      <div className="inline-flex items-center gap-1 shrink min-w-[0px]">
-                        <div className="truncate">
-                          {list.name ? list.name : 'Untitled'}
-                        </div>
-                      </div>
-                      <span
-                        className={cn(
-                          'ml-0.5 text-muted-foreground',
-                          isActive && 'text-accent-foreground',
-                        )}
-                      >
-                        {list.count}
-                      </span>
-                    </Button>
-                  </SidebarMenuItem>
-                );
-              })}
-            </SidebarMenu>
-          </SidebarGroup>
         </SidebarContent>
-        <SidebarFooter className="pl-0">
-          <div className="text-sm text-muted-foreground flex items-center justify-between gap-2">
-            <WorkspaceDropdown />v{publicRuntimeConfig.NEXT_PUBLIC_VERSION}
+        <SidebarFooter className="pl-0 mb-2">
+          <div className="text-sm text-muted-foreground flex items-center justify-center gap-2">
+            <WorkspaceDropdown />
           </div>
           <Updates />
         </SidebarFooter>

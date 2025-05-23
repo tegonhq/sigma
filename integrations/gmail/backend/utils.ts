@@ -40,7 +40,6 @@ export async function createActivity(emails: ProcessedEmail[], integrationAccoun
     const text = `Email received from ${sender} with subject ${subject}. \n\n Content: ${fullContent} \n\n Labels: ${tags.join(',')}, Timestamp: ${timestamp}, ThreadId: ${threadId}`;
 
     await axios.post('/api/v1/activity', {
-      sourceId: email.id,
       sourceURL: `https://mail.google.com/mail/u/0/#all/${email.id}`,
       text,
       taskId: existingTask ? existingTask.id : null,

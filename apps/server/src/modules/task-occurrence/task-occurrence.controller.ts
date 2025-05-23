@@ -121,7 +121,13 @@ export class TaskOccurenceController {
 
   @Delete('task/:taskId')
   @UseGuards(AuthGuard)
-  async deleteTaskOccurenceByTask(@Param('taskId') taskId: string) {
-    return await this.taskOccurenceService.deleteTaskOccurenceByTask(taskId);
+  async deleteTaskOccurenceByTask(
+    @Param('taskId') taskId: string,
+    @Workspace() workspaceId: string,
+  ) {
+    return await this.taskOccurenceService.deleteTaskOccurenceByTask(
+      taskId,
+      workspaceId,
+    );
   }
 }

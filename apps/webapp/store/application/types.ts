@@ -24,7 +24,7 @@ export enum TabViewType {
   CONTEXT = 'context',
 
   // Misc
-  NOTIFICATIONS = 'notifications',
+  ASSISTANT = 'notifications',
 }
 
 export interface TabGroupType {

@@ -41,15 +41,6 @@ export async function getWorkspaceId(
       });
       return task.workspaceId;
 
-    case ModelName.TaskExternalLink:
-      const taskExternalLink = await prisma.taskExternalLink.findUnique({
-        where: { id: modelId },
-        include: {
-          task: true,
-        },
-      });
-      return taskExternalLink.task.workspaceId;
-
     case ModelName.TaskOccurrence:
       const taskOccurrence = await prisma.taskOccurrence.findUnique({
         where: { id: modelId },
@@ -109,12 +100,13 @@ export async function getWorkspaceId(
 
       return activity.workspaceId;
 
-    case ModelName.Notification:
-      const notification = await prisma.notification.findUnique({
+    case ModelName.Automation:
+      const automation = await prisma.automation.findUnique({
         where: { id: modelId },
       });
 
-      return notification.workspaceId;
+      return automation.workspaceId;
+
     default:
       return undefined;
   }
@@ -132,12 +124,10 @@ export async function getModelData(
     Template: prisma.template,
     Page: prisma.page,
     Task: prisma.task,
-    TaskExternalLink: prisma.taskExternalLink,
     TaskOccurrence: prisma.taskOccurrence,
     Conversation: prisma.conversation,
     ConversationHistory: prisma.conversationHistory,
     List: prisma.list,
-    Notification: prisma.notification,
     IntegrationAccount: {
       findUnique: (args: { where: { id: string } }) =>
         prisma.integrationAccount.findUnique({
@@ -157,6 +147,7 @@ export async function getModelData(
     },
     TaskOccurence: prisma.taskOccurrence,
     AgentWorklog: prisma.agentWorklog,
+    Automation: prisma.automation,
   };
 
   const model = modelMap[modelName];

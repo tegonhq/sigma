@@ -40,6 +40,18 @@ export class ConversationController {
     );
   }
 
+  @Get(':conversationId/run')
+  @UseGuards(AuthGuard, CreditsGuard)
+  async getConversationStream(
+    @Workspace() workspaceId: string,
+    @Param() conversationData: { conversationId: string },
+  ) {
+    return await this.conversationService.getCurrentConversationRun(
+      conversationData.conversationId,
+      workspaceId,
+    );
+  }
+
   @Get(':conversationId')
   @UseGuards(AuthGuard, CreditsGuard)
   async getConversation(
@@ -56,6 +68,14 @@ export class ConversationController {
     @Param() conversationParams: ConversationParamsDto,
   ): Promise<Conversation> {
     return await this.conversationService.deleteConversation(
+      conversationParams.conversationId,
+    );
+  }
+
+  @Post(':conversationId/read')
+  @UseGuards(AuthGuard)
+  async readConversation(@Param() conversationParams: ConversationParamsDto) {
+    return await this.conversationService.readConversation(
       conversationParams.conversationId,
     );
   }

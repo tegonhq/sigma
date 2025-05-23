@@ -154,8 +154,16 @@ export const ScrollAreaWithAutoScroll = ({
   });
 
   return (
-    <div ref={scrollRef} className={cn('overflow-y-auto grow pb-4', className)}>
-      {children}
+    <div
+      ref={scrollRef}
+      className={cn(
+        'overflow-y-auto grow flex flex-col items-center',
+        className,
+      )}
+    >
+      <div className="flex flex-col h-full max-w-[97ch] w-full pb-4">
+        {children}
+      </div>
     </div>
   );
 };

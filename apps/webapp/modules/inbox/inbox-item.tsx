@@ -1,33 +1,30 @@
 import { cn } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
-import ReactTimeAgo from 'react-time-ago';
 
 import { getIcon, type IconType } from 'common/icon-utils';
-import { type NotificationType } from 'common/types';
 
 import { useGetIntegrationDefinitions } from 'services/integration-definition';
 
 import { useContextStore } from 'store/global-context-provider';
 
 interface InboxItemProps {
-  notification: NotificationType;
+  conversationId: string;
   selected: boolean;
   onSelect: (id: string) => void;
-  nextIsSelected: boolean;
-}
-
-function getNotificationText(): string {
-  return 'New activity';
 }
 
 export const InboxItem = observer(
-  ({ notification, selected, onSelect, nextIsSelected }: InboxItemProps) => {
-    const { activitesStore, integrationAccountsStore } = useContextStore();
+  ({ conversationId, selected, onSelect }: InboxItemProps) => {
+    const { conversationsStore, activitesStore, integrationAccountsStore } =
+      useContextStore();
 
-    const activity = activitesStore.getActivityById(notification.modelId);
+    const conversationData =
+      conversationsStore.getConversationWithId(conversationId);
     const { data: integrationDefinitions } = useGetIntegrationDefinitions();
-
+    const activity = activitesStore.getActivityById(
+      conversationData?.activityId,
+    );
     const integrationAccount = integrationAccountsStore.getAccountWithId(
       activity?.integrationAccountId,
     );
@@ -42,54 +39,36 @@ export const InboxItem = observer(
 
     const Icon = integrationDefinition
       ? getIcon(integrationDefinition.icon as IconType)
-      : undefined;
-
-    // TODO : will fail when issues are from different teams
-    const noBorder = nextIsSelected || selected;
+      : null;
 
     return (
       <div
         className={cn(
-          'ml-2 p-3 py-0 mr-2 mb-1 flex gap-1 items-center hover:bg-grayAlpha-100 rounded',
+          'mx-2 py-0 px-2 mb-0.5 flex gap-1 items-center hover:bg-grayAlpha-100 rounded',
           selected && 'bg-grayAlpha-200',
         )}
         onClick={() => {
-          if (!notification.read) {
+          if (!conversationData.unread) {
           }
 
-          onSelect(notification.id);
+          onSelect(conversationData.id);
         }}
       >
-        <div
-          className={cn(
-            'flex flex-col gap-1 py-2 w-full',
-            !noBorder && 'border-b border-border',
-          )}
-        >
-          <div className="flex justify-between w-full items-center">
+        <div className={cn('flex flex-col gap-1 py-1.5 w-full')}>
+          <div className="flex gap-2 w-full items-center">
             <div
               className={cn(
-                'w-[calc(100%_-_40px)]',
-                notification.read ? 'text-muted-foreground' : 'text-foreground',
+                activity ? 'w-[calc(100%_-_25px)]' : 'w-[calc(100%_-_10px)]',
+                !conversationData.unread
+                  ? 'text-muted-foreground'
+                  : 'text-foreground',
               )}
             >
-              <div className="truncate"> {activity?.text} </div>
+              <div className="truncate"> {conversationData?.title} </div>
             </div>
+
             <div className="text-foreground text-right">
-              {Icon && <Icon size={18} className="dark:text-background" />}
-            </div>
-          </div>
-
-          <div className="flex justify-between text-xs">
-            <div className="flex gap-2 text-muted-foreground">
-              {getNotificationText()}
-            </div>
-
-            <div className="text-muted-foreground">
-              <ReactTimeAgo
-                date={new Date(notification.createdAt)}
-                timeStyle="twitter"
-              />
+              {Icon && <Icon size={16} className="dark:text-background" />}
             </div>
           </div>
         </div>

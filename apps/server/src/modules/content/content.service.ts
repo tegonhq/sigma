@@ -24,6 +24,9 @@ export class ContentService implements OnModuleInit {
     this.server = Server.configure({
       name: 'sigma-collab',
       port: 1234,
+      timeout: 30000, // Configure timeout for operations
+      debounce: 3000, // Debounce time for updates
+      maxDebounce: 10000, // Maximum debounce time
       extensions: [
         new Database({
           // Return a Promise to retrieve data …

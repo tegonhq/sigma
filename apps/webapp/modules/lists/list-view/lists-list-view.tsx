@@ -1,100 +1,94 @@
-import {
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@tegonhq/ui';
+import { Project } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
+import {
+  AutoSizer,
+  CellMeasurer,
+  CellMeasurerCache,
+  type Index,
+  type ListRowProps,
+} from 'react-virtualized';
+
+import { ScrollManagedList } from 'common/virtualized-list';
 
 import { useApplication } from 'hooks/application';
 import { useLists } from 'hooks/list';
 
 import { TabViewType } from 'store/application';
-import { useContextStore } from 'store/global-context-provider';
 
-import { useListColumns } from './columns';
+import { ListItem } from './list-view-item';
 
-export const ListsList = observer(() => {
-  const { listsStore } = useContextStore();
+export const ListsList = observer(({ selected }: { selected: string }) => {
   const lists = useLists();
 
-  const [data, setData] = React.useState(listsStore.lists);
+  const cache = new CellMeasurerCache({
+    defaultHeight: 45, // Default row height
+    fixedWidth: true, // Rows have fixed width but dynamic height
+  });
+
   const { updateTabType } = useApplication();
 
   React.useEffect(() => {
-    setData(lists);
+    cache.clearAll();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lists.length]);
-
-  const columns = useListColumns();
-  const table = useReactTable({
-    data,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    columns: columns as any,
-    getCoreRowModel: getCoreRowModel(),
-  });
+  }, [lists]);
 
   const goToList = (listId: string) => {
     updateTabType(0, TabViewType.LIST, { entityId: listId });
   };
 
+  const rowRender = ({ index, style, key, parent }: ListRowProps) => {
+    const row = lists[index];
+
+    if (!row) {
+      return null;
+    }
+
+    return (
+      <CellMeasurer
+        key={key}
+        cache={cache}
+        columnIndex={0}
+        parent={parent}
+        rowIndex={index}
+      >
+        <div style={style} key={key}>
+          <ListItem
+            list={row}
+            onSelect={(id: string) => goToList(id)}
+            selected={selected === row.id}
+          />
+        </div>
+      </CellMeasurer>
+    );
+  };
+
+  const rowHeight = ({ index }: Index) => {
+    return cache.getHeight(index, 0);
+  };
+
   return (
-    <div className="flex items-center w-full">
-      <Table>
-        <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                return (
-                  <TableHead key={header.id} className="text-sm">
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                  </TableHead>
-                );
-              })}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && 'selected'}
-                className="cursor-pointer"
-                onClick={() => {
-                  goToList(row.original.id);
-                }}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id} className="w-[90%] py-0.5">
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell
-                colSpan={columns.length}
-                className="h-24 text-center"
-              ></TableCell>
-            </TableRow>
+    <AutoSizer className="h-full mt-2">
+      {({ width, height }) => (
+        <ScrollManagedList
+          className=""
+          listId="inbox-list"
+          height={height}
+          overscanRowCount={10}
+          noRowsRenderer={() => (
+            <div className="p-4 h-full flex flex-col items-center justify-start gap-3 mt-4">
+              <Project size={30} />
+              No lists
+            </div>
           )}
-        </TableBody>
-      </Table>
-    </div>
+          rowCount={lists.length + 2}
+          rowHeight={rowHeight}
+          deferredMeasurementCache={cache}
+          rowRenderer={rowRender}
+          width={width}
+          shallowCompare
+        />
+      )}
+    </AutoSizer>
   );
 });

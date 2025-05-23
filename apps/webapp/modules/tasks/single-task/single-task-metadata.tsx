@@ -15,10 +15,6 @@ import { ScheduleDropdown } from '../metadata';
 import { DuedateDropdown } from '../metadata/due-date';
 import { SubTasks } from '../metadata/sub-tasks';
 import { TaskExternalInfo } from '../task-external-info';
-import {
-  TaskIntegrationMetadataWrapper,
-  TaskIntegrationViewType,
-} from '../task-integration-metadata';
 
 interface SingleTaskMetadataProps {
   task: TaskType;
@@ -80,11 +76,6 @@ export const SingleTaskMetadata = observer(
           {task.parentId && parentTask()}
           <TaskExternalInfo task={task} />
         </div>
-
-        <TaskIntegrationMetadataWrapper
-          task={task}
-          view={TaskIntegrationViewType.SINGLE_TASK}
-        />
       </>
     );
   },

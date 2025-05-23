@@ -23,18 +23,11 @@ export const TaskExternalInfo = ({
   task,
   variant = TaskExternalVariant.DEFAULT,
 }: TaskExternalInfoProps) => {
-  const { integrationAccountsStore, taskExternalLinksStore } =
-    useContextStore();
+  const { integrationAccountsStore } = useContextStore();
   const ipc = useIPC();
 
-  const taskExternalLinks = taskExternalLinksStore.getExternalLinksForTask({
-    taskId: task.id,
-  });
-
-  const firstExternalLink = taskExternalLinks[0];
-
   const integrationAccount = integrationAccountsStore.getAccountWithId(
-    firstExternalLink?.integrationAccountId,
+    task?.integrationAccountId,
   );
   const { data: integrationDefinitions } = useGetIntegrationDefinitions();
   const integrationDefinition =
@@ -45,17 +38,19 @@ export const TaskExternalInfo = ({
         integrationAccount?.integrationDefinitionId,
     );
 
-  if (!firstExternalLink || !integrationDefinition) {
+  if (!task.integrationAccountId || !integrationDefinition) {
     return null;
   }
+
+  const source = JSON.parse(task.source);
 
   const Icon = getIcon(integrationDefinition.icon as IconType);
 
   const onClick = () => {
     if (ipc) {
-      ipc.openUrl(firstExternalLink.url);
+      ipc.openUrl(source.url);
     } else {
-      window.open(firstExternalLink.url, '_blank');
+      window.open(source.url, '_blank');
     }
   };
 

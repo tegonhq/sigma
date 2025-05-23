@@ -12,27 +12,37 @@ import { ScrollAreaWithAutoScroll } from 'common/use-auto-scroll';
 
 import { useConversationHistory } from 'hooks/conversations';
 
-import { useCreateConversationMutation } from 'services/conversations';
+import {
+  useCreateConversationMutation,
+  useGetCurrentConversationRun,
+} from 'services/conversations';
 
 import { useContextStore } from 'store/global-context-provider';
 
 interface InboxConversationProps {
-  activityId: string;
+  conversationId: string;
 }
 
 export const InboxConversation = observer(
-  ({ activityId }: InboxConversationProps) => {
+  ({ conversationId }: InboxConversationProps) => {
     const { commonStore, conversationsStore } = useContextStore();
-    const conversation = conversationsStore.conversations.find(
-      (conversation) => conversation.activityId === activityId,
-    );
+    const conversation =
+      conversationsStore.getConversationWithId(conversationId);
     const [conversationResponse, setConversationResponse] =
       React.useState(undefined);
+    const { data: initialRunResponse } =
+      useGetCurrentConversationRun(conversationId);
 
     const { mutate: createConversation } = useCreateConversationMutation({});
     const { toast } = useToast();
 
     const { conversationHistory } = useConversationHistory(conversation?.id);
+
+    React.useEffect(() => {
+      if (initialRunResponse) {
+        setConversationResponse(initialRunResponse);
+      }
+    }, [initialRunResponse]);
 
     const onSend = (text: string, agents: string[]) => {
       if (!!conversationResponse) {
@@ -48,7 +58,7 @@ export const InboxConversation = observer(
         },
         {
           onSuccess: (data) => {
-            commonStore.update({ currentConversationId: data.id });
+            commonStore.update({ currentConversationId: data.conversationId });
             setConversationResponse(data);
           },
           onError: (data) => {
@@ -99,8 +109,8 @@ export const InboxConversation = observer(
     };
 
     return (
-      <div className="flex flex-col h-full justify-center w-full items-center">
-        <div className="flex flex-col justify-end overflow-hidden h-full max-w-[97ch]">
+      <div className="flex flex-col h-full justify-center w-full items-center overflow-auto">
+        <div className="flex flex-col justify-end overflow-hidden h-full w-full">
           <ScrollAreaWithAutoScroll>
             {getConversations()}
             {conversationResponse && (
@@ -112,11 +122,15 @@ export const InboxConversation = observer(
             )}
           </ScrollAreaWithAutoScroll>
 
-          <ConversationTextarea
-            onSend={onSend}
-            className="bg-grayAlpha-100 m-4 mt-0"
-            isLoading={!!conversationResponse}
-          />
+          <div className="flex flex-col w-full items-center">
+            <div className="max-w-[97ch] w-full">
+              <ConversationTextarea
+                onSend={onSend}
+                className="bg-grayAlpha-100 m-4 mt-0 w-full"
+                isLoading={!!conversationResponse}
+              />
+            </div>
+          </div>
         </div>
       </div>
     );

@@ -7,11 +7,11 @@ export async function getTaskById(taskDto: TaskDto): Promise<Task> {
   return response.data;
 }
 
-export async function getTaskBySourceId(
+export async function getTaskBySourceURL(
   sourceDto: TaskBySourceDto,
 ): Promise<Task> {
   const response = await axios.get(
-    `/api/v1/tasks/source/${sourceDto.sourceId}`,
+    `/api/v1/tasks/source/${sourceDto.sourceURL}`,
   );
 
   return response.data;

@@ -410,9 +410,22 @@ export class TaskOccurenceService {
     return await this.createTaskOccurenceByTask(taskId, workspaceId);
   }
 
-  async deleteTaskOccurenceByTask(taskId: string) {
-    // Mark occurrences as deleted (including today and future occurrences)
-    const yesterday = endOfDay(subDays(new Date(), 1));
+  async deleteTaskOccurenceByTask(taskId: string, workspaceId: string) {
+    const workspace = await this.prisma.workspace.findUnique({
+      where: { id: workspaceId },
+    });
+
+    // Get start of today in workspace timezone
+    const todayInTZ = formatInTimeZone(
+      new Date(),
+      (workspace.preferences as Preferences).timezone || 'UTC',
+      'yyyy-MM-dd',
+    );
+
+    // Convert to UTC for database query
+    const todayUTC = new Date(todayInTZ);
+
+    // Update task to remove recurrence
     await this.prisma.task.update({
       where: { id: taskId },
       data: {
@@ -423,11 +436,12 @@ export class TaskOccurenceService {
       },
     });
 
+    // Delete all occurrences from today onwards in UTC
     return await this.prisma.taskOccurrence.updateMany({
       where: {
         taskId,
         startTime: {
-          gte: yesterday,
+          gte: todayUTC,
         },
       },
       data: { deleted: new Date().toISOString() },

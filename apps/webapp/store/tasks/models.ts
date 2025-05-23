@@ -19,4 +19,5 @@ export const Task = types.model({
   pageId: types.union(types.null, types.string),
   workspaceId: types.string,
   listId: types.union(types.null, types.string, types.undefined),
+  source: types.union(types.null, types.string, types.undefined),
 });
