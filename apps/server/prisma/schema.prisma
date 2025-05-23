@@ -134,6 +134,7 @@ model Conversation {
   status String @default("pending") // Can be "pending", "running", "completed", "failed"
 
   ConversationHistory ConversationHistory[]
+  syncs               Sync[]
 }
 
 model ConversationHistory {
@@ -309,10 +310,12 @@ model Sync {
   deleted   DateTime?
   title     String
   content   String
-  date      String
+  syncedAt  DateTime?
 
-  workspace   Workspace @relation(fields: [workspaceId], references: [id])
-  workspaceId String
+  workspace      Workspace     @relation(fields: [workspaceId], references: [id])
+  workspaceId    String
+  conversation   Conversation? @relation(fields: [conversationId], references: [id])
+  conversationId String?
 }
 
 model SyncAction {
