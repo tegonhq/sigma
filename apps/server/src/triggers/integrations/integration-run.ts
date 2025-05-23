@@ -67,13 +67,13 @@ export const integrationRun = task({
       `${integrationDefinition.url}/${integrationDefinition.version}/backend/index.js`,
     );
 
-    // const integrationFunction = await remoteModuleLoad(
-    //   `${integrationDefinition.url}/${integrationDefinition.version}/backend/index.js`,
-    // );
-
     const integrationFunction = await remoteModuleLoad(
-      `${integrationDefinition.url}`,
+      `${integrationDefinition.url}/${integrationDefinition.version}/backend/index.js`,
     );
+
+    // const integrationFunction = await remoteModuleLoad(
+    //   `${integrationDefinition.url}`,
+    // );
 
     return await integrationFunction.run({
       integrationAccount,
