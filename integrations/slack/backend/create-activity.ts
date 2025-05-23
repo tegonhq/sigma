@@ -1,7 +1,7 @@
 import { IntegrationAccount } from '@tegonhq/sigma-sdk';
 import axios from 'axios';
 
-import { getChannelDetails, getUserDetails } from './utils';
+import { getUserDetails } from './utils';
 
 async function getMessage(accessToken: string, channel: string, ts: string) {
   const result = await axios.get('https://slack.com/api/conversations.history', {
@@ -18,6 +18,19 @@ async function getMessage(accessToken: string, channel: string, ts: string) {
   });
 
   return result.data.messages?.[0];
+}
+
+async function getConversationInfo(accessToken: string, channel: string) {
+  const result = await axios.get('https://slack.com/api/conversations.info', {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+    params: {
+      channel,
+    },
+  });
+
+  return result.data.channel;
 }
 
 export const createActivityEvent = async (
@@ -44,12 +57,11 @@ export const createActivityEvent = async (
     const ts = event.item.ts;
 
     const eventMessage = await getMessage(accessToken, channel, ts);
-
     const mentionedUsers = getMentionUsers(eventMessage.text);
 
-    const [userDetails, channelDetails] = await Promise.all([
+    const [userDetails, conversationInfo] = await Promise.all([
       getUserDetails([eventMessage.user, ...mentionedUsers], integrationConfiguration.access_token),
-      getChannelDetails(event.item.channel, integrationConfiguration.access_token),
+      getConversationInfo(accessToken, channel),
     ]);
 
     const userIdMap = new Map(userDetails.map((user) => [user.id, user]));
@@ -60,8 +72,18 @@ export const createActivityEvent = async (
       return user ? `@${user.real_name}|${userId}` : match;
     });
 
-    const text = `Message from user ${userIdMap.get(eventMessage.user)?.real_name}(${eventMessage.user}) in channel ${channelDetails.name}(${channelDetails.id}) at ${eventMessage.ts}. Content: '${eventMessageText}'`;
-    // Get permalink from Slack API
+    let conversationContext;
+    if (conversationInfo.is_im) {
+      const dmUser = userIdMap.get(conversationInfo.user);
+      conversationContext = `direct message with ${dmUser?.real_name}(${conversationInfo.user})`;
+    } else if (conversationInfo.is_group) {
+      conversationContext = `private channel ${conversationInfo.name}(${conversationInfo.id})`;
+    } else {
+      conversationContext = `channel ${conversationInfo.name}(${conversationInfo.id})`;
+    }
+
+    const text = `Message from user ${userIdMap.get(eventMessage.user)?.real_name}(${eventMessage.user}) in ${conversationContext} at ${eventMessage.ts}. Content: '${eventMessageText}'`;
+
     const permalinkResponse = await axios.get(
       `https://slack.com/api/chat.getPermalink?channel=${channel}&message_ts=${ts}`,
       {

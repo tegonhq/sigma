@@ -14,4 +14,16 @@ export default class AutomationService {
       },
     });
   }
+
+  async deleteAutomation(automationId: string, workspaceId: string) {
+    await this.prisma.automation.update({
+      where: {
+        id: automationId,
+        workspaceId,
+      },
+      data: {
+        deleted: new Date(),
+      },
+    });
+  }
 }

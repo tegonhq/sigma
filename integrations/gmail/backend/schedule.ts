@@ -1,4 +1,4 @@
-/* eslint-disable dot-location */
+/* eslint-disable dot-notation */
 import { IntegrationAccount, IntegrationDefinition } from '@tegonhq/sigma-sdk';
 import axios from 'axios';
 
@@ -23,11 +23,12 @@ export async function handleSchedule(
 
   // If lastSyncTime is not available, default to 1 day ago
   const lastSyncTime =
-    settings.lastSyncTime || new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString();
+    settings.lastSyncTime || new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
   const unixTimestamp = Math.floor(new Date(lastSyncTime).getTime() / 1000);
-  // 1. List messages after lastSyncTime with Agent label
+
+  // List messages from inbox after lastSyncTime
   const listRes = await fetch(
-    `https://gmail.googleapis.com/gmail/v1/users/me/messages?q=after:${unixTimestamp} label:Sigma &maxResults=1`,
+    `https://gmail.googleapis.com/gmail/v1/users/me/messages?q=in:inbox after:${unixTimestamp} &maxResults=50`,
     {
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -120,22 +121,20 @@ export async function handleSchedule(
   }
 
   // 4. Update the lastSyncTime in settings
-  let newLastSyncTime = settings.lastSyncTime;
   if (maxTimestamp > 0) {
-    newLastSyncTime = new Date(maxTimestamp).toISOString();
-  }
-  const newSettings = {
-    ...settings,
-    lastSyncTime: newLastSyncTime,
-  };
+    const newSettings = {
+      ...settings,
+      lastSyncTime: new Date(maxTimestamp).toISOString(),
+    };
 
-  if (processedEmails.length > 0) {
-    await createActivity(processedEmails, integrationAccount.id);
-  }
+    if (processedEmails.length > 0) {
+      await createActivity(processedEmails, integrationAccount.id);
+    }
 
-  await axios.post(`/api/v1/integration_account/${integrationAccount.id}`, {
-    settings: { ...newSettings },
-  });
+    await axios.post(`/api/v1/integration_account/${integrationAccount.id}`, {
+      settings: newSettings,
+    });
+  }
 
   return { message: `Processed ${processedEmails.length} emails from gmail` };
 }

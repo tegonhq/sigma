@@ -55,16 +55,13 @@ export class WorkspacesController {
     return await this.workspacesService.getWorkspaceBySlug(workspaceSlug);
   }
 
-  @Post('daily-sync')
+  @Post('sync')
   @UseGuards(AuthGuard)
-  async toggleDailySync(
+  async toggleSync(
     @WorkspaceDecorator() workspaceId: string,
     @Body() body: { value: boolean },
   ) {
-    return await this.workspacesService.toggleDailySync(
-      workspaceId,
-      body.value,
-    );
+    return await this.workspacesService.toggleSync(workspaceId, body.value);
   }
 
   @Get(':workspaceId')

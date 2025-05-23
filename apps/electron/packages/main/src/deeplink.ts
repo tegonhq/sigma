@@ -6,12 +6,12 @@ export const registerDeepLink = (mainWindow: BrowserWindow) => {
   const deeplink = new Deeplink({
     app,
     mainWindow,
-    protocol: 'sigma',
+    protocol: 'mysigma',
   });
 
   deeplink.on('received', link => {
-    if (!link.startsWith('sigma://')) return;
-    const encoded = link.split('sigma://')[1];
+    if (!link.startsWith('mysigma://')) return;
+    const encoded = link.split('mysigma://')[1];
     if (!encoded) {
       throw new Error('Invalid sigma link!');
     }

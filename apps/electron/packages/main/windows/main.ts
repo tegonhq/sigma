@@ -7,7 +7,6 @@ import {PORT} from '../utils';
 // Initialize Fastify
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const isDev = process.env.NODE_ENV === 'development';
 
 export async function createMainWindow() {
   log.info(app.getAppPath());
@@ -41,10 +40,6 @@ export async function createMainWindow() {
    */
   browserWindow.on('ready-to-show', () => {
     browserWindow?.show();
-
-    if (isDev) {
-      // browserWindow?.webContents.openDevTools();
-    }
   });
 
   /**

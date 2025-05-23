@@ -1,5 +1,6 @@
 import { AddLine, Button, Card } from '@tegonhq/ui';
 import { EditorContent, useEditor } from '@tiptap/react';
+import { Trash2 } from 'lucide-react';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 
@@ -7,7 +8,10 @@ import { CustomMention } from 'modules/conversation/suggestion-extension';
 
 import { extensionsForConversation } from 'common/editor';
 
-import { useCreateAutomationMutation } from 'services/automation';
+import {
+  useCreateAutomationMutation,
+  useDeleteAutomationMutation,
+} from 'services/automation';
 import { useGetIntegrationDefinitions } from 'services/integration-definition';
 
 import { useContextStore } from 'store/global-context-provider';
@@ -19,6 +23,7 @@ export const Automation = observer(
   ({ automationId }: { automationId: string }) => {
     const { automationsStore } = useContextStore();
     const automation = automationsStore.getAutomationById(automationId);
+    const { mutate: deleteAutomation } = useDeleteAutomationMutation({});
 
     const editor = useEditor({
       extensions: [...extensionsForConversation, CustomMention],
@@ -33,14 +38,21 @@ export const Automation = observer(
     return (
       <Card className="p-2">
         <EditorContent editor={editor} />
-        <div className="flex justify-between mt-2">
+        <div className="flex justify-between items-center mt-2">
           <div className="text-muted-foreground text-sm">
             Ran
-            <span className="ml-1 text-muted-foreground">
+            <span className="mx-1 text-muted-foreground">
               {automation.usedCount}
-            </span>{' '}
+            </span>
             times
           </div>
+
+          <Button
+            variant="ghost"
+            onClick={() => deleteAutomation(automationId)}
+          >
+            <Trash2 size={14} />
+          </Button>
         </div>
       </Card>
     );

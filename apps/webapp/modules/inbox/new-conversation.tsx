@@ -51,7 +51,7 @@ export const NewConversation = ({
   return (
     <div className="flex flex-col h-full justify-center w-full items-start overflow-hidden">
       <div className="flex flex-col w-full items-center">
-        <div className="max-w-[90ch] w-full">
+        <div className="max-w-[90ch] w-full p-4">
           <h1 className="text-[32px] mx-1 font-medium">
             Hello <span className="text-primary">{user.fullname}</span>
           </h1>

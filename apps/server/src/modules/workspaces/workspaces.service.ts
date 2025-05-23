@@ -182,7 +182,7 @@ export default class WorkspacesService {
     });
   }
 
-  async toggleDailySync(workspaceId: string, value: boolean) {
+  async toggleSync(workspaceId: string, value: boolean) {
     const workspace = await this.prisma.workspace.findUnique({
       where: { id: workspaceId },
     });
@@ -200,8 +200,8 @@ export default class WorkspacesService {
     const createdSchedule = await schedules.create({
       // The id of the scheduled task you want to attach to.
       task: 'daily-run-schedule',
-      // The schedule in cron format.
-      cron: '0 5 * * *',
+      // The schedule in cron format - runs at 9am, 1pm, and 8pm
+      cron: '0 9,13,20 * * *',
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       timezone: (workspace.preferences as any).timezone,
       // this is required, it prevents you from creating duplicate schedules. It will update the schedule if it already exists.
