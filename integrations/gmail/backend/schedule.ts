@@ -61,7 +61,6 @@ export async function handleSchedule(
 
   // 3. Process emails and extract relevant information
   const processedEmails = [];
-  let maxTimestamp = 0;
 
   for (const email of emails) {
     try {
@@ -69,11 +68,6 @@ export async function handleSchedule(
       let fullContent = '';
       let sender = '';
       const tags = email.labelIds || [];
-
-      const timestamp = parseInt(email.internalDate, 10);
-      if (timestamp > maxTimestamp) {
-        maxTimestamp = timestamp;
-      }
 
       // Get sender information from headers
       const fromHeader = email.payload.headers.find(
@@ -121,20 +115,19 @@ export async function handleSchedule(
   }
 
   // 4. Update the lastSyncTime in settings
-  if (maxTimestamp > 0) {
-    const newSettings = {
-      ...settings,
-      lastSyncTime: new Date(maxTimestamp).toISOString(),
-    };
 
-    if (processedEmails.length > 0) {
-      await createActivity(processedEmails, integrationAccount.id);
-    }
+  const newSettings = {
+    ...settings,
+    lastSyncTime: new Date().toISOString(),
+  };
 
-    await axios.post(`/api/v1/integration_account/${integrationAccount.id}`, {
-      settings: newSettings,
-    });
+  if (processedEmails.length > 0) {
+    await createActivity(processedEmails, integrationAccount.id);
   }
+
+  await axios.post(`/api/v1/integration_account/${integrationAccount.id}`, {
+    settings: newSettings,
+  });
 
   return { message: `Processed ${processedEmails.length} emails from gmail` };
 }

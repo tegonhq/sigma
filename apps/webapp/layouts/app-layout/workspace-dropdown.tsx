@@ -27,11 +27,14 @@ export const WorkspaceDropdown = observer(() => {
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          size="sm"
-          className="hover:bg-transparent justify-between gap-2 items-center shrink min-w-[0px] max-w-[150px]"
+          className="hover:bg-transparent justify-between gap-2 items-center shrink p-0"
         >
           <div className="flex justify-between gap-2 items-center">
-            <AvatarText text={workspaceStore.workspace.name} noOfChar={1} />
+            <AvatarText
+              text={workspaceStore.workspace.name}
+              noOfChar={1}
+              className="w-6 h-6"
+            />
           </div>
         </Button>
       </DropdownMenuTrigger>

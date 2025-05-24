@@ -63,9 +63,7 @@ export const InboxItem = observer(
             >
               <div className="truncate"> {conversationData?.title} </div>
             </div>
-            <div className="text-foreground text-right">
-              {Icon && <Icon size={16} className="dark:text-background" />}
-            </div>
+
             <div className="text-foreground text-right">
               {Icon && <Icon size={16} className="dark:text-background" />}
             </div>
