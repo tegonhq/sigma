@@ -193,13 +193,6 @@ export class TaskVectorService implements OnModuleInit {
       });
     }
 
-    if (parsedQuery.filters.isUnplanned) {
-      filter.must.push({
-        key: 'unplanned',
-        match: { value: true },
-      });
-    }
-
     if (parsedQuery.filters.sourceURL) {
       filter.must.push({
         key: 'sourceURL',

@@ -33,6 +33,21 @@ export class AutomationController {
     );
   }
 
+  @Post(':automationId')
+  @UseGuards(AuthGuard)
+  async updateAutomation(
+    @Workspace() workspaceId: string,
+    @Param('automationId') automationId: string,
+    @Body() updateAutomation: { text: string; mcps: string[] },
+  ) {
+    return await this.automation.updateAutomation(
+      automationId,
+      updateAutomation.text,
+      updateAutomation.mcps,
+      workspaceId,
+    );
+  }
+
   @Delete(':automationId')
   @UseGuards(AuthGuard)
   async deleteAutomation(

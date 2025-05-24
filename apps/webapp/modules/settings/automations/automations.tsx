@@ -1,4 +1,4 @@
-import { AddLine, Button, Card } from '@tegonhq/ui';
+import { AddLine, Button, Card, EditLine } from '@tegonhq/ui';
 import { EditorContent, useEditor } from '@tiptap/react';
 import { Trash2 } from 'lucide-react';
 import { observer } from 'mobx-react-lite';
@@ -11,19 +11,22 @@ import { extensionsForConversation } from 'common/editor';
 import {
   useCreateAutomationMutation,
   useDeleteAutomationMutation,
+  useUpdateAutomationMutation,
 } from 'services/automation';
 import { useGetIntegrationDefinitions } from 'services/integration-definition';
 
 import { useContextStore } from 'store/global-context-provider';
 
 import { SettingSection } from '../setting-section';
-import { AddAutomation } from './add-automation';
+import { EditorAutomation } from './editor-automation';
 
 export const Automation = observer(
   ({ automationId }: { automationId: string }) => {
     const { automationsStore } = useContextStore();
+    const [update, setUpdate] = React.useState(false);
     const automation = automationsStore.getAutomationById(automationId);
     const { mutate: deleteAutomation } = useDeleteAutomationMutation({});
+    const { mutate: updateAutomation } = useUpdateAutomationMutation({});
 
     const editor = useEditor({
       extensions: [...extensionsForConversation, CustomMention],
@@ -33,6 +36,22 @@ export const Automation = observer(
 
     if (!automation) {
       return null;
+    }
+
+    if (update) {
+      return (
+        <EditorAutomation
+          defaultValue={automation.text}
+          onSend={(value, agents) => {
+            updateAutomation({
+              text: value,
+              mcps: agents,
+              automationId: automation.id,
+            });
+          }}
+          onClose={() => setUpdate(false)}
+        />
+      );
     }
 
     return (
@@ -47,12 +66,17 @@ export const Automation = observer(
             times
           </div>
 
-          <Button
-            variant="ghost"
-            onClick={() => deleteAutomation({ automationId })}
-          >
-            <Trash2 size={14} />
-          </Button>
+          <div className="flex">
+            <Button variant="ghost" onClick={() => setUpdate(true)}>
+              <EditLine size={14} />
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={() => deleteAutomation({ automationId })}
+            >
+              <Trash2 size={14} />
+            </Button>
+          </div>
         </div>
       </Card>
     );
@@ -89,7 +113,7 @@ export const Automations = observer(() => {
         }
       >
         {addAutomation && (
-          <AddAutomation
+          <EditorAutomation
             onSend={(value, agents) => {
               createAutomation({ text: value, mcps: agents });
             }}

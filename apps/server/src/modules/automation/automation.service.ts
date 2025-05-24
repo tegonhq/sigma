@@ -15,6 +15,24 @@ export default class AutomationService {
     });
   }
 
+  async updateAutomation(
+    automationId: string,
+    text: string,
+    mcps: string[],
+    workspaceId: string,
+  ) {
+    await this.prisma.automation.update({
+      where: {
+        id: automationId,
+        workspaceId,
+      },
+      data: {
+        text,
+        mcps,
+      },
+    });
+  }
+
   async deleteAutomation(automationId: string, workspaceId: string) {
     await this.prisma.automation.update({
       where: {

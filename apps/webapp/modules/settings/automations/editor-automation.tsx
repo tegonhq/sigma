@@ -14,7 +14,7 @@ import {
 
 import { EditorRoot, lowlight, type EditorT } from 'common/editor';
 
-interface AddAutomationProps {
+interface EditorAutomationProps {
   onSend: (value: string, agents: string[], title: string) => void;
   defaultValue?: string;
   isLoading?: boolean;
@@ -22,13 +22,13 @@ interface AddAutomationProps {
   onClose: () => void;
 }
 
-export function AddAutomation({
+export function EditorAutomation({
   onSend,
   defaultValue,
   isLoading = false,
   className,
   onClose,
-}: AddAutomationProps) {
+}: EditorAutomationProps) {
   const [text, setText] = useState(defaultValue ?? '');
   const [editor, setEditor] = React.useState<EditorT>();
   const [agents, setAgents] = React.useState<string[]>([]);
@@ -72,20 +72,8 @@ export function AddAutomation({
       >
         <EditorRoot>
           <EditorContent
-            initialContent={{
-              type: 'doc',
-              content: [
-                {
-                  type: 'paragraph',
-                  content: [
-                    {
-                      type: 'text',
-                      text: defaultValue,
-                    },
-                  ],
-                },
-              ],
-            }}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            initialContent={defaultValue as any}
             extensions={[
               Document,
               Paragraph,

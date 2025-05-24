@@ -209,7 +209,7 @@ export const AppSidebar = observer(
             </SidebarMenu>
           </SidebarGroup>
         </SidebarContent>
-        <SidebarFooter className="pl-0 mb-2">
+        <SidebarFooter className="mb-2">
           <div className="text-sm text-muted-foreground flex items-center justify-center gap-2">
             <WorkspaceDropdown />
           </div>
