@@ -1,9 +1,11 @@
 import { cn } from '@tegonhq/ui';
+import { RefreshCcw } from 'lucide-react';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 
 import { getIcon, type IconType } from 'common/icon-utils';
 
+import { useGetConversationSyncsRun } from 'services/conversations';
 import { useGetIntegrationDefinitions } from 'services/integration-definition';
 
 import { useContextStore } from 'store/global-context-provider';
@@ -18,6 +20,7 @@ export const InboxItem = observer(
   ({ conversationId, selected, onSelect }: InboxItemProps) => {
     const { conversationsStore, activitesStore, integrationAccountsStore } =
       useContextStore();
+    const { data: syncs } = useGetConversationSyncsRun(conversationId);
 
     const conversationData =
       conversationsStore.getConversationWithId(conversationId);
@@ -37,9 +40,19 @@ export const InboxItem = observer(
           integrationAccount?.integrationDefinitionId,
       );
 
-    const Icon = integrationDefinition
-      ? getIcon(integrationDefinition.icon as IconType)
-      : null;
+    const getIconComponent = () => {
+      if (syncs && syncs.length > 0) {
+        return RefreshCcw;
+      }
+
+      const Icon = integrationDefinition
+        ? getIcon(integrationDefinition.icon as IconType)
+        : null;
+
+      return Icon;
+    };
+
+    const Icon = getIconComponent();
 
     return (
       <div
