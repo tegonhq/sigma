@@ -307,4 +307,13 @@ export class ConversationService {
       data: { unread: false },
     });
   }
+
+  async getConversationSyncs(conversationId: string, workspaceId: string) {
+    return this.prisma.sync.findMany({
+      where: {
+        conversationId,
+        workspaceId,
+      },
+    });
+  }
 }

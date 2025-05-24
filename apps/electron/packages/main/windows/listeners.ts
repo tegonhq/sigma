@@ -28,14 +28,6 @@ export function listeners(window: BrowserWindow) {
     window.webContents.send('fullscreen-changed', false);
   });
 
-  // Instead of closing, hide the window when Cmd+W is pressed
-  window.on('close', event => {
-    if (process.platform === 'darwin') {
-      event.preventDefault(); // Prevent the default close behavior
-      window.hide(); // Hide the window instead
-    }
-  });
-
   // Main window communication
   // Handle window-to-window communication
   ipcMain.on('from-quick-window', (_event, message) => {

@@ -52,6 +52,18 @@ export class ConversationController {
     );
   }
 
+  @Get(':conversationId/syncs')
+  @UseGuards(AuthGuard, CreditsGuard)
+  async getConversationSync(
+    @Workspace() workspaceId: string,
+    @Param() conversationData: { conversationId: string },
+  ) {
+    return await this.conversationService.getConversationSyncs(
+      conversationData.conversationId,
+      workspaceId,
+    );
+  }
+
   @Get(':conversationId')
   @UseGuards(AuthGuard, CreditsGuard)
   async getConversation(
