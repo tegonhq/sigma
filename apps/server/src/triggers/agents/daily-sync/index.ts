@@ -1,0 +1,41 @@
+import { PrismaClient } from '@prisma/client';
+import { Preferences } from '@tegonhq/sigma-sdk';
+import { schedules } from '@trigger.dev/sdk/v3';
+import axios from 'axios';
+
+import { pageGroomTask } from './page-groom';
+import { processTaskOccurrences } from './task-occurrence';
+
+const prisma = new PrismaClient();
+
+export const dailyRunSchedule = schedules.task({
+  id: 'daily-run-schedule',
+  run: async (payload) => {
+    const { externalId } = payload;
+
+    const workspace = await prisma.workspace.findUnique({
+      where: { id: externalId },
+    });
+
+    const timezone = (workspace.preferences as Preferences).timezone;
+
+    const pat = await prisma.personalAccessToken.findFirst({
+      where: { userId: workspace.userId as string, name: 'default' },
+    });
+
+    axios.interceptors.request.use((config) => {
+      // Check if URL starts with /api and doesn't have a full host
+
+      if (config.url?.startsWith('/api')) {
+        config.url = `${process.env.BACKEND_HOST}${config.url.replace('/api', '')}`;
+        config.headers.Authorization = `Bearer ${pat?.token}`;
+      }
+
+      return config;
+    });
+
+    await processTaskOccurrences(externalId, timezone);
+
+    return await pageGroomTask(externalId, timezone);
+  },
+});
