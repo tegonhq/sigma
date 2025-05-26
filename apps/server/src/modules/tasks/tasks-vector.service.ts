@@ -110,7 +110,7 @@ export class TaskVectorService implements OnModuleInit {
       dueDate: task.dueDate ? task.dueDate.getTime() : undefined,
       parentId: task.parentId,
       unplanned: isPlanned,
-      sourceURL: (task.source as Source).url,
+      sourceURL: (task.source as Source)?.url,
     };
 
     // Upsert into Qdrant

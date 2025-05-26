@@ -30,7 +30,7 @@ export const Lists = observer(({ entity_id }: TabsProps) => {
           minSize={16}
           collapsible
           collapsedSize={16}
-          className="h-[calc(100vh)] border-r-1 border-border"
+          className="h-[calc(100vh)] min-w-[200px] border-r-1 border-border"
         >
           <ListPageHeader />
           <ListsList selected={firstTab.entity_id} />
