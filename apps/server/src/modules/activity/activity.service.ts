@@ -33,11 +33,11 @@ export default class ActivityService {
       },
     });
 
+    const conversation = exisitingActivity.Conversation[0];
     const pat = await this.users.getOrCreatePat(userId, workspaceId);
 
-    if (exisitingActivity) {
+    if (exisitingActivity && conversation) {
       // Create just conversation history for the existing conversation and add a new message to that
-      const conversation = exisitingActivity.Conversation[0];
       const integrationDefinition =
         exisitingActivity.integrationAccount?.integrationDefinition;
 
