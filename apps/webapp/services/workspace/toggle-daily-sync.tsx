@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from 'react-query';
 import { GetUserQuery } from 'services/users';
 
 export function toggleDailySync(value: boolean) {
-  return axios.post(`/api/v1/workspaces/daily-sync`, { value });
+  return axios.post(`/api/v1/workspaces/sync`, { value });
 }
 
 interface MutationParams {
