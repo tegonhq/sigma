@@ -3,7 +3,7 @@
     <img src="https://github.com/user-attachments/assets/5cb0e4f6-32d1-40e2-bed6-be551c901d93" width="200px" alt="Sigma logo" />
   </a>
 
-### Sigma: Your Personal AI Assistant now in a todo app.
+### Sigma: Your Personal AI Assistant that starts before you do.
 
 <p align="center">
     <a href="https://www.mysigma.ai"><b>Website</b></a> •
@@ -14,7 +14,7 @@
 </div>
 
 ## About Sigma
-Sigma learns your style, plans your day, and handles the busywork—like auto-creating tasks, drafting replies, and pulling insights from your tools — just like a personal assistant or chief of staff. It also runs automations, so you can focus on what truly matters.
+Sigma connects to Slack, GitHub, Linear & Gmail — summarises PRs, drafts emails, creates issues, and clears the busywork so you stay in flow
 
 <img width="1512" alt="Main" src="https://github.com/user-attachments/assets/f1a11299-79b6-4195-b702-1e00ed8e565c" />
 
@@ -22,46 +22,57 @@ Sigma learns your style, plans your day, and handles the busywork—like auto-cr
 
 The quickest way to get started is to download our [desktop app](https://github.com/tegonhq/sigma/releases/tag/0.1.15) and follow the instructions in the onboarding. Create your first task and ai workflow and start managing your day better.
 
-## Key Features
 
-### Signals
-It is your editable profile that learns your preferences and automates tasks.
-- Remembers what matters: "No meetings after 6 pm", "Reply in a direct tone", "I prefer Airbnbs."
-- Acts on simple rules: "When a GitHub issue is assigned to me, create a task."
-- Keeps you in control: edit or erase anything—Sigma stores only what you approve.
+## ⏱ In 2 Minutes: Know What Matters Today
 
-### AI Automation Workflows
-Write a rule or instruction in plain English in the signals page and let Sigma take care of the rest. For example:
-- When a GitHub pull request or issue is assigned to me, automatically add a task in Sigma.
-- Turn each bookmarked Slack message into a Sigma task for its action items.
-- Post a comment on every new issue opened in tegonhq/sigma.
+Sigma’s Daily Sync gives you a clear, digestible summary 3 times a day—morning, afternoon, and evening. It reads your emails, Slack messages, GitHub PRs, and Linear issues to help you quickly answer:
 
-![signals](https://github.com/user-attachments/assets/a1e64858-5180-43bb-b15b-35c176ba7a32)
+✅ What happened yesterday? </br>
+🚨 What’s urgent today? </br>
+💬 Who needs a response? </br>
+⚠️ What’s slipping through the cracks? </br>
 
 
-### Task Management
-Let sigma plan and organise your day. Keep tasks, notes, lists, and priorities in one clear view—so you can focus on what matters, without the clutter.
-- **Task & Notes** : Capture tasks and notes together in the same space—no tab-hopping.
-- **Lists** : Your Swiss-army doc for everything—code snippets, side-projects, grocery runs.
-- **Today** : One focused view of today's priorities, meetings, and quick notes.
-  
-![Task Management](https://github.com/user-attachments/assets/a29e0de7-027b-4d25-b231-c40df734ebe2)
+## 🧩 All Your Work, One Place
+
+No more jumping across tabs. Sigma automatically collates your work items from Slack, GitHub, Gmail, Linear, and more—based on custom rules you define.
+
+Examples of rules:
+- **Linear**: Create a Sigma task for every issue assigned to you
+- **GitHub**: Add PRs needing your review as tasks
+- **Email**: Convert Sentry/GCP alert emails into actionable tasks
+- **Meetings**: Auto-create tasks from meeting summaries by tools like Fathom, Fireflies
+- **Slack**: Turn customer requests or team mentions into Sigma tasks
 
 
+## 🧠 Personalization That Actually Matters
 
-### Sigma Chat
+To help you focus only on what’s relevant, Sigma uses two key components:
 
-Sigma connectes to your tools (like github, slack, jira, gmail etc.) via MCP servers and get any insights or answers from the chat. Few examples:
-1. **Walk into 1-1s fully briefed** : "_Show me Harshith's last-month GitHub + Jira work_."  ->  Sigma drops ticket counts, PRs, and DORA metrics straight onto your 1-1 page.
-2. **Audit outreach in seconds** : "_Score my outbound emails from the past two weeks, 1-10._" ->  Sigma rates each email, highlights wins, and suggests fixes.
+### 📝 Memory
 
-![chat](https://github.com/user-attachments/assets/dbd14864-52c4-498b-99e2-7aa8c4d3fab7)
+A customizable knowledge base where Sigma stores key facts about you:
+Who you are, your responsibilities, writing preferences, module ownership, scheduling habits, and more. This makes your daily briefs feel tailor-made. You can also define what you want included in your Sync summaries.
+
+### ⚙️ Rules
+
+Think of rules as automation instructions that handle repetitive, manual workflows.
+
+Examples:
+- Auto-create tasks for PR comments, mentions, or tag-based triggers
+- Proactive nudges when something important is slipping through
+- Email response automation: “If an email comes from @sentry.com or @gcp.com and meets these criteria: [your criteria], create a task + draft a reply.”
 
 
-### Daily Sync
-Kick start your day with a 30-second summary of today's top priorities, deadlines - plan fast, then get back to work.
+## 🤖 Automate the Busywork
 
-<img width="603" alt="daily-sync" src="https://github.com/user-attachments/assets/9b9a048a-2e89-4b38-84a5-82e315c123ce" />
+Rules in Sigma don’t just create tasks—they help execute workflows end-to-end.
+
+What you can automate:
+- Highlight urgent emails in Sigma chat by assigning an urgency score (1–100)
+- Auto-draft personalized emails based on task context (e.g., follow-ups, updates)
+- Create or update Linear issues directly from Sigma
+- PR Summaries auto-generated and attached to their respective Sigma tasks
 
 
 ## Meet the Amazing People Behind This Project:
