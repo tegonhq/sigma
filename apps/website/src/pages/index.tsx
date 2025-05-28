@@ -1,8 +1,12 @@
 import { Footer, Header, Hero, Section } from '../components';
+import { Integrations } from '../components/integrations';
+import { Letter } from '../components/letter';
+import { OpenSource } from '../components/open-source';
 import { DailyPlanner } from '../features/daily-planner';
 import { Lists } from '../features/lists';
 import { Personalisation } from '../features/personalisation';
 import { Tasks } from '../features/task';
+import { UseCases } from '../features/use-cases';
 
 const TaskManagement = () => {
   return (
@@ -136,9 +140,13 @@ const Index = () => {
       <Header />
       <Hero />
 
+      <UseCases />
       <Personalisation />
       <TaskManagement />
       <Chat />
+      <OpenSource />
+      <Letter />
+      <Integrations />
       <Footer />
     </div>
   );
