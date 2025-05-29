@@ -57,7 +57,7 @@ export const InboxItem = observer(
     return (
       <div
         className={cn(
-          'mx-2 py-0 px-2 mb-0.5 flex gap-1 items-center hover:bg-grayAlpha-100 rounded',
+          'py-0 px-2 mb-0.5 flex flex-col gap-1 items-start hover:bg-grayAlpha-100 rounded w-fit',
           selected && 'bg-grayAlpha-200',
         )}
         onClick={() => {
@@ -67,13 +67,9 @@ export const InboxItem = observer(
           onSelect(conversationData.id);
         }}
       >
-        <div className={cn('flex flex-col gap-1 py-1.5 w-full')}>
-          <div className="flex gap-2 w-full items-center">
-            <div
-              className={cn(
-                activity ? 'w-[calc(100%_-_25px)]' : 'w-[calc(100%_-_10px)]',
-              )}
-            >
+        <div className={cn('flex flex-col gap-1 py-1 w-fit')}>
+          <div className="flex gap-2 w-fit items-center">
+            <div>
               <div className="truncate"> {conversationData?.title} </div>
             </div>
 

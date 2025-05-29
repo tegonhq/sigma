@@ -76,8 +76,14 @@ export function AssistantEditor({
 
   const pagesCommands = () => {
     const pagesCommands = commands['Pages'];
+    const create_task_commands = commands['create_tasks'];
 
-    if (!pagesCommands || pagesCommands?.length === 0) {
+    if (
+      pagesCommands &&
+      create_task_commands &&
+      pagesCommands?.length === 0 &&
+      create_task_commands.length === 0
+    ) {
       return null;
     }
 
@@ -97,6 +103,22 @@ export function AssistantEditor({
             <div className="truncate"> {text} - Chat </div>
           </div>
         </CommandItem>
+
+        {create_task_commands.map((command, index) => {
+          return (
+            <CommandItem
+              onSelect={command.command}
+              key={`page__c${index}`}
+              className="flex gap-1 items-center py-2 aria-selected:bg-grayAlpha-100"
+            >
+              <div className="inline-flex items-center gap-2 min-w-[0px]">
+                <command.Icon size={16} className="shrink-0" />
+                <div className="truncate"> {command.text}</div>
+              </div>
+            </CommandItem>
+          );
+        })}
+
         {pagesCommands.splice(0, 5).map((command, index: number) => {
           return (
             <CommandItem
@@ -188,7 +210,16 @@ export function AssistantEditor({
                     '[aria-selected="true"]',
                   ) as HTMLElement;
 
-                  activeItem?.click();
+                  if (activeItem) {
+                    activeItem.click();
+                  }
+
+                  if (!activeItem || !mentionItem) {
+                    onSend(html, agents, text);
+                    editor.commands.clearContent(true);
+                    setText('');
+                  }
+
                   return true;
                 }
 
