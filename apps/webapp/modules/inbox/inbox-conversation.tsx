@@ -19,6 +19,10 @@ import {
 } from 'services/conversations';
 
 import { useContextStore } from 'store/global-context-provider';
+import { useHotkeys } from 'react-hotkeys-hook';
+import { Key } from 'ts-key-enum';
+import { SCOPES } from 'common/shortcut-scopes';
+import { useScope } from 'hooks/use-scope';
 
 interface InboxConversationProps {
   conversationId: string;
@@ -26,6 +30,8 @@ interface InboxConversationProps {
 
 export const InboxConversation = observer(
   ({ conversationId }: InboxConversationProps) => {
+    useScope(SCOPES.AI);
+
     const { conversationsStore } = useContextStore();
     const conversation =
       conversationsStore.getConversationWithId(conversationId);
@@ -45,6 +51,14 @@ export const InboxConversation = observer(
         setConversationResponse(initialRunResponse);
       }
     }, [initialRunResponse]);
+
+    useHotkeys(
+      Key.Escape,
+      () => {
+        updateConversationId(undefined);
+      },
+      { scopes: [SCOPES.INBOX] },
+    );
 
     const onSend = (text: string, agents: string[]) => {
       if (!!conversationResponse) {
@@ -128,7 +142,7 @@ export const InboxConversation = observer(
             <div className="max-w-[97ch] w-full">
               <ConversationTextarea
                 onSend={onSend}
-                className="bg-grayAlpha-100 m-4 mt-0 w-full"
+                className="bg-background-2 m-4 mt-0 w-full shadow border-gray-300 border-1"
                 isLoading={!!conversationResponse}
               />
             </div>

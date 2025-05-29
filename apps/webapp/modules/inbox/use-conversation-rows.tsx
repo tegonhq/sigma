@@ -48,15 +48,7 @@ export const useConversationRows = (filter?: 'read' | 'unread' | 'all') => {
 
   // Add grouped conversations to rows with headers
   if (today.length > 0) {
-    rows.push({ type: 'header', id: 'today', data: 'Today' });
     today.forEach((con) =>
-      rows.push({ type: 'conversation', id: con.id, data: con }),
-    );
-  }
-
-  if (yesterday.length > 0) {
-    rows.push({ type: 'header', id: 'yesterday', data: 'Yesterday' });
-    yesterday.forEach((con) =>
       rows.push({ type: 'conversation', id: con.id, data: con }),
     );
   }

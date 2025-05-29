@@ -7,19 +7,14 @@ import { RightSideLayout } from 'layouts/right-side-layout';
 
 import { useScope } from 'hooks/use-scope';
 
-import { useContextStore } from 'store/global-context-provider';
-
 import { InboxConversation } from './inbox-conversation';
 import { NewConversation } from './new-conversation';
+import { useApplication } from 'hooks/application';
 
 export const Assistant = observer(() => {
   useScope(SCOPES.INBOX);
-  const { conversationsStore } = useContextStore();
 
-  const [currentConversation, setCurrentConversation] =
-    React.useState(undefined);
-  const conversation =
-    conversationsStore.getConversationWithId(currentConversation);
+  const { activeTab } = useApplication();
 
   // const getActivityId = () => {
   //   return conversation?.modelId;
@@ -32,17 +27,13 @@ export const Assistant = observer(() => {
   //   // eslint-disable-next-line react-hooks/exhaustive-deps
   // }, [conversation]);
 
-  const startConversation = (conversationId: string) => {
-    setCurrentConversation(conversationId);
-  };
-
   return (
     <RightSideLayout>
       <div className={cn('h-[calc(100vh_-_48px)] flex flex-col pt-10')}>
-        {conversation ? (
-          <InboxConversation conversationId={conversation.id} />
+        {activeTab.conversation_id ? (
+          <InboxConversation conversationId={activeTab.conversation_id} />
         ) : (
-          <NewConversation startConversation={startConversation} />
+          <NewConversation />
         )}
       </div>
     </RightSideLayout>

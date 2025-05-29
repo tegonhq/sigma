@@ -9,7 +9,6 @@ export enum SCOPES {
   // view
   SIDE_VIEW = 'SIDE_VIEW',
   INBOX = 'INBOX',
-  QUICK = 'QUICK',
 }
 
 export const FRONTEND_IPC = 'frontend';

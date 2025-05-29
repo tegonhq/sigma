@@ -122,8 +122,8 @@ export const defaultApplicationStoreValue: {
       tabs: [
         {
           id: initialId,
-          entity_id: 'days',
-          type: 'days',
+          entity_id: undefined,
+          type: 'assistant',
           order: 0,
           data: { date: new Date() },
         },
