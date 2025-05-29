@@ -1,10 +1,9 @@
 import { observer } from 'mobx-react-lite';
 
-import { useConversationRows } from './use-conversation-rows';
-import { Button } from '@tegonhq/ui';
 import { useApplication } from 'hooks/application';
-import { useContextStore } from 'store/global-context-provider';
+
 import { InboxItem } from './inbox-item';
+import { useConversationRows } from './use-conversation-rows';
 
 export const ConversationsView = observer(() => {
   const rows = useConversationRows('all');
@@ -24,6 +23,7 @@ export const ConversationsView = observer(() => {
             <InboxItem
               conversationId={row.id}
               selected={false}
+              key={index}
               onSelect={(id) => updateConversationId(id)}
             />
           );

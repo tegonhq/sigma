@@ -2,16 +2,20 @@ import { useToast } from '@tegonhq/ui';
 import { sort } from 'fast-sort';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
+import { useHotkeys } from 'react-hotkeys-hook';
+import { Key } from 'ts-key-enum';
 
 import { ConversationItem } from 'modules/conversation/conversation-item';
 import { ConversationTextarea } from 'modules/conversation/conversation-textarea';
 import { StreamingConversation } from 'modules/conversation/streaming-conversation';
 
+import { SCOPES } from 'common/shortcut-scopes';
 import type { ConversationHistoryType } from 'common/types';
 import { ScrollAreaWithAutoScroll } from 'common/use-auto-scroll';
 
 import { useApplication } from 'hooks/application';
 import { useConversationHistory } from 'hooks/conversations';
+import { useScope } from 'hooks/use-scope';
 
 import {
   useCreateConversationMutation,
@@ -19,10 +23,6 @@ import {
 } from 'services/conversations';
 
 import { useContextStore } from 'store/global-context-provider';
-import { useHotkeys } from 'react-hotkeys-hook';
-import { Key } from 'ts-key-enum';
-import { SCOPES } from 'common/shortcut-scopes';
-import { useScope } from 'hooks/use-scope';
 
 interface InboxConversationProps {
   conversationId: string;

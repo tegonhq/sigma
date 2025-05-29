@@ -11,9 +11,9 @@ import { useContextStore } from 'store/global-context-provider';
 import { UserContext } from 'store/user-context';
 
 import { AssistantEditor } from './assistant-editor';
+import { ConversationsView } from './conversation-view';
 import { TodayView } from './today-view';
 import { getTasksForToday } from './utils';
-import { ConversationsView } from './conversation-view';
 
 export const NewConversation = observer(() => {
   const { taskOccurrencesStore } = useContextStore();

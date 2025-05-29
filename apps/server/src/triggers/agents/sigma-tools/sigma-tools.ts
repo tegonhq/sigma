@@ -34,6 +34,7 @@ import {
 
 export function getSigmaTools() {
   const searchPagesJsonSchema = zodToJsonSchema(SearchPagesSchema);
+  console.log(searchPagesJsonSchema);
 
   return {
     'sigma--get_lists': tool({

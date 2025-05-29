@@ -5,11 +5,11 @@ import React from 'react';
 import { SCOPES } from 'common/shortcut-scopes';
 import { RightSideLayout } from 'layouts/right-side-layout';
 
+import { useApplication } from 'hooks/application';
 import { useScope } from 'hooks/use-scope';
 
 import { InboxConversation } from './inbox-conversation';
 import { NewConversation } from './new-conversation';
-import { useApplication } from 'hooks/application';
 
 export const Assistant = observer(() => {
   useScope(SCOPES.INBOX);

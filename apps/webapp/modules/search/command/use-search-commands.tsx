@@ -16,11 +16,12 @@ import { useSettings } from 'modules/settings';
 
 import { useApplication } from 'hooks/application';
 
+import { useCreateTaskMutation } from 'services/tasks';
+
 import { TabViewType } from 'store/application';
 import { useContextStore } from 'store/global-context-provider';
 
 import { useTaskOperations } from './use-task-operations';
-import { useCreateTaskMutation } from 'services/tasks';
 
 interface CommandType {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
