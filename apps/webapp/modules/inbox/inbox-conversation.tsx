@@ -10,6 +10,7 @@ import { StreamingConversation } from 'modules/conversation/streaming-conversati
 import type { ConversationHistoryType } from 'common/types';
 import { ScrollAreaWithAutoScroll } from 'common/use-auto-scroll';
 
+import { useApplication } from 'hooks/application';
 import { useConversationHistory } from 'hooks/conversations';
 
 import {
@@ -25,13 +26,14 @@ interface InboxConversationProps {
 
 export const InboxConversation = observer(
   ({ conversationId }: InboxConversationProps) => {
-    const { commonStore, conversationsStore } = useContextStore();
+    const { conversationsStore } = useContextStore();
     const conversation =
       conversationsStore.getConversationWithId(conversationId);
     const [conversationResponse, setConversationResponse] =
       React.useState(undefined);
     const { data: initialRunResponse } =
       useGetCurrentConversationRun(conversationId);
+    const { updateConversationId } = useApplication();
 
     const { mutate: createConversation } = useCreateConversationMutation({});
     const { toast } = useToast();
@@ -58,7 +60,7 @@ export const InboxConversation = observer(
         },
         {
           onSuccess: (data) => {
-            commonStore.update({ currentConversationId: data.conversationId });
+            updateConversationId(data.conversationId);
             setConversationResponse(data);
           },
           onError: (data) => {

@@ -11,7 +11,6 @@ import { initPosthog } from 'common/init-config';
 import { useGetQueryClient } from 'common/lib';
 import { SCOPES } from 'common/shortcut-scopes';
 import { ThemeProvider } from 'common/theme-provider';
-import { TaskViewProvider } from 'layouts/side-task-view';
 
 import { StoreContext, storeContextStore } from 'store/global-context-provider';
 
@@ -39,10 +38,8 @@ export function Provider({ children }: ProviderProps) {
             <TooltipProvider delayDuration={2000} disableHoverableContent>
               <StoreContext.Provider value={storeContextStore as any}>
                 <QueryClientProvider client={queryClientRef.current}>
-                  <TaskViewProvider>
-                    <DialogViewsProvider>{children}</DialogViewsProvider>
-                    <Toaster />
-                  </TaskViewProvider>
+                  <DialogViewsProvider>{children}</DialogViewsProvider>
+                  <Toaster />
                 </QueryClientProvider>
               </StoreContext.Provider>
             </TooltipProvider>

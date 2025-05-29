@@ -1,4 +1,5 @@
-import { Button, cn } from '@tegonhq/ui';
+import { AI, Button, cn } from '@tegonhq/ui';
+import { Command, CommandItem, CommandList } from '@tegonhq/ui';
 import { Document } from '@tiptap/extension-document';
 import HardBreak from '@tiptap/extension-hard-break';
 import { Paragraph } from '@tiptap/extension-paragraph';
@@ -7,9 +8,13 @@ import { EditorContent, CodeBlockLowlight, Placeholder } from 'novel';
 import { useState } from 'react';
 import React from 'react';
 
-import { EditorRoot, lowlight, type EditorT } from 'common/editor';
+import {
+  CustomMention,
+  useMentionSuggestions,
+} from 'modules/conversation/suggestion-extension';
+import { useSearchCommands } from 'modules/search/command/use-search-commands';
 
-import { CustomMention, useMentionSuggestions } from './suggestion-extension';
+import { EditorRoot, lowlight, type EditorT } from 'common/editor';
 
 interface ConversationTextareaProps {
   onSend: (value: string, agents: string[], title: string) => void;
@@ -20,7 +25,7 @@ interface ConversationTextareaProps {
   onChange?: (text: string) => void;
 }
 
-export function ConversationTextarea({
+export function AssistantEditor({
   onSend,
   defaultValue,
   isLoading = false,
@@ -29,14 +34,18 @@ export function ConversationTextarea({
   onChange,
 }: ConversationTextareaProps) {
   const [text, setText] = useState(defaultValue ?? '');
+  const [html, setHTML] = useState(defaultValue ?? '');
   const [editor, setEditor] = React.useState<EditorT>();
   const [agents, setAgents] = React.useState<string[]>([]);
+  const commands = useSearchCommands(text, () => {}, true);
 
   const suggestion = useMentionSuggestions();
 
   const onCommentUpdate = (editor: EditorT) => {
-    setText(editor.getHTML());
+    setHTML(editor.getHTML());
+    setText(editor.getText());
     onChange && onChange(editor.getText());
+
     const json = editor.getJSON();
 
     // Extract agent IDs from mentions
@@ -65,11 +74,52 @@ export function ConversationTextarea({
     setAgents(mentionAgents);
   };
 
+  const pagesCommands = () => {
+    const pagesCommands = commands['Pages'];
+
+    if (!pagesCommands || pagesCommands?.length === 0) {
+      return null;
+    }
+
+    return (
+      <>
+        <CommandItem
+          onSelect={() => {
+            onSend(html, agents, text);
+            editor.commands.clearContent(true);
+            setText('');
+          }}
+          key={`page__${pagesCommands.length + 1}`}
+          className="flex gap-1 items-center py-2 aria-selected:bg-grayAlpha-100"
+        >
+          <div className="inline-flex items-center gap-2 min-w-[0px]">
+            <AI size={16} className="shrink-0" />
+            <div className="truncate"> {text} - Chat </div>
+          </div>
+        </CommandItem>
+        {pagesCommands.splice(0, 5).map((command, index: number) => {
+          return (
+            <CommandItem
+              onSelect={command.command}
+              key={`page__${index}`}
+              className="flex gap-1 items-center py-2 aria-selected:bg-grayAlpha-100"
+            >
+              <div className="inline-flex items-center gap-2 min-w-[0px]">
+                <command.Icon size={16} className="shrink-0" />
+                <div className="truncate"> {command.text}</div>
+              </div>
+            </CommandItem>
+          );
+        })}
+      </>
+    );
+  };
+
   return (
-    <div className="px-1">
+    <Command className="rounded-lg border bg-background-2 mt-0 w-full p-1 rounded-xl shadow border-gray-300 border-1 !h-auto">
       <div
         className={cn(
-          'flex flex-col rounded-md pt-2 bg-transparent',
+          'flex flex-col rounded-md pt-1 bg-transparent',
           className,
         )}
       >
@@ -126,23 +176,19 @@ export function ConversationTextarea({
               handleKeyDown(view, event) {
                 // Block default Enter
                 if (event.key === 'Enter' && !event.shiftKey) {
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  const target = event.target as any;
+                  const mentionItem = document.querySelector(
+                    '[data-selected="true"]',
+                  ) as HTMLElement;
 
-                  if (target.innerHTML.includes('suggestion')) {
-                    return false;
+                  if (mentionItem) {
+                    mentionItem.click();
                   }
 
-                  event.preventDefault();
+                  const activeItem = document.querySelector(
+                    '[aria-selected="true"]',
+                  ) as HTMLElement;
 
-                  if (text) {
-                    const title = editor.getText();
-
-                    onSend(text, agents, title);
-                    editor.commands.clearContent(true);
-                    setText('');
-                  }
-
+                  activeItem?.click();
                   return true;
                 }
 
@@ -161,12 +207,16 @@ export function ConversationTextarea({
             }}
             immediatelyRender={false}
             className={cn(
-              'editor-container w-full min-w-full text-base sm:rounded-lg px-3 max-h-[400px] min-h-[40px] overflow-auto',
+              'editor-container w-full min-w-full text-base sm:rounded-lg px-3 max-h-[400px] min-h-[30px] overflow-auto',
             )}
           ></EditorContent>
         </EditorRoot>
+      </div>
 
-        <div className={cn('flex justify-end p-2 pt-0 pb-2 items-center')}>
+      <CommandList className="p-2 pt-0 pb-2">
+        {text && text.slice(-1) !== '@' && pagesCommands()}
+
+        <div className={cn('flex justify-end pt-2 items-center')}>
           <Button
             variant="default"
             className="transition-all duration-500 ease-in-out gap-1"
@@ -174,10 +224,10 @@ export function ConversationTextarea({
             size="lg"
             isLoading={isLoading}
             onClick={() => {
-              if (text) {
+              if (html) {
                 const title = editor.getText();
 
-                onSend(text, agents, title);
+                onSend(html, agents, title);
                 editor.commands.clearContent(true);
                 setText('');
               }
@@ -186,7 +236,7 @@ export function ConversationTextarea({
             {isLoading ? <>Generating...</> : <>Chat ↵</>}
           </Button>
         </div>
-      </div>
-    </div>
+      </CommandList>
+    </Command>
   );
 }

@@ -16,13 +16,16 @@ import React from 'react';
 
 import type { ConversationType } from 'common/types';
 
+import { useApplication } from 'hooks/application';
+
 import { useContextStore } from 'store/global-context-provider';
 
 import { useConversationContext } from './use-conversation-context';
 
 export const AIHistoryDropdown = observer(() => {
   const [open, setOpen] = React.useState(false);
-  const { conversationsStore, commonStore } = useContextStore();
+  const { conversationsStore } = useContextStore();
+  const { updateConversationId } = useApplication();
 
   const pageId = useConversationContext();
 
@@ -55,9 +58,7 @@ export const AIHistoryDropdown = observer(() => {
                     key={conversation.id}
                     value={conversation.id}
                     onSelect={() => {
-                      commonStore.update({
-                        currentConversationId: conversation.id,
-                      });
+                      updateConversationId(conversation.id);
                       setOpen(false);
                     }}
                   >

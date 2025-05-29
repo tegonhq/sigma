@@ -12,8 +12,6 @@ import { GroupingEnum } from 'store/application';
 import { Filters } from './filters';
 import { ScheduleList } from './group-view/schedule';
 import { StatusList } from './group-view/status';
-import { Header } from './header';
-import { HeaderActions } from './header-actions';
 import { SingleTask } from './single-task';
 
 interface TabsProps {
@@ -45,7 +43,7 @@ export const Tasks = observer(({ entity_id }: TabsProps) => {
   };
 
   return (
-    <RightSideLayout header={<Header actions={<HeaderActions />} />}>
+    <RightSideLayout>
       <Filters />
 
       {getComponent()}

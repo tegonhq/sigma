@@ -15,8 +15,9 @@ import {
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 
-import { TaskViewContext } from 'layouts/side-task-view';
+import { useApplication } from 'hooks/application';
 
+import { TabViewType } from 'store/application';
 import { useContextStore } from 'store/global-context-provider';
 
 export enum SubTaskVariant {
@@ -33,7 +34,7 @@ export const SubTasks = observer(
   ({ taskId, variant = SubTaskVariant.DEFAULT }: SubTasksProps) => {
     const { tasksStore, pagesStore } = useContextStore();
     const subTasks = tasksStore.getSubTasks(taskId);
-    const { openTask } = React.useContext(TaskViewContext);
+    const { changeActiveTab } = useApplication();
 
     if (subTasks.length === 0) {
       return null;
@@ -69,7 +70,9 @@ export const SubTasks = observer(
                       key={task.id}
                       value={page?.title}
                       onSelect={() => {
-                        openTask(task.id);
+                        changeActiveTab(TabViewType.MY_TASKS, {
+                          entityId: task.id,
+                        });
                       }}
                     >
                       <Checkbox

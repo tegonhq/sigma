@@ -12,15 +12,8 @@ import React from 'react';
 
 import { DailogViewsContext, DialogType } from 'modules/dialog-views-provider';
 import { useSettings } from 'modules/settings';
-import { AddTaskDialogContext } from 'modules/tasks/add-task';
-
-import type { ListType } from 'common/types';
-import { RightSideViewContext } from 'layouts/right-side-layout';
 
 import { useApplication } from 'hooks/application';
-import { useIPC } from 'hooks/ipc';
-
-import { useCreateListMutation } from 'services/lists';
 
 import { TabViewType } from 'store/application';
 import { useContextStore } from 'store/global-context-provider';
@@ -35,20 +28,17 @@ interface CommandType {
   command: () => void;
 }
 
-export const useSearchCommands = (value: string, onClose: () => void) => {
+export const useSearchCommands = (
+  value: string,
+  onClose: () => void,
+  strict?: boolean,
+) => {
   const { tasksStore, pagesStore, listsStore } = useContextStore();
-  const { setDialogOpen } = React.useContext(AddTaskDialogContext);
-  const { tabs, updateTabType, selectedTasks } = useApplication();
-  const firstTab = tabs[0];
+  const { changeActiveTab, selectedTasks, activeTab } = useApplication();
+
   const { openDialog } = React.useContext(DailogViewsContext);
-  const rightViewContext = React.useContext(RightSideViewContext);
   const { markComplete, deleteTasks } = useTaskOperations();
   const { openSettings } = useSettings();
-  const { mutate: createList } = useCreateListMutation({
-    onSuccess: (data: ListType) => {
-      updateTabType(0, TabViewType.LIST, data.id ? { entityId: data.id } : {});
-    },
-  });
 
   const getTasks = () => {
     if (selectedTasks.length > 0) {
@@ -63,31 +53,10 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
 
     commands['default'] = [
       {
-        Icon: AI,
-        text: 'Ask sigma agent about...',
-        command: () => {
-          if (rightViewContext && rightViewContext.onOpen) {
-            rightViewContext.onOpen('');
-            onClose();
-          }
-        },
-      },
-      {
-        Icon: IssuesLine,
-        text: 'Create task',
-        shortcut: 'cmd + n',
-        command: () => {
-          onClose();
-
-          setDialogOpen(true);
-        },
-      },
-      {
         Icon: CalendarLine,
-        text: 'Go to today',
-        shortcut: 'G + T',
+        text: 'Home',
         command: () => {
-          updateTabType(0, TabViewType.DAYS, {
+          changeActiveTab(TabViewType.ASSISTANT, {
             data: {
               date: new Date(),
             },
@@ -99,9 +68,8 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
       {
         Icon: IssuesLine,
         text: 'Go to tasks',
-        shortcut: 'G + M',
         command: () => {
-          updateTabType(0, TabViewType.MY_TASKS, {});
+          changeActiveTab(TabViewType.MY_TASKS, {});
 
           onClose();
         },
@@ -109,9 +77,8 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
       {
         Icon: Project,
         text: 'Go to lists',
-        shortcut: 'G + L',
         command: () => {
-          updateTabType(0, TabViewType.MY_TASKS, {});
+          changeActiveTab(TabViewType.LIST, {});
 
           onClose();
         },
@@ -119,38 +86,14 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
       {
         Icon: SettingsLine,
         text: 'Go to settings',
-        shortcut: 'G + S',
         command: () => {
           openSettings();
-          onClose();
-        },
-      },
-      {
-        Icon: Project,
-        text: 'Create list',
-
-        command: () => {
-          createList(false);
           onClose();
         },
       },
     ];
 
     if (value) {
-      commands['default'] = [
-        ...commands['default'],
-        {
-          Icon: AI,
-          text: `${value} ... ask sigma`,
-          command: () => {
-            if (rightViewContext && rightViewContext.onOpen) {
-              rightViewContext.onOpen(value);
-              onClose();
-            }
-          },
-        },
-      ];
-
       commands['settings'] = [
         {
           Icon: Workflow,
@@ -180,8 +123,8 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
     }
 
     if (
-      firstTab.type === TabViewType.MY_TASKS &&
-      (getTasks().length > 0 || firstTab.entity_id)
+      activeTab.type === TabViewType.MY_TASKS &&
+      (getTasks().length > 0 || activeTab.entity_id)
     ) {
       commands['Task'] = [
         {
@@ -224,7 +167,7 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
     }
 
     if (value) {
-      const pages = pagesStore.searchPages(value);
+      const pages = pagesStore.searchPages(value, strict);
 
       commands['Pages'] = pages
         .map((page) => {
@@ -237,7 +180,7 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
               text: page.title,
               key: task.id,
               command: () => {
-                updateTabType(0, TabViewType.MY_TASKS, {
+                changeActiveTab(TabViewType.MY_TASKS, {
                   entityId: task.id,
                 });
 
@@ -252,7 +195,7 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
               text: page.title,
               key: list.id,
               command: () => {
-                updateTabType(0, TabViewType.LIST, {
+                changeActiveTab(TabViewType.LIST, {
                   entityId: list.id,
                 });
 
@@ -265,66 +208,6 @@ export const useSearchCommands = (value: string, onClose: () => void) => {
         })
         .filter(Boolean);
     }
-
-    return commands;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value]);
-};
-
-export const useSearchCommandsQuick = (value: string, onClose: () => void) => {
-  const { tasksStore, pagesStore, listsStore } = useContextStore();
-
-  const ipc = useIPC();
-
-  return React.useMemo(() => {
-    const commands: Record<string, CommandType[]> = {};
-    commands['default'] = [];
-    if (value) {
-      commands['default'] = [
-        ...commands['default'],
-        {
-          Icon: AI,
-          text: `${value} ... ask sigma`,
-          command: () => {},
-        },
-      ];
-    }
-
-    const pages = pagesStore.searchPages(value ?? '');
-
-    commands['Pages'] = pages
-      .map((page) => {
-        const task = tasksStore.getTaskForPage(page.id);
-        const list = listsStore.getListWithPageId(page.id);
-
-        if (task) {
-          return {
-            Icon: IssuesLine,
-            text: page.title,
-            key: task.id,
-            command: () => {
-              ipc.sendToMain({ type: 'Task', id: task.id });
-              onClose();
-            },
-          };
-        }
-
-        if (list) {
-          return {
-            Icon: Project,
-            text: page.title,
-            key: list.id,
-            command: () => {
-              ipc.sendToMain({ type: 'List', id: list.id });
-
-              onClose();
-            },
-          };
-        }
-
-        return undefined;
-      })
-      .filter(Boolean);
 
     return commands;
     // eslint-disable-next-line react-hooks/exhaustive-deps

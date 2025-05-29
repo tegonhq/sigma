@@ -4,7 +4,6 @@ import React from 'react';
 
 import { getIcon } from 'common/icon-picker';
 import type { TaskType } from 'common/types';
-import { TaskViewContext } from 'layouts/side-task-view';
 
 import { useApplication } from 'hooks/application';
 
@@ -23,10 +22,10 @@ interface SingleTaskMetadataProps {
 export const SingleTaskMetadata = observer(
   ({ task }: SingleTaskMetadataProps) => {
     const { tasksStore, pagesStore, listsStore } = useContextStore();
-    const { openTask } = React.useContext(TaskViewContext);
+
     const list = listsStore.getListWithId(task.listId);
     const listPage = pagesStore.getPageWithId(list?.pageId);
-    const { updateTabType } = useApplication();
+    const { changeActiveTab } = useApplication();
 
     const parentTask = () => {
       const parent = tasksStore.getTaskWithId(task?.parentId);
@@ -37,7 +36,9 @@ export const SingleTaskMetadata = observer(
           <Badge
             variant="secondary"
             className="flex items-center gap-1 shrink min-w-[0px] h-7 px-2 text-base"
-            onClick={() => openTask(parent.id)}
+            onClick={() =>
+              changeActiveTab(TabViewType.MY_TASKS, { entityId: parent.id })
+            }
           >
             <ParentIssueLine size={16} />{' '}
             <span className="text-muted-foreground">Parent</span>{' '}
@@ -60,8 +61,7 @@ export const SingleTaskMetadata = observer(
               variant="secondary"
               className="flex items-center gap-1 shrink max-w-[300px] h-7 p-2 text-base"
               onClick={() =>
-                updateTabType(
-                  0,
+                changeActiveTab(
                   TabViewType.LIST,
                   list.id ? { entityId: list.id } : {},
                 )

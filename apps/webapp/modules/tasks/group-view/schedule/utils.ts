@@ -1,11 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { format, addDays, endOfTomorrow } from 'date-fns';
+import { addDays, isToday, isTomorrow, isWithinInterval } from 'date-fns';
 import { sort } from 'fast-sort';
 import React from 'react';
 
 import { filterTasksNoHook, type IssueRow } from 'modules/tasks/utils';
 
-import type { PageType, TaskType } from 'common/types';
+import type { TaskType } from 'common/types';
 
 import { useApplication } from 'hooks/application';
 
@@ -18,6 +18,8 @@ interface TaskTypeWithOccurrence extends TaskType {
 export const useTaskRows = (collapsedHeader: Record<string, boolean>) => {
   const { pagesStore, taskOccurrencesStore, tasksStore } = useContextStore();
   const { filters, displaySettings } = useApplication();
+  const taskOccurrences = taskOccurrencesStore.getTaskOccurrences;
+  const tasks = tasksStore.getTasks({});
 
   // Memoize planCategories since it's static
   const planCategories = React.useMemo(
@@ -25,91 +27,57 @@ export const useTaskRows = (collapsedHeader: Record<string, boolean>) => {
     [],
   );
 
-  // Memoize date calculations
-  const dates = React.useMemo(() => {
-    const today = new Date();
-    const tomorrow = format(endOfTomorrow(), 'dd-MM-yyyy');
-    const daysUntilEndOfWeek = 7 - today.getDay();
-    const weekDates = Array.from({ length: daysUntilEndOfWeek }, (_, index) =>
-      format(addDays(today, index), 'dd-MM-yyyy'),
-    );
+  const getTasksForPlan = React.useCallback(
+    (plan: (typeof planCategories)[number], existingTasks: TaskType[]) => {
+      const today = new Date();
+      const tomorrow = addDays(today, 1);
+      const endOfWeek = addDays(today, 7);
 
-    return {
-      today: format(today, 'dd-MM-yyyy'),
-      tomorrow,
-      weekDates,
-      restOfWeekDates: weekDates.filter(
-        (date) => date !== format(today, 'dd-MM-yyyy') && date !== tomorrow,
-      ),
-    };
-  }, []);
-
-  const getAllPages = (dates: string[]) => {
-    return pagesStore.getDailyPageWithDateArray(dates);
-  };
-
-  // Memoize pages to prevent recalculation
-  const pages = React.useMemo(
-    () => getAllPages(dates.weekDates),
-    [dates.weekDates, pagesStore.pages.length],
-  );
-
-  const getTasksForPage = (pageId: string): TaskTypeWithOccurrence[] => {
-    if (pageId) {
-      const taskOccurrences =
-        taskOccurrencesStore.getTaskOccurrencesForPage(pageId);
-
-      if (!taskOccurrences || taskOccurrences?.length === 0) {
-        return [];
+      if (plan === 'Later') {
+        // For Later, return all tasks that don't have occurrences in other time periods
+        const tasksWithOccurrences = taskOccurrences.map((occ) => occ.taskId);
+        return tasks
+          .filter((task) => !tasksWithOccurrences.includes(task.id))
+          .map((task) => ({
+            ...task,
+            taskOccurrenceId: '', // Empty string since these tasks don't have occurrences
+          }))
+          .filter((task) => !existingTasks.find((t) => t.id === task.id));
       }
 
-      const tasks = taskOccurrences.map((occurrence) => {
-        return {
-          taskOccurrenceId: occurrence.id,
+      return taskOccurrences
+        .filter((occurrence) => {
+          const startTime = new Date(occurrence.startTime);
+
+          switch (plan) {
+            case 'Today':
+              return isToday(startTime);
+            case 'Tomorrow':
+              return isTomorrow(startTime);
+            case 'Rest of the week':
+              return isWithinInterval(startTime, {
+                start: addDays(tomorrow, 1),
+                end: endOfWeek,
+              });
+            default:
+              return false;
+          }
+        })
+        .map((occurrence) => ({
           ...tasksStore.getTaskWithId(occurrence.taskId),
-        };
-      });
-
-      return tasks;
-    }
-
-    return [];
-  };
-
-  const getTasksForPlan = (
-    plan: string,
-    pages: PageType[],
-    currentRows: TaskType[],
-  ) => {
-    if (plan === 'Today') {
-      const planPages = pages.filter((page) => page.title === dates.today);
-      return planPages.flatMap((page) => getTasksForPage(page.id));
-    }
-
-    if (plan === 'Tomorrow') {
-      const planPages = pages.filter((page) => page.title === dates.tomorrow);
-      return planPages.flatMap((page) => getTasksForPage(page.id));
-    }
-
-    if (plan === 'Rest of the week') {
-      const planPages = dates.restOfWeekDates.flatMap((date) =>
-        pages.filter((page) => page.title === date),
-      );
-
-      return planPages.flatMap((page) => getTasksForPage(page.id));
-    }
-
-    return tasksStore.tasks.filter(
-      (task) => !currentRows.find((row) => row.id === task.id),
-    );
-  };
+          taskOccurrenceId: occurrence.id,
+        }))
+        .filter((task) => task && !existingTasks.find((t) => t.id === task.id));
+    },
+    [taskOccurrences, tasksStore, tasks],
+  );
 
   const rows = React.useMemo(() => {
     const rows: IssueRow[] = [];
     let existingTasks: TaskType[] = [];
 
     planCategories.forEach((plan) => {
-      const tasks = getTasksForPlan(plan, pages, existingTasks);
+      const tasks = getTasksForPlan(plan, existingTasks);
 
       const filteredTasks = filterTasksNoHook(tasks, filters, displaySettings);
       existingTasks = [...existingTasks, ...tasks];

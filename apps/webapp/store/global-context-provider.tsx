@@ -13,11 +13,6 @@ import {
 } from './application';
 import { AutomationStore, type AutomationStoreType } from './automation';
 import {
-  CommonStore,
-  defaultCommonStoreValue,
-  type CommonStoreType,
-} from './common';
-import {
   ConversationHistoryStore,
   type ConversationHistoryStoreType,
 } from './conversation-history';
@@ -39,8 +34,6 @@ import { TasksStore, type TasksStoreType } from './tasks';
 import { WorkspaceStore, type WorkspaceStoreType } from './workspace';
 
 const StoreContextModel = types.model({
-  commonStore: CommonStore,
-
   conversationsStore: ConversationsStore,
   conversationHistoryStore: ConversationHistoryStore,
   workspaceStore: WorkspaceStore,
@@ -89,7 +82,6 @@ export const storeContextStore = StoreContextModel.create({
   listsStore: {
     lists: [],
   },
-  commonStore: defaultCommonStoreValue,
   agentWorklogsStore: {
     agentWorklogs: [],
   },
@@ -109,7 +101,6 @@ export interface StoreContextInstanceType {
   tasksStore: TasksStoreType;
   conversationsStore: ConversationStoreType;
   conversationHistoryStore: ConversationHistoryStoreType;
-  commonStore: CommonStoreType;
   listsStore: ListsStoreType;
   taskOccurrencesStore: TaskOccurrencesStoreType;
   agentWorklogsStore: AgentWorklogStoreType;

@@ -7,11 +7,13 @@ export interface TabType {
   order: number;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any;
+  conversation_id: string;
 
   // Functions
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   updateData: (data: any) => void;
   changeType: (type: TabViewType, entityId?: string) => void;
+  updateConversationId: (conversationId: string) => void;
 }
 
 export enum TabViewType {
@@ -24,7 +26,7 @@ export enum TabViewType {
   CONTEXT = 'context',
 
   // Misc
-  ASSISTANT = 'notifications',
+  ASSISTANT = 'assistant',
 }
 
 export interface TabGroupType {

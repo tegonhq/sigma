@@ -17,9 +17,9 @@ interface HeaderProps {
 }
 
 export const Header = observer(({ actions }: HeaderProps) => {
-  const { tabs, updateTabType } = useApplication();
-  const firstTab = tabs[0];
-  const entityId = firstTab.entity_id;
+  const { activeTab, changeActiveTab } = useApplication();
+
+  const entityId = activeTab.entity_id;
   const { tasksStore, pagesStore } = useContextStore();
   const task = tasksStore.getTaskWithId(entityId);
   const page = pagesStore.getPageWithId(task?.pageId);
@@ -30,7 +30,7 @@ export const Header = observer(({ actions }: HeaderProps) => {
         <Breadcrumb>
           <BreadcrumbList className="gap-1">
             <BreadcrumbItem
-              onClick={() => updateTabType(0, TabViewType.MY_TASKS, {})}
+              onClick={() => changeActiveTab(TabViewType.MY_TASKS, {})}
             >
               <BreadcrumbPage>Tasks</BreadcrumbPage>
             </BreadcrumbItem>

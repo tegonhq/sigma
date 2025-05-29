@@ -1,16 +1,20 @@
-import { Button, cn, SidebarInset, SidebarProvider } from '@tegonhq/ui';
-import { GeistMono } from 'geist/font/mono';
-import { GeistSans } from 'geist/font/sans';
+import { AddLine, Button } from '@tegonhq/ui';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
+import { useHotkeys } from 'react-hotkeys-hook';
 import { signOut } from 'supertokens-auth-react/recipe/session';
+import { Key } from 'ts-key-enum';
 
 import { AIThinking } from 'modules/ai-thinking';
 import { SettingsProvider } from 'modules/settings';
+import { Updates } from 'modules/updates/updates';
 
+import { SCOPES } from 'common/shortcut-scopes';
+
+import { useApplication } from 'hooks/application';
 import { useIPC } from 'hooks/ipc';
 
-import { AppSidebar } from './app-sidebar';
+import { AppTabs } from './app-tabs';
 import { Navigation } from './navigation';
 
 interface AppLayoutProps {
@@ -20,6 +24,20 @@ interface AppLayoutProps {
 export function AppLayout({ children }: AppLayoutProps) {
   const ipc = useIPC();
   const { replace } = useRouter();
+  const { addTab } = useApplication();
+
+  useHotkeys(
+    [`${Key.Meta}+n`],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    () => {
+      addTab();
+    },
+    {
+      scopes: [SCOPES.Global],
+      enableOnFormTags: true,
+      enableOnContentEditable: true,
+    },
+  );
 
   if (!ipc) {
     return (
@@ -51,23 +69,34 @@ export function AppLayout({ children }: AppLayoutProps) {
   }
 
   return (
-    <SidebarProvider
-      className={cn('sidebar', GeistSans.variable, GeistMono.variable)}
-      style={{
-        '--sidebar-width': '4rem',
-        '--sidebar-width-icon': '4rem',
-        backgroundColor: 'oklch(var(--background)) !important',
-      }}
-    >
-      <SettingsProvider>
-        <AppSidebar />
-        <SidebarInset className="bg-transparent md:peer-data-[variant=inset]:shadow-none">
-          {children}
-        </SidebarInset>
-      </SettingsProvider>
+    <SettingsProvider>
+      <div className="h-full w-full">
+        <div className="sticky top-0 z-50 w-full bg-background">
+          <div className="flex h-12 items-end px-4">
+            <div className="flex items-center overflow-hidden w-full md:max-w-[calc(100%-10px)]">
+              <div className="h-9 pl-1 relative flex items-center w-full">
+                <AppTabs />
 
-      <AIThinking />
-      <Navigation />
-    </SidebarProvider>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 w-7 shrink-0 ml-1"
+                  onClick={() => {
+                    addTab();
+                  }}
+                >
+                  <AddLine size={20} />
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>{children}</div>
+        <AIThinking />
+        <Navigation />
+        <Updates />
+      </div>
+    </SettingsProvider>
   );
 }

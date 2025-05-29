@@ -83,6 +83,8 @@ export const MentionList = forwardRef(
                 )}
                 key={index}
                 onClick={() => selectItem(index)}
+                data-selected={index === selectedIndex}
+                data-item="mention"
               >
                 {item.name === 'Sigma' ? (
                   <Image

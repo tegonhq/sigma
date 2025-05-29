@@ -120,7 +120,7 @@ export const PagesStore: IAnyStateTreeNode = types
       // Calculate the new sort order using fractional-index
       return generateKeyBetween(lastPage?.sortOrder, null);
     },
-    searchPages(query: string) {
+    searchPages(query: string, strict?: boolean) {
       if (query === '') {
         return sort(self.pages.toJSON().filter((page) => page.type === 'List'))
           .desc((page) => page.updatedAt)
@@ -138,7 +138,7 @@ export const PagesStore: IAnyStateTreeNode = types
           ], // Fields to search
 
           includeScore: true, // Optional: include match scores
-          threshold: 0.9, // Lower threshold for stricter matches
+          threshold: strict ? 0.3 : 0.9, // Lower threshold for stricter matches
           distance: 100, // Reduce distance to prioritize closer matches
           findAllMatches: true, // Include all potential matches
           useExtendedSearch: true, // Enable advanced search features
@@ -176,6 +176,6 @@ export interface PagesStoreType {
     children?: any[];
     sortOrder?: string;
   }>;
-  searchPages: (query: string) => PageType[];
+  searchPages: (query: string, strict?: boolean) => PageType[];
   getContextPage: () => PageType;
 }

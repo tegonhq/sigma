@@ -8,7 +8,6 @@ import { useApplication } from 'hooks/application';
 import { useContextStore } from 'store/global-context-provider';
 
 import { ListPage } from './list-page';
-import { ListPageHeader } from './list-page-header';
 import { ListsList } from './list-view';
 
 interface TabsProps {
@@ -18,11 +17,10 @@ interface TabsProps {
 export const Lists = observer(({ entity_id }: TabsProps) => {
   const { listsStore } = useContextStore();
   const list = listsStore.getListWithId(entity_id);
-  const { tabs } = useApplication();
-  const firstTab = tabs[0];
+  const { activeTab } = useApplication();
 
   return (
-    <RightSideLayout header={<></>}>
+    <RightSideLayout>
       <ResizablePanelGroup direction="horizontal">
         <ResizablePanel
           maxSize={16}
@@ -30,15 +28,14 @@ export const Lists = observer(({ entity_id }: TabsProps) => {
           minSize={16}
           collapsible
           collapsedSize={16}
-          className="h-[calc(100vh)] min-w-[200px] border-r-1 border-border"
+          className="h-[calc(100vh_-_48px)] min-w-[200px] border-r-1 border-border"
         >
-          <ListPageHeader />
-          <ListsList selected={firstTab.entity_id} />
+          <ListsList selected={activeTab.entity_id} />
         </ResizablePanel>
         <ResizablePanel
           collapsible
           collapsedSize={0}
-          className="flex flex-col w-full h-[calc(100vh)]"
+          className="flex flex-col w-full h-[calc(100vh_-_48px)]"
         >
           {list && <ListPage list={list} />}
         </ResizablePanel>

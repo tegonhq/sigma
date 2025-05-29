@@ -2,11 +2,9 @@ import { observer } from 'mobx-react-lite';
 import React from 'react';
 
 import { Conversation } from 'modules/conversation';
-import { Days } from 'modules/days';
-import { Inbox } from 'modules/inbox';
+import { Assistant } from 'modules/inbox';
 import { Lists } from 'modules/lists';
 import { Tasks } from 'modules/tasks';
-import { AddTaskDialogProvider } from 'modules/tasks/add-task';
 import { initIntegrations } from 'modules/tasks/utils';
 
 import { SCOPES } from 'common/shortcut-scopes';
@@ -23,10 +21,6 @@ import { useWindowListener } from './window-listener';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getComponent(componentType: string, props: any) {
-  if (componentType === TabViewType.DAYS) {
-    return <Days />;
-  }
-
   if (componentType === TabViewType.MY_TASKS) {
     return <Tasks {...props} />;
   }
@@ -36,22 +30,21 @@ function getComponent(componentType: string, props: any) {
   }
 
   if (componentType === TabViewType.ASSISTANT) {
-    return <Inbox {...props} />;
+    return <Assistant {...props} />;
   }
 
   if (componentType === TabViewType.AI) {
     return <Conversation {...props} />;
   }
 
-  return <Days />;
+  return <Assistant />;
 }
 
 export const Home = observer(() => {
   useScope(SCOPES.Global);
-  const { tabs } = useApplication();
+  const { activeTab } = useApplication();
   useWindowListener();
 
-  const firstTab = tabs[0];
   const ipc = useIPC();
 
   // Init integrations here will download the latest integration definitions
@@ -62,11 +55,9 @@ export const Home = observer(() => {
   }, []);
 
   return (
-    <AddTaskDialogProvider>
-      <div className="flex flex-col h-full">
-        {getComponent(firstTab.type, { entity_id: firstTab.entity_id })}
-      </div>
-    </AddTaskDialogProvider>
+    <div className="flex flex-col h-full">
+      {getComponent(activeTab.type, { entity_id: activeTab.entity_id })}
+    </div>
   );
 });
 

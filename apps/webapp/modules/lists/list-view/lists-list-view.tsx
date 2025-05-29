@@ -26,7 +26,7 @@ export const ListsList = observer(({ selected }: { selected: string }) => {
     fixedWidth: true, // Rows have fixed width but dynamic height
   });
 
-  const { updateTabType } = useApplication();
+  const { changeActiveTab } = useApplication();
 
   React.useEffect(() => {
     cache.clearAll();
@@ -34,7 +34,7 @@ export const ListsList = observer(({ selected }: { selected: string }) => {
   }, [lists]);
 
   const goToList = (listId: string) => {
-    updateTabType(0, TabViewType.LIST, { entityId: listId });
+    changeActiveTab(TabViewType.LIST, { entityId: listId });
   };
 
   const rowRender = ({ index, style, key, parent }: ListRowProps) => {

@@ -8,16 +8,16 @@ import { TabViewType } from 'store/application';
 export const useWindowListener = () => {
   const ipc = useIPC();
 
-  const { updateTabType } = useApplication();
+  const { changeActiveTab } = useApplication();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const eventFromOtherWindow = (_event: string, value: any) => {
     switch (value.type) {
       case 'List':
-        updateTabType(0, TabViewType.LIST, { entityId: value.id });
+        changeActiveTab(TabViewType.LIST, { entityId: value.id });
         return;
       case 'Task':
-        updateTabType(0, TabViewType.MY_TASKS, { entityId: value.id });
+        changeActiveTab(TabViewType.MY_TASKS, { entityId: value.id });
     }
   };
 

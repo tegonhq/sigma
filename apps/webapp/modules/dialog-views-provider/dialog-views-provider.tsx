@@ -7,7 +7,6 @@ import { ScheduleDialog } from 'modules/tasks/metadata';
 import { DueDateDialog } from 'modules/tasks/metadata/due-date';
 
 import { SCOPES } from 'common/shortcut-scopes';
-import { TaskViewContext } from 'layouts/side-task-view';
 
 import { useApplication } from 'hooks/application';
 
@@ -35,11 +34,10 @@ export const DialogViewsProvider = observer(
 
     const [dialogOpen, setDialogOpen] = React.useState<DialogType>(undefined);
 
-    const { tabs, selectedTasks, hoverTask } = useApplication();
-    const { taskId: viewTaskId } = React.useContext(TaskViewContext);
-    const firstTab = tabs[0];
+    const { activeTab, selectedTasks, hoverTask } = useApplication();
+
     const taskId =
-      firstTab.type === TabViewType.MY_TASKS ? firstTab.entity_id : undefined;
+      activeTab.type === TabViewType.MY_TASKS ? activeTab.entity_id : undefined;
 
     const openDialog = (dialogType: DialogType) => {
       setDialogOpen(dialogType);
@@ -58,10 +56,6 @@ export const DialogViewsProvider = observer(
     const getTasks = () => {
       if (taskId) {
         return [taskId];
-      }
-
-      if (viewTaskId) {
-        return [viewTaskId];
       }
 
       if (selectedTasks.length > 0) {
