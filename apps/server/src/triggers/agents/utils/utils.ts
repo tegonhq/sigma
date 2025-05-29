@@ -1,3 +1,6 @@
+import fs from 'fs';
+import path from 'path';
+
 import {
   Activity,
   Conversation,
@@ -72,12 +75,35 @@ export const getAccessToken = async (
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function createMCPConfig(userMCP: any) {
+export async function createMCPConfig(userMCP: any) {
   if (userMCP && userMCP.mcpServers) {
+    const mcpServers = { ...userMCP.mcpServers };
+
+    // Process each MCP server config
+    for (const serverKey of Object.keys(mcpServers)) {
+      const server = mcpServers[serverKey];
+
+      // If command is 'node', check all args for URLs to download
+      if (server.command === 'node' && server.args) {
+        server.args = await Promise.all(
+          server.args.map(async (arg: string) => {
+            if (arg.trim().startsWith('https://')) {
+              const filename = arg.split('/').pop() || arg;
+              const localPath = path.join(process.cwd(), filename);
+
+              const response = await axios.get(arg, { responseType: 'text' });
+              await fs.promises.writeFile(localPath, response.data);
+
+              return localPath;
+            }
+            return arg;
+          }),
+        );
+      }
+    }
+
     return {
-      mcpServers: {
-        ...userMCP.mcpServers,
-      },
+      mcpServers,
     };
   }
 
@@ -200,7 +226,7 @@ export const init = async (payload: InitChatPayload) => {
 
     return config;
   });
-  const mcp = createMCPConfig(user.mcp);
+  const mcp = await createMCPConfig(user.mcp);
 
   const userContextPageHTML = await getUserContextHTML();
   logger.info(

@@ -101,7 +101,7 @@ export async function initMcp(agents: string[], workspaceId: string) {
     return config;
   });
 
-  const mcp = createMCPConfig(user.mcp);
+  const mcp = await createMCPConfig(user.mcp);
 
   logger.info(
     `Found users, workspace, conversation, ${JSON.stringify({ mcpServers: { ...mcp.mcpServers, ...integrationMCPServers } })}`,

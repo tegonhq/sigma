@@ -39,6 +39,39 @@ export const createActivityEvent = async (
   integrationAccount: IntegrationAccount,
 ) => {
   const { eventData } = eventBody;
+  if (eventData.event.type === 'message' && eventData.event.channel === 'D06UAK42494') {
+    const event = eventData.event;
+
+    const integrationConfiguration = integrationAccount.integrationConfiguration as Record<
+      string,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      any
+    >;
+
+    if (!integrationConfiguration) {
+      throw new Error('Integration configuration not found');
+    }
+
+    const accessToken = integrationConfiguration.access_token;
+
+    const text = `DM with Sigma channel Content: '${event.text}'`;
+
+    const permalinkResponse = await axios.get(
+      `https://slack.com/api/chat.getPermalink?channel=${event.channel}&message_ts=${event.ts}`,
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      },
+    );
+
+    const activity = {
+      sourceURL: permalinkResponse.data.permalink,
+      text,
+      integrationAccountId: integrationAccount.id,
+      taskId: null,
+    };
+
+    await axios.post('/api/v1/activity', activity);
+  }
 
   if (eventData.event.type === 'reaction_added' && eventData.event.reaction === 'eyes') {
     const event = eventData.event;
