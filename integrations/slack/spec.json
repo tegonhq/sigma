@@ -5,7 +5,7 @@
   "icon": "slack",
   "mcp": {
     "command": "npx",
-    "args": [ "-y", "@modelcontextprotocol/server-slack" ],
+    "args": ["-y", "@modelcontextprotocol/server-slack"],
     "env": {
       "SLACK_BOT_TOKEN": "${config:access_token}",
       "SLACK_TEAM_ID": "${config:team_id}",
@@ -24,9 +24,13 @@
         "channels:read",
         "groups:read",
         "im:read",
+        "im:history",
         "mpim:read",
+        "mpim:write",
+        "mpim:history",
         "channels:history",
         "chat:write",
+        "reactions:read",
         "reactions:write",
         "users.profile:read"
       ],

@@ -33,7 +33,8 @@ export default class ActivityService {
       },
     });
 
-    const conversation = exisitingActivity.Conversation[0];
+    const conversation =
+      exisitingActivity?.Conversation && exisitingActivity.Conversation[0];
     const pat = await this.users.getOrCreatePat(userId, workspaceId);
 
     if (exisitingActivity && conversation) {
