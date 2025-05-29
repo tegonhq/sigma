@@ -214,7 +214,7 @@ export function AssistantEditor({
                     activeItem.click();
                   }
 
-                  if (!activeItem || !mentionItem) {
+                  if (!activeItem && !mentionItem) {
                     onSend(html, agents, text);
                     editor.commands.clearContent(true);
                     setText('');
