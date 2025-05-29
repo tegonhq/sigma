@@ -4,8 +4,10 @@ import React from 'react';
 
 import { getIcon } from 'common/icon-picker';
 import type { TaskType } from 'common/types';
-import { TaskViewContext } from 'layouts/side-task-view';
 
+import { useApplication } from 'hooks/application';
+
+import { TabViewType } from 'store/application';
 import { useContextStore } from 'store/global-context-provider';
 
 import { ScheduleDropdown, ScheduleDropdownVariant } from './metadata';
@@ -26,7 +28,7 @@ export const TaskInfo = observer(
     const { listsStore, pagesStore, tasksStore } = useContextStore();
     const list = listsStore.getListWithId(task.listId);
     const page = pagesStore.getPageWithId(list?.pageId);
-    const { openTask } = React.useContext(TaskViewContext);
+    const { changeActiveTab } = useApplication();
 
     const parentTask = () => {
       const parent = tasksStore.getTaskWithId(task?.parentId);
@@ -37,7 +39,9 @@ export const TaskInfo = observer(
           <Badge
             variant="secondary"
             className="flex items-center gap-1 shrink min-w-[0px]"
-            onClick={() => openTask(parent.id)}
+            onClick={() =>
+              changeActiveTab(TabViewType.MY_TASKS, { entityId: parent.id })
+            }
           >
             <ParentIssueLine size={12} />{' '}
             <span className="text-muted-foreground">Parent</span>{' '}

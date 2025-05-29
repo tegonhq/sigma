@@ -9,6 +9,7 @@ import { TaskOccurrenceArray } from './models';
 export const TaskOccurrencesStore: IAnyStateTreeNode = types
   .model({
     taskOccurrences: types.map(TaskOccurrenceArray),
+    taskOccurrencesArray: TaskOccurrenceArray,
     taskOccurrencesWithPages: types.map(TaskOccurrenceArray),
     workspaceId: types.union(types.string, types.undefined),
     loading: types.union(types.undefined, types.boolean),
@@ -41,29 +42,20 @@ export const TaskOccurrencesStore: IAnyStateTreeNode = types
         taskOccurrencesArray.push(taskOccurrence);
       }
 
-      // Populate based on a page
-      const pageId = taskOccurrence.pageId;
-      if (!self.taskOccurrencesWithPages.has(pageId)) {
-        self.taskOccurrencesWithPages.set(
-          pageId,
-          TaskOccurrenceArray.create([]),
-        );
-      }
-
-      const taskOccurrencesByPageArray =
-        self.taskOccurrencesWithPages.get(pageId);
-      const indexToUpd = taskOccurrencesByPageArray.findIndex(
+      const indexToUpdateInArray = self.taskOccurrencesArray.findIndex(
         (obj) => obj.id === id,
       );
 
-      if (indexToUpd !== -1) {
+      if (indexToUpdateInArray !== -1) {
         // Update the object at the found index with the new data
-        taskOccurrencesByPageArray[indexToUpd] = {
-          ...taskOccurrencesByPageArray[indexToUpd],
+        self.taskOccurrencesArray[indexToUpdate] = {
+          ...self.taskOccurrencesArray[indexToUpdate],
           ...taskOccurrence,
-        };
+          // TODO fix the any and have a type with Issuetype
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } as any;
       } else {
-        taskOccurrencesByPageArray.push(taskOccurrence);
+        self.taskOccurrencesArray.push(taskOccurrence);
       }
 
       setTimeout(() => {
@@ -93,23 +85,12 @@ export const TaskOccurrencesStore: IAnyStateTreeNode = types
         }
       }
 
-      // Delete based on a page
-      for (const [
-        pageId,
-        taskOccurrencesArray,
-      ] of self.taskOccurrencesWithPages.entries()) {
-        const indexToDelete = taskOccurrencesArray.findIndex(
-          (obj) => obj.id === id,
-        );
+      const indexToDeleteInArray = self.taskOccurrencesArray.findIndex(
+        (obj) => obj.id === id,
+      );
 
-        if (indexToDelete !== -1) {
-          taskOccurrencesArray.splice(indexToDelete, 1);
-          // If the task occurrences array is empty, we can remove it from the map
-          if (taskOccurrencesArray.length === 0) {
-            self.taskOccurrencesWithPages.delete(pageId);
-          }
-          break; // Exit loop once we've found and deleted the task occurrence
-        }
+      if (indexToDeleteInArray !== -1) {
+        self.taskOccurrencesArray.splice(indexToDeleteInArray, 1);
       }
 
       setTimeout(() => {
@@ -150,6 +131,13 @@ export const TaskOccurrencesStore: IAnyStateTreeNode = types
     getTaskOccurrencesForPage(pageId: string): TaskOccurrenceType[] {
       return self.taskOccurrencesWithPages.get(pageId) ?? [];
     },
+    get getKeys() {
+      return Array.from(self.taskOccurrences.keys());
+    },
+
+    get getTaskOccurrences() {
+      return self.taskOccurrencesArray;
+    },
   }));
 
 export interface TaskOccurrencesStoreType {
@@ -161,9 +149,10 @@ export interface TaskOccurrencesStoreType {
   update: (task: TaskOccurrenceType, id: string) => Promise<void>;
   deleteById: (id: string) => Promise<void>;
   load: () => Promise<void>;
+  getKeys: string[];
+  getTaskOccurrences: TaskOccurrenceType[];
 
   getTaskOccurrencesForTask: (taskId: string) => TaskOccurrenceType[];
-  getTaskOccurrencesForPage: (pageId: string) => TaskOccurrenceType[];
   getTaskOccurrenceWithTaskAndId: (
     taskId: string,
     id: string,

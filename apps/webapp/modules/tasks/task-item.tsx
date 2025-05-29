@@ -5,29 +5,31 @@ import { useHotkeys } from 'react-hotkeys-hook';
 
 import { SCOPES } from 'common/shortcut-scopes';
 import { TooltipWrapper } from 'common/tooltip';
-import { TaskViewContext } from 'layouts/side-task-view';
 
 import { useApplication } from 'hooks/application';
 
 import { useUpdateSingleTaskOccurrenceMutation } from 'services/task-occurrence';
 import { useUpdateTaskMutation } from 'services/tasks';
 
+import { TabViewType } from 'store/application';
 import { useContextStore } from 'store/global-context-provider';
 
 import { TaskInfo } from './task-info';
 
 interface TaskListItemProps {
   taskId: string;
+  minimal?: boolean;
 }
 
 export const TaskListItem = observer(
-  ({ taskId: taskIdWithOccurrence }: TaskListItemProps) => {
+  ({ taskId: taskIdWithOccurrence, minimal }: TaskListItemProps) => {
     const { tasksStore, pagesStore, taskOccurrencesStore, agentWorklogsStore } =
       useContextStore();
-    const { openTask } = React.useContext(TaskViewContext);
+
     const {
       selectedTasks,
       setHoverTask,
+      changeActiveTab,
       hoverTask,
       addToSelectedTask,
       removeSelectedTask,
@@ -64,7 +66,7 @@ export const TaskListItem = observer(
     };
 
     const taskSelect = (taskId: string) => {
-      openTask(taskId);
+      changeActiveTab(TabViewType.MY_TASKS, { entityId: taskId });
     };
 
     const getStatus = () => {
@@ -110,39 +112,42 @@ export const TaskListItem = observer(
         }}
       >
         <div className="w-full flex items-center">
-          <div
-            className={cn(
-              'flex items-center py-2.5 pl-4 group-hover:pl-0',
-              taskSelected && 'pl-0',
-            )}
-          >
+          {!minimal && (
             <div
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
+              className={cn(
+                'flex items-center py-2.5 pl-4 group-hover:pl-0',
+                taskSelected && 'pl-0',
+              )}
             >
-              <TooltipWrapper tooltip="">
-                <Checkbox
-                  className={cn(
-                    'hidden group-hover:block',
-                    taskSelected && 'block',
-                  )}
-                  onCheckedChange={(checked) => {
-                    if (checked) {
-                      addToSelectedTask(taskIdWithOccurrence, false);
-                    } else {
-                      removeSelectedTask(taskIdWithOccurrence);
-                    }
-                  }}
-                  checked={taskSelected}
-                />
-              </TooltipWrapper>
+              <div
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                <TooltipWrapper tooltip="">
+                  <Checkbox
+                    className={cn(
+                      'hidden group-hover:block',
+                      taskSelected && 'block',
+                    )}
+                    onCheckedChange={(checked) => {
+                      if (checked) {
+                        addToSelectedTask(taskIdWithOccurrence, false);
+                      } else {
+                        removeSelectedTask(taskIdWithOccurrence);
+                      }
+                    }}
+                    checked={taskSelected}
+                  />
+                </TooltipWrapper>
+              </div>
             </div>
-          </div>
+          )}
           <div
             className={cn(
               'flex grow items-start gap-2 pl-2 ml-1 pr-2 group-hover:bg-grayAlpha-100 rounded-xl shrink min-w-[0px]',
               taskSelected && 'bg-primary/10',
+              minimal && '-ml-2',
             )}
           >
             <div
@@ -152,7 +157,10 @@ export const TaskListItem = observer(
               }}
             >
               <Checkbox
-                className="shrink-0 relative top-1 h-[18px] w-[18px]"
+                className={cn(
+                  'shrink-0 relative top-1 h-[18px] w-[18px]',
+                  minimal && 'top-[1px]',
+                )}
                 checked={getStatus() === 'Done'}
                 onCheckedChange={(value: boolean) =>
                   statusChange(value === true ? 'Done' : 'Todo')
@@ -163,11 +171,12 @@ export const TaskListItem = observer(
             <div
               className={cn(
                 'flex flex-col w-full py-2 border-b border-border shrink min-w-[0px]',
+                minimal && 'border-none py-1.5',
               )}
             >
               <div className="flex w-full justify-between gap-4 items-center">
                 <div className="flex gap-2 w-full items-center min-w-[0px] shrink">
-                  <div className="text-muted-foreground font-mono min-w-[40px] pl-1 relative top-[1px] text-sm self-center shrink-0">
+                  <div className="text-muted-foreground font-mono min-w-[40px] pl-1 relative text-sm self-center shrink-0">
                     T-{task.number}
                   </div>
                   <div className="inline-flex items-center justify-start shrink min-w-[0px] min-h-[24px]">

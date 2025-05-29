@@ -24,6 +24,7 @@ const Tab = types
   .model({
     id: types.identifier,
     entity_id: types.union(types.string, types.undefined),
+    conversation_id: types.union(types.string, types.undefined),
     type: types.enumeration([
       'days',
       'my_tasks',
@@ -31,7 +32,7 @@ const Tab = types
       'ai',
       'context',
       'sync',
-      'notifications',
+      'assistant',
     ]),
     order: types.number,
     data: types.frozen(),
@@ -49,6 +50,10 @@ const Tab = types
       } else {
         self.entity_id = undefined;
       }
+    },
+
+    updateConversationId(conversationId: string) {
+      self.conversation_id = conversationId;
     },
   }));
 
@@ -69,7 +74,7 @@ const TabGroup = types
         const newTab = Tab.create({
           id,
           entity_id: undefined,
-          type: 'days',
+          type: 'assistant',
           order: 0,
           data: {},
         });

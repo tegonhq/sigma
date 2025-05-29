@@ -116,7 +116,7 @@ export const ScheduleList = observer(() => {
   };
 
   return (
-    <AutoSizer className="h-full mt-2">
+    <AutoSizer className="h-full mt-2 px-1">
       {({ width, height }) => (
         <ScrollManagedList
           className=""

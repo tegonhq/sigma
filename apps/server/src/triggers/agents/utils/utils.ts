@@ -80,27 +80,28 @@ export async function createMCPConfig(userMCP: any) {
     const mcpServers = { ...userMCP.mcpServers };
 
     // Process each MCP server config
-    for (const serverKey of Object.keys(mcpServers)) {
+    Object.keys(mcpServers).forEach(async (serverKey) => {
       const server = mcpServers[serverKey];
 
       // If command is 'node', check all args for URLs to download
       if (server.command === 'node' && server.args) {
         server.args = await Promise.all(
           server.args.map(async (arg: string) => {
-            if (arg.trim().startsWith('https://')) {
+            if (arg.startsWith('https://')) {
               const filename = arg.split('/').pop() || arg;
               const localPath = path.join(process.cwd(), filename);
 
+              // Download file contents
               const response = await axios.get(arg, { responseType: 'text' });
               await fs.promises.writeFile(localPath, response.data);
 
-              return localPath;
+              return filename; // Return local filename
             }
             return arg;
           }),
         );
       }
-    }
+    });
 
     return {
       mcpServers,
@@ -557,7 +558,6 @@ export async function getDailyContext(
       }
 
       dailyRules.automationTexts = automationTexts;
-      console.log(dailyRules);
 
       memoryContext = await getMemoryContext(
         automationTexts.join('\n'),

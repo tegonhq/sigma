@@ -17,9 +17,8 @@ import { useContextStore } from 'store/global-context-provider';
 
 import { SingleTaskEditor } from './single-task-editor';
 import { SingleTaskMetadata } from './single-task-metadata';
-import { PageTitle } from './single-task-title';
-import { Header } from '../header';
 import { SingleTaskStatus } from './single-task-status';
+import { PageTitle } from './single-task-title';
 
 interface SingleTaskProps {
   index?: number;
@@ -114,7 +113,7 @@ export const SingleTaskWithoutLayout = observer(
 export const SingleTask = observer(
   ({ taskId, sideView = false }: SingleTaskProps) => {
     return (
-      <RightSideLayout header={<Header />}>
+      <RightSideLayout>
         <SingleTaskWithoutLayout taskId={taskId} sideView={sideView} />
       </RightSideLayout>
     );

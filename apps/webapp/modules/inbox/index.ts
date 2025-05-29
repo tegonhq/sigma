@@ -1,1 +1,1 @@
-export * from './inbox';
+export * from './assistant';

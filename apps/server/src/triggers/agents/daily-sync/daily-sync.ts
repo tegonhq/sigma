@@ -9,6 +9,7 @@ import { getDailySync } from './agent';
 import { getDailyContext, getUserContextHTML } from '../utils/utils';
 
 const prisma = new PrismaClient();
+
 export const dailySyncSchedule = schedules.task({
   id: 'daily-sync-schedule',
   run: async (payload) => {
@@ -317,7 +318,6 @@ async function getLastSyncedAt(workspaceId: string, today: Date) {
     lastSyncedAt = todayMidnight;
   }
 
-  console.log(lastSyncedAt);
   return lastSyncedAt;
 }
 

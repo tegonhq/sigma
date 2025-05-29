@@ -4,7 +4,6 @@ import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
-  useSidebar,
 } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
@@ -27,7 +26,6 @@ import { RightSideHeader } from './right-side-header';
 
 interface RightSideLayoutProps {
   children: React.ReactNode;
-  header: React.ReactNode;
 }
 
 export interface ContextType {
@@ -39,16 +37,14 @@ export interface ContextType {
 export const RightSideViewContext = React.createContext<ContextType>(undefined);
 
 export const RightSideLayout = observer(
-  ({ children, header }: RightSideLayoutProps) => {
+  ({ children }: RightSideLayoutProps) => {
     useScope(SCOPES.AI);
 
     const [size, setSize] = useLocalCommonState('panelSize', 15);
     const [defaultValue, setDefaultValue] = React.useState(undefined);
     const [rightSideCollapsed, setRightSideCollapsed] = React.useState(true);
-    const { open } = useSidebar();
 
-    const { tabs } = useApplication();
-    const firstTab = tabs[0];
+    const { activeTab } = useApplication();
 
     useHotkeys(
       [Key.Escape],
@@ -68,7 +64,7 @@ export const RightSideLayout = observer(
       (event) => {
         switch (event.key) {
           case 'l':
-            if (firstTab.type === TabViewType.ASSISTANT) {
+            if (activeTab.type === TabViewType.ASSISTANT) {
               return;
             }
 
@@ -110,11 +106,10 @@ export const RightSideLayout = observer(
         }}
       >
         <div
-          className="flex flex-col"
+          className="flex flex-col p-2 pt-0 rounded-md"
           style={{
             overflow: 'hidden',
-            height: 'calc(100vh - 1rem)',
-            width: open ? 'calc(100vw - 4.5rem)' : 'calc(100vw - 1rem)',
+            height: 'calc(100vh - 48px)',
           }}
         >
           <ResizablePanelGroup direction="horizontal">
@@ -122,14 +117,12 @@ export const RightSideLayout = observer(
               collapsible={false}
               className="bg-background-2 rounded-md"
               style={{
-                height: 'calc(100vh - 1rem)',
+                height: 'calc(100vh - 56px)',
               }}
               order={1}
               id="home"
             >
-              {header}
-
-              <TabContext.Provider value={{ tabId: firstTab.id }}>
+              <TabContext.Provider value={{ tabId: activeTab.id }}>
                 {children}
               </TabContext.Provider>
             </ResizablePanel>
@@ -156,7 +149,7 @@ export const RightSideLayout = observer(
         </div>
 
         <SearchDialog />
-        {rightSideCollapsed && firstTab.type !== TabViewType.ASSISTANT && (
+        {rightSideCollapsed && activeTab.type !== TabViewType.ASSISTANT && (
           <Button
             className="fixed bottom-4 right-4 gap-2 bg-background"
             size="lg"

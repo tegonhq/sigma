@@ -22,6 +22,7 @@ export const useApplication = () => {
 
   const setActiveTab = (tabId: string) => {
     getTabGroup().setActiveTab(tabId);
+    historyManager.save(applicationStore);
   };
 
   const removeTab = (tabId: string) => {
@@ -50,16 +51,23 @@ export const useApplication = () => {
     historyManager.save(applicationStore);
   };
 
-  const updateTabType = (
-    index: number,
+  const updateConversationId = (conversationId: string) => {
+    const activeTab = getTabGroup().activeTab;
+
+    activeTab.updateConversationId(conversationId);
+
+    historyManager.save(applicationStore);
+  };
+
+  const changeActiveTab = (
     type: TabViewType,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     { entityId, data }: { entityId?: string; data?: any },
   ) => {
-    const tab = getTabGroup().tabs[index];
+    const activeTab = getTabGroup().activeTab;
 
-    tab.changeType(type, entityId);
-    tab.updateData(data);
+    activeTab.changeType(type, entityId);
+    activeTab.updateData(data);
 
     historyManager.save(applicationStore);
   };
@@ -109,7 +117,8 @@ export const useApplication = () => {
     setActiveTab,
     updateTabData,
     updateActiveTabData,
-    updateTabType,
+    changeActiveTab,
+    updateConversationId,
     rightScreenCollapsed: applicationStore.rightScreenCollapsed,
     updateRightScreen,
     closeRightScreen: () => applicationStore.updateRightScreen(true),

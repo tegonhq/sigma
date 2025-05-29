@@ -2,14 +2,15 @@ import { cn } from '@tegonhq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 
-import { TaskViewContext } from 'layouts/side-task-view';
+import { useApplication } from 'hooks/application';
 
+import { TabViewType } from 'store/application';
 import { useContextStore } from 'store/global-context-provider';
 
 export const TaskMetadata = observer(({ taskId }: { taskId: string }) => {
   const { tasksStore } = useContextStore();
   const task = tasksStore.getTaskWithId(taskId);
-  const { openTask } = React.useContext(TaskViewContext);
+  const { changeActiveTab } = useApplication();
 
   return (
     <div
@@ -19,7 +20,7 @@ export const TaskMetadata = observer(({ taskId }: { taskId: string }) => {
       <div
         className="text-muted-foreground font-mono text-sm relative top-[1px]"
         onClick={() => {
-          openTask(task.id);
+          changeActiveTab(TabViewType.MY_TASKS, { entityId: task.id });
         }}
       >
         T-{task.number}

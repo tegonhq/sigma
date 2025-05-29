@@ -4,17 +4,17 @@ import { Key } from 'ts-key-enum';
 
 import { SCOPES } from 'common/shortcut-scopes';
 
-import { useContextStore } from 'store/global-context-provider';
+import { useApplication } from 'hooks/application';
 
 import { AIHistoryDropdown } from './history-dropdown';
 
 export const ConversationHeaderActions = () => {
-  const { commonStore } = useContextStore();
+  const { updateConversationId } = useApplication();
 
   useHotkeys(
     [`${Key.Meta}+${Key.Shift}+n`],
     () => {
-      commonStore.update({ currentConversationId: undefined });
+      updateConversationId(undefined);
     },
     {
       scopes: [SCOPES.AI],
@@ -28,7 +28,7 @@ export const ConversationHeaderActions = () => {
       <Button
         variant="ghost"
         onClick={() => {
-          commonStore.update({ currentConversationId: undefined });
+          updateConversationId(undefined);
         }}
       >
         <AddLine size={16} />

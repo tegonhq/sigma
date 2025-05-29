@@ -6,12 +6,11 @@ import React from 'react';
 import type { ConversationHistoryType } from 'common/types';
 import { ScrollAreaWithAutoScroll } from 'common/use-auto-scroll';
 
+import { useApplication } from 'hooks/application';
 import { useConversationHistory } from 'hooks/conversations';
 
 import { useCreateConversationMutation } from 'services/conversations';
 import { useGetIntegrationDefinitions } from 'services/integration-definition';
-
-import { useContextStore } from 'store/global-context-provider';
 
 import { ConversationItem } from './conversation-item';
 import { ConversationTextarea } from './conversation-textarea';
@@ -23,11 +22,11 @@ interface ConversationProps {
 }
 
 export const Conversation = observer(({ defaultValue }: ConversationProps) => {
-  const { commonStore } = useContextStore();
+  const { activeTab, updateConversationId } = useApplication();
   const { toast } = useToast();
 
   const { conversationHistory } = useConversationHistory(
-    commonStore.currentConversationId,
+    activeTab.conversation_id,
   );
   const { isLoading: integrationsLoading } = useGetIntegrationDefinitions();
   const [conversationResponse, setConversationResponse] =
@@ -48,11 +47,11 @@ export const Conversation = observer(({ defaultValue }: ConversationProps) => {
         pageId,
         context: { agents },
         title,
-        conversationId: commonStore.currentConversationId,
+        conversationId: activeTab.conversation_id,
       },
       {
         onSuccess: (data) => {
-          commonStore.update({ currentConversationId: data.conversationId });
+          updateConversationId(data.conversationId);
           setConversationResponse(data);
         },
         onError: (data) => {
@@ -107,7 +106,7 @@ export const Conversation = observer(({ defaultValue }: ConversationProps) => {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh_-_3.5rem)] items-center">
+    <div className="flex flex-col h-[calc(100vh_-_95px)] items-center">
       <div className="overflow-hidden w-full grow">
         <div className="flex flex-col h-full justify-start overflow-hidden">
           <ScrollAreaWithAutoScroll>
@@ -126,6 +125,7 @@ export const Conversation = observer(({ defaultValue }: ConversationProps) => {
               onSend={onSend}
               defaultValue={defaultValue}
               isLoading={conversationResponse}
+              className="bg-background-2"
             />
           </div>
         </div>
