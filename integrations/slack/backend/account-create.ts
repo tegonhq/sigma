@@ -1,4 +1,4 @@
-import { IntegrationDefinition } from '@tegonhq/sigma-sdk';
+import { IntegrationDefinition } from '@redplanethq/sol-sdk';
 import axios from 'axios';
 
 export async function integrationCreate(

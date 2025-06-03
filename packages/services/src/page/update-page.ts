@@ -1,4 +1,4 @@
-import type { UpdatePageDto } from '@sigma/types';
+import type { UpdatePageDto } from '@sol/types';
 
 import axios from 'axios';
 

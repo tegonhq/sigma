@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Checkbox, cn } from '@tegonhq/ui';
+import { Checkbox, cn } from '@redplanethq/ui';
 import { Editor, ReactRenderer } from '@tiptap/react';
 import { sort } from 'fast-sort';
 import React, { useImperativeHandle } from 'react';

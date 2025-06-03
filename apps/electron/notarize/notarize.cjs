@@ -21,7 +21,7 @@ exports.default = async function notarizing(context) {
 
   return await notarize({
     tool: 'notarytool',
-    appBundleId: 'com.mysigma.mysigma-desktop',
+    appBundleId: 'com.sol.sol-desktop',
     appPath: `${appOutDir}/${appName}.app`,
     appleId: process.env.APPLE_ID,
     appleIdPassword: process.env.APPLE_ID_PASSWORD,

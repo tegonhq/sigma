@@ -14,7 +14,7 @@ export class SupertokensService {
   ) {
     supertokens.init({
       appInfo: {
-        appName: 'Sigma',
+        appName: 'Sol',
         apiDomain: process.env.BACKEND_HOST,
         websiteDomain: process.env.FRONTEND_HOST.split(',')[0] || '',
         apiBasePath: '/auth',

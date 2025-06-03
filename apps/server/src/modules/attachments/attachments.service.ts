@@ -7,7 +7,7 @@ import {
   Attachment,
   AttachmentResponse,
   AttachmentStatusEnum,
-} from '@tegonhq/sigma-sdk';
+} from '@redplanethq/sol-sdk';
 import { PrismaService } from 'nestjs-prisma';
 
 import { LoggerService } from 'modules/logger/logger.service';

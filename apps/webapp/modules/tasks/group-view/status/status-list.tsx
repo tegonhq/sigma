@@ -1,4 +1,10 @@
-import { Button, ChevronDown, ChevronRight, cn, TodoLine } from '@tegonhq/ui';
+import {
+  Button,
+  ChevronDown,
+  ChevronRight,
+  cn,
+  TodoLine,
+} from '@redplanethq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import {

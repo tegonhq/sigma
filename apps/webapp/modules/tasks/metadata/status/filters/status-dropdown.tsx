@@ -5,7 +5,7 @@ import {
   Command,
   CommandInput,
   Button,
-} from '@tegonhq/ui';
+} from '@redplanethq/ui';
 import * as React from 'react';
 
 import { StatusDropdownContent } from 'modules/tasks/metadata';

@@ -1,4 +1,4 @@
-import { Badge, cn, Cycle } from '@tegonhq/ui';
+import { Badge, cn, Cycle } from '@redplanethq/ui';
 import { format, isThisWeek, isToday, isTomorrow } from 'date-fns';
 import { sort } from 'fast-sort';
 import { Clock } from 'lucide-react';

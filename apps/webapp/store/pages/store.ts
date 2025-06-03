@@ -1,4 +1,4 @@
-import { PageTypeEnum } from '@sigma/types';
+import { PageTypeEnum } from '@sol/types';
 import { format } from 'date-fns';
 import { sort } from 'fast-sort';
 import { generateKeyBetween } from 'fractional-indexing'; // Import the fractional-index package
@@ -7,7 +7,7 @@ import { type IAnyStateTreeNode, types, flow } from 'mobx-state-tree';
 
 import type { PageType } from 'common/types';
 
-import { sigmaDatabase } from 'store/database';
+import { solDatabase } from 'store/database';
 
 import { Page } from './models';
 
@@ -42,7 +42,7 @@ export const PagesStore: IAnyStateTreeNode = types
     };
 
     const load = flow(function* () {
-      const pages = yield sigmaDatabase.pages.toArray();
+      const pages = yield solDatabase.pages.toArray();
 
       // Sort pages lexically by title before building the tree
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

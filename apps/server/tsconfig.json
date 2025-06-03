@@ -1,5 +1,5 @@
 {
-  "extends": "@sigma/typescript-config/nest.json",
+  "extends": "@sol/typescript-config/nest.json",
   "compilerOptions": {
     "baseUrl": "src",
     "module": "commonjs",

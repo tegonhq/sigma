@@ -1,4 +1,4 @@
-import { UpdateTaskDto } from '@sigma/types';
+import { UpdateTaskDto } from '@sol/types';
 import axios from 'axios';
 
 export interface UpdateTaskDtoWithId extends UpdateTaskDto {

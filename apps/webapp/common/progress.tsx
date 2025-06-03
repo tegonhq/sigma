@@ -1,5 +1,5 @@
 import * as ProgressPrimitive from '@radix-ui/react-progress';
-import { cn } from '@tegonhq/ui';
+import { cn } from '@redplanethq/ui';
 import * as React from 'react';
 
 interface ProgressSegment {

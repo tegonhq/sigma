@@ -1,5 +1,5 @@
 {
-  "name": "@sigma/editor-extensions",
+  "name": "@sol/editor-extensions",
   "version": "0.1.0",
   "private": true,
   "main": "./dist/index.js",
@@ -16,8 +16,8 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@sigma/eslint-config": "workspace:*",
-    "@sigma/typescript-config": "workspace:*",
+    "@sol/eslint-config": "workspace:*",
+    "@sol/typescript-config": "workspace:*",
     "@types/node": "^20",
     "@typescript-eslint/eslint-plugin": "^7.1.0",
     "@typescript-eslint/parser": "^7.1.0",

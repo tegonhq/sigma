@@ -27,7 +27,7 @@ export function OnboardingComponent() {
   return (
     <AuthLayout>
       <div className="flex flex-col w-[360px]">
-        <h1 className="text-lg">✋ Welcome to Sigma</h1>
+        <h1 className="text-lg">✋ Welcome to Sol</h1>
         <div className="text-muted-foreground mt-1 mb-8">
           We just need to take couple of information before we proceed
         </div>

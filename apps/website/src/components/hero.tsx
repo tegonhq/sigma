@@ -1,5 +1,5 @@
 import { RiGithubFill } from '@remixicon/react';
-import { Badge, Button, Card } from '@tegonhq/ui';
+import { Badge, Button, Card } from '@redplanethq/ui';
 import Image from 'next/image';
 
 import { Container, DownloadButton } from './utils';

@@ -2,7 +2,7 @@ import type { ConversationHistoryStoreType } from './models';
 
 import type { SyncActionRecord } from 'common/types';
 
-import { sigmaDatabase } from 'store/database';
+import { solDatabase } from 'store/database';
 
 export async function saveConversationHistorytData(
   data: SyncActionRecord[],
@@ -24,7 +24,7 @@ export async function saveConversationHistorytData(
 
       switch (record.action) {
         case 'I': {
-          await sigmaDatabase.conversationHistory.put(conversationHistory);
+          await solDatabase.conversationHistory.put(conversationHistory);
           return (
             conversationHistoryStore &&
             (await conversationHistoryStore.update(
@@ -35,7 +35,7 @@ export async function saveConversationHistorytData(
         }
 
         case 'U': {
-          await sigmaDatabase.conversationHistory.put(conversationHistory);
+          await solDatabase.conversationHistory.put(conversationHistory);
           return (
             conversationHistoryStore &&
             (await conversationHistoryStore.update(
@@ -46,7 +46,7 @@ export async function saveConversationHistorytData(
         }
 
         case 'D': {
-          await sigmaDatabase.conversationHistory.delete(record.data.id);
+          await solDatabase.conversationHistory.delete(record.data.id);
           return (
             conversationHistoryStore &&
             (await conversationHistoryStore.deleteById(record.data.id))

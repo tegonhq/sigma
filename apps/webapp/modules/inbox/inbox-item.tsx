@@ -1,4 +1,4 @@
-import { cn } from '@tegonhq/ui';
+import { cn } from '@redplanethq/ui';
 import { RefreshCcw } from 'lucide-react';
 import { observer } from 'mobx-react-lite';
 import React from 'react';

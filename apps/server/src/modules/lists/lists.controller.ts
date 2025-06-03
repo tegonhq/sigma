@@ -8,7 +8,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { List, UpdateListDto, ListIdDto, Task } from '@tegonhq/sigma-sdk';
+import { List, UpdateListDto, ListIdDto, Task } from '@redplanethq/sol-sdk';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
 import { Workspace } from 'modules/auth/session.decorator';

@@ -1,4 +1,9 @@
-import { PopoverTrigger, Popover, PopoverContent, Button } from '@tegonhq/ui';
+import {
+  PopoverTrigger,
+  Popover,
+  PopoverContent,
+  Button,
+} from '@redplanethq/ui';
 import { Check, ChevronDown } from 'lucide-react';
 import { EditorBubbleItem, useEditor } from 'novel';
 

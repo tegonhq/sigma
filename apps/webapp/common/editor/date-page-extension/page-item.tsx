@@ -1,4 +1,4 @@
-import { DocumentLine } from '@tegonhq/ui';
+import { DocumentLine } from '@redplanethq/ui';
 import { parse } from 'date-fns';
 import { observer } from 'mobx-react-lite';
 

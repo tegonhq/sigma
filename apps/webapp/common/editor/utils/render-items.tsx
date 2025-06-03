@@ -2,7 +2,7 @@
 // as the slash command is not working when used inside a modal
 import type { Editor } from '@tiptap/core';
 
-import { Command, CommandInput, CommandList } from '@tegonhq/ui';
+import { Command, CommandInput, CommandList } from '@redplanethq/ui';
 import { ReactRenderer } from '@tiptap/react';
 import { Provider } from 'jotai';
 import { useSetAtom, useAtom } from 'jotai';

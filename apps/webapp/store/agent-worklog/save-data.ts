@@ -2,7 +2,7 @@ import type { AgentWorklogStoreType } from './store';
 
 import type { SyncActionRecord } from 'common/types';
 
-import { sigmaDatabase } from 'store/database';
+import { solDatabase } from 'store/database';
 
 export async function saveAgentWorklog(
   data: SyncActionRecord[],
@@ -24,7 +24,7 @@ export async function saveAgentWorklog(
 
       switch (record.action) {
         case 'I': {
-          await sigmaDatabase.agentWorklogs.put(agentWorklog);
+          await solDatabase.agentWorklogs.put(agentWorklog);
           return (
             agentWorklogStoreType &&
             (await agentWorklogStoreType.update(agentWorklog, record.data.id))
@@ -36,14 +36,14 @@ export async function saveAgentWorklog(
             agentWorklog.state === 'Failed' ||
             agentWorklog.state === 'Done'
           ) {
-            await sigmaDatabase.agentWorklogs.delete(record.data.id);
+            await solDatabase.agentWorklogs.delete(record.data.id);
             return (
               agentWorklogStoreType &&
               (await agentWorklogStoreType.deleteById(record.data.id))
             );
           }
 
-          await sigmaDatabase.agentWorklogs.put(agentWorklog);
+          await solDatabase.agentWorklogs.put(agentWorklog);
           return (
             agentWorklogStoreType &&
             (await agentWorklogStoreType.update(agentWorklog, record.data.id))
@@ -51,7 +51,7 @@ export async function saveAgentWorklog(
         }
 
         case 'D': {
-          await sigmaDatabase.agentWorklogs.delete(record.data.id);
+          await solDatabase.agentWorklogs.delete(record.data.id);
           return (
             agentWorklogStoreType &&
             (await agentWorklogStoreType.deleteById(record.data.id))

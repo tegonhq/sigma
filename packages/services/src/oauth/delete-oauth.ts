@@ -1,4 +1,4 @@
-import { IntegrationAccountIdDto } from '@sigma/types';
+import { IntegrationAccountIdDto } from '@sol/types';
 import axios from 'axios';
 
 export async function deleteIntegrationAccount(

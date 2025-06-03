@@ -1,4 +1,4 @@
-import { Command, CommandInput, Loader, ScrollArea, AI } from '@tegonhq/ui';
+import { Command, CommandInput, Loader, ScrollArea, AI } from '@redplanethq/ui';
 import { useCompletion } from 'ai/react';
 import { useEditor, addAIHighlight } from 'novel';
 import { useState } from 'react';

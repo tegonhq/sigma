@@ -1,5 +1,5 @@
 import { Body, Controller, Post, Headers, Param, Res } from '@nestjs/common';
-import { EventBody, EventHeaders } from '@tegonhq/sigma-sdk';
+import { EventBody, EventHeaders } from '@redplanethq/sol-sdk';
 import { Response } from 'express';
 
 import WebhookService from './webhook.service';

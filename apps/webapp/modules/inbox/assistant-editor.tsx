@@ -1,5 +1,5 @@
-import { AI, Button, cn } from '@tegonhq/ui';
-import { Command, CommandItem, CommandList } from '@tegonhq/ui';
+import { AI, Button, cn } from '@redplanethq/ui';
+import { Command, CommandItem, CommandList } from '@redplanethq/ui';
 import { Document } from '@tiptap/extension-document';
 import HardBreak from '@tiptap/extension-hard-break';
 import { Paragraph } from '@tiptap/extension-paragraph';
@@ -7,6 +7,7 @@ import { Text } from '@tiptap/extension-text';
 import { EditorContent, CodeBlockLowlight, Placeholder } from 'novel';
 import { useState } from 'react';
 import React from 'react';
+import { useHotkeys } from 'react-hotkeys-hook';
 
 import {
   CustomMention,
@@ -15,6 +16,7 @@ import {
 import { useSearchCommands } from 'modules/search/command/use-search-commands';
 
 import { EditorRoot, lowlight, type EditorT } from 'common/editor';
+import { SCOPES } from 'common/shortcut-scopes';
 
 interface ConversationTextareaProps {
   onSend: (value: string, agents: string[], title: string) => void;
@@ -37,7 +39,27 @@ export function AssistantEditor({
   const [html, setHTML] = useState(defaultValue ?? '');
   const [editor, setEditor] = React.useState<EditorT>();
   const [agents, setAgents] = React.useState<string[]>([]);
-  const commands = useSearchCommands(text, () => {}, true);
+  const commands = useSearchCommands(
+    text,
+    () => {
+      editor.commands.clearContent(true);
+      setText('');
+      setHTML('');
+    },
+    true,
+  );
+
+  useHotkeys(
+    '/',
+    () => {
+      if (!editor.isFocused) {
+        editor.commands.focus();
+      }
+    },
+    {
+      scopes: [SCOPES.ASSISTANT],
+    },
+  );
 
   const suggestion = useMentionSuggestions();
 
@@ -94,6 +116,7 @@ export function AssistantEditor({
             onSend(html, agents, text);
             editor.commands.clearContent(true);
             setText('');
+            setHTML('');
           }}
           key={`page__${pagesCommands.length + 1}`}
           className="flex gap-1 items-center py-2 aria-selected:bg-grayAlpha-100"
@@ -138,7 +161,7 @@ export function AssistantEditor({
   };
 
   return (
-    <Command className="rounded-lg border bg-background-2 mt-0 w-full p-1 rounded-xl shadow border-gray-300 border-1 !h-auto">
+    <Command className="rounded-lg border bg-background-3 mt-0 w-full p-1 rounded-xl shadow border-gray-300 border-1 !h-auto">
       <div
         className={cn(
           'flex flex-col rounded-md pt-1 bg-transparent',
@@ -176,7 +199,7 @@ export function AssistantEditor({
               }),
               Placeholder.configure({
                 placeholder: () => {
-                  return placeholder ?? 'Ask sigma...';
+                  return placeholder ?? 'Ask sol...';
                 },
                 includeChildren: true,
               }),
@@ -204,6 +227,7 @@ export function AssistantEditor({
 
                   if (mentionItem) {
                     mentionItem.click();
+                    return true;
                   }
 
                   const activeItem = document.querySelector(
@@ -212,13 +236,12 @@ export function AssistantEditor({
 
                   if (activeItem) {
                     activeItem.click();
+                    return true;
                   }
 
-                  if (!activeItem && !mentionItem) {
-                    onSend(html, agents, text);
-                    editor.commands.clearContent(true);
-                    setText('');
-                  }
+                  onSend(html, agents, text);
+                  editor.commands.clearContent(true);
+                  setText('');
 
                   return true;
                 }
@@ -238,7 +261,7 @@ export function AssistantEditor({
             }}
             immediatelyRender={false}
             className={cn(
-              'editor-container w-full min-w-full text-base sm:rounded-lg px-3 max-h-[400px] min-h-[30px] overflow-auto',
+              'editor-container w-full min-w-full text-base sm:rounded-lg px-3 max-h-[400px] pt-1 min-h-[30px] overflow-auto',
             )}
           ></EditorContent>
         </EditorRoot>
@@ -261,6 +284,7 @@ export function AssistantEditor({
                 onSend(html, agents, title);
                 editor.commands.clearContent(true);
                 setText('');
+                setHTML('');
               }
             }}
           >

@@ -2,7 +2,7 @@ import { type IAnyStateTreeNode, types, flow } from 'mobx-state-tree';
 
 import type { AutomationType } from 'common/types';
 
-import { sigmaDatabase } from 'store/database';
+import { solDatabase } from 'store/database';
 
 import { Automation } from './models';
 
@@ -36,7 +36,7 @@ export const AutomationStore: IAnyStateTreeNode = types
     };
 
     const load = flow(function* () {
-      const automations = yield sigmaDatabase.automations.toArray();
+      const automations = yield solDatabase.automations.toArray();
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const sortedAutomations: any = [...automations].sort((a, b) =>

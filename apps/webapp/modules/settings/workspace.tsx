@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
   useToast,
-} from '@tegonhq/ui';
+} from '@redplanethq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { useForm } from 'react-hook-form';

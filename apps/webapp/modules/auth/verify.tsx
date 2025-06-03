@@ -1,4 +1,4 @@
-import { Loader, useToast } from '@tegonhq/ui';
+import { Loader, useToast } from '@redplanethq/ui';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import React from 'react';

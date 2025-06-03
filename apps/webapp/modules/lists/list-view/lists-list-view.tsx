@@ -1,4 +1,4 @@
-import { Project } from '@tegonhq/ui';
+import { Project } from '@redplanethq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import {

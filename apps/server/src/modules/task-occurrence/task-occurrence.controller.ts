@@ -13,7 +13,7 @@ import {
   CreateTaskOccurrenceDTO,
   GetTaskOccurrenceDTO,
   UpdateTaskOccurenceDTO,
-} from '@tegonhq/sigma-sdk';
+} from '@redplanethq/sol-sdk';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
 import { Workspace } from 'modules/auth/session.decorator';

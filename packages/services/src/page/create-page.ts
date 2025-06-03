@@ -1,4 +1,4 @@
-import type { CreatePageDto } from '@sigma/types';
+import type { CreatePageDto } from '@sol/types';
 
 import axios from 'axios';
 

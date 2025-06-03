@@ -1,5 +1,5 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
-import { ReccurenceInput } from '@tegonhq/sigma-sdk';
+import { ReccurenceInput } from '@redplanethq/sol-sdk';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
 import { Workspace } from 'modules/auth/session.decorator';

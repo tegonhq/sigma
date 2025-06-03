@@ -1,11 +1,11 @@
-import { PageTypeEnum } from '@sigma/types';
+import { PageTypeEnum } from '@sol/types';
 import {
   Command,
   CommandInput,
   CommandItem,
   CommandList,
   TodoLine,
-} from '@tegonhq/ui';
+} from '@redplanethq/ui';
 import { NodeViewWrapper } from '@tiptap/react';
 import { format, subDays, addDays, addWeeks, parse } from 'date-fns';
 import { observer } from 'mobx-react-lite';

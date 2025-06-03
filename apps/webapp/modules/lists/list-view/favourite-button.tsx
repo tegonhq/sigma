@@ -1,4 +1,4 @@
-import { BookMark, Button } from '@tegonhq/ui';
+import { BookMark, Button } from '@redplanethq/ui';
 
 interface FavouriteButtonProps {
   favourite: boolean;

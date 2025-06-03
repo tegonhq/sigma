@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { TooltipProvider, Toaster } from '@tegonhq/ui';
+import { TooltipProvider, Toaster } from '@redplanethq/ui';
 import posthog from 'posthog-js';
 import { PostHogProvider } from 'posthog-js/react';
 import React from 'react';

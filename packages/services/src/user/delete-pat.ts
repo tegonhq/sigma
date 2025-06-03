@@ -1,4 +1,4 @@
-import type { PatIdDto } from '@sigma/types';
+import type { PatIdDto } from '@sol/types';
 
 import axios from 'axios';
 

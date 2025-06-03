@@ -8,7 +8,7 @@ const { publicRuntimeConfig } = getConfig();
 
 export const frontendConfig = () => {
   const appInfo = {
-    appName: 'Sigma',
+    appName: 'Sol',
     apiDomain: publicRuntimeConfig.NEXT_PUBLIC_BASE_HOST,
     websiteDomain: publicRuntimeConfig.NEXT_PUBLIC_BASE_HOST,
     apiBasePath: '/api/auth',

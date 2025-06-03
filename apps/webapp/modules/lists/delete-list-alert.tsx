@@ -7,7 +7,7 @@ import {
   AlertDialogAction,
   AlertDialogHeader,
   AlertDialogFooter,
-} from '@tegonhq/ui';
+} from '@redplanethq/ui';
 
 interface DeleteListAlertProps {
   open: boolean;

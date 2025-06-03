@@ -1,4 +1,9 @@
-import { CommandGroup, CommandItem, Project, UnscopedLine } from '@tegonhq/ui';
+import {
+  CommandGroup,
+  CommandItem,
+  Project,
+  UnscopedLine,
+} from '@redplanethq/ui';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 

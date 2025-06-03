@@ -2,7 +2,7 @@ import { tool } from 'ai';
 import { z } from 'zod';
 import zodToJsonSchema from 'zod-to-json-schema';
 
-import { formatSigmaError, isSigmaError } from './errors';
+import { formatSolError, isSolError } from './errors';
 import { createList, getList, getLists } from './operations/list';
 import {
   deletePage,
@@ -200,8 +200,8 @@ export async function callSigmaTool(name: string, parameters: any) {
     if (error instanceof z.ZodError) {
       throw new Error(`Invalid input: ${JSON.stringify(error.errors)}`);
     }
-    if (isSigmaError(error)) {
-      throw new Error(formatSigmaError(error));
+    if (isSolError(error)) {
+      throw new Error(formatSolError(error));
     }
     throw error;
   }

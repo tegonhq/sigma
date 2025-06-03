@@ -1,4 +1,4 @@
-import { cn } from '@tegonhq/ui';
+import { cn } from '@redplanethq/ui';
 import * as React from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 

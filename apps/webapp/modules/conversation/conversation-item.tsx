@@ -1,5 +1,5 @@
-import { UserTypeEnum } from '@sigma/types';
-import { cn } from '@tegonhq/ui';
+import { UserTypeEnum } from '@sol/types';
+import { cn } from '@redplanethq/ui';
 import { EditorContent, useEditor } from '@tiptap/react';
 import { observer } from 'mobx-react-lite';
 import React, { useEffect } from 'react';

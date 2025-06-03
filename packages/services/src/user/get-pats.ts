@@ -1,4 +1,4 @@
-import { Pat } from '@sigma/types';
+import { Pat } from '@sol/types';
 import axios from 'axios';
 
 export async function getPats(): Promise<Pat[]> {

@@ -1,4 +1,4 @@
-import { updatePage } from '@sigma/services';
+import { updatePage } from '@sol/services';
 import { useMutation } from 'react-query';
 
 import type { PageType } from 'common/types';

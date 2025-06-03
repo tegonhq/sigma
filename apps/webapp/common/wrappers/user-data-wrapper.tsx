@@ -1,5 +1,5 @@
 import { HocuspocusProviderWebsocket } from '@hocuspocus/provider';
-import { Loader } from '@tegonhq/ui';
+import { Loader } from '@redplanethq/ui';
 import posthog from 'posthog-js';
 import * as React from 'react';
 

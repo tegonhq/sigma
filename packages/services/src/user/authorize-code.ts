@@ -1,4 +1,4 @@
-import type { CodeDto } from '@sigma/types';
+import type { CodeDto } from '@sol/types';
 
 import axios from 'axios';
 

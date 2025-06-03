@@ -15,7 +15,7 @@ import {
   SettingsLine,
   Button,
   AI,
-} from '@tegonhq/ui';
+} from '@redplanethq/ui';
 import { Brain, Workflow } from 'lucide-react';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
@@ -65,7 +65,7 @@ export const Settings = observer(
 
     return (
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-[50vw] min-w-[50vw] max-h-[70vh] overflow-hidden p-0 bg-background">
+        <DialogContent className="w-full h-full overflow-hidden p-0 bg-background">
           <SidebarProvider className="items-start">
             <Sidebar collapsible="none" className="hidden md:flex w-[180px]">
               <SidebarHeader className="pb-0">

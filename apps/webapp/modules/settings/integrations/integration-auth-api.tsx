@@ -1,6 +1,6 @@
-import type { IntegrationDefinition } from '@sigma/types';
+import type { IntegrationDefinition } from '@sol/types';
 
-import { Button, Input, useToast } from '@tegonhq/ui';
+import { Button, Input, useToast } from '@redplanethq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 

@@ -1,6 +1,6 @@
 import type { User } from './types';
 
-import { AvatarText, cn } from '@tegonhq/ui';
+import { AvatarText, cn } from '@redplanethq/ui';
 
 interface UserAvatarProps {
   user: User;

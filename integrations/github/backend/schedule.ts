@@ -1,4 +1,4 @@
-import { IntegrationAccount } from '@tegonhq/sigma-sdk';
+import { IntegrationAccount } from '@redplanethq/sol-sdk';
 import axios from 'axios';
 
 import { createActivity, getGithubData, ActivityCreate } from './utils';

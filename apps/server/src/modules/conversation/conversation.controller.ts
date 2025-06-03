@@ -11,7 +11,7 @@ import {
   Conversation,
   ConversationParamsDto,
   CreateConversationDto,
-} from '@tegonhq/sigma-sdk';
+} from '@redplanethq/sol-sdk';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
 import { CreditsGuard } from 'modules/auth/credit.guard';

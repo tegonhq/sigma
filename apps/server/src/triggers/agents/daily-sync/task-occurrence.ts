@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { PageTypeEnum } from '@tegonhq/sigma-sdk';
+import { PageTypeEnum } from '@redplanethq/sol-sdk';
 import axios from 'axios';
 import { formatInTimeZone } from 'date-fns-tz';
 import { RRule } from 'rrule';

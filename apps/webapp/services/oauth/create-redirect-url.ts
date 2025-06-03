@@ -1,4 +1,4 @@
-import { createRedirectURL, type RedirectURLResponse } from '@sigma/services';
+import { createRedirectURL, type RedirectURLResponse } from '@sol/services';
 import { useMutation } from 'react-query';
 
 export interface MutationParams {

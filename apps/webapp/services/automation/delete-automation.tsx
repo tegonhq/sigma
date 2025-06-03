@@ -1,4 +1,4 @@
-import { deleteAutomation } from '@sigma/services';
+import { deleteAutomation } from '@sol/services';
 import { useMutation } from 'react-query';
 
 import type { AutomationType } from 'common/types';

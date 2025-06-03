@@ -1,4 +1,4 @@
-import type { Source } from '@sigma/types';
+import type { Source } from '@sol/types';
 
 import React from 'react';
 

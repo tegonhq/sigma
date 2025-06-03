@@ -9,7 +9,7 @@ import {
   GetAIRequestDTO,
   LLMMappings,
   LLMModelEnum,
-} from '@tegonhq/sigma-sdk';
+} from '@redplanethq/sol-sdk';
 import {
   CoreMessage,
   CoreUserMessage,

@@ -1,4 +1,4 @@
-import { ListIdDto } from '@sigma/types';
+import { ListIdDto } from '@sol/types';
 import axios from 'axios';
 
 export async function deleteList({ listId }: ListIdDto) {

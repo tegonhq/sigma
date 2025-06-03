@@ -1,4 +1,4 @@
-import { addTaskDuedate } from '@sigma/services';
+import { addTaskDuedate } from '@sol/services';
 import { useMutation } from 'react-query';
 
 import type { TaskType } from 'common/types';

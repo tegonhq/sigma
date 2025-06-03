@@ -7,7 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
   StackLine,
-} from '@tegonhq/ui';
+} from '@redplanethq/ui';
 import { observer } from 'mobx-react-lite';
 
 import { useApplication } from 'hooks/application';

@@ -1,6 +1,6 @@
-import type { IntegrationDefinition } from '@sigma/types';
+import type { IntegrationDefinition } from '@sol/types';
 
-import { getIntegrationDefinitions } from '@sigma/services';
+import { getIntegrationDefinitions } from '@sol/services';
 import { type UseQueryResult, useQuery } from 'react-query';
 
 import { type XHRErrorResponse } from 'services/utils';

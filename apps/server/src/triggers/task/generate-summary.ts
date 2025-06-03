@@ -3,7 +3,7 @@ import {
   LLMModelEnum,
   summaryExamples,
   summaryPrompt,
-} from '@tegonhq/sigma-sdk';
+} from '@redplanethq/sol-sdk';
 import { task } from '@trigger.dev/sdk/v3';
 import axios from 'axios';
 

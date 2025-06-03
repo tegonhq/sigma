@@ -1,7 +1,7 @@
 import { applySnapshot, flow, types, type Instance } from 'mobx-state-tree';
 import { v4 as uuidv4 } from 'uuid'; // Make sure to install and import uuid
 
-import { sigmaDatabase } from 'store/database';
+import { solDatabase } from 'store/database';
 import { historyLoad } from 'store/history';
 
 import {
@@ -164,7 +164,7 @@ const ApplicationStore = types
     };
 
     const load = flow(function* () {
-      const data = yield sigmaDatabase.application.toArray();
+      const data = yield solDatabase.application.toArray();
       if (data[0] && data[0].id !== self.id) {
         try {
           applySnapshot(self, data[0]);

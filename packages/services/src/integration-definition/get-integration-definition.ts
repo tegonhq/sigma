@@ -1,7 +1,4 @@
-import {
-  IntegrationDefinition,
-  IntegrationDefinitionIdDto,
-} from '@sigma/types';
+import { IntegrationDefinition, IntegrationDefinitionIdDto } from '@sol/types';
 import axios from 'axios';
 
 export async function getIntegrationDefinition({

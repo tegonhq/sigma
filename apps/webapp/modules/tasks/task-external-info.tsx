@@ -1,4 +1,4 @@
-import { Badge, cn } from '@tegonhq/ui';
+import { Badge, cn } from '@redplanethq/ui';
 
 import { getIcon, type IconType } from 'common/icon-utils';
 import type { TaskType } from 'common/types';

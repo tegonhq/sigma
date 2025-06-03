@@ -1,4 +1,4 @@
-import { updateTask, type UpdateTaskDtoWithId } from '@sigma/services';
+import { updateTask, type UpdateTaskDtoWithId } from '@sol/services';
 import { useMutation } from 'react-query';
 
 import type { TaskType } from 'common/types';

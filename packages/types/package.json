@@ -1,5 +1,5 @@
 {
-  "name": "@sigma/types",
+  "name": "@sol/types",
   "version": "0.1.0",
   "publishConfig": {
     "access": "public"
@@ -19,8 +19,8 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@sigma/eslint-config": "workspace:*",
-    "@sigma/typescript-config": "workspace:*",
+    "@sol/eslint-config": "workspace:*",
+    "@sol/typescript-config": "workspace:*",
     "@types/node": "^20",
     "class-transformer": "0.5.1",
     "esbuild": "0.24.0",

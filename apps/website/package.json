@@ -13,7 +13,7 @@
     "@hookform/resolvers": "3.9.0",
     "@radix-ui/react-icons": "^1.3.0",
     "@remixicon/react": "^4.2.0",
-    "@tegonhq/ui": "0.2.40",
+    "@redplanethq/ui": "0.2.41",
     "@tiptap/react": "^2.11.9",
     "@tiptap/core": "^2.11.9",
     "@tiptap/starter-kit": "^2.11.9",
@@ -36,8 +36,8 @@
     "zod": "3.23.8"
   },
   "devDependencies": {
-    "@sigma/eslint-config": "workspace:*",
-    "@sigma/typescript-config": "workspace:*",
+    "@sol/eslint-config": "workspace:*",
+    "@sol/typescript-config": "workspace:*",
     "@types/node": "^20.11.5",
     "@types/qs": "^6.9.12",
     "@types/react": "^18",

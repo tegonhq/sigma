@@ -3,7 +3,7 @@ import {
   PopoverContent,
   PopoverTrigger,
   ScrollArea,
-} from '@tegonhq/ui';
+} from '@redplanethq/ui';
 import { observer } from 'mobx-react-lite';
 
 import { PageTitle } from 'modules/tasks/single-task/single-task-title';

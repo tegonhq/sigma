@@ -8,7 +8,7 @@
   },
   "mcp": {
     "command": "npx",
-    "args": [ "-y", "@tegonhq/gmail-mcp" ],
+    "args": [ "-y", "@redplanethq/gmail-mcp" ],
     "env": {
       "GMAIL_CLIENT_ID": "${integrationConfig:clientId}",
       "GMAIL_CLIENT_SECRET": "${integrationConfig:clientSecret}",

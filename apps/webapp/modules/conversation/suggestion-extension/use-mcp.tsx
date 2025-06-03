@@ -28,7 +28,7 @@ export const getMCPServers = (mcpConfig: string | object) => {
       name: key.charAt(0).toUpperCase() + key.slice(1), // Capitalize first letter
     }));
 
-    // Always include the default Sigma server
+    // Always include the default Sol server
     return [...userServers];
   } catch (error) {
     console.error('Error parsing MCP config:', error);

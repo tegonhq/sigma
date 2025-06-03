@@ -1,15 +1,15 @@
 ---
-productName: mysigma
+productName: sol
 extraMetadata:
-  name: mysigma
-copyright: Copyright © 2025 tegon
-appId: com.mysigma.mysigma-desktop
+  name: sol
+copyright: Copyright © 2025 sol
+appId: com.sol.sol-desktop
 asar: true
 afterSign: './notarize/notarize.cjs'
 publish:
   - provider: github
-    owner: tegonhq
-    repo: sigma
+    owner: RedPlanetHQ
+    repo: sol
     releaseType: release
 nsis:
   deleteAppDataOnUninstall: true
@@ -55,10 +55,10 @@ files:
   - '!**/node_modules/.bin'
   - '!notarize'
   - from: ../webapp/out
-    to: ./out/sigma
+    to: ./out/sol
     filter:
       - '**/*'
 protocols:
-  name: sigma
+  name: sol
   schemes:
-    - sigma
+    - sol

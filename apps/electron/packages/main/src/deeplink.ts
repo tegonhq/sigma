@@ -6,14 +6,14 @@ export const registerDeepLink = (mainWindow: BrowserWindow) => {
   const deeplink = new Deeplink({
     app,
     mainWindow,
-    protocol: 'mysigma',
+    protocol: 'sol',
   });
 
   deeplink.on('received', link => {
-    if (!link.startsWith('mysigma://')) return;
-    const encoded = link.split('mysigma://')[1];
+    if (!link.startsWith('sol://')) return;
+    const encoded = link.split('sol://')[1];
     if (!encoded) {
-      throw new Error('Invalid sigma link!');
+      throw new Error('Invalid sol link!');
     }
     const [action, data] = Buffer.from(encoded, 'base64').toString().split(':');
     mainWindow.webContents.send('received-link', {action, data});

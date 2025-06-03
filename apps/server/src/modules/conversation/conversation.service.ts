@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { defaultExtensions } from '@sigma/editor-extensions';
+import { defaultExtensions } from '@sol/editor-extensions';
 import {
   Conversation,
   CreateConversationDto,
   UserTypeEnum,
-} from '@tegonhq/sigma-sdk';
+} from '@redplanethq/sol-sdk';
 import {
   ConversationContext,
   ConversationContextData,
   Page,
   Task,
-} from '@tegonhq/sigma-sdk';
+} from '@redplanethq/sol-sdk';
 import { generateHTML } from '@tiptap/html';
 import { auth, runs, tasks } from '@trigger.dev/sdk/v3';
 import { PrismaService } from 'nestjs-prisma';

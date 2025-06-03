@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { RiDownloadLine } from '@remixicon/react';
-import { Button, Loader, CrossLine, FullscreenLine } from '@tegonhq/ui';
+import { Button, Loader, CrossLine, FullscreenLine } from '@redplanethq/ui';
 import { NodeViewWrapper } from '@tiptap/react';
 import React from 'react';
 

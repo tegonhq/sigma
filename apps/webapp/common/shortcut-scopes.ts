@@ -8,7 +8,7 @@ export enum SCOPES {
 
   // view
   SIDE_VIEW = 'SIDE_VIEW',
-  INBOX = 'INBOX',
+  ASSISTANT = 'ASSISTANT',
 }
 
 export const FRONTEND_IPC = 'frontend';

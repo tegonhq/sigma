@@ -1,7 +1,7 @@
 // apps/server/src/modules/vector-store/task-vector.service.ts
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Source, UnifiedSearchOptionsDto } from '@tegonhq/sigma-sdk';
+import { Source, UnifiedSearchOptionsDto } from '@redplanethq/sol-sdk';
 import { CohereClientV2 } from 'cohere-ai';
 import { PrismaService } from 'nestjs-prisma';
 

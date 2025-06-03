@@ -7,7 +7,7 @@ import {
   IssuesLine,
   Project,
   SettingsLine,
-} from '@tegonhq/ui';
+} from '@redplanethq/ui';
 import { Brain, Check, Workflow } from 'lucide-react';
 import React from 'react';
 
@@ -103,30 +103,23 @@ export const useSearchCommands = (
           Icon: AddLine,
           text: (
             <>
-              {value} -{' '}
-              <span className="text-muted-foreground">Create task Today</span>
+              {value} - <span className="text-muted-foreground">Task</span>
             </>
           ),
           command: () => {
-            createTask({
-              status: 'Todo',
-              title: `${value} - Today`,
-            });
-          },
-        },
-        {
-          Icon: AddLine,
-          text: (
-            <>
-              {value} -{' '}
-              <span className="text-muted-foreground">Create task</span>
-            </>
-          ),
-          command: () => {
-            createTask({
-              status: 'Todo',
-              title: value,
-            });
+            // TODO fix this by creating task occurrence directly
+            if (!value.toLowerCase().includes('today')) {
+              createTask({
+                status: 'Todo',
+                title: `${value}`,
+              });
+            } else {
+              createTask({
+                status: 'Todo',
+                title: value,
+              });
+            }
+            onClose();
           },
         },
       ];

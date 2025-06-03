@@ -1,4 +1,4 @@
-import { GetPageByTitleDto } from '@sigma/types';
+import { GetPageByTitleDto } from '@sol/types';
 import axios from 'axios';
 
 export const getOrCreatePageByTitle = async (

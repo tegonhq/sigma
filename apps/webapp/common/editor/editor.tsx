@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Editor as EditorT, Extension, Mark, Node } from '@tiptap/core';
 
-import { cn, Separator } from '@tegonhq/ui';
+import { cn, Separator } from '@redplanethq/ui';
 import {
   EditorInstance,
   EditorContent,

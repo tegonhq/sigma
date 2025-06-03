@@ -1,4 +1,4 @@
-import { Button, Project } from '@tegonhq/ui';
+import { Button, Project } from '@redplanethq/ui';
 
 export const Lists = () => {
   return (

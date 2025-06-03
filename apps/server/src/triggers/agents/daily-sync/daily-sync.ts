@@ -1,5 +1,5 @@
 import { PrismaClient, UserType } from '@prisma/client';
-import { Outlink, Preferences } from '@tegonhq/sigma-sdk';
+import { Outlink, Preferences } from '@redplanethq/sol-sdk';
 import { schedules } from '@trigger.dev/sdk/v3';
 import axios from 'axios';
 import { format, getHours, isSameDay } from 'date-fns';

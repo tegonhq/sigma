@@ -1,4 +1,4 @@
-import { getTaskSchedule } from '@sigma/services';
+import { getTaskSchedule } from '@sol/services';
 import { useMutation } from 'react-query';
 
 import type { TaskType } from 'common/types';

@@ -7,7 +7,7 @@ import {
   CalendarLine,
   Fire,
   cn,
-} from '@tegonhq/ui';
+} from '@redplanethq/ui';
 import { differenceInDays, format } from 'date-fns';
 import React from 'react';
 

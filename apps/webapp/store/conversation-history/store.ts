@@ -2,7 +2,7 @@ import { type IAnyStateTreeNode, types, flow } from 'mobx-state-tree';
 
 import type { ConversationHistoryType } from 'common/types';
 
-import { sigmaDatabase } from 'store/database';
+import { solDatabase } from 'store/database';
 
 import { ConversationHistory } from './models';
 
@@ -41,7 +41,7 @@ export const ConversationHistoryStore: IAnyStateTreeNode = types
 
     const load = flow(function* () {
       const conversationHistory =
-        yield sigmaDatabase.conversationHistory.toArray();
+        yield solDatabase.conversationHistory.toArray();
 
       self.conversationHistory = conversationHistory;
     });

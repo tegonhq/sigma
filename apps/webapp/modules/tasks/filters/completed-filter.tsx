@@ -1,4 +1,4 @@
-import { CheckLine } from '@tegonhq/ui';
+import { CheckLine } from '@redplanethq/ui';
 import { observer } from 'mobx-react-lite';
 
 import { useApplication } from 'hooks/application';

@@ -12,7 +12,7 @@ import {
   ConversationHistoryParamsDto,
   ConversationParamsDto,
   UpdateConversationHistoryDto,
-} from '@tegonhq/sigma-sdk';
+} from '@redplanethq/sol-sdk';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
 

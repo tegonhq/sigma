@@ -6,7 +6,7 @@ export const config: Config = {
   },
   superToken: {
     appInfo: {
-      appName: 'Sigma',
+      appName: 'Sol',
       apiDomain: process.env.BACKEND_HOST,
       websiteDomain: process.env.FRONTEND_HOST,
       apiBasePath: '/auth',

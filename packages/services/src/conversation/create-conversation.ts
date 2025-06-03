@@ -1,4 +1,4 @@
-import { CreateConversationDto } from '@sigma/types';
+import { CreateConversationDto } from '@sol/types';
 import axios from 'axios';
 
 export async function createConversation(

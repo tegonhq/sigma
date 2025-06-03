@@ -1,6 +1,6 @@
-import type { IntegrationAccount } from '@sigma/types';
+import type { IntegrationAccount } from '@sol/types';
 
-import { createIntegrationAccountWithoutOAuth } from '@sigma/services';
+import { createIntegrationAccountWithoutOAuth } from '@sol/services';
 import { useMutation } from 'react-query';
 
 interface MutationParams {

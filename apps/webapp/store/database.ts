@@ -19,7 +19,7 @@ import type { WorkspaceType } from 'common/types';
 
 import { MODELS } from './models';
 
-export class SigmaDatabase extends Dexie {
+export class SolDatabase extends Dexie {
   workspaces: Dexie.Table<WorkspaceType, string>;
   integrationAccounts: Dexie.Table<IntegrationAccountType, string>;
   pages: Dexie.Table<PageType, string>;
@@ -78,16 +78,16 @@ export class SigmaDatabase extends Dexie {
   }
 }
 
-export let sigmaDatabase: SigmaDatabase;
+export let solDatabase: SolDatabase;
 
 export function initDatabase(hash: number) {
-  sigmaDatabase = new SigmaDatabase(`Sigma_${hash}`);
+  solDatabase = new SolDatabase(`Sol_${hash}`);
 }
 
 export async function resetDatabase() {
   localStorage.removeItem('lastSequenceId');
 
-  if (sigmaDatabase) {
-    await sigmaDatabase.delete();
+  if (solDatabase) {
+    await solDatabase.delete();
   }
 }

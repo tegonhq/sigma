@@ -1,4 +1,4 @@
-import { Loader } from '@tegonhq/ui';
+import { Loader } from '@redplanethq/ui';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 

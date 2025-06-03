@@ -16,7 +16,7 @@ const isDev = process.env.NODE_ENV === 'development';
 function logOtp(email: string, otp: string) {
   const message = `##### sendEmail to ${email}, subject: Login email
 
-Log in to mysigma.ai
+Log in to heysol.ai
 
 Click here to log in with this otp:
 ${otp}\n\n`;
@@ -128,7 +128,7 @@ export const recipeList = (
               try {
                 await mailerService.sendMail({
                   to: email,
-                  subject: 'Login for Sigma',
+                  subject: 'Login for Sol',
                   template: 'loginUser',
                   context: {
                     userName: email.split('@')[0],

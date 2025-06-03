@@ -1,4 +1,4 @@
-import { CommandDialog } from '@tegonhq/ui';
+import { CommandDialog } from '@redplanethq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
@@ -32,6 +32,7 @@ export const SearchDialog = observer(() => {
       onOpenChange={setOpen}
       commandProps={{
         className: 'border-none w-[600px]',
+        loop: true,
       }}
     >
       <CommandComponent onClose={() => setOpen(false)} />

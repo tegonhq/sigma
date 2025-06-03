@@ -4,7 +4,7 @@ import {
   TooltipTrigger,
   Button,
   IssuesLine,
-} from '@tegonhq/ui';
+} from '@redplanethq/ui';
 import React from 'react';
 
 import { useEditor } from 'common/editor';

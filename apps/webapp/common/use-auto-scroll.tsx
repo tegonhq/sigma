@@ -1,6 +1,6 @@
 // @hidden
 
-import { cn } from '@tegonhq/ui';
+import { cn } from '@redplanethq/ui';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import React from 'react';
 

@@ -2,7 +2,7 @@ import type { TaskOccurrencesStoreType } from './store';
 
 import type { SyncActionRecord } from 'common/types';
 
-import { sigmaDatabase } from 'store/database';
+import { solDatabase } from 'store/database';
 
 export async function saveTaskOccurrencesData(
   data: SyncActionRecord[],
@@ -26,7 +26,7 @@ export async function saveTaskOccurrencesData(
 
       switch (record.action) {
         case 'I': {
-          await sigmaDatabase.taskOccurrences.put(taskOccurrence);
+          await solDatabase.taskOccurrences.put(taskOccurrence);
           return (
             taskOccurrencesStore &&
             (await taskOccurrencesStore.update(taskOccurrence, record.data.id))
@@ -34,7 +34,7 @@ export async function saveTaskOccurrencesData(
         }
 
         case 'U': {
-          await sigmaDatabase.taskOccurrences.put(taskOccurrence);
+          await solDatabase.taskOccurrences.put(taskOccurrence);
           return (
             taskOccurrencesStore &&
             (await taskOccurrencesStore.update(taskOccurrence, record.data.id))
@@ -42,7 +42,7 @@ export async function saveTaskOccurrencesData(
         }
 
         case 'D': {
-          await sigmaDatabase.taskOccurrences.delete(record.data.id);
+          await solDatabase.taskOccurrences.delete(record.data.id);
           return (
             taskOccurrencesStore &&
             (await taskOccurrencesStore.deleteById(record.data.id))

@@ -1,4 +1,4 @@
-import { Badge, cn, Fire } from '@tegonhq/ui';
+import { Badge, cn, Fire } from '@redplanethq/ui';
 import {
   differenceInDays,
   differenceInHours,

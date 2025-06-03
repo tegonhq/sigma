@@ -1,7 +1,4 @@
 import React, { createContext, useContext, useState } from 'react';
-import { useHotkeys } from 'react-hotkeys-hook';
-
-import { SCOPES } from 'common/shortcut-scopes';
 
 import { Settings } from './settings';
 
@@ -31,20 +28,6 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
     setIsOpen(false);
     setDefaultPage(undefined);
   };
-
-  useHotkeys(
-    [`g+s`],
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (event) => {
-      switch (event.key) {
-        case 's':
-          openSettings();
-      }
-    },
-    {
-      scopes: [SCOPES.Global],
-    },
-  );
 
   return (
     <SettingsContext.Provider

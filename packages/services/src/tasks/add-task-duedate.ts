@@ -1,4 +1,4 @@
-import { ReccurenceInput } from '@sigma/types';
+import { ReccurenceInput } from '@sol/types';
 import axios from 'axios';
 
 export async function addTaskDuedate(recurrenceInput: ReccurenceInput) {

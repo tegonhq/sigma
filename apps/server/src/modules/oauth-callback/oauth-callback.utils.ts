@@ -1,5 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
-import { IntegrationDefinition, OAuth2Params } from '@tegonhq/sigma-sdk';
+import { IntegrationDefinition, OAuth2Params } from '@redplanethq/sol-sdk';
 
 import {
   OAuthAuthorizationMethod,
@@ -35,7 +35,7 @@ export function getSimpleOAuth2ClientConfig(
   const authorizeUrl = new URL(
     interpolateString(template.authorization_url, connectionConfig),
   );
-  const headers = { 'User-Agent': 'Tegon' };
+  const headers = { 'User-Agent': 'Sol' };
 
   const authConfig = template as ProviderTemplateOAuth2;
 

@@ -2,7 +2,7 @@ import { type IAnyStateTreeNode, types, flow } from 'mobx-state-tree';
 
 import type { ActivityType } from 'common/types';
 
-import { sigmaDatabase } from 'store/database';
+import { solDatabase } from 'store/database';
 
 import { Activity } from './models';
 
@@ -36,7 +36,7 @@ export const ActivityStore: IAnyStateTreeNode = types
     };
 
     const load = flow(function* () {
-      const activities = yield sigmaDatabase.activities.toArray();
+      const activities = yield solDatabase.activities.toArray();
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const sortedActivitys: any = [...activities].sort((a, b) =>

@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 import { RiGoogleLine } from '@remixicon/react';
-import { Button } from '@tegonhq/ui';
+import { Button } from '@redplanethq/ui';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import React from 'react';

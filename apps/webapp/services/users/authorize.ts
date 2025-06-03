@@ -1,4 +1,4 @@
-import { authorizeCode } from '@sigma/services';
+import { authorizeCode } from '@sol/services';
 import { useMutation } from 'react-query';
 
 interface MutationParams {

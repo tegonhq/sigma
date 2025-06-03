@@ -1,10 +1,8 @@
 import {
-  AI,
-  Button,
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
-} from '@tegonhq/ui';
+} from '@redplanethq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
@@ -58,6 +56,13 @@ export const RightSideLayout = observer(
       },
     );
 
+    React.useEffect(() => {
+      if (activeTab.type === TabViewType.ASSISTANT && !rightSideCollapsed) {
+        setRightSideCollapsed(true);
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [activeTab]);
+
     useHotkeys(
       [`${Key.Meta}+l`],
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -105,61 +110,39 @@ export const RightSideLayout = observer(
           onClose,
         }}
       >
-        <div
-          className="flex flex-col p-2 pt-0 rounded-md"
-          style={{
-            overflow: 'hidden',
-            height: 'calc(100vh - 48px)',
-          }}
-        >
-          <ResizablePanelGroup direction="horizontal">
-            <ResizablePanel
-              collapsible={false}
-              className="bg-background-2 rounded-md"
-              style={{
-                height: 'calc(100vh - 56px)',
-              }}
-              order={1}
-              id="home"
-            >
-              <TabContext.Provider value={{ tabId: activeTab.id }}>
-                {children}
-              </TabContext.Provider>
-            </ResizablePanel>
-            {!rightSideCollapsed && (
-              <>
-                <ResizableHandle className="w-2.5" />
+        <ResizablePanelGroup direction="horizontal">
+          <ResizablePanel
+            collapsible={false}
+            className="rounded-md"
+            order={1}
+            id="home"
+          >
+            <TabContext.Provider value={{ tabId: activeTab.id }}>
+              {children}
+            </TabContext.Provider>
+          </ResizablePanel>
+          {!rightSideCollapsed && (
+            <>
+              <ResizableHandle className="w-1" />
 
-                <ResizablePanel
-                  className="rounded-md"
-                  collapsible={false}
-                  maxSize={50}
-                  minSize={25}
-                  defaultSize={size}
-                  onResize={(size) => setSize(size)}
-                  order={2}
-                  id="rightScreen"
-                >
-                  <RightSideHeader onClose={onClose} />
-                  <Conversation defaultValue={defaultValue} />
-                </ResizablePanel>
-              </>
-            )}
-          </ResizablePanelGroup>
-        </div>
+              <ResizablePanel
+                className="rounded-md"
+                collapsible={false}
+                maxSize={50}
+                minSize={25}
+                defaultSize={size}
+                onResize={(size) => setSize(size)}
+                order={2}
+                id="rightScreen"
+              >
+                <RightSideHeader onClose={onClose} />
+                <Conversation defaultValue={defaultValue} />
+              </ResizablePanel>
+            </>
+          )}
+        </ResizablePanelGroup>
 
         <SearchDialog />
-        {rightSideCollapsed && activeTab.type !== TabViewType.ASSISTANT && (
-          <Button
-            className="fixed bottom-4 right-4 gap-2 bg-background"
-            size="lg"
-            variant="secondary"
-            onClick={() => setRightSideCollapsed(false)}
-          >
-            <AI />
-            Chat
-          </Button>
-        )}
       </RightSideViewContext.Provider>
     );
   },

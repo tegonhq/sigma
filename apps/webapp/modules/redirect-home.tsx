@@ -1,4 +1,4 @@
-import { Loader } from '@tegonhq/ui';
+import { Loader } from '@redplanethq/ui';
 import { useRouter } from 'next/router';
 import * as React from 'react';
 import { SessionAuth } from 'supertokens-auth-react/recipe/session';

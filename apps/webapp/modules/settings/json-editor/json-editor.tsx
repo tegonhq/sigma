@@ -5,7 +5,7 @@ import type {
 } from '@uiw/react-codemirror';
 
 import { json as jsonLang } from '@codemirror/lang-json';
-import { Button, cn } from '@tegonhq/ui';
+import { Button, cn } from '@redplanethq/ui';
 import { useCodeMirror } from '@uiw/react-codemirror';
 import { useCallback, useEffect, useRef, useState } from 'react';
 

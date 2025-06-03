@@ -1,6 +1,6 @@
-import type { Pat } from '@sigma/types';
+import type { Pat } from '@sol/types';
 
-import { deletePat } from '@sigma/services';
+import { deletePat } from '@sol/services';
 import { useMutation, useQueryClient } from 'react-query';
 
 import { GetPats } from './get-pats';

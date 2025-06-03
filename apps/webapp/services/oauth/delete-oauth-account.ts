@@ -1,4 +1,4 @@
-import { deleteIntegrationAccount } from '@sigma/services';
+import { deleteIntegrationAccount } from '@sol/services';
 import { useMutation } from 'react-query';
 
 interface MutationParams {

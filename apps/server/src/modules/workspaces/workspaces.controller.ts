@@ -9,7 +9,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { Workspace, WorkspaceRequestParamsDto } from '@tegonhq/sigma-sdk';
+import { Workspace, WorkspaceRequestParamsDto } from '@redplanethq/sol-sdk';
 import { Request, Response } from 'express';
 import { SessionContainer } from 'supertokens-node/recipe/session';
 

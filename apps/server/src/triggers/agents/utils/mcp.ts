@@ -26,6 +26,7 @@ export class MCP {
   async load(agents: string[], mcpConfig: any) {
     await Promise.all(
       agents.map(async (agent) => {
+        console.log(mcpConfig);
         const mcp = mcpConfig.mcpServers[agent];
 
         return await this.connectToServer(

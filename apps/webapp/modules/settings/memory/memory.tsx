@@ -1,5 +1,5 @@
 import { HocuspocusProvider } from '@hocuspocus/provider';
-import { Loader } from '@tegonhq/ui';
+import { Loader } from '@redplanethq/ui';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import Collaboration from '@tiptap/extension-collaboration';
 import { observer } from 'mobx-react-lite';

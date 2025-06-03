@@ -1,5 +1,5 @@
 {
-  "extends": "@sigma/typescript-config/node.json",
+  "extends": "@sol/typescript-config/node.json",
   "include": ["./src/**/*.ts", "tsup.config.ts"],
   "compilerOptions": {
     "experimentalDecorators": true,

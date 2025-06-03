@@ -1,6 +1,6 @@
 {
   "name": "webapp",
-  "version": "0.1.19",
+  "version": "0.1.20",
   "private": true,
   "scripts": {
     "dev": "PORT=3000 next dev",
@@ -25,9 +25,9 @@
     "@radix-ui/react-progress": "^1.1.4",
     "@remixicon/react": "^4.2.0",
     "@sentry/nextjs": "^7.105.0",
-    "@sigma/services": "workspace:*",
-    "@sigma/types": "workspace:*",
-    "@tegonhq/ui": "0.2.40",
+    "@sol/services": "workspace:*",
+    "@sol/types": "workspace:*",
+    "@redplanethq/ui": "0.2.41",
     "@tiptap/core": "^2.11.9",
     "@tiptap/extension-code-block": "2.11.9",
     "@tiptap/extension-code-block-lowlight": "^2.11.9",
@@ -97,8 +97,8 @@
     "zod": "3.23.8"
   },
   "devDependencies": {
-    "@sigma/eslint-config": "workspace:*",
-    "@sigma/typescript-config": "workspace:*",
+    "@sol/eslint-config": "workspace:*",
+    "@sol/typescript-config": "workspace:*",
     "@types/node": "^20.11.5",
     "@types/pluralize": "^0.0.33",
     "@types/qs": "^6.9.12",

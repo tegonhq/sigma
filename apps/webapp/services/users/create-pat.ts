@@ -1,6 +1,6 @@
-import type { Pat } from '@sigma/types';
+import type { Pat } from '@sol/types';
 
-import { createPat } from '@sigma/services';
+import { createPat } from '@sol/services';
 import { useMutation } from 'react-query';
 
 interface MutationParams {

@@ -8,7 +8,7 @@ import {
   Fire,
   IssuesLine,
   Loader,
-} from '@tegonhq/ui';
+} from '@redplanethq/ui';
 import { endOfDay, addDays, endOfWeek, formatISO } from 'date-fns';
 import React from 'react';
 

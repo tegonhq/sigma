@@ -1,5 +1,5 @@
 /* eslint-disable dot-notation */
-import { IntegrationAccount, IntegrationDefinition } from '@tegonhq/sigma-sdk';
+import { IntegrationAccount, IntegrationDefinition } from '@redplanethq/sol-sdk';
 import axios from 'axios';
 
 import { createActivity, getAccessToken } from './utils';

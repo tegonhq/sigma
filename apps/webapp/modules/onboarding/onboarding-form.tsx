@@ -14,7 +14,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@tegonhq/ui';
+} from '@redplanethq/ui';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 

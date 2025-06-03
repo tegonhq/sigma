@@ -1,4 +1,4 @@
-import { cn } from '@tegonhq/ui';
+import { cn } from '@redplanethq/ui';
 
 interface ShortcutProps {
   shortcut: string;

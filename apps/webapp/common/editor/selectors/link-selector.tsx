@@ -5,7 +5,7 @@ import {
   Popover,
   PopoverTrigger,
   LinkLine,
-} from '@tegonhq/ui';
+} from '@redplanethq/ui';
 import { Check, Trash } from 'lucide-react';
 import { useEditor } from 'novel';
 import { useEffect, useRef } from 'react';

@@ -58,7 +58,7 @@ ENV NODE_ENV production
 COPY --from=pruner --chown=node:node /app/out/full/ .
 COPY --from=production-deps --chown=node:node /app .
 COPY --from=builder  --chown=node:node /app/apps/server/node_modules ./apps/server/node_modules
-COPY --from=builder  --chown=node:node /app/packages/editor-extensions/dist ./apps/server/node_modules/@sigma/editor-extensions/dist
+COPY --from=builder  --chown=node:node /app/packages/editor-extensions/dist ./apps/server/node_modules/@sol/editor-extensions/dist
 COPY --from=builder  --chown=node:node /app/apps/server/package.json ./apps/server/package.json
 COPY --from=builder  --chown=node:node /app/apps/server/dist ./apps/server/dist
 COPY --from=builder  --chown=node:node /app/apps/server/prisma ./apps/server/prisma

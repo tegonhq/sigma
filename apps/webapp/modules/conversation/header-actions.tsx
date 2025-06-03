@@ -1,4 +1,4 @@
-import { AddLine, Button } from '@tegonhq/ui';
+import { AddLine, Button } from '@redplanethq/ui';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
 
@@ -27,6 +27,7 @@ export const ConversationHeaderActions = () => {
     <div className="flex items-center">
       <Button
         variant="ghost"
+        className="text-muted-foreground"
         onClick={() => {
           updateConversationId(undefined);
         }}

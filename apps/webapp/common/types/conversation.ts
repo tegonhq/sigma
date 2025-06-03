@@ -1,4 +1,4 @@
-import type { UserType } from '@sigma/types';
+import type { UserType } from '@sol/types';
 
 export interface ConversationType {
   id: string;

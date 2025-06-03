@@ -1,4 +1,4 @@
-import { CommandGroup, CommandItem, CommandSeparator } from '@tegonhq/ui';
+import { CommandGroup, CommandItem, CommandSeparator } from '@redplanethq/ui';
 import { Check, TextQuote, TrashIcon } from 'lucide-react';
 import { useEditor } from 'novel';
 

@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { IntegrationPayloadEventType } from '@tegonhq/sigma-sdk';
+import { IntegrationPayloadEventType } from '@redplanethq/sol-sdk';
 import { logger, schedules, tasks } from '@trigger.dev/sdk/v3';
 
 import { integrationRun } from './integration-run';

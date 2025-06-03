@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getSnapshot, applySnapshot, types } from 'mobx-state-tree';
 
-import { sigmaDatabase } from 'store/database';
+import { solDatabase } from 'store/database';
 
 // Define the HistoryManager model
 const HistoryManagerModel = types
@@ -46,7 +46,7 @@ const HistoryManagerModel = types
 
     // Save the current state to IndexedDB
     async saveCurrentStateToIndexedDB(snapshot: any) {
-      await sigmaDatabase.application.put(snapshot, snapshot.id); // Save the snapshot to the application table
+      await solDatabase.application.put(snapshot, snapshot.id); // Save the snapshot to the application table
     },
 
     // Save the current state to IndexedDB

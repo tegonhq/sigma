@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import {
   ConversationHistory,
   UpdateConversationHistoryDto,
-} from '@tegonhq/sigma-sdk';
+} from '@redplanethq/sol-sdk';
 import { PrismaService } from 'nestjs-prisma';
 
 @Injectable()

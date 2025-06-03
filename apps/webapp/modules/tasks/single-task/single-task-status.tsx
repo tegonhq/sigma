@@ -1,4 +1,4 @@
-import { Checkbox } from '@tegonhq/ui';
+import { Checkbox } from '@redplanethq/ui';
 import { sort } from 'fast-sort';
 
 import type { TaskType } from 'common/types';

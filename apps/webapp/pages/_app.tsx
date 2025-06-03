@@ -1,11 +1,11 @@
 import 'styles/globals.css';
 
-import '@tegonhq/ui/index.css';
-import '@tegonhq/ui/global.css';
+import '@redplanethq/ui/index.css';
+import '@redplanethq/ui/global.css';
 
 import type { AppLayoutProps } from 'next/app';
 
-import { cn } from '@tegonhq/ui';
+import { cn } from '@redplanethq/ui';
 import { GeistMono } from 'geist/font/mono';
 import { GeistSans } from 'geist/font/sans';
 import TimeAgo from 'javascript-time-ago';

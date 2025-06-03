@@ -1,4 +1,4 @@
-import { Task, TaskBySourceDto, TaskDto } from '@sigma/types';
+import { Task, TaskBySourceDto, TaskDto } from '@sol/types';
 import axios from 'axios';
 
 export async function getTaskById(taskDto: TaskDto): Promise<Task> {

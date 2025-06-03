@@ -8,7 +8,7 @@ import {
   PopoverContent,
   PopoverTrigger,
   Popover,
-} from '@tegonhq/ui';
+} from '@redplanethq/ui';
 import { Check, ChevronDown } from 'lucide-react';
 import { EditorBubbleItem, useEditor } from 'novel';
 import React from 'react';

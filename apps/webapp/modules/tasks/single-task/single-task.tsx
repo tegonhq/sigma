@@ -1,4 +1,4 @@
-import { cn, ScrollArea } from '@tegonhq/ui';
+import { cn, ScrollArea } from '@redplanethq/ui';
 import { sort } from 'fast-sort';
 import { observer } from 'mobx-react-lite';
 import { useRouter } from 'next/router';
@@ -7,7 +7,6 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
 
 import { SCOPES } from 'common/shortcut-scopes';
-import { RightSideLayout } from 'layouts/right-side-layout';
 
 import { useScope } from 'hooks/use-scope';
 
@@ -112,10 +111,6 @@ export const SingleTaskWithoutLayout = observer(
 
 export const SingleTask = observer(
   ({ taskId, sideView = false }: SingleTaskProps) => {
-    return (
-      <RightSideLayout>
-        <SingleTaskWithoutLayout taskId={taskId} sideView={sideView} />
-      </RightSideLayout>
-    );
+    return <SingleTaskWithoutLayout taskId={taskId} sideView={sideView} />;
   },
 );

@@ -4,7 +4,7 @@ import {
   Task,
   TaskHookAction,
   TaskHookContext,
-} from '@tegonhq/sigma-sdk';
+} from '@redplanethq/sol-sdk';
 import { tasks } from '@trigger.dev/sdk/v3';
 import { endOfDay, subDays } from 'date-fns';
 import { PrismaService } from 'nestjs-prisma';

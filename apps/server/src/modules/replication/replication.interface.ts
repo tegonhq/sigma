@@ -1,4 +1,4 @@
-import { ModelNameEnum } from '@tegonhq/sigma-sdk';
+import { ModelNameEnum } from '@redplanethq/sol-sdk';
 
 export interface logChangeType {
   kind: string;

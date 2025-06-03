@@ -1,4 +1,4 @@
-import { CreateTaskDto } from '@sigma/types';
+import { CreateTaskDto } from '@sol/types';
 import axios from 'axios';
 
 export async function createTask(createTaskDto: CreateTaskDto) {

@@ -1,4 +1,4 @@
-import { Checkbox, CommandGroup } from '@tegonhq/ui';
+import { Checkbox, CommandGroup } from '@redplanethq/ui';
 import { observer } from 'mobx-react-lite';
 
 import { getIcon } from 'common/icon-picker';

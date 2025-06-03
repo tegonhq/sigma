@@ -1,4 +1,4 @@
-import { useToast } from '@tegonhq/ui';
+import { useToast } from '@redplanethq/ui';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import pRetry from 'p-retry';

@@ -1,4 +1,9 @@
-import { CanceledLine, DoneFill, InReviewLine, TodoLine } from '@tegonhq/ui';
+import {
+  CanceledLine,
+  DoneFill,
+  InReviewLine,
+  TodoLine,
+} from '@redplanethq/ui';
 
 export const STATUS_ICONS = {
   Todo: TodoLine,

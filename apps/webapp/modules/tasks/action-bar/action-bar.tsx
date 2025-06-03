@@ -1,4 +1,4 @@
-import { Button, Close, DeleteLine, Fire, Separator } from '@tegonhq/ui';
+import { Button, Close, DeleteLine, Fire, Separator } from '@redplanethq/ui';
 import { Check, Clock } from 'lucide-react';
 import { observer } from 'mobx-react-lite';
 import React from 'react';

@@ -1,4 +1,4 @@
-import { Loader, useToast } from '@tegonhq/ui';
+import { Loader, useToast } from '@redplanethq/ui';
 import { sort } from 'fast-sort';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
@@ -106,7 +106,7 @@ export const Conversation = observer(({ defaultValue }: ConversationProps) => {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh_-_95px)] items-center">
+    <div className="flex flex-col h-[calc(100vh_-_48px)] items-center pr-2">
       <div className="overflow-hidden w-full grow">
         <div className="flex flex-col h-full justify-start overflow-hidden">
           <ScrollAreaWithAutoScroll>

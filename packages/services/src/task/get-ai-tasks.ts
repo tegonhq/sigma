@@ -1,4 +1,4 @@
-import type { ReccurenceInput } from '@sigma/types';
+import type { ReccurenceInput } from '@sol/types';
 
 import axios from 'axios';
 

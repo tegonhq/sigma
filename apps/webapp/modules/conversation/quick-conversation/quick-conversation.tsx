@@ -1,4 +1,4 @@
-import { ArrowLeft, Button, cn, useToast } from '@tegonhq/ui';
+import { ArrowLeft, Button, cn, useToast } from '@redplanethq/ui';
 import { sort } from 'fast-sort';
 import { observer } from 'mobx-react-lite';
 import React from 'react';

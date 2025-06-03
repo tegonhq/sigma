@@ -1,4 +1,4 @@
-import { Button } from '@tegonhq/ui';
+import { Button } from '@redplanethq/ui';
 import React from 'react';
 
 import { useIPC } from 'hooks/ipc';

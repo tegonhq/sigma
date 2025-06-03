@@ -1,4 +1,4 @@
-import { createAuthCode } from '@sigma/services';
+import { createAuthCode } from '@sol/services';
 import { useMutation } from 'react-query';
 
 export interface AuthCodeResponse {

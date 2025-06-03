@@ -1,10 +1,10 @@
 import { PrismaClient } from '@prisma/client';
-import { convertTiptapJsonToHtml } from '@sigma/editor-extensions';
+import { convertTiptapJsonToHtml } from '@sol/editor-extensions';
 import {
   IntegrationPayloadEventType,
   ParsedQuery,
   Task,
-} from '@tegonhq/sigma-sdk';
+} from '@redplanethq/sol-sdk';
 
 import { IntegrationsService } from 'modules/integrations/integrations.service';
 

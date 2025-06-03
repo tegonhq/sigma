@@ -1,4 +1,8 @@
-import { SyncActionTypeEnum, ModelName, SyncAction } from '@tegonhq/sigma-sdk';
+import {
+  SyncActionTypeEnum,
+  ModelName,
+  SyncAction,
+} from '@redplanethq/sol-sdk';
 import { PrismaService } from 'nestjs-prisma';
 
 export function convertToActionType(action: string): SyncActionTypeEnum {

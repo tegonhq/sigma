@@ -1,13 +1,13 @@
 {
   "name": "electron",
   "description": "Personal task management",
-  "version": "0.1.19",
+  "version": "0.1.20",
   "type": "module",
-  "repository": "https://github.com/tegonhq/sigma.git",
+  "repository": "https://github.com/RedPlanetHQ/sol.git",
   "author": {
     "email": "harshith@tegon.ai",
-    "name": "Sigma",
-    "url": "https://mysigma.ai"
+    "name": "Sol",
+    "url": "https://heysol.ai"
   },
   "main": "packages/main/dist/index.js",
   "scripts": {

@@ -1,4 +1,4 @@
-import { updateList } from '@sigma/services';
+import { updateList } from '@sol/services';
 import { useMutation } from 'react-query';
 
 import type { ListType } from 'common/types';

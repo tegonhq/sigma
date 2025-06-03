@@ -4,7 +4,7 @@ import { type IAnyStateTreeNode, types, flow } from 'mobx-state-tree';
 
 import type { TaskType } from 'common/types';
 
-import { sigmaDatabase } from 'store/database';
+import { solDatabase } from 'store/database';
 
 import { Task } from './models';
 
@@ -55,7 +55,7 @@ export const TasksStore: IAnyStateTreeNode = types
     const load = flow(function* () {
       self.loading = true;
 
-      const tasks = yield sigmaDatabase.tasks.toArray();
+      const tasks = yield solDatabase.tasks.toArray();
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const sortedTasks: any = [...tasks].sort((a, b) =>

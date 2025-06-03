@@ -8,7 +8,7 @@ import {
   UnderlineLine,
   cn,
   Button,
-} from '@tegonhq/ui';
+} from '@redplanethq/ui';
 import { EditorBubbleItem, useEditor } from 'novel';
 
 export const TextButtons = () => {

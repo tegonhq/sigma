@@ -3,7 +3,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-} from '@tegonhq/ui';
+} from '@redplanethq/ui';
 
 import { FilterTypeEnum } from 'store/application';
 

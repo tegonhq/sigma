@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { convertTiptapJsonToHtml } from '@sigma/editor-extensions';
-import { CodeDto, User } from '@tegonhq/sigma-sdk';
+import { convertTiptapJsonToHtml } from '@sol/editor-extensions';
+import { CodeDto, User } from '@redplanethq/sol-sdk';
 import { PrismaService } from 'nestjs-prisma';
 
 import {

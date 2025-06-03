@@ -2,7 +2,7 @@ import { type IAnyStateTreeNode, types, flow } from 'mobx-state-tree';
 
 import type { ListType } from 'common/types';
 
-import { sigmaDatabase } from 'store/database';
+import { solDatabase } from 'store/database';
 
 import { List } from './models';
 
@@ -36,7 +36,7 @@ export const ListsStore: IAnyStateTreeNode = types
     };
 
     const load = flow(function* () {
-      const lists = yield sigmaDatabase.lists.toArray();
+      const lists = yield solDatabase.lists.toArray();
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const sortedLists: any = [...lists].sort((a, b) =>

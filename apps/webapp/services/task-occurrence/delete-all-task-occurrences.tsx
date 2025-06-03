@@ -1,4 +1,4 @@
-import { deleteAllTaskOccurrences } from '@sigma/services';
+import { deleteAllTaskOccurrences } from '@sol/services';
 import { useMutation } from 'react-query';
 
 interface MutationParams {

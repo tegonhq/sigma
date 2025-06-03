@@ -1,6 +1,6 @@
 module.exports = {
   reactStrictMode: false,
-  transpilePackages: ['geist', '@tegonhq/ui', 'novel', 'react-tweet'],
+  transpilePackages: ['geist', '@redplanethq/ui', 'novel', 'react-tweet'],
   images: {
     unoptimized: true,
   },

@@ -1,4 +1,4 @@
-import { getConversationSyncs } from '@sigma/services';
+import { getConversationSyncs } from '@sol/services';
 import { type UseQueryResult, useQuery } from 'react-query';
 
 import { type XHRErrorResponse } from 'services/utils';

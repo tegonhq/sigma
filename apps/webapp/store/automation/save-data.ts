@@ -2,7 +2,7 @@ import type { AutomationStoreType } from './store';
 
 import type { SyncActionRecord } from 'common/types';
 
-import { sigmaDatabase } from 'store/database';
+import { solDatabase } from 'store/database';
 
 export async function saveAutomationData(
   data: SyncActionRecord[],
@@ -23,7 +23,7 @@ export async function saveAutomationData(
 
       switch (record.action) {
         case 'I': {
-          await sigmaDatabase.automations.put(automation);
+          await solDatabase.automations.put(automation);
           return (
             automationsStore &&
             (await automationsStore.update(automation, record.data.id))
@@ -31,7 +31,7 @@ export async function saveAutomationData(
         }
 
         case 'U': {
-          await sigmaDatabase.automations.put(automation);
+          await solDatabase.automations.put(automation);
           return (
             automationsStore &&
             (await automationsStore.update(automation, record.data.id))
@@ -39,7 +39,7 @@ export async function saveAutomationData(
         }
 
         case 'D': {
-          await sigmaDatabase.automations.delete(record.data.id);
+          await solDatabase.automations.delete(record.data.id);
           return (
             automationsStore &&
             (await automationsStore.deleteById(record.data.id))

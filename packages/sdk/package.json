@@ -1,7 +1,7 @@
 {
-  "name": "@tegonhq/sigma-sdk",
+  "name": "@redplanethq/sol-sdk",
   "version": "0.2.8",
-  "description": "Sigma Node.JS SDK",
+  "description": "Sol Node.JS SDK",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "module": "./dist/index.mjs",
@@ -31,9 +31,9 @@
   "dependencies": {
   },
   "devDependencies": {
-    "@sigma/services": "workspace:*",
-    "@sigma/types": "workspace:*",
-    "@sigma/typescript-config": "workspace:*",
+    "@sol/services": "workspace:*",
+    "@sol/types": "workspace:*",
+    "@sol/typescript-config": "workspace:*",
     "@types/configstore": "^6.0.2",
     "@types/debug": "^4.1.7",
     "@types/node": "18",

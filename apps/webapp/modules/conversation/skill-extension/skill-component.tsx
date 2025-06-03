@@ -6,7 +6,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
   Loader,
-} from '@tegonhq/ui';
+} from '@redplanethq/ui';
 import { NodeViewWrapper } from '@tiptap/react';
 import { observer } from 'mobx-react-lite';
 import Image from 'next/image';
@@ -98,7 +98,6 @@ export const SkillComponent = observer((props: any) => {
               {!open ? <ChevronRight size={16} /> : <ChevronDown size={16} />}
             </div>
             <div className="flex gap-2 items-center">
-              Action:
               {getIcon()}
               <span className="text-muted-foreground font-mono text-sm">
                 {snakeToTitleCase(name)}

@@ -1,6 +1,6 @@
-import type { Pat } from '@sigma/types';
+import type { Pat } from '@sol/types';
 
-import { getPats } from '@sigma/services';
+import { getPats } from '@sol/services';
 import { type UseQueryResult, useQuery } from 'react-query';
 
 import { type XHRErrorResponse } from 'services/utils';

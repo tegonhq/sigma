@@ -1,4 +1,4 @@
-import { createConversation } from '@sigma/services';
+import { createConversation } from '@sol/services';
 import { useMutation } from 'react-query';
 
 import type { ConversationType } from 'common/types';

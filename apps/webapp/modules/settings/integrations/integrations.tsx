@@ -1,4 +1,4 @@
-import { Button, Loader } from '@tegonhq/ui';
+import { Button, Loader } from '@redplanethq/ui';
 import React from 'react';
 
 import { SettingSection } from 'modules/settings/setting-section';

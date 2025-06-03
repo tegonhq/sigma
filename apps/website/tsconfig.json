@@ -1,5 +1,5 @@
 {
-  "extends": "@sigma/typescript-config/next.json",
+  "extends": "@sol/typescript-config/next.json",
   "compilerOptions": {
     "baseUrl": "./",
     "plugins": [

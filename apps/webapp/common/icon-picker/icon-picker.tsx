@@ -11,7 +11,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from '@tegonhq/ui';
+} from '@redplanethq/ui';
 import * as LucideIcons from 'lucide-react';
 import { useState } from 'react';
 

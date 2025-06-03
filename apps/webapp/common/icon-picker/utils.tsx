@@ -1,4 +1,4 @@
-import { cn, Project } from '@tegonhq/ui';
+import { cn, Project } from '@redplanethq/ui';
 import * as LucideIcons from 'lucide-react';
 
 import { emojiData } from './emoji-data';

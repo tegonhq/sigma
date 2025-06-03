@@ -2,7 +2,7 @@ import type { ActivityStoreType } from './store';
 
 import type { SyncActionRecord } from 'common/types';
 
-import { sigmaDatabase } from 'store/database';
+import { solDatabase } from 'store/database';
 
 export async function saveActivityData(
   data: SyncActionRecord[],
@@ -25,7 +25,7 @@ export async function saveActivityData(
 
       switch (record.action) {
         case 'I': {
-          await sigmaDatabase.activities.put(activity);
+          await solDatabase.activities.put(activity);
           return (
             activitiesStore &&
             (await activitiesStore.update(activity, record.data.id))
@@ -33,7 +33,7 @@ export async function saveActivityData(
         }
 
         case 'U': {
-          await sigmaDatabase.activities.put(activity);
+          await solDatabase.activities.put(activity);
           return (
             activitiesStore &&
             (await activitiesStore.update(activity, record.data.id))
@@ -41,7 +41,7 @@ export async function saveActivityData(
         }
 
         case 'D': {
-          await sigmaDatabase.activities.delete(record.data.id);
+          await solDatabase.activities.delete(record.data.id);
           return (
             activitiesStore &&
             (await activitiesStore.deleteById(record.data.id))

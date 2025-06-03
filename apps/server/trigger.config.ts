@@ -8,7 +8,7 @@ import { prismaExtension } from '@trigger.dev/build/extensions/prisma';
 import { defineConfig } from '@trigger.dev/sdk/v3';
 
 export default defineConfig({
-  project: 'proj_sigma_common',
+  project: 'proj_fiaatxwphtcuoriofpbe',
   runtime: 'node',
   logLevel: 'log',
   maxDuration: 3600,
@@ -31,7 +31,7 @@ export default defineConfig({
         BACKEND_HOST: process.env.BACKEND_HOST,
       })),
       additionalPackages({
-        packages: ['@tegonhq/sigma-sdk'],
+        packages: ['@redplanethq/sol-sdk'],
       }),
       installUVX(),
       prismaExtension({

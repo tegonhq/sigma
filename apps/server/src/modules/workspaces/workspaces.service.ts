@@ -3,7 +3,7 @@ import {
   PageTypeEnum,
   Workspace,
   WorkspaceRequestParamsDto,
-} from '@tegonhq/sigma-sdk';
+} from '@redplanethq/sol-sdk';
 import { schedules } from '@trigger.dev/sdk/v3';
 import { format } from 'date-fns';
 import { Request, Response } from 'express';
@@ -30,7 +30,7 @@ export default class WorkspacesService {
     // Create the onboarding list
     const list = await this.listsService.createList(
       workspaceId,
-      'Getting started with Sigma',
+      'Getting started with Sol',
       true,
       JSON.stringify(OnboardingContent),
     );

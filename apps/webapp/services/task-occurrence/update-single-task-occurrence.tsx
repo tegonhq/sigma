@@ -1,4 +1,4 @@
-import { updateSingleTaskOccurrence } from '@sigma/services';
+import { updateSingleTaskOccurrence } from '@sol/services';
 import { useMutation } from 'react-query';
 
 interface MutationParams {

@@ -1,4 +1,4 @@
-import { Checkbox, CommandGroup } from '@tegonhq/ui';
+import { Checkbox, CommandGroup } from '@redplanethq/ui';
 
 import { DropdownItem } from '../dropdown-item';
 import { getStatusColor, getStatusIcon } from './status-utils';

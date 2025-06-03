@@ -1,4 +1,4 @@
-import { Loader } from '@tegonhq/ui';
+import { Loader } from '@redplanethq/ui';
 import { useRouter } from 'next/router';
 import React, { cloneElement } from 'react';
 import Session from 'supertokens-web-js/recipe/session';

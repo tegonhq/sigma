@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { conversationTitlePrompt, LLMModelEnum } from '@tegonhq/sigma-sdk';
+import { conversationTitlePrompt, LLMModelEnum } from '@redplanethq/sol-sdk';
 import { logger, task } from '@trigger.dev/sdk/v3';
 import axios from 'axios';
 

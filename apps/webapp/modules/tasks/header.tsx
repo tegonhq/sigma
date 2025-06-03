@@ -4,7 +4,7 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from '@tegonhq/ui';
+} from '@redplanethq/ui';
 import { observer } from 'mobx-react-lite';
 
 import { useApplication } from 'hooks/application';

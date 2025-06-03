@@ -1,4 +1,4 @@
-import { Checkbox, cn } from '@tegonhq/ui';
+import { Checkbox, cn } from '@redplanethq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';

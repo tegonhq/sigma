@@ -1,4 +1,4 @@
-import { useToast } from '@tegonhq/ui';
+import { useToast } from '@redplanethq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 
@@ -60,10 +60,7 @@ export const NewConversation = observer(() => {
             Hello <span className="text-primary">{user.fullname}</span>
           </h1>
 
-          <AssistantEditor
-            onSend={onSend}
-            placeholder="Search or Ask sigma..."
-          />
+          <AssistantEditor onSend={onSend} placeholder="Search or Ask sol..." />
 
           <ConversationsView />
 

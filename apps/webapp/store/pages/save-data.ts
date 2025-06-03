@@ -2,7 +2,7 @@ import type { PagesStoreType } from './store';
 
 import type { SyncActionRecord } from 'common/types';
 
-import { sigmaDatabase } from 'store/database';
+import { solDatabase } from 'store/database';
 
 export async function savePageData(
   data: SyncActionRecord[],
@@ -27,7 +27,7 @@ export async function savePageData(
 
       switch (record.action) {
         case 'I': {
-          await sigmaDatabase.pages.put(page);
+          await solDatabase.pages.put(page);
           let convertedPage = page;
           if (page.description) {
             convertedPage = {
@@ -49,7 +49,7 @@ export async function savePageData(
             };
           }
 
-          await sigmaDatabase.pages.put(page);
+          await solDatabase.pages.put(page);
           return (
             pagesStore &&
             (await pagesStore.update(convertedPage, record.data.id))
@@ -57,7 +57,7 @@ export async function savePageData(
         }
 
         case 'D': {
-          await sigmaDatabase.pages.delete(record.data.id);
+          await solDatabase.pages.delete(record.data.id);
           return pagesStore && (await pagesStore.deleteById(record.data.id));
         }
       }

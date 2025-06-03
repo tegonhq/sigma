@@ -5,7 +5,7 @@ import {
   IntegrationAccountIdDto,
   IntegrationPayloadEventType,
   UpdateIntegrationAccountDto,
-} from '@tegonhq/sigma-sdk';
+} from '@redplanethq/sol-sdk';
 import { schedules } from '@trigger.dev/sdk/v3';
 import { PrismaService } from 'nestjs-prisma';
 

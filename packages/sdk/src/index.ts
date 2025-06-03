@@ -1,2 +1,2 @@
-export * from '@sigma/services';
-export * from '@sigma/types';
+export * from '@sol/services';
+export * from '@sol/types';

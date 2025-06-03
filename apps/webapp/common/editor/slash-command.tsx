@@ -6,7 +6,7 @@ import {
   LinkLine,
   NumberedListLine,
   TextLine,
-} from '@tegonhq/ui';
+} from '@redplanethq/ui';
 import { ImageIcon } from 'lucide-react';
 import { createSuggestionItems, Command } from 'novel';
 

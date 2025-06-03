@@ -2,7 +2,7 @@ import type { IntegrationAccountsStoreType } from './store';
 
 import type { SyncActionRecord } from 'common/types';
 
-import { sigmaDatabase } from 'store/database';
+import { solDatabase } from 'store/database';
 
 export async function saveIntegrationAccountData(
   data: SyncActionRecord[],
@@ -23,7 +23,7 @@ export async function saveIntegrationAccountData(
 
       switch (record.action) {
         case 'I': {
-          await sigmaDatabase.integrationAccounts.put(integrationAccount);
+          await solDatabase.integrationAccounts.put(integrationAccount);
           return (
             integrationAccountsStore &&
             (await integrationAccountsStore.update(
@@ -34,7 +34,7 @@ export async function saveIntegrationAccountData(
         }
 
         case 'U': {
-          await sigmaDatabase.integrationAccounts.put(integrationAccount);
+          await solDatabase.integrationAccounts.put(integrationAccount);
           return (
             integrationAccountsStore &&
             (await integrationAccountsStore.update(
@@ -45,7 +45,7 @@ export async function saveIntegrationAccountData(
         }
 
         case 'D': {
-          await sigmaDatabase.integrationAccounts.delete(record.data.id);
+          await solDatabase.integrationAccounts.delete(record.data.id);
           return (
             integrationAccountsStore &&
             (await integrationAccountsStore.deleteById(record.data.id))

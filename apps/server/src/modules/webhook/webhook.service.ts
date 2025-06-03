@@ -3,7 +3,7 @@ import {
   EventBody,
   EventHeaders,
   IntegrationPayloadEventType,
-} from '@tegonhq/sigma-sdk';
+} from '@redplanethq/sol-sdk';
 import { Response } from 'express';
 import { PrismaService } from 'nestjs-prisma';
 

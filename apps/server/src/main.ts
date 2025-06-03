@@ -24,7 +24,7 @@ async function bootstrap() {
     AppModule,
 
     {
-      logger: new LoggerService('Sigma'),
+      logger: new LoggerService('Sol'),
     },
   );
 

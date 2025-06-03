@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ModelName } from '@prisma/client';
-import { ModelNameEnum, SyncAction } from '@tegonhq/sigma-sdk';
+import { ModelNameEnum, SyncAction } from '@redplanethq/sol-sdk';
 import { PrismaService } from 'nestjs-prisma';
 
 import {

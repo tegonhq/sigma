@@ -1,4 +1,4 @@
-import { Loader } from '@tegonhq/ui';
+import { Loader } from '@redplanethq/ui';
 import * as React from 'react';
 
 import { hash } from 'common/common-utils';

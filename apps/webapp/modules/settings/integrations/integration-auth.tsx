@@ -1,6 +1,6 @@
-import type { IntegrationDefinition } from '@sigma/types';
+import type { IntegrationDefinition } from '@sol/types';
 
-import { Button } from '@tegonhq/ui';
+import { Button } from '@redplanethq/ui';
 import { observer } from 'mobx-react-lite';
 
 import { useIPC } from 'hooks/ipc';

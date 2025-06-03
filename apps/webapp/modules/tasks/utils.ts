@@ -1,4 +1,4 @@
-import type { IntegrationDefinition } from '@sigma/types';
+import type { IntegrationDefinition } from '@sol/types';
 
 import { sort } from 'fast-sort';
 import React from 'react';
@@ -33,7 +33,7 @@ export const getStatusPriority = (status: string) => {
 
 export const getIntegrationURL = async (
   ipc: IPCRenderer,
-  integration: IntegrationDefinition,
+  integration: { url: string },
 ) => {
   if (!ipc) {
     return `${integration.url}/frontend/index.js`;
@@ -252,7 +252,13 @@ const isCompleted = (status: string) => {
 };
 
 export function filterTasks(tasks: TaskType[], filters: FilterType[]) {
-  return tasks.filter((task: TaskType) => {
+  // TODO: fix this
+  // First remove duplicates by task ID
+  const uniqueTasks = tasks.filter(
+    (task, index, self) => index === self.findIndex((t) => t.id === task.id),
+  );
+
+  return uniqueTasks.filter((task: TaskType) => {
     return filters.every((filter) => {
       switch (filter.key) {
         case 'updatedAt': {

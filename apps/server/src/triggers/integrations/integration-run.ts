@@ -1,7 +1,10 @@
 import createLoadRemoteModule, {
   createRequires,
 } from '@paciolan/remote-module-loader';
-import { IntegrationAccount, IntegrationDefinition } from '@tegonhq/sigma-sdk';
+import {
+  IntegrationAccount,
+  IntegrationDefinition,
+} from '@redplanethq/sol-sdk';
 import { logger, task } from '@trigger.dev/sdk/v3';
 import axios from 'axios';
 

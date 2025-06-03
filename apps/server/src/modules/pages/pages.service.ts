@@ -4,7 +4,7 @@ import { Prisma } from '@prisma/client';
 import {
   convertHtmlToTiptapJson,
   convertTiptapJsonToHtml,
-} from '@sigma/editor-extensions';
+} from '@sol/editor-extensions';
 import {
   CreatePageDto,
   EnhancePageResponse,
@@ -20,7 +20,7 @@ import {
   CreateTaskDto,
   PageTypeEnum,
   PublicPage,
-} from '@tegonhq/sigma-sdk';
+} from '@redplanethq/sol-sdk';
 import { CohereClientV2 } from 'cohere-ai';
 import { parse } from 'date-fns';
 import { PrismaService } from 'nestjs-prisma';

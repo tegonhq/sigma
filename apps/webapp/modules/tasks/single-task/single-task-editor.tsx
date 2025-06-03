@@ -1,5 +1,5 @@
 import { HocuspocusProvider } from '@hocuspocus/provider';
-import { SourceType } from '@sigma/types';
+import { SourceType } from '@sol/types';
 import Collaboration from '@tiptap/extension-collaboration';
 import React from 'react';
 import { useDebouncedCallback } from 'use-debounce';

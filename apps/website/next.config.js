@@ -3,7 +3,7 @@ module.exports = {
   experimental: {
     scrollRestoration: true,
   },
-  transpilePackages: ['geist', '@tegonhq/ui', 'react-tweet'],
+  transpilePackages: ['geist', '@redplanethq/ui', 'react-tweet'],
   devIndicators: {
     buildActivityPosition: 'bottom-right',
   },

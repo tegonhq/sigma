@@ -1,4 +1,4 @@
-import { IntegrationPayloadEventType } from '@tegonhq/sigma-sdk';
+import { IntegrationPayloadEventType } from '@redplanethq/sol-sdk';
 
 import { integrationCreate } from './account-create';
 import { handleSchedule } from './schedule';

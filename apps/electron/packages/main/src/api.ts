@@ -81,7 +81,7 @@ if (isDev) {
   });
 } else {
   fastify.register(fastifyStatic, {
-    root: path.join(app.getAppPath(), '/out/sigma/'),
+    root: path.join(app.getAppPath(), '/out/sol/'),
     prefix: '/',
   });
 }

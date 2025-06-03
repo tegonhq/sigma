@@ -1,4 +1,4 @@
-import { GetUsersDto, PublicUser } from '@sigma/types';
+import { GetUsersDto, PublicUser } from '@sol/types';
 import axios from 'axios';
 
 export async function getUsers(data: GetUsersDto): Promise<PublicUser[]> {

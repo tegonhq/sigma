@@ -1,4 +1,4 @@
-import { CommandItem, CommandList, SubIssue } from '@tegonhq/ui';
+import { CommandItem, CommandList, SubIssue } from '@redplanethq/ui';
 import { StepForward } from 'lucide-react';
 import { useEditor, getPrevText } from 'novel';
 

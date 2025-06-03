@@ -10,7 +10,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { CodeDto, CreatePatDto, PatIdDto, User } from '@tegonhq/sigma-sdk';
+import { CodeDto, CreatePatDto, PatIdDto, User } from '@redplanethq/sol-sdk';
 import { Request, Response } from 'express';
 import supertokens from 'supertokens-node';
 import { SessionContainer } from 'supertokens-node/recipe/session';

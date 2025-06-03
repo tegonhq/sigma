@@ -1,6 +1,6 @@
 import type { Agent } from './mention-list';
 
-import { cn } from '@tegonhq/ui';
+import { cn } from '@redplanethq/ui';
 import Mention from '@tiptap/extension-mention';
 import {
   mergeAttributes,

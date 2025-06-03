@@ -1,5 +1,5 @@
 import { RiDownloadLine } from '@remixicon/react';
-import { DocumentLine, Button } from '@tegonhq/ui';
+import { DocumentLine, Button } from '@redplanethq/ui';
 import { NodeViewWrapper } from '@tiptap/react';
 import { filesize } from 'filesize';
 import Player from 'next-video/player';

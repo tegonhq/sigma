@@ -2,7 +2,7 @@ import { Database } from '@hocuspocus/extension-database';
 import { Hocuspocus, Server } from '@hocuspocus/server';
 import { TiptapTransformer } from '@hocuspocus/transformer';
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { getSchema } from '@sigma/editor-extensions';
+import { getSchema } from '@sol/editor-extensions';
 import { PrismaService } from 'nestjs-prisma';
 import { prosemirrorJSONToYXmlFragment } from 'y-prosemirror';
 
@@ -22,7 +22,7 @@ export class ContentService implements OnModuleInit {
     }
 
     this.server = Server.configure({
-      name: 'sigma-collab',
+      name: 'sol-collab',
       port: 1234,
       timeout: 30000, // Configure timeout for operations
       debounce: 3000, // Debounce time for updates

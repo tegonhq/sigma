@@ -5,7 +5,7 @@ import {
   LLMModelEnum,
   ModelNameEnum,
   Preferences,
-} from '@tegonhq/sigma-sdk';
+} from '@redplanethq/sol-sdk';
 import { logger, task } from '@trigger.dev/sdk/v3';
 import axios from 'axios';
 
@@ -18,7 +18,7 @@ export const beautifyTask = task({
     concurrencyLimit: 10,
   },
   run: async (payload: { taskId: string; pat: string }) => {
-    const sigmaTask = await prisma.task.findUnique({
+    const solTask = await prisma.task.findUnique({
       where: { id: payload.taskId },
       select: {
         id: true,
@@ -35,7 +35,7 @@ export const beautifyTask = task({
       },
     });
 
-    logger.info(JSON.stringify(sigmaTask));
+    logger.info(JSON.stringify(solTask));
 
     const agentWorklog = await prisma.agentWorklog.create({
       data: {
@@ -43,12 +43,12 @@ export const beautifyTask = task({
         modelName: ModelNameEnum.Task,
         state: AgentWorklogStateEnum.Thinking,
         type: 'Beautify Task',
-        workspaceId: sigmaTask.workspaceId,
+        workspaceId: solTask.workspaceId,
       },
     });
 
     const listsData = await prisma.list.findMany({
-      where: { deleted: null, workspaceId: sigmaTask.workspaceId },
+      where: { deleted: null, workspaceId: solTask.workspaceId },
       include: { page: true },
     });
 
@@ -56,8 +56,7 @@ export const beautifyTask = task({
     let updatedTask;
 
     try {
-      const timezone = (sigmaTask.workspace.preferences as Preferences)
-        .timezone;
+      const timezone = (solTask.workspace.preferences as Preferences).timezone;
 
       // Run both API requests in parallel
       const [recurrenceData, beautifyOutput] = await Promise.all([
@@ -65,7 +64,7 @@ export const beautifyTask = task({
           .post(
             `${process.env.BACKEND_HOST}/v1/tasks/ai/recurrence`,
             {
-              text: sigmaTask.page.title,
+              text: solTask.page.title,
               currentTime: new Date().toLocaleString('en-US', {
                 timeZone: timezone,
               }),
@@ -82,7 +81,7 @@ export const beautifyTask = task({
                 {
                   role: 'user',
                   content: beautifyPrompt
-                    .replace('{{text}}', sigmaTask.page.title)
+                    .replace('{{text}}', solTask.page.title)
                     .replace('{{lists}}', lists.join('\n')),
                 },
               ],
@@ -135,7 +134,7 @@ export const beautifyTask = task({
           }),
 
           ...(outputData.listId &&
-            !sigmaTask.listId && {
+            !solTask.listId && {
               list: { connect: { id: outputData.listId } },
             }),
         };

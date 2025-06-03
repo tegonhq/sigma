@@ -1,7 +1,7 @@
 {
-  "name": "@sigma/slack",
+  "name": "@sol/slack",
   "version": "0.1.2",
-  "description": "slack extension for Sigma",
+  "description": "slack extension for Sol",
   "files": [
     "slack"
   ],
@@ -14,7 +14,7 @@
     "copy:spec": "cp spec.json dist/"
   },
   "peerDependencies": {
-    "@tegonhq/ui": "^0.2.21",
+    "@redplanethq/ui": "^0.2.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
@@ -70,8 +70,8 @@
     ]
   },
   "dependencies": {
-    "@tegonhq/agent-sdk": "0.1.7",
-    "@tegonhq/sigma-sdk": "0.1.13",
+    "@redplanethq/agent-sdk": "0.1.7",
+    "@redplanethq/sol-sdk": "0.1.13",
     "axios": "^1.7.9",
     "openai": "^4.0.0",
     "react-query": "^3.39.3"

@@ -15,7 +15,7 @@ import {
   LLMModelEnum,
   Preferences,
   UserTypeEnum,
-} from '@tegonhq/sigma-sdk';
+} from '@redplanethq/sol-sdk';
 import { logger } from '@trigger.dev/sdk/v3';
 import { CoreMessage } from 'ai';
 import axios from 'axios';

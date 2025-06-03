@@ -3,14 +3,14 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { convertTiptapJsonToHtml } from '@sigma/editor-extensions';
+import { convertTiptapJsonToHtml } from '@sol/editor-extensions';
 import {
   List,
   PageSelect,
   PageTypeEnum,
   Task,
   UpdateListDto,
-} from '@tegonhq/sigma-sdk';
+} from '@redplanethq/sol-sdk';
 import { PrismaService } from 'nestjs-prisma';
 
 import { PagesService } from 'modules/pages/pages.service';

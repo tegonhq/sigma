@@ -7,7 +7,7 @@ import {
 
 import type { WorkspaceType } from 'common/types';
 
-import { sigmaDatabase } from 'store/database';
+import { solDatabase } from 'store/database';
 
 import { Workspace } from './models';
 
@@ -22,7 +22,7 @@ export const WorkspaceStore: IAnyStateTreeNode = types
     };
 
     const load = flow(function* (workspaceId: string) {
-      self.workspace = yield sigmaDatabase.workspaces.get({
+      self.workspace = yield solDatabase.workspaces.get({
         id: workspaceId,
       });
     });

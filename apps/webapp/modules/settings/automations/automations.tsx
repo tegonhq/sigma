@@ -1,4 +1,4 @@
-import { AddLine, Button, Card, EditLine } from '@tegonhq/ui';
+import { AddLine, Button, Card, EditLine } from '@redplanethq/ui';
 import { EditorContent, useEditor } from '@tiptap/react';
 import { Trash2 } from 'lucide-react';
 import { observer } from 'mobx-react-lite';

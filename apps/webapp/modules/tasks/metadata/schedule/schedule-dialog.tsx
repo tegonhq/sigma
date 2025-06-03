@@ -8,7 +8,7 @@ import {
   Cycle,
   IssuesLine,
   Loader,
-} from '@tegonhq/ui';
+} from '@redplanethq/ui';
 import {
   endOfDay,
   addDays,

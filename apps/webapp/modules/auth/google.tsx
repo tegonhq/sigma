@@ -1,4 +1,4 @@
-import { Loader, useToast } from '@tegonhq/ui';
+import { Loader, useToast } from '@redplanethq/ui';
 import React from 'react';
 import { signInAndUp } from 'supertokens-auth-react/recipe/thirdparty';
 

@@ -38,7 +38,7 @@ export class TriggerdevService {
 
     const commonProjectExists = await checkIfProjectExist(
       {
-        slug: 'sigma_common', // Check if a project with the slug 'common' exists
+        slug: 'sol_common', // Check if a project with the slug 'common' exists
       },
       this.knex,
     );
@@ -51,8 +51,8 @@ export class TriggerdevService {
         where: `TriggerdevService.initCommonProject`,
       }); // Log a message if the common project doesn't exist
       await createProject(
-        'Sigma Common',
-        'sigma_common',
+        'Sol Common',
+        'sol_common',
         process.env.TRIGGER_TOKEN,
         this.knex,
         this.logger,

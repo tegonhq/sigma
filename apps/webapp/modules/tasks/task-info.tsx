@@ -1,4 +1,4 @@
-import { Badge, cn, ParentIssueLine } from '@tegonhq/ui';
+import { Badge, cn, ParentIssueLine } from '@redplanethq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 
@@ -79,7 +79,7 @@ export const TaskInfo = observer(
               taskOccurrenceId={taskOccurrenceId}
             />
           )}
-          <DuedateDropdown task={task} variant={DuedateDropdownVariant.SHORT} />
+          <DuedateDropdown task={task} variant={DuedateDropdownVariant.SHORT} />{' '}
           <SubTasks taskId={task.id} variant={SubTaskVariant.SHORT} />
           {task.parentId && parentTask()}
           <div className={cn(inEditor && 'relative')}>

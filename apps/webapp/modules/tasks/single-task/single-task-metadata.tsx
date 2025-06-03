@@ -1,4 +1,4 @@
-import { Badge, ParentIssueLine } from '@tegonhq/ui';
+import { Badge, ParentIssueLine } from '@redplanethq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 
@@ -53,8 +53,7 @@ export const SingleTaskMetadata = observer(
     return (
       <>
         <div className="p-2 mx-2 flex gap-2 rounded bg-grayAlpha-50 items-center">
-          <ScheduleDropdown task={task} />
-          <DuedateDropdown task={task} />
+          <ScheduleDropdown task={task} /> <DuedateDropdown task={task} />
           <SubTasks taskId={task.id} />
           {list && (
             <Badge

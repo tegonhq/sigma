@@ -1,4 +1,4 @@
-import type { CreatePatDto } from '@sigma/types';
+import type { CreatePatDto } from '@sol/types';
 
 import axios from 'axios';
 

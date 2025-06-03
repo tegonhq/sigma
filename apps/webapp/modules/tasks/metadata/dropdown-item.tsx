@@ -1,4 +1,4 @@
-import { CommandItem } from '@tegonhq/ui';
+import { CommandItem } from '@redplanethq/ui';
 
 interface DropdownItemProps {
   id: string | number;

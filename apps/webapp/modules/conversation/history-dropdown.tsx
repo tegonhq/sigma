@@ -8,7 +8,7 @@ import {
   PopoverContent,
   PopoverTrigger,
   ScrollArea,
-} from '@tegonhq/ui';
+} from '@redplanethq/ui';
 import { sort } from 'fast-sort';
 import { HistoryIcon, MessageSquare } from 'lucide-react';
 import { observer } from 'mobx-react-lite';
@@ -44,7 +44,7 @@ export const AIHistoryDropdown = observer(() => {
     >
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <Button variant="ghost">
+          <Button variant="ghost" className="text-muted-foreground">
             <HistoryIcon size={16} />
           </Button>
         </PopoverTrigger>

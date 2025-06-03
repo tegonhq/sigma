@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { cn, Tooltip, TooltipContent, TooltipTrigger } from '@tegonhq/ui';
+import { cn, Tooltip, TooltipContent, TooltipTrigger } from '@redplanethq/ui';
 
 interface TooltipWrapperProps {
   tooltip: ReactNode;

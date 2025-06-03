@@ -1,5 +1,5 @@
-import { SourceType } from '@sigma/types';
-import { Checkbox, cn } from '@tegonhq/ui';
+import { SourceType } from '@sol/types';
+import { Checkbox, cn } from '@redplanethq/ui';
 import { NodeViewContent, NodeViewWrapper } from '@tiptap/react';
 import { isSameDay } from 'date-fns';
 import { observer } from 'mobx-react-lite';

@@ -1,4 +1,4 @@
-import { UpdateListDto } from '@sigma/types';
+import { UpdateListDto } from '@sol/types';
 import axios from 'axios';
 
 interface UpdateListDtoWithId extends UpdateListDto {

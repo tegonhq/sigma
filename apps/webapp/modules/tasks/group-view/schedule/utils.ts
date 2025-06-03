@@ -19,6 +19,7 @@ export const useTaskRows = (collapsedHeader: Record<string, boolean>) => {
   const { pagesStore, taskOccurrencesStore, tasksStore } = useContextStore();
   const { filters, displaySettings } = useApplication();
   const taskOccurrences = taskOccurrencesStore.getTaskOccurrences;
+
   const tasks = tasksStore.getTasks({});
 
   // Memoize planCategories since it's static
@@ -40,7 +41,7 @@ export const useTaskRows = (collapsedHeader: Record<string, boolean>) => {
           .filter((task) => !tasksWithOccurrences.includes(task.id))
           .map((task) => ({
             ...task,
-            taskOccurrenceId: '', // Empty string since these tasks don't have occurrences
+            taskOccurrenceId: undefined, // Empty string since these tasks don't have occurrences
           }))
           .filter((task) => !existingTasks.find((t) => t.id === task.id));
       }
@@ -50,8 +51,9 @@ export const useTaskRows = (collapsedHeader: Record<string, boolean>) => {
           const startTime = new Date(occurrence.startTime);
 
           switch (plan) {
-            case 'Today':
+            case 'Today': {
               return isToday(startTime);
+            }
             case 'Tomorrow':
               return isTomorrow(startTime);
             case 'Rest of the week':
@@ -67,7 +69,9 @@ export const useTaskRows = (collapsedHeader: Record<string, boolean>) => {
           ...tasksStore.getTaskWithId(occurrence.taskId),
           taskOccurrenceId: occurrence.id,
         }))
-        .filter((task) => task && !existingTasks.find((t) => t.id === task.id));
+        .filter((task) => {
+          return task && !existingTasks.find((t) => t.id === task.id);
+        });
     },
     [taskOccurrences, tasksStore, tasks],
   );

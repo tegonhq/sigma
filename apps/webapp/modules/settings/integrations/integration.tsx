@@ -4,7 +4,7 @@ import {
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbSeparator,
-} from '@tegonhq/ui';
+} from '@redplanethq/ui';
 
 import { SettingSection } from 'modules/settings/setting-section';
 

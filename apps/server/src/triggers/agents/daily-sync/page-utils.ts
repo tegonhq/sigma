@@ -1,4 +1,4 @@
-import { Page, Task } from '@tegonhq/sigma-sdk';
+import { Page, Task } from '@redplanethq/sol-sdk';
 
 import { getTaskItemContent } from 'modules/pages/pages.utils';
 

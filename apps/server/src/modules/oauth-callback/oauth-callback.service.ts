@@ -1,6 +1,9 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { IntegrationPayloadEventType, OAuth2Params } from '@tegonhq/sigma-sdk';
+import {
+  IntegrationPayloadEventType,
+  OAuth2Params,
+} from '@redplanethq/sol-sdk';
 import { tasks } from '@trigger.dev/sdk/v3';
 import * as simpleOauth2 from 'simple-oauth2';
 import { scheduler } from 'triggers/integrations/scheduler';

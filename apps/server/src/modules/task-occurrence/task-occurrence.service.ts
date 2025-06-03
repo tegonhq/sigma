@@ -8,7 +8,7 @@ import {
   PublicPage,
   TaskOccurrence,
   UpdateTaskOccurenceDTO,
-} from '@tegonhq/sigma-sdk';
+} from '@redplanethq/sol-sdk';
 import { endOfDay, subDays } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { PrismaService } from 'nestjs-prisma';

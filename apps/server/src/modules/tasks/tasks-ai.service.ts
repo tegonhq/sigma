@@ -4,7 +4,7 @@ import {
   LLMModelEnum,
   ReccurenceInput,
   recurrencePrompt,
-} from '@tegonhq/sigma-sdk';
+} from '@redplanethq/sol-sdk';
 import { endOfDay, startOfDay } from 'date-fns';
 import { PrismaService } from 'nestjs-prisma';
 

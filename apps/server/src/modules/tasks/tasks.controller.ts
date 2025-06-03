@@ -8,7 +8,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { CreateTaskDto, UnifiedSearchOptionsDto } from '@tegonhq/sigma-sdk';
+import { CreateTaskDto, UnifiedSearchOptionsDto } from '@redplanethq/sol-sdk';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
 import { UserId, Workspace } from 'modules/auth/session.decorator';

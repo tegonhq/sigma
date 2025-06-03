@@ -1,4 +1,4 @@
-import { Close, Button, Separator } from '@tegonhq/ui';
+import { Close, Button, Separator } from '@redplanethq/ui';
 import { observer } from 'mobx-react-lite';
 
 import { useApplication } from 'hooks/application';

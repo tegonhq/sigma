@@ -2,7 +2,7 @@ import { type IAnyStateTreeNode, types, flow } from 'mobx-state-tree';
 
 import type { TaskOccurrenceType } from 'common/types';
 
-import { sigmaDatabase } from 'store/database';
+import { solDatabase } from 'store/database';
 
 import { TaskOccurrenceArray } from './models';
 
@@ -102,12 +102,15 @@ export const TaskOccurrencesStore: IAnyStateTreeNode = types
     const load = flow(function* () {
       self.loading = true;
 
-      const taskOccurrences = yield sigmaDatabase.taskOccurrences.toArray();
+      const taskOccurrences = yield solDatabase.taskOccurrences.toArray();
 
       taskOccurrences.forEach((taskOccurrence: TaskOccurrenceType) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (self as any).update(taskOccurrence, taskOccurrence.id);
       });
+
+      self.taskOccurrencesArray = taskOccurrences;
+
       self.loading = false;
     });
 
@@ -134,7 +137,6 @@ export const TaskOccurrencesStore: IAnyStateTreeNode = types
     get getKeys() {
       return Array.from(self.taskOccurrences.keys());
     },
-
     get getTaskOccurrences() {
       return self.taskOccurrencesArray;
     },

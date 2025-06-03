@@ -2,7 +2,7 @@ import {
   GetTaskOccurrenceDTO,
   TaskOccurrenceDto,
   TaskOccurrence,
-} from '@sigma/types';
+} from '@sol/types';
 import axios from 'axios';
 
 export async function getTaskOccurenceById(

@@ -1,4 +1,4 @@
-import { Spec, WorkspaceRequestParamsDto } from '@tegonhq/sigma-sdk';
+import { Spec, WorkspaceRequestParamsDto } from '@redplanethq/sol-sdk';
 import { IsObject, IsString } from 'class-validator';
 
 export class IntegrationDefinitionSpec {

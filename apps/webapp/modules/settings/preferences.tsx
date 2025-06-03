@@ -6,7 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
   useToast,
-} from '@tegonhq/ui';
+} from '@redplanethq/ui';
 import { useTheme } from 'next-themes';
 import React from 'react';
 

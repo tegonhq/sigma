@@ -1,4 +1,4 @@
-import { OAuth2Params } from '@tegonhq/sigma-sdk';
+import { OAuth2Params } from '@redplanethq/sol-sdk';
 import { IsBoolean, IsString } from 'class-validator';
 
 export interface RedirectURLParams {

@@ -1,4 +1,4 @@
-import { TaskBySourceDto, TaskDto } from '@sigma/types';
+import { TaskBySourceDto, TaskDto } from '@sol/types';
 import axios from 'axios';
 
 export async function deleteTask({ taskId }: TaskDto) {

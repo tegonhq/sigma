@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { Preferences } from '@tegonhq/sigma-sdk';
+import { Preferences } from '@redplanethq/sol-sdk';
 import { schedules } from '@trigger.dev/sdk/v3';
 import axios from 'axios';
 

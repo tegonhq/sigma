@@ -1,4 +1,4 @@
-import { Button, useToast } from '@tegonhq/ui';
+import { Button, useToast } from '@redplanethq/ui';
 import React from 'react';
 
 import { useUpdateUserMutation } from 'services/users';

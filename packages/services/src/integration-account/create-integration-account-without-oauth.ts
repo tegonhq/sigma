@@ -1,4 +1,4 @@
-import { CreateIntegrationAccountDto, IntegrationAccount } from '@sigma/types';
+import { CreateIntegrationAccountDto, IntegrationAccount } from '@sol/types';
 import axios from 'axios';
 
 export async function createIntegrationAccountWithoutOAuth(

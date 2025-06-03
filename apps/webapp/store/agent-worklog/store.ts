@@ -3,7 +3,7 @@ import { type IAnyStateTreeNode, types, flow } from 'mobx-state-tree';
 
 import type { AgentWorklogType } from 'common/types';
 
-import { sigmaDatabase } from 'store/database';
+import { solDatabase } from 'store/database';
 
 import { AgentWorklog } from './models';
 
@@ -41,7 +41,7 @@ export const AgentWorklogsStore: IAnyStateTreeNode = types
     };
 
     const load = flow(function* () {
-      const agentWorklogs = yield sigmaDatabase.agentWorklogs.toArray();
+      const agentWorklogs = yield solDatabase.agentWorklogs.toArray();
 
       // Get current time and calculate 10 minutes ago
 
@@ -70,7 +70,7 @@ export const AgentWorklogsStore: IAnyStateTreeNode = types
         .map((log: AgentWorklogType) => log.id);
 
       if (oldLogIds.length > 0) {
-        yield sigmaDatabase.agentWorklogs.bulkDelete(oldLogIds);
+        yield solDatabase.agentWorklogs.bulkDelete(oldLogIds);
       }
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

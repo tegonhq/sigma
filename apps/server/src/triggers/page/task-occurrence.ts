@@ -1,6 +1,10 @@
 import { PrismaClient } from '@prisma/client';
-import { PageTypeEnum, Preferences, TaskOccurrence } from '@tegonhq/sigma-sdk';
-import { getOrCreatePageByTitle } from '@tegonhq/sigma-sdk';
+import {
+  PageTypeEnum,
+  Preferences,
+  TaskOccurrence,
+} from '@redplanethq/sol-sdk';
+import { getOrCreatePageByTitle } from '@redplanethq/sol-sdk';
 import { task } from '@trigger.dev/sdk/v3';
 import { formatInTimeZone } from 'date-fns-tz';
 import { RRule } from 'rrule';

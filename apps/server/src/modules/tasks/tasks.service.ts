@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Prisma } from '@prisma/client';
-import { convertTiptapJsonToHtml } from '@sigma/editor-extensions';
+import { convertTiptapJsonToHtml } from '@sol/editor-extensions';
 import {
   CreateTaskDto,
   JsonObject,
@@ -9,7 +9,7 @@ import {
   PageTypeEnum,
   Task,
   UpdateTaskDto,
-} from '@tegonhq/sigma-sdk';
+} from '@redplanethq/sol-sdk';
 import { CohereClientV2 } from 'cohere-ai';
 import { PrismaService } from 'nestjs-prisma';
 
