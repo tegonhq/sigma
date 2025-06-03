@@ -7,9 +7,10 @@ import { SCOPES } from 'common/shortcut-scopes';
 import { useApplication } from 'hooks/application';
 import { useScope } from 'hooks/use-scope';
 
+import { useGetIntegrationDefinitions } from 'services/integration-definition';
+
 import { InboxConversation } from './inbox-conversation';
 import { NewConversation } from './new-conversation';
-import { useGetIntegrationDefinitions } from 'services/integration-definition';
 
 export const Assistant = observer(() => {
   useScope(SCOPES.ASSISTANT);

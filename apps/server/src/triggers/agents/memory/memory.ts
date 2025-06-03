@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
-import { convertTiptapJsonToHtml } from '@sol/editor-extensions';
 import { LLMModelEnum } from '@redplanethq/sol-sdk';
+import { convertTiptapJsonToHtml } from '@sol/editor-extensions';
 import { logger, task } from '@trigger.dev/sdk/v3';
 import axios from 'axios';
 

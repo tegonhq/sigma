@@ -2,10 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Prisma } from '@prisma/client';
 import {
-  convertHtmlToTiptapJson,
-  convertTiptapJsonToHtml,
-} from '@sol/editor-extensions';
-import {
   CreatePageDto,
   EnhancePageResponse,
   GetPageByTitleDto,
@@ -21,6 +17,10 @@ import {
   PageTypeEnum,
   PublicPage,
 } from '@redplanethq/sol-sdk';
+import {
+  convertHtmlToTiptapJson,
+  convertTiptapJsonToHtml,
+} from '@sol/editor-extensions';
 import { CohereClientV2 } from 'cohere-ai';
 import { parse } from 'date-fns';
 import { PrismaService } from 'nestjs-prisma';

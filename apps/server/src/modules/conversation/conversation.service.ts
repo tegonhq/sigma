@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { defaultExtensions } from '@sol/editor-extensions';
 import {
   Conversation,
   CreateConversationDto,
@@ -11,6 +10,7 @@ import {
   Page,
   Task,
 } from '@redplanethq/sol-sdk';
+import { defaultExtensions } from '@sol/editor-extensions';
 import { generateHTML } from '@tiptap/html';
 import { auth, runs, tasks } from '@trigger.dev/sdk/v3';
 import { PrismaService } from 'nestjs-prisma';

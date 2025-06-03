@@ -1,5 +1,5 @@
-import { convertTiptapJsonToHtml } from '@sol/editor-extensions';
 import { JsonValue, Page, PublicPage, Task } from '@redplanethq/sol-sdk';
+import { convertTiptapJsonToHtml } from '@sol/editor-extensions';
 
 export function getTaskListsInPage(page: PublicPage) {
   const description = page.description;

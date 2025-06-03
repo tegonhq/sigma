@@ -1,5 +1,5 @@
-import { RiDiscordFill, RiGithubFill, RiMailFill } from '@remixicon/react';
 import { Actions, SlackIcon, StackLine } from '@redplanethq/ui';
+import { RiDiscordFill, RiGithubFill, RiMailFill } from '@remixicon/react';
 
 import { Gmail, Hevy } from 'icons';
 

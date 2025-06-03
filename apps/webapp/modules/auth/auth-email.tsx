@@ -1,6 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
 import { zodResolver } from '@hookform/resolvers/zod';
-import { RiMailFill } from '@remixicon/react';
 import {
   Button,
   Form,
@@ -11,6 +10,7 @@ import {
   Input,
   ArrowRight,
 } from '@redplanethq/ui';
+import { RiMailFill } from '@remixicon/react';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { convertTiptapJsonToHtml } from '@sol/editor-extensions';
 import { CreateActivityDto, UserTypeEnum } from '@redplanethq/sol-sdk';
+import { convertTiptapJsonToHtml } from '@sol/editor-extensions';
 import { tasks } from '@trigger.dev/sdk/v3';
 import { PrismaService } from 'nestjs-prisma';
 import { createConversationTitle } from 'triggers/conversation/create-conversation-title';

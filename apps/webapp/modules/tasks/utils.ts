@@ -33,7 +33,7 @@ export const getStatusPriority = (status: string) => {
 
 export const getIntegrationURL = async (
   ipc: IPCRenderer,
-  integration: { url: string },
+  integration: IntegrationDefinition,
 ) => {
   if (!ipc) {
     return `${integration.url}/frontend/index.js`;

@@ -3,7 +3,6 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { convertTiptapJsonToHtml } from '@sol/editor-extensions';
 import {
   List,
   PageSelect,
@@ -11,6 +10,7 @@ import {
   Task,
   UpdateListDto,
 } from '@redplanethq/sol-sdk';
+import { convertTiptapJsonToHtml } from '@sol/editor-extensions';
 import { PrismaService } from 'nestjs-prisma';
 
 import { PagesService } from 'modules/pages/pages.service';

@@ -1,5 +1,5 @@
-import { RiAppleFill, RiGithubFill } from '@remixicon/react';
 import { Button, Checkbox, cn } from '@redplanethq/ui';
+import { RiAppleFill, RiGithubFill } from '@remixicon/react';
 import Heading from '@tiptap/extension-heading';
 import { mergeAttributes } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';

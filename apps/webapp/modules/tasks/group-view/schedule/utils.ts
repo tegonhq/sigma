@@ -41,7 +41,7 @@ export const useTaskRows = (collapsedHeader: Record<string, boolean>) => {
           .filter((task) => !tasksWithOccurrences.includes(task.id))
           .map((task) => ({
             ...task,
-            taskOccurrenceId: undefined, // Empty string since these tasks don't have occurrences
+            taskOccurrenceId: '', // Empty string since these tasks don't have occurrences
           }))
           .filter((task) => !existingTasks.find((t) => t.id === task.id));
       }

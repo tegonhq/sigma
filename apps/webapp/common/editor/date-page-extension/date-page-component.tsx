@@ -1,4 +1,3 @@
-import { PageTypeEnum } from '@sol/types';
 import {
   Command,
   CommandInput,
@@ -6,6 +5,7 @@ import {
   CommandList,
   TodoLine,
 } from '@redplanethq/ui';
+import { PageTypeEnum } from '@sol/types';
 import { NodeViewWrapper } from '@tiptap/react';
 import { format, subDays, addDays, addWeeks, parse } from 'date-fns';
 import { observer } from 'mobx-react-lite';
