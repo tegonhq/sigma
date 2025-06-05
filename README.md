@@ -1,6 +1,6 @@
 <div align="center">
   <a href="https://heysol.ai">
-    <img src="https://github.com/user-attachments/assets/5cb0e4f6-32d1-40e2-bed6-be551c901d93" width="200px" alt="Sol logo" />
+    <img src="https://github.com/user-attachments/assets/0d08302b-8f56-4b95-a3cd-dfa2cc254340" width="200px" alt="Sol logo" />
   </a>
 
 ### Sol: Your Personal AI Assistant that starts before you do.
