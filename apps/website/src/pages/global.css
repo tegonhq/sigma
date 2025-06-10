@@ -17,8 +17,7 @@ strong {
   body {
     @apply text-foreground bg-background text-base;
     @apply antialiased;
-    overflow: hidden;
-
+    background: #0F1019;
     /* shape-rendering: auto; */
     /* --webkit-font-smoothing: antialiased; */
     /* -webkit-font-smoothing: subpixel-antialiased; */
