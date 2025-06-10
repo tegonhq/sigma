@@ -376,39 +376,6 @@ Action Input:
 </action_input>
 `;
 
-export const DAILY_SYNC_SYSTEM_PROMPT = `
-You are a retrieval assistant that extracts and combines daily sync rules.
-Your job is to return relevant daily sync rules and formulate a final daily sync plan.
-
-Instructions:
-1. You will receive:
-   - A list of user rules that may contain daily sync rules
-2. From the provided rules:
-   - Select rules related to daily syncs
-   - Look for keywords like "daily", "sync", "brief", "report"
-   - Extract any sections containing agent tags like <agent data-id="...">...</agent>
-   - Preserve all tags and formatting
-3. Combine relevant rules into a cohesive sync plan
-
-CRITICAL: Your response MUST be in one of two formats:
-
-1. If matching sync rules are found:
-<output>
-{
-  "found": true,
-  "rules": [Array of rule ids related to daily syncs]
-}
-</output>
-
-2. If no matching sync rules are found:
-<output>
-{
-  "found": false,
-  "reason": "No daily sync rules found in the user rules"
-}
-</output>
-`;
-
 export const AUTOMATION_SYSTEM_PROMPT = `
 You are a retrieval assistant that extracts and combines automation preferences for specific activities.
 Your job is to return relevant automation rules and formulate a final automation plan for the current activity, using provided user context to better identify relevant automations.

@@ -1,4 +1,4 @@
-import { useToast } from '@redplanethq/ui';
+import { ArrowLeft, Button, useToast } from '@redplanethq/ui';
 import { sort } from 'fast-sort';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
@@ -125,7 +125,7 @@ export const InboxConversation = observer(
     };
 
     return (
-      <div className="flex flex-col h-full justify-center w-full items-center overflow-auto">
+      <div className="relative flex flex-col h-full justify-center w-full items-center overflow-auto">
         <div className="flex flex-col justify-end overflow-hidden h-full w-full">
           <ScrollAreaWithAutoScroll>
             {getConversations()}

@@ -21,14 +21,16 @@ model Activity {
   integrationAccount   IntegrationAccount? @relation(fields: [integrationAccountId], references: [id])
   integrationAccountId String?
 
+  conversation   Conversation? @relation(fields: [conversationId], references: [id])
+  conversationId String?
+
   task   Task?   @relation(fields: [taskId], references: [id])
   taskId String?
 
   rejectionReason String?
 
-  workspace    Workspace      @relation(fields: [workspaceId], references: [id])
-  workspaceId  String
-  Conversation Conversation[]
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId String
 }
 
 model AIRequest {
@@ -124,17 +126,16 @@ model Conversation {
   workspace   Workspace? @relation(fields: [workspaceId], references: [id])
   workspaceId String?
 
-  page       Page?     @relation(fields: [pageId], references: [id])
-  pageId     String?
-  task       Task?     @relation(fields: [taskId], references: [id])
-  taskId     String?
-  activity   Activity? @relation(fields: [activityId], references: [id])
-  activityId String?
+  page   Page?   @relation(fields: [pageId], references: [id])
+  pageId String?
+  task   Task?   @relation(fields: [taskId], references: [id])
+  taskId String?
 
   status String @default("pending") // Can be "pending", "running", "completed", "failed"
 
   ConversationHistory ConversationHistory[]
   syncs               Sync[]
+  Activity            Activity[]
 }
 
 model ConversationHistory {
@@ -262,12 +263,11 @@ model Page {
 
   type PageType @default(Default)
 
-  workspaceId    String
-  workspace      Workspace        @relation(fields: [workspaceId], references: [id])
-  task           Task[]
-  conversation   Conversation[]
-  taskOccurrence TaskOccurrence[]
-  List           List[]
+  workspaceId  String
+  workspace    Workspace      @relation(fields: [workspaceId], references: [id])
+  task         Task[]
+  conversation Conversation[]
+  List         List[]
 }
 
 model PersonalAccessToken {
@@ -406,16 +406,13 @@ model TaskOccurrence {
   endTime   DateTime?
   status    String?
 
+  metadata Json? @default("{}")
+
   task   Task   @relation(fields: [taskId], references: [id])
   taskId String
 
-  page   Page   @relation(fields: [pageId], references: [id])
-  pageId String
-
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
   workspaceId String
-
-  @@unique([taskId, pageId])
 }
 
 model Template {

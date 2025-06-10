@@ -23,15 +23,17 @@ export const StreamingConversation = ({
 
   const loadingMessages = [
     'Thinking...',
-    'Loading MCP...',
-    'Starting MCP servers...',
     'Still thinking...',
-    'Warming up my neural networks...',
-    'Consulting my crystal ball...',
-    'Teaching hamsters to power the servers...',
-    'Bribing the AI gods with cookies...',
-    'Untangling quantum spaghetti...',
-    'Almost there, just need my morning coffee...',
+    'Deep in thought...',
+    'Processing at light speed...',
+    'Loading SOL...',
+    'Establishing Mars connection...',
+    'Consulting the Martian archives...',
+    'Calculating in Mars time...',
+    'Warming up the quantum processors...',
+    'Checking atmospheric conditions on Mars...',
+    'Untangling red planet algorithms...',
+    'Just need my Mars-roasted coffee...',
   ];
 
   const messagesEditor = useEditor({
@@ -56,13 +58,13 @@ export const StreamingConversation = ({
 
   React.useEffect(() => {
     let currentIndex = 0;
-    let delay = 1000; // Start with 1 second
+    let delay = 5000; // Start with 2 seconds for more thinking time
 
     const updateLoadingText = () => {
       if (!message) {
         setLoadingText(loadingMessages[currentIndex]);
         currentIndex = (currentIndex + 1) % loadingMessages.length;
-        delay = Math.min(delay * 1.5, 10000); // Increase delay exponentially up to 5 seconds
+        delay = Math.min(delay * 1.3, 8000); // Increase delay more gradually
         setTimeout(updateLoadingText, delay);
       }
     };

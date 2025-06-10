@@ -22,7 +22,6 @@ import {
   convertTiptapJsonToHtml,
 } from '@sol/editor-extensions';
 import { CohereClientV2 } from 'cohere-ai';
-import { parse } from 'date-fns';
 import { PrismaService } from 'nestjs-prisma';
 
 import AIRequestsService from 'modules/ai-requests/ai-requests.services';
@@ -405,51 +404,7 @@ export class PagesService {
         (taskId) => !currentTaskIds.includes(taskId),
       );
 
-      if (page.type === 'Daily') {
-        if (removedTaskIds.length) {
-          await this.prisma.taskOccurrence.updateMany({
-            where: {
-              taskId: { in: removedTaskIds },
-              pageId,
-            },
-            data: { deleted: new Date().toISOString() },
-          });
-        }
-
-        if (addedTaskIds.length) {
-          const pageDate = parse(page.title, 'dd-MM-yyyy', new Date());
-
-          const startTime = new Date(pageDate);
-          startTime.setHours(0, 0, 0, 0);
-
-          const endTime = new Date(pageDate);
-          endTime.setHours(23, 59, 59, 999);
-
-          await Promise.all(
-            addedTaskIds.map((taskId) =>
-              this.prisma.taskOccurrence.upsert({
-                where: {
-                  taskId_pageId: {
-                    taskId,
-                    pageId,
-                  },
-                },
-                create: {
-                  taskId,
-                  pageId,
-                  workspaceId: page.workspaceId,
-                  startTime,
-                  endTime,
-                  status: 'Todo',
-                },
-                update: {
-                  deleted: null,
-                },
-              }),
-            ),
-          );
-        }
-      } else if (page.type === 'List') {
+      if (page.type === 'List') {
         const list = await this.prisma.list.findFirst({
           where: { pageId: page.id, deleted: null },
         });

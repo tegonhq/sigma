@@ -10,15 +10,11 @@ interface RightSideHeaderProps {
 
 export const RightSideHeader = observer(({ onClose }: RightSideHeaderProps) => {
   return (
-    <header className="flex h-[40px] shrink-0 items-center justify-between gap-2">
+    <header className="flex h-[56px] shrink-0 items-center justify-between gap-2">
       <div className="flex items-center justify-end gap-2 px-2 w-full">
         <div className="flex gap-1 items-center">
           <ConversationHeaderActions />
-          <Button
-            variant="ghost"
-            onClick={onClose}
-            className="text-muted-foreground"
-          >
+          <Button variant="ghost" onClick={onClose}>
             <Close size={16} />
           </Button>
         </div>

@@ -19,11 +19,13 @@ export const TaskInfo = observer(
   ({
     task,
     taskOccurrenceId,
+    minimal,
     inEditor,
   }: {
     task: TaskType;
     taskOccurrenceId?: string;
     inEditor?: boolean;
+    minimal: boolean;
   }) => {
     const { listsStore, pagesStore, tasksStore } = useContextStore();
     const list = listsStore.getListWithId(task.listId);
@@ -72,7 +74,7 @@ export const TaskInfo = observer(
               </span>
             </Badge>
           )}
-          {!inEditor && (
+          {!inEditor && !minimal && (
             <ScheduleDropdown
               task={task}
               variant={ScheduleDropdownVariant.SHORT}

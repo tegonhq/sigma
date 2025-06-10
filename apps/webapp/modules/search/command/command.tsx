@@ -73,8 +73,7 @@ export const CommandComponent = observer(
               >
                 <command.Icon size={16} />
                 <div className="grow flex gap-2 items-center">
-                  <div className="text-muted-foreground">Settings</div>{' '}
-                  <ArrowRight className="text-muted-foreground" size={14} />
+                  <div>Settings</div> <ArrowRight size={14} />
                   <div>{command.text}</div>
                 </div>
                 {command.shortcut && (

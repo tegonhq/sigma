@@ -24,7 +24,6 @@ import { HistoryStep } from './types';
 import {
   AUTOMATION_SYSTEM_PROMPT,
   AUTOMATIONS_USER_PROMPT,
-  DAILY_SYNC_SYSTEM_PROMPT,
   MEMORY_SYSTEM_PROMPT,
   RETRIEVAL_USER_PROMPT,
 } from '../chat/prompt';
@@ -501,81 +500,6 @@ export async function getMemoryContext(
   return {};
 }
 
-export async function getDailyContext(
-  workspaceId: string,
-  userContextPageHTML: string,
-): Promise<{
-  dailyContext: string[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  memoryContext: Record<string, any>;
-}> {
-  const automations = await prisma.automation.findMany({
-    where: {
-      workspaceId,
-      deleted: null,
-    },
-  });
-
-  const automationsList = automations
-    .map((automation) => {
-      return `id: ${automation.id}\ntext: ${automation.text}\nservices: ${Array.isArray(automation.mcps) ? automation.mcps.join(',') : ''}\n\n`;
-    })
-    .join('');
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let dailyRules: Record<string, any> = {};
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let memoryContext: Record<string, any> = {};
-  try {
-    dailyRules = await getContext({
-      messages: [
-        {
-          role: 'system',
-          content: DAILY_SYNC_SYSTEM_PROMPT,
-        },
-        {
-          role: 'user',
-          content: `
-          <user_rules>
-          ${automationsList}
-          </user_rules>
-          `,
-        },
-      ],
-      llmModel: LLMModelEnum.GPT41,
-      model: 'dailyContext',
-    });
-
-    if (dailyRules.found) {
-      const automationTexts: string[] = [];
-      if (Array.isArray(dailyRules.rules)) {
-        dailyRules.rules.forEach((rule) => {
-          const automation = automations.find((a) => a.id === rule);
-          if (automation) {
-            automationTexts.push(automation.text);
-          }
-        });
-      }
-
-      dailyRules.automationTexts = automationTexts;
-
-      memoryContext = await getMemoryContext(
-        automationTexts.join('\n'),
-        userContextPageHTML,
-      );
-
-      return {
-        dailyContext: automationTexts,
-        memoryContext,
-      };
-    }
-  } catch (e) {
-    logger.error(e);
-  }
-
-  return { dailyContext: [], memoryContext: {} };
-}
-
 export async function getAutomationContext(
   workspaceId: string,
   query: string,
@@ -686,7 +610,11 @@ export const createConversation = async (
     data: {
       workspaceId: activity.workspaceId,
       userId: workspace.userId,
-      activityId: activity.id,
+      Activity: {
+        connect: {
+          id: activity.id,
+        },
+      },
       title: activity.text.substring(0, 100),
       ConversationHistory: {
         create: {

@@ -1,17 +1,18 @@
 import { cn, ScrollArea } from '@redplanethq/ui';
 import { sort } from 'fast-sort';
 import { observer } from 'mobx-react-lite';
-import { useRouter } from 'next/router';
 import React from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
 
 import { SCOPES } from 'common/shortcut-scopes';
 
+import { useApplication } from 'hooks/application';
 import { useScope } from 'hooks/use-scope';
 
 import { useUpdateTaskMutation } from 'services/tasks';
 
+import { TabViewType } from 'store/application';
 import { useContextStore } from 'store/global-context-provider';
 
 import { SingleTaskEditor } from './single-task-editor';
@@ -26,23 +27,22 @@ interface SingleTaskProps {
 }
 
 export const SingleTaskWithoutLayout = observer(
-  ({ taskId, sideView = false }: SingleTaskProps) => {
+  ({ taskId }: SingleTaskProps) => {
     useScope(SCOPES.Task);
 
     const { tasksStore, pagesStore, taskOccurrencesStore } = useContextStore();
     const task = tasksStore.getTaskWithId(taskId);
     const page = pagesStore.getPageWithId(task?.pageId);
-    const { back } = useRouter();
+    const { changeActiveTab } = useApplication();
     const { mutate: updateTask } = useUpdateTaskMutation({});
 
     useHotkeys(
       [Key.Escape],
       () => {
-        back();
+        changeActiveTab(TabViewType.MY_TASKS, {});
       },
       {
         scopes: [SCOPES.Task],
-        enabled: !sideView,
       },
     );
 

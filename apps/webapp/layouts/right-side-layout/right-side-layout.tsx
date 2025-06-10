@@ -61,7 +61,7 @@ export const RightSideLayout = observer(
         setRightSideCollapsed(true);
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [activeTab]);
+    }, [activeTab.type]);
 
     useHotkeys(
       [`${Key.Meta}+l`],
@@ -126,7 +126,7 @@ export const RightSideLayout = observer(
               <ResizableHandle className="w-1" />
 
               <ResizablePanel
-                className="rounded-md"
+                className="bg-background pl-2"
                 collapsible={false}
                 maxSize={50}
                 minSize={25}

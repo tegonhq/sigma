@@ -13,7 +13,6 @@ export default class ActivityService {
     private prisma: PrismaService,
     private users: UsersService,
   ) {}
-
   async createActivity(
     createActivity: CreateActivityDto,
     workspaceId: string,
@@ -21,10 +20,23 @@ export default class ActivityService {
   ) {
     const exisitingActivity = await this.prisma.activity.findFirst({
       where: {
-        sourceURL: createActivity.sourceURL,
+        AND: [
+          { workspaceId },
+          {
+            OR: [
+              createActivity.sourceURL
+                ? { sourceURL: createActivity.sourceURL }
+                : {},
+              createActivity.taskId ? { taskId: createActivity.taskId } : {},
+            ],
+          },
+        ],
+      },
+      orderBy: {
+        createdAt: 'desc',
       },
       include: {
-        Conversation: true,
+        conversation: true,
         integrationAccount: {
           include: {
             integrationDefinition: true,
@@ -33,8 +45,7 @@ export default class ActivityService {
       },
     });
 
-    const conversation =
-      exisitingActivity?.Conversation && exisitingActivity.Conversation[0];
+    const conversation = exisitingActivity?.conversation;
     const pat = await this.users.getOrCreatePat(userId, workspaceId);
 
     if (exisitingActivity && conversation) {

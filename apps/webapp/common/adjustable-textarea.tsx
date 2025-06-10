@@ -46,9 +46,9 @@ export const AdjustableTextArea = ({
   }, [value]);
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-fit min-w-[80px]">
       <span
-        className={`absolute z-1 left-0 top-0 text-muted-foreground ${value ? 'hidden' : ''} ${placeholderClassName}`} // Placeholder styling
+        className={`absolute z-1 left-0 top-1 text-muted-foreground ${value ? 'hidden' : ''} ${placeholderClassName}`} // Placeholder styling
       >
         {placeholder}
       </span>

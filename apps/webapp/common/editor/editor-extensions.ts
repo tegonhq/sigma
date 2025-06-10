@@ -19,9 +19,7 @@ import {
   TaskItem,
 } from 'novel';
 import AutoJoiner from 'tiptap-extension-auto-joiner'; // optional
-// import GlobalDragHandle from 'tiptap-extension-global-drag-handle';
 
-import { datePageExtension } from './date-page-extension';
 import { GlobalDragHandle } from './drag-handler';
 import { fileExtension } from './file-extension';
 import { imageExtension } from './image-extension';
@@ -154,7 +152,6 @@ export const defaultExtensions = [
   }),
   AutoJoiner,
   TaskList,
-  datePageExtension,
   LinkTaskExtension,
   CustomKeymap,
   trailingNode,
@@ -178,7 +175,6 @@ export const extensionsForConversation = [
   fileExtension,
   imageExtension,
   HighlightExtension,
-  datePageExtension,
   Table.configure({
     resizable: true,
   }),

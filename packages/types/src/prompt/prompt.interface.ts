@@ -345,25 +345,7 @@ Here is the message:
 {{message}}
 </message>
 
-Here is the context:
-<context>
-{{isActivity}}
-{{activitySource}} // e.g. "GitHub", "Jira" etc. (only present if isActivity is true)
-</context>
-
 Please follow these steps:
-
-1. Determine if this is an activity-based conversation or general conversation based on the context.
-
-2. For activity-based conversations:
-   - Create a title that clearly indicates the source and action
-   - Format: "[Source Action] · Brief context"
-   - Example: "GitHub Issue · Sarah commented: 'Needs API check'"
-   - Keep it actionable and informative
-   - Include relevant actor names and key details
-   - Maximum length: 100 characters
-
-3. For general conversations:
    - Extract the core topic/intent from the message
    - Create a clear, concise title
    - Focus on the main subject or action

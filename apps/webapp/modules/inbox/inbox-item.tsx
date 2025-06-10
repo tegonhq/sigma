@@ -18,15 +18,15 @@ interface InboxItemProps {
 
 export const InboxItem = observer(
   ({ conversationId, selected, onSelect }: InboxItemProps) => {
-    const { conversationsStore, activitesStore, integrationAccountsStore } =
+    const { conversationsStore, activitiesStore, integrationAccountsStore } =
       useContextStore();
     const { data: syncs } = useGetConversationSyncsRun(conversationId);
 
     const conversationData =
       conversationsStore.getConversationWithId(conversationId);
     const { data: integrationDefinitions } = useGetIntegrationDefinitions();
-    const activity = activitesStore.getActivityById(
-      conversationData?.activityId,
+    const activity = activitiesStore.getActivityForConversation(
+      conversationData?.id,
     );
     const integrationAccount = integrationAccountsStore.getAccountWithId(
       activity?.integrationAccountId,

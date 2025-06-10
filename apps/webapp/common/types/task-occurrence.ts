@@ -6,6 +6,5 @@ export interface TaskOccurrenceType {
   endTime?: string;
   status?: string;
   workspaceId: string;
-  pageId: string;
   taskId: string;
 }

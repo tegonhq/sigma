@@ -55,6 +55,11 @@ export const ActivityStore: IAnyStateTreeNode = types
     getActivityById(activityId: string) {
       return self.activities.find((activity) => activity.id === activityId);
     },
+    getActivityForConversation(conversationId: string) {
+      return self.activities.find(
+        (activity) => activity.conversationId === conversationId,
+      );
+    },
   }));
 
 export interface ActivityStoreType {
@@ -67,4 +72,5 @@ export interface ActivityStoreType {
 
   getActivities: ActivityType[];
   getActivityById: (id: string) => ActivityType;
+  getActivityForConversation: (conversationId: string) => ActivityType;
 }

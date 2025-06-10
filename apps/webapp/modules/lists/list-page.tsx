@@ -18,6 +18,7 @@ import { useUpdatePageMutation } from 'services/pages';
 import { useContextStore } from 'store/global-context-provider';
 
 import { ListPageEditor } from './list-page-editor';
+import { ListPageHeader } from './list-page-header';
 
 interface ListPageProps {
   list: ListType;
@@ -58,7 +59,7 @@ export const ListPage = observer(({ list }: ListPageProps) => {
     return (
       <Popover>
         <PopoverTrigger>
-          <div className="relative top-1.5">{getIcon(list?.icon, 24)}</div>
+          <div className="relative">{getIcon(list?.icon, 24)}</div>
         </PopoverTrigger>
         <PopoverContent className="p-2">
           <IconPicker
@@ -75,9 +76,10 @@ export const ListPage = observer(({ list }: ListPageProps) => {
     <ScrollArea className="w-full h-full flex justify-center p-4 px-6 h-full">
       <div className="flex h-full justify-center w-full">
         <div className="grow flex flex-col gap-2 h-full max-w-[97ch]">
-          <div className="flex gap-2 items-start">
+          <div className="flex gap-2 items-center">
             {getIconComponent()}
             <PageTitle value={page?.title} onChange={onChange} />
+            <ListPageHeader list={list} />
           </div>
 
           <div className="flex flex-col gap-0">

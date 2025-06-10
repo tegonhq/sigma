@@ -32,7 +32,9 @@ export const useTaskRows = (collapsedHeader: Record<string, boolean>) => {
     (plan: (typeof planCategories)[number], existingTasks: TaskType[]) => {
       const today = new Date();
       const tomorrow = addDays(today, 1);
-      const endOfWeek = addDays(today, 7);
+      const endOfWeek = new Date(
+        today.setDate(today.getDate() - today.getDay() + 7),
+      ); // Get end of current week (Sunday)
 
       if (plan === 'Later') {
         // For Later, return all tasks that don't have occurrences in other time periods
@@ -68,10 +70,7 @@ export const useTaskRows = (collapsedHeader: Record<string, boolean>) => {
         .map((occurrence) => ({
           ...tasksStore.getTaskWithId(occurrence.taskId),
           taskOccurrenceId: occurrence.id,
-        }))
-        .filter((task) => {
-          return task && !existingTasks.find((t) => t.id === task.id);
-        });
+        }));
     },
     [taskOccurrences, tasksStore, tasks],
   );

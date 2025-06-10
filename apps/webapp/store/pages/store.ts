@@ -1,4 +1,3 @@
-import { PageTypeEnum } from '@sol/types';
 import { format } from 'date-fns';
 import { sort } from 'fast-sort';
 import { generateKeyBetween } from 'fractional-indexing'; // Import the fractional-index package
@@ -56,41 +55,6 @@ export const PagesStore: IAnyStateTreeNode = types
     return { update, deleteById, load };
   })
   .views((self) => ({
-    getPages() {
-      const buildTree = (pages: PageType[]) => {
-        const pageMap = new Map<string, PageType & { children: PageType[] }>();
-
-        // Initialize the map with all pages
-        pages.forEach((page) => {
-          pageMap.set(page.id, { ...page, children: [] });
-        });
-
-        const tree: Array<PageType & { children: PageType[] }> = [];
-
-        // Sort pages lexically by title before building the tree
-        const sortedPages = [...pages].sort((a, b) =>
-          a.sortOrder.localeCompare(b.sortOrder),
-        );
-
-        // Build the tree structure
-        sortedPages.forEach((page) => {
-          if (page.type !== PageTypeEnum.Daily) {
-            if (page.parentId) {
-              const parent = pageMap.get(page.parentId);
-              if (parent) {
-                parent.children.push(pageMap.get(page.id)!);
-              }
-            } else {
-              tree.push(pageMap.get(page.id)!);
-            }
-          }
-        });
-
-        return tree;
-      };
-
-      return buildTree(self.pages);
-    },
     getPagesWithIds(ids: string[]) {
       return self.pages.filter((page: PageType) => ids.includes(page.id));
     },

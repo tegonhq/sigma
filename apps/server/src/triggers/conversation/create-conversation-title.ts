@@ -11,29 +11,6 @@ export const createConversationTitle = task({
     message: string;
     pat: string;
   }) => {
-    const conversation = await prisma.conversation.findUnique({
-      where: {
-        id: payload.conversationId,
-      },
-    });
-
-    const activity =
-      conversation.activityId &&
-      (await prisma.activity.findUnique({
-        where: { id: conversation.activityId },
-        include: {
-          integrationAccount: {
-            include: {
-              integrationDefinition: true,
-            },
-          },
-        },
-      }));
-
-    const isActivity = !!conversation.activityId;
-    const activitySource =
-      activity?.integrationAccount.integrationDefinition.name;
-
     const conversationTitleResponse = (
       await axios.post(
         `${process.env.BACKEND_HOST}/v1/ai_requests`,
@@ -41,10 +18,10 @@ export const createConversationTitle = task({
           messages: [
             {
               role: 'user',
-              content: conversationTitlePrompt
-                .replace('{{message}}', payload.message)
-                .replace('{{isActivity}}', isActivity.toString())
-                .replace('{{activitySource}}', activitySource),
+              content: conversationTitlePrompt.replace(
+                '{{message}}',
+                payload.message,
+              ),
             },
           ],
           llmModel: LLMModelEnum.CLAUDESONNET,

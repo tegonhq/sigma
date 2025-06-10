@@ -10,7 +10,6 @@ export const Conversation = types.model({
   userId: types.string,
   workspaceId: types.string,
   pageId: types.union(types.null, types.string, types.undefined),
-  activityId: types.union(types.null, types.string, types.undefined),
   taskId: types.union(types.null, types.string, types.undefined),
   unread: types.union(types.null, types.boolean, types.undefined),
 });

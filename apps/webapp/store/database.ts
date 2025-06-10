@@ -37,7 +37,7 @@ export class SolDatabase extends Dexie {
   constructor(databaseName: string) {
     super(databaseName);
 
-    this.version(36).stores({
+    this.version(39).stores({
       [MODELS.Workspace]: 'id,createdAt,updatedAt,name,slug,userId',
       [MODELS.IntegrationAccount]:
         'id,createdAt,updatedAt,accountId,settings,integratedById,integrationDefinitionId,workspaceId',
@@ -46,17 +46,17 @@ export class SolDatabase extends Dexie {
       [MODELS.Task]:
         'id,createdAt,updatedAt,source,status,metadata,workspaceId,pageId,integrationAccountId,startTime,endTime,recurrence,number,completedAt,listId,dueDate,remindAt,scheduleText,parentId',
       [MODELS.TaskOccurrence]:
-        'id,createdAt,updatedAt,workspaceId,pageId,taskId,startTime,endTime,status',
+        'id,createdAt,updatedAt,workspaceId,taskId,startTime,endTime,status',
 
       [MODELS.Conversation]:
-        'id,createdAt,updatedAt,title,userId,workspaceId,pageId,taskId,activityId,unread',
+        'id,createdAt,updatedAt,title,userId,workspaceId,pageId,taskId,unread',
       [MODELS.ConversationHistory]:
         'id,createdAt,updatedAt,message,userType,context,thoughts,userId,conversationId',
       [MODELS.List]: 'id,createdAt,updatedAt,pageId,icon,favourite',
       [MODELS.AgentWorklog]:
         'id,createdAt,updatedAt,modelName,modelId,state,type,workspaceId',
       [MODELS.Activity]:
-        'id,createdAt,updatedAt,text,sourceId,sourceURL,taskId,integrationAccountId,workspaceId',
+        'id,createdAt,updatedAt,text,sourceId,sourceURL,taskId,integrationAccountId,workspaceId,conversationId',
       [MODELS.Automation]:
         'id,createdAt,updatedAt,text,usedCount,mcps,integrationAccountIds,workspaceId',
 

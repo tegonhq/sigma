@@ -1,4 +1,5 @@
 import { AddLine, Button } from '@redplanethq/ui';
+import { observer } from 'mobx-react-lite';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
 
@@ -8,11 +9,11 @@ import { useApplication } from 'hooks/application';
 
 import { AIHistoryDropdown } from './history-dropdown';
 
-export const ConversationHeaderActions = () => {
+export const ConversationHeaderActions = observer(() => {
   const { updateConversationId } = useApplication();
 
   useHotkeys(
-    [`${Key.Meta}+${Key.Shift}+n`],
+    [`${Key.Meta}+n`],
     () => {
       updateConversationId(undefined);
     },
@@ -27,7 +28,6 @@ export const ConversationHeaderActions = () => {
     <div className="flex items-center">
       <Button
         variant="ghost"
-        className="text-muted-foreground"
         onClick={() => {
           updateConversationId(undefined);
         }}
@@ -37,4 +37,4 @@ export const ConversationHeaderActions = () => {
       <AIHistoryDropdown />
     </div>
   );
-};
+});

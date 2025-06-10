@@ -145,29 +145,16 @@ export async function processTaskOccurrences(
       });
 
       // Step 4: Bulk upsert task occurrences
-      // Create a list of unique taskId_pageId combinations for upsert
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const upsertOperations = taskOccurrenceData.map((data: any) => {
-        return prisma.taskOccurrence.upsert({
-          where: {
-            taskId_pageId: {
-              taskId: data.taskId,
-              pageId: data.pageId,
-            },
-          },
-          create: {
+        return prisma.taskOccurrence.create({
+          data: {
             taskId: data.taskId,
-            pageId: data.pageId,
             workspaceId: data.workspaceId,
             startTime: data.startTime,
             endTime: data.endTime,
             status: data.status,
             deleted: null,
-          },
-          update: {
-            deleted: null,
-            startTime: data.startTime,
-            endTime: data.endTime,
           },
         });
       });

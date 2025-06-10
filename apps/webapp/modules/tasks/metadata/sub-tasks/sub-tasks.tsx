@@ -79,7 +79,7 @@ export const SubTasks = observer(
                         className="shrink-0 h-[16px] w-[16px] ml-1"
                         checked={task.status === 'Done'}
                       />
-                      <div className="text-muted-foreground font-mono min-w-[40px] pl-1 text-sm self-center">
+                      <div className="text-muted-foreground font-mono min-w-[40px] pl-1 text-sm self-center shrink-0">
                         T-{task.number}
                       </div>
                       <div className="inline-flex ml-1 items-center justify-start shrink min-w-[0px] min-h-[24px]">
