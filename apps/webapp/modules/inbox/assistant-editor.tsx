@@ -15,7 +15,7 @@ import {
 } from 'modules/conversation/suggestion-extension';
 import { useSearchCommands } from 'modules/search/command/use-search-commands';
 
-import { EditorRoot, lowlight, type EditorT } from 'common/editor';
+import { EditorRoot, lowlight, starterKit, type EditorT } from 'common/editor';
 import { SCOPES } from 'common/shortcut-scopes';
 
 interface ConversationTextareaProps {
@@ -161,7 +161,7 @@ export function AssistantEditor({
   };
 
   return (
-    <Command className="rounded-lg border bg-background-3 mt-0 w-full p-1 rounded-xl shadow border-gray-300 border-1 !h-auto">
+    <Command className="rounded-lg border bg-background-3 mt-0 w-full p-1 rounded-xl border-gray-300 border-1 !h-auto">
       <div
         className={cn(
           'flex flex-col rounded-md pt-1 bg-transparent',
@@ -197,6 +197,7 @@ export function AssistantEditor({
               HardBreak.configure({
                 keepMarks: true,
               }),
+              starterKit,
               Placeholder.configure({
                 placeholder: () => {
                   return placeholder ?? 'Ask sol...';
@@ -219,6 +220,14 @@ export function AssistantEditor({
                 class: `prose prose-lg dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full`,
               },
               handleKeyDown(view, event) {
+                if (event.key === 'Enter' && event.metaKey) {
+                  onSend(html, agents, text);
+                  editor.commands.clearContent(true);
+                  setText('');
+                  setHTML('');
+                  return true;
+                }
+
                 // Block default Enter
                 if (event.key === 'Enter' && !event.shiftKey) {
                   const mentionItem = document.querySelector(
@@ -239,11 +248,7 @@ export function AssistantEditor({
                     return true;
                   }
 
-                  onSend(html, agents, text);
-                  editor.commands.clearContent(true);
-                  setText('');
-
-                  return true;
+                  return false;
                 }
 
                 // Allow Shift+Enter to insert hard break
@@ -288,7 +293,7 @@ export function AssistantEditor({
               }
             }}
           >
-            {isLoading ? <>Generating...</> : <>Chat ↵</>}
+            {isLoading ? <>Generating...</> : <>Chat</>}
           </Button>
         </div>
       </CommandList>

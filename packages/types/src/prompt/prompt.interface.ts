@@ -51,7 +51,7 @@ The current time and timezone for reference is:
 
 Please follow these steps to complete the task:
 
-1. Analyze the input text to identify information about event frequency, recurrence patterns, start time, end time, and due date.
+1. Analyze the input text to identify information about event frequency, recurrence patterns, start time, and end time.
 
 2. If frequency information is found, create RRULE strings based on it. The RRULE should follow the iCalendar specification (RFC 5545). Include the frequency part (e.g., FREQ=DAILY, FREQ=WEEKLY;BYDAY=MO,WE,FR, etc.) and any time-specific information (BYHOUR, BYMINUTE) if a specific time is associated with the recurrence pattern. If multiple recurrence patterns are detected, create separate RRULE strings for each.
 
@@ -59,13 +59,9 @@ Please follow these steps to complete the task:
 
 4. If an end time is not explicitly stated for a scheduled task, add 15 minutes to the start time to create an end time.
 
-5. Extract and format any mentioned due date using the same ISO 8601 format. A due date represents when a task needs to be completed by, as opposed to when it occurs (which would be the start/end time).
-
-6. Generate a concise, human-readable description of the recurrence pattern and/or schedule. This should be brief (maximum 10-15 words) and easily scannable.
-
 Before providing the final output, wrap your analysis in <recurrence_parsing> tags. Include:
 
-a. A list of recurrence and time components found in the text (frequency, days, intervals, start time, end time, due date).
+a. A list of recurrence and time components found in the text (frequency, days, intervals, start time, end time).
 b. Relevant quotes from the input text for each identified component.
 c. Your interpretation of the recurrence and time information, considering different possibilities.
 d. A step-by-step plan for constructing each RRULE string (if applicable), including how you're incorporating time-specific information.
@@ -73,16 +69,14 @@ e. Your approach for generating a clear human-readable description of the recurr
 f. Identification of any ambiguities or missing information and how you'll handle them.
 g. If a specific time is mentioned without a recurrence pattern, explain how you're interpreting it (as a one-time event).
 h. If multiple recurrence patterns are detected, explain how you're separating them into distinct rules.
-i. Explain your reasoning for identifying a date as a due date versus a start time, if applicable.
 
 After your analysis, provide the final JSON output with the following structure:
 <output>
 {
   "recurrenceRule": ["RRULE string 1", "RRULE string 2", ...] or [] if not applicable,
   "scheduleText": "Brief description (10-15 words max)",
-  "startTime": "Formatted start time or empty string if not found",
-  "endTime": "Formatted end time or empty string if not found",
-  "dueDate": "Formatted due date or empty string if not applicable"
+  "startTime": "YYYY-MM-DDTHH:MM:SS±HH:MM" or "" if not found,
+  "endTime": "YYYY-MM-DDTHH:MM:SS±HH:MM" or "" if not found
 }
 </output>
 If the input text does not contain any recurrence or scheduling information, return an empty JSON object {}.`;

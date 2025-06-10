@@ -4,7 +4,10 @@ import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 
+import { AIThinking } from 'modules/ai-thinking';
+
 import { SCOPES } from 'common/shortcut-scopes';
+import { TooltipWrapper } from 'common/tooltip';
 import { RightSideViewContext } from 'layouts/right-side-layout';
 
 import { useApplication } from 'hooks/application';
@@ -74,43 +77,49 @@ export const AppTabs = observer(() => {
   };
 
   return (
-    <div className="tabs-list rounded-none flex gap-2 w-full justify-between items-center mt-2">
+    <div className="tabs-list rounded-none flex gap-2 w-full justify-between items-center mt-1">
       <div className="flex rounded-md items-center px-2 h-11">
         <WorkspaceDropdown />
       </div>
-      <div className="flex gap-1 items-center shrink-0 p-1 px-1 bg-background-3 rounded-md">
-        <Button
-          variant="ghost"
-          onClick={() => goTo(TabViewType.ASSISTANT)}
-          className={cn(
-            'gap-1',
-            activeTab.type === TabViewType.ASSISTANT && 'bg-grayAlpha-100',
-          )}
-        >
-          <Inbox size={20} /> Home
-        </Button>
+      <div className="flex gap-1 items-center shrink-0 p-1 px-1 bg-background-3 rounded-md shadow">
+        <TooltipWrapper tooltip="G then H">
+          <Button
+            variant="ghost"
+            onClick={() => goTo(TabViewType.ASSISTANT)}
+            className={cn(
+              'gap-1',
+              activeTab.type === TabViewType.ASSISTANT && 'bg-grayAlpha-100',
+            )}
+          >
+            <Inbox size={20} /> Home
+          </Button>
+        </TooltipWrapper>
+        <TooltipWrapper tooltip="G then T">
+          <Button
+            variant="ghost"
+            onClick={() => goTo(TabViewType.MY_TASKS)}
+            className={cn(
+              'gap-1',
+              activeTab.type === TabViewType.MY_TASKS && 'bg-grayAlpha-100',
+            )}
+          >
+            <IssuesLine size={18} /> Tasks
+          </Button>
+        </TooltipWrapper>
+        <TooltipWrapper tooltip="G then L">
+          <Button
+            variant="ghost"
+            onClick={() => goTo(TabViewType.LIST)}
+            className={cn(
+              'gap-1',
+              activeTab.type === TabViewType.LIST && 'bg-grayAlpha-100',
+            )}
+          >
+            <Project size={18} /> List
+          </Button>
+        </TooltipWrapper>
 
-        <Button
-          variant="ghost"
-          onClick={() => goTo(TabViewType.MY_TASKS)}
-          className={cn(
-            'gap-1',
-            activeTab.type === TabViewType.MY_TASKS && 'bg-grayAlpha-100',
-          )}
-        >
-          <IssuesLine size={18} /> Tasks
-        </Button>
-
-        <Button
-          variant="ghost"
-          onClick={() => goTo(TabViewType.LIST)}
-          className={cn(
-            'gap-1',
-            activeTab.type === TabViewType.LIST && 'bg-grayAlpha-100',
-          )}
-        >
-          <Project size={18} /> List
-        </Button>
+        <AIThinking />
       </div>
 
       <div

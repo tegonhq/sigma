@@ -72,18 +72,6 @@ export function getTaskContent(task: Task) {
   };
 }
 
-export function getSummaryData(task: Task, isCreate: boolean) {
-  return {
-    type: 'task',
-    action: isCreate ? 'create' : 'update',
-    content: getTaskContent(task),
-    metadata: {
-      createdAt: task.createdAt,
-      updatedAt: task.updatedAt,
-    },
-  };
-}
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getCurrentTaskIds = (tiptapJson: any) => {
   const taskIds: string[] = [];

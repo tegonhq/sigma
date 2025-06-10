@@ -408,8 +408,4 @@ export class TaskOccurenceService {
 
     return data;
   }
-
-  async handleHooks(taskOccurenceId: string, action: string) {
-    console.log(taskOccurenceId, action);
-  }
 }

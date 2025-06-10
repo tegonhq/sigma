@@ -208,7 +208,7 @@ const config = {
         'accordion-up': 'accordion-up 0.2s ease-out',
         'multiline-strikethrough':
           'multiline-strikethrough 0.3s ease-in forwards',
-        'gradient-slide': 'gradientSlide 0.2s linear infinite',
+        'gradient-slide': 'gradientSlide 10s linear infinite',
       },
     },
   },

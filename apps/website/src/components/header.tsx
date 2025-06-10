@@ -31,7 +31,7 @@ export const Header = () => {
           {/* Features Dropdown */}
           <Popover>
             <PopoverTrigger>
-              <Button variant="ghost"> Features </Button>
+              <Button variant="ghost"> Features</Button>
             </PopoverTrigger>
 
             <PopoverContent className="p-2 w-30">

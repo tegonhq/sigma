@@ -8,6 +8,7 @@ import {
 } from '@redplanethq/sol-sdk';
 import { logger, task } from '@trigger.dev/sdk/v3';
 import axios from 'axios';
+import { addMinutes } from 'date-fns';
 
 const prisma = new PrismaClient();
 
@@ -122,8 +123,11 @@ export const beautifyTask = task({
           ...(outputData.startTime && {
             startTime: outputData.startTime,
           }),
-          ...(outputData.endTime && { endTime: outputData.endTime }),
-          ...(outputData.dueDate && { dueDate: outputData.dueDate }),
+          ...(outputData.endTime && {
+            endTime: outputData.endTime
+              ? outputData.endTime
+              : addMinutes(outputData.startTime, 15).toISOString(),
+          }),
 
           // Recurrence related fields
           ...(outputData.recurrenceRule && {
@@ -153,6 +157,7 @@ export const beautifyTask = task({
         data: { state: AgentWorklogStateEnum.Done },
       });
     } catch (error) {
+      console.log(error);
       logger.error(`Beautify failed: ${JSON.stringify(error)}`);
 
       await prisma.agentWorklog.update({

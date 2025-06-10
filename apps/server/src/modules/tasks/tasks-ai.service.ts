@@ -5,7 +5,7 @@ import {
   ReccurenceInput,
   recurrencePrompt,
 } from '@redplanethq/sol-sdk';
-import { endOfDay, startOfDay } from 'date-fns';
+import { addMinutes, endOfDay, startOfDay } from 'date-fns';
 import { PrismaService } from 'nestjs-prisma';
 
 import AIRequestsService from 'modules/ai-requests/ai-requests.services';
@@ -51,26 +51,31 @@ export default class TasksAIService {
         {
           taskIds: recurrenceInput.taskIds,
           startTime: startOfDay(data.startTime).toISOString(),
-          endTime: endOfDay(data.startTime).toISOString(),
+          endTime: addMinutes(data.startTime, 15).toISOString(),
         },
         workspaceId,
       );
-    } else {
-      await this.prisma.task.updateMany({
-        where: {
-          id: {
-            in: recurrenceInput.taskIds,
-          },
-        },
-        data: {
-          status: 'Todo',
-          recurrence: data.recurrenceRule ? data.recurrenceRule : [],
-          scheduleText: data.scheduleText ? data.scheduleText : null,
-          startTime: data.startTime ? data.startTime : null,
-          endTime: data.endTime ? data.endTime : null,
-        },
-      });
     }
+
+    await this.prisma.task.updateMany({
+      where: {
+        id: {
+          in: recurrenceInput.taskIds,
+        },
+      },
+      data: {
+        status: 'Todo',
+        recurrence: data.recurrenceRule ? data.recurrenceRule : [],
+        scheduleText:
+          data.recurrenceRule && data.recurrenceRule.length > 0
+            ? data.scheduleText
+            : null,
+        startTime: data.startTime ? data.startTime : null,
+        endTime: data.endTime
+          ? data.endTime
+          : addMinutes(data.startTime, 15).toISOString(),
+      },
+    });
 
     await this.prisma.agentWorklog.update({
       where: {

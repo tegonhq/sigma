@@ -11,7 +11,6 @@ import { useContextStore } from 'store/global-context-provider';
 import { UserContext } from 'store/user-context';
 
 import { AssistantEditor } from './assistant-editor';
-import { ConversationsView } from './conversation-view';
 import { TodayView } from './today-view';
 import { getTasksForToday } from './utils';
 
@@ -61,8 +60,6 @@ export const NewConversation = observer(() => {
           </h1>
 
           <AssistantEditor onSend={onSend} placeholder="Search or Ask sol..." />
-
-          <ConversationsView />
 
           {taskIds && (
             <div className="mt-4">
