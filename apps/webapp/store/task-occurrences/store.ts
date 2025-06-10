@@ -109,8 +109,6 @@ export const TaskOccurrencesStore: IAnyStateTreeNode = types
         (self as any).update(taskOccurrence, taskOccurrence.id);
       });
 
-      self.taskOccurrencesArray = taskOccurrences;
-
       self.loading = false;
     });
 

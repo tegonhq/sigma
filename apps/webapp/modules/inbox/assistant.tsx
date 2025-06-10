@@ -18,23 +18,12 @@ export const Assistant = observer(() => {
   const { activeTab } = useApplication();
   const { isLoading } = useGetIntegrationDefinitions();
 
-  // const getActivityId = () => {
-  //   return conversation?.modelId;
-  // };
-
-  // React.useEffect(() => {
-  //   if (conversation && !conversation?.read) {
-  //     readNotification(currentNotification);
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [conversation]);
-
   if (isLoading) {
     return null;
   }
 
   return (
-    <div className={cn('h-[calc(100vh_-_40px)] flex flex-col pt-10')}>
+    <div className={cn('h-[calc(100vh_-56px)] flex flex-col pt-4')}>
       {activeTab.conversation_id ? (
         <InboxConversation conversationId={activeTab.conversation_id} />
       ) : (

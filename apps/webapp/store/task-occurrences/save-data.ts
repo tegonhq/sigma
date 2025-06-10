@@ -21,7 +21,6 @@ export async function saveTaskOccurrencesData(
 
         workspaceId: record.data.workspaceId,
         taskId: record.data.taskId,
-        pageId: record.data.pageId,
       };
 
       switch (record.action) {

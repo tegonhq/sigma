@@ -18,6 +18,8 @@ export async function createMainWindow() {
     resizable: true,
     movable: true,
     hasShadow: true,
+    // titleBarStyle: 'hiddenInset',
+    // transparent: true,
     skipTaskbar: true, // Hides it from the taskbar
     icon: path.join(__dirname, '/../../../buildResources/icon.png'),
     frame: true,

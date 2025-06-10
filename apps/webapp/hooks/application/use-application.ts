@@ -61,12 +61,17 @@ export const useApplication = () => {
 
   const changeActiveTab = (
     type: TabViewType,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    { entityId, data }: { entityId?: string; data?: any },
+    {
+      entityId,
+      conversationId,
+      data,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    }: { entityId?: string; conversationId?: string; data?: any },
   ) => {
     const activeTab = getTabGroup().activeTab;
 
     activeTab.changeType(type, entityId);
+    activeTab.updateConversationId(conversationId);
     activeTab.updateData(data);
 
     historyManager.save(applicationStore);

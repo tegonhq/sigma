@@ -18,7 +18,6 @@ export async function saveConversationData(
         userId: record.data.userId,
         workspaceId: record.data.workspaceId,
         pageId: record.data.pageId,
-        activityId: record.data.activityId,
         taskId: record.data.taskId,
         unread: record.data.unread,
       };

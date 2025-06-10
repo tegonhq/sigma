@@ -190,15 +190,9 @@ export default class WorkspacesService {
     if (!value) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const scheduleId = (workspace.preferences as any).scheduleId;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const dailySyncSchedule = (workspace.preferences as any)
-        .dailySyncSchedule;
+
       if (scheduleId) {
         await schedules.del(scheduleId);
-      }
-
-      if (dailySyncSchedule) {
-        await schedules.del(dailySyncSchedule);
       }
 
       return;
@@ -217,18 +211,6 @@ export default class WorkspacesService {
       externalId: workspace.id,
     });
 
-    const dailySyncSchedule = await schedules.create({
-      // The id of the scheduled task you want to attach to.
-      task: 'daily-sync-schedule',
-      // The schedule in cron format - runs at 9am, 1pm, and 8pm
-      cron: '0 9,13,20 * * *',
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      timezone: (workspace.preferences as any).timezone,
-      // this is required, it prevents you from creating duplicate schedules. It will update the schedule if it already exists.
-      deduplicationKey: workspace.id,
-      externalId: workspace.id,
-    });
-
     await this.prisma.workspace.update({
       where: {
         id: workspace.id,
@@ -237,7 +219,6 @@ export default class WorkspacesService {
         preferences: {
           ...(workspace.preferences as Record<string, string>),
           scheduleId: createdRunSchedule.id,
-          dailySyncSchedule: dailySyncSchedule.id,
         },
       },
     });

@@ -93,15 +93,15 @@ export const SkillComponent = observer((props: any) => {
           open={open}
           onOpenChange={setOpen}
         >
-          <CollapsibleTrigger className="p-1 px-2 h-full flex gap-1 items-center">
-            <div className="px-0">
-              {!open ? <ChevronRight size={16} /> : <ChevronDown size={16} />}
-            </div>
+          <CollapsibleTrigger className="p-2 px-3 h-full flex gap-1 items-center">
             <div className="flex gap-2 items-center">
               {getIcon()}
               <span className="text-muted-foreground font-mono text-sm">
                 {snakeToTitleCase(name)}
               </span>
+            </div>
+            <div className="px-0">
+              {!open ? <ChevronRight size={16} /> : <ChevronDown size={16} />}
             </div>
           </CollapsibleTrigger>
 

@@ -1,13 +1,12 @@
 export enum SCOPES {
   Global = 'global',
-  Day = 'day',
   Search = 'search',
   Task = 'task',
   Tasks = 'tasks',
+  List = 'list',
   AI = 'ai',
 
   // view
-  SIDE_VIEW = 'SIDE_VIEW',
   ASSISTANT = 'ASSISTANT',
 }
 

@@ -5,7 +5,6 @@ import {
   GetTaskOccurrenceDTO,
   PageTypeEnum,
   Preferences,
-  PublicPage,
   TaskOccurrence,
   UpdateTaskOccurenceDTO,
 } from '@redplanethq/sol-sdk';
@@ -98,44 +97,16 @@ export class TaskOccurenceService {
     workspaceId: string,
   ): Promise<TaskOccurrence[]> {
     const { taskIds, startTime, endTime } = createTaskOccurenceData;
-    let pageId = createTaskOccurenceData.pageId;
-    const workspace = await this.prisma.workspace.findUnique({
-      where: { id: workspaceId },
-    });
-    const timezone = (workspace.preferences as Preferences).timezone;
-
-    let page: PublicPage;
-    if (!pageId) {
-      const formattedDate = formatInTimeZone(
-        new Date(startTime),
-        timezone,
-        'dd-MM-yyyy',
-      );
-      page = await this.pagesService.getOrCreatePageByTitle(workspaceId, {
-        title: formattedDate,
-        type: PageTypeEnum.Daily,
-      });
-      pageId = page.id;
-    }
-
-    if (!page || !pageId) {
-      return null;
-    }
 
     // Create each task occurrence in parallel
     return await Promise.all(
-      taskIds.map((taskId) =>
-        this.prisma.taskOccurrence.upsert({
-          where: { taskId_pageId: { taskId, pageId } },
-          create: {
+      taskIds.map((taskId: string) =>
+        this.prisma.taskOccurrence.create({
+          data: {
             taskId,
             startTime: startTime ? new Date(startTime) : null,
             endTime: endTime ? new Date(endTime) : null,
-            pageId: pageId || page.id,
             workspaceId,
-          },
-          update: {
-            deleted: null,
           },
         }),
       ),
@@ -168,7 +139,7 @@ export class TaskOccurenceService {
   ): Promise<TaskOccurrence> {
     const taskOccurrence = await this.prisma.taskOccurrence.findUnique({
       where: { id: taskOccurrenceId },
-      include: { task: true, page: true },
+      include: { task: true },
     });
 
     if (!taskOccurrence || taskOccurrence.workspaceId !== workspaceId) {
@@ -228,7 +199,7 @@ export class TaskOccurenceService {
 
     const taskOccurences = await this.prisma.taskOccurrence.findMany({
       where: { id: { in: taskOccurrenceIds } },
-      include: { page: true, task: true },
+      include: { task: true },
     });
 
     return taskOccurences;
@@ -367,26 +338,14 @@ export class TaskOccurenceService {
     // Create a list of unique taskId_pageId combinations for upsert
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const upsertOperations = taskOccurrenceData.map((data: any) => {
-      return this.prisma.taskOccurrence.upsert({
-        where: {
-          taskId_pageId: {
-            taskId: data.taskId,
-            pageId: data.pageId,
-          },
-        },
-        create: {
+      return this.prisma.taskOccurrence.create({
+        data: {
           taskId: data.taskId,
-          pageId: data.pageId,
           workspaceId: data.workspaceId,
           startTime: data.startTime,
           endTime: data.endTime,
           status: data.status,
           deleted: null,
-        },
-        update: {
-          deleted: null,
-          startTime: data.startTime,
-          endTime: data.endTime,
         },
       });
     });
@@ -409,21 +368,21 @@ export class TaskOccurenceService {
 
     return await this.createTaskOccurenceByTask(taskId, workspaceId);
   }
-
   async deleteTaskOccurenceByTask(taskId: string, workspaceId: string) {
     const workspace = await this.prisma.workspace.findUnique({
       where: { id: workspaceId },
     });
 
     // Get start of today in workspace timezone
-    const todayInTZ = formatInTimeZone(
+    const timezone = (workspace.preferences as Preferences).timezone || 'UTC';
+    const todayStart = formatInTimeZone(
       new Date(),
-      (workspace.preferences as Preferences).timezone || 'UTC',
-      'yyyy-MM-dd',
+      timezone,
+      "yyyy-MM-dd'T'00:00:00.000xxx",
     );
 
-    // Convert to UTC for database query
-    const todayUTC = new Date(todayInTZ);
+    // Convert to UTC Date object
+    const todayStartUTC = new Date(todayStart);
 
     // Update task to remove recurrence
     await this.prisma.task.update({
@@ -437,42 +396,20 @@ export class TaskOccurenceService {
     });
 
     // Delete all occurrences from today onwards in UTC
-    return await this.prisma.taskOccurrence.updateMany({
+    const data = await this.prisma.taskOccurrence.updateMany({
       where: {
         taskId,
         startTime: {
-          gte: todayUTC,
+          gte: todayStartUTC,
         },
       },
       data: { deleted: new Date().toISOString() },
     });
+
+    return data;
   }
 
   async handleHooks(taskOccurenceId: string, action: string) {
-    const taskOccurence = await this.prisma.taskOccurrence.findUnique({
-      where: { id: taskOccurenceId },
-    });
-
-    switch (action) {
-      case 'create':
-        await this.pagesService.upsertTasksInPageById(taskOccurence.pageId, [
-          taskOccurence.taskId,
-        ]);
-        break;
-
-      case 'update':
-        if (!taskOccurence.deleted) {
-          await this.pagesService.upsertTasksInPageById(taskOccurence.pageId, [
-            taskOccurence.taskId,
-          ]);
-        }
-        break;
-
-      case 'delete':
-        await this.pagesService.removeTaskFromPageById(taskOccurence.pageId, [
-          taskOccurence.taskId,
-        ]);
-        break;
-    }
+    console.log(taskOccurenceId, action);
   }
 }

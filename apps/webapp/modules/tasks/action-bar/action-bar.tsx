@@ -49,7 +49,7 @@ export const ActionBar = observer(({ openDialog }: ActionBarProps) => {
   );
 
   return (
-    <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 shadow-1 rounded-lg bg-background p-2">
+    <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 shadow-1 rounded-lg bg-background-3 p-2">
       <div className="flex gap-2 items-center">
         <div className="flex items-center ml-2">
           {selectedTasks.length} tasks

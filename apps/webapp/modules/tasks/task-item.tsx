@@ -192,6 +192,7 @@ export const TaskListItem = observer(
                   </div>
                   <TaskInfo
                     task={task}
+                    minimal={minimal}
                     taskOccurrenceId={
                       task.startTime ? taskOccurrenceId : undefined
                     }

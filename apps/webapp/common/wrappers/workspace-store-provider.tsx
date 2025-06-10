@@ -20,7 +20,7 @@ export const WorkspaceStoreInit = observer(
       listsStore,
       taskOccurrencesStore,
       agentWorklogsStore,
-      activitesStore,
+      activitiesStore,
       automationsStore,
     } = useContextStore();
 
@@ -55,7 +55,7 @@ export const WorkspaceStoreInit = observer(
         listsStore.load(),
         taskOccurrencesStore.load(),
         agentWorklogsStore.load(),
-        activitesStore.load(),
+        activitiesStore.load(),
         automationsStore.load(),
       ]);
 

@@ -10,7 +10,6 @@ export const TaskOccurrence = types.model({
   status: types.union(types.null, types.string),
 
   taskId: types.string,
-  pageId: types.string,
   workspaceId: types.string,
 });
 

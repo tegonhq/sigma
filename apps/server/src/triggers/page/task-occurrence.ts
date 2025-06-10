@@ -165,25 +165,13 @@ export const processTaskOccurrences = task({
         const upsertOperations: TaskOccurrence[] = taskOccurrenceData.map(
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (data: any) => {
-            return prisma.taskOccurrence.upsert({
-              where: {
-                taskId_pageId: {
-                  taskId: data.taskId,
-                  pageId: data.pageId,
-                },
-              },
-              create: {
+            return prisma.taskOccurrence.create({
+              data: {
                 taskId: data.taskId,
-                pageId: data.pageId,
                 workspaceId: data.workspaceId,
                 startTime: data.startTime,
                 endTime: data.endTime,
                 status: data.status,
-              },
-              update: {
-                deleted: null,
-                startTime: data.startTime,
-                endTime: data.endTime,
               },
             });
           },

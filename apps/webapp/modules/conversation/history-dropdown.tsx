@@ -44,7 +44,7 @@ export const AIHistoryDropdown = observer(() => {
     >
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <Button variant="ghost" className="text-muted-foreground">
+          <Button variant="ghost">
             <HistoryIcon size={16} />
           </Button>
         </PopoverTrigger>

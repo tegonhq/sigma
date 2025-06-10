@@ -44,7 +44,7 @@ const StoreContextModel = types.model({
   listsStore: ListsStore,
   taskOccurrencesStore: TaskOccurrencesStore,
   agentWorklogsStore: AgentWorklogsStore,
-  activitesStore: ActivityStore,
+  activitiesStore: ActivityStore,
   automationsStore: AutomationStore,
 });
 
@@ -85,7 +85,7 @@ export const storeContextStore = StoreContextModel.create({
   agentWorklogsStore: {
     agentWorklogs: [],
   },
-  activitesStore: {
+  activitiesStore: {
     activities: [],
   },
   automationsStore: {
@@ -104,7 +104,7 @@ export interface StoreContextInstanceType {
   listsStore: ListsStoreType;
   taskOccurrencesStore: TaskOccurrencesStoreType;
   agentWorklogsStore: AgentWorklogStoreType;
-  activitesStore: ActivityStoreType;
+  activitiesStore: ActivityStoreType;
   automationsStore: AutomationStoreType;
 }
 export const StoreContext =

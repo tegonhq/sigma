@@ -37,7 +37,8 @@ const config = {
       '6': '6px',
       '8': '8px',
       DEFAULT: '0.5px',
-    },
+    } /* playground color palette */,
+
     extend: {
       fontFamily: {
         sans: ['var(--font-geist-sans)'],

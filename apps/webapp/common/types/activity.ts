@@ -7,6 +7,8 @@ export interface ActivityType {
   sourceId?: string;
   sourceURL?: string;
 
+  conversationId?: string;
+
   taskId?: string;
   workspaceId: string;
   integrationAccountId?: string;

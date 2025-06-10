@@ -151,6 +151,14 @@ export const useSearchCommands = (
             onClose();
           },
         },
+        {
+          Icon: AI,
+          text: 'Activities',
+          command: () => {
+            openSettings('Activities');
+            onClose();
+          },
+        },
       ];
     }
 

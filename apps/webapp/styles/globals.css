@@ -196,6 +196,10 @@ These are table stylings
   box-shadow: none;
 }
 
+.ProseMirror:not(.dragging) .ProseMirror-selectednode.node-skill {
+  @apply !bg-transparent;
+}
+
 .prosemirror-dropcursor-block {
   @apply !bg-primary/50;
   height: 2px !important;

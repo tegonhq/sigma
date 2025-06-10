@@ -11,6 +11,7 @@ export const Activity = types.model({
   taskId: types.union(types.undefined, types.null, types.string),
   integrationAccountId: types.union(types.undefined, types.null, types.string),
   rejectReason: types.union(types.undefined, types.null, types.string),
+  conversationId: types.union(types.undefined, types.null, types.string),
 
   workspaceId: types.string,
 });
