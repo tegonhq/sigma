@@ -20,7 +20,7 @@ export const MentionComponent = observer((props: NodeViewProps) => {
   const mcpServers = useMCPServers();
 
   const agent = mcpServers.find((ag) => ag.key === props.node.attrs.id);
-  const Icon = getIcon(agent.key as IconType);
+  const Icon = getIcon(agent?.key as IconType);
 
   return (
     <NodeViewWrapper className="inline w-fit">
@@ -29,7 +29,7 @@ export const MentionComponent = observer((props: NodeViewProps) => {
           'mention bg-grayAlpha-100 px-1 rounded-sm text-foreground inline-flex w-fit items-center gap-1 h-5 relative top-0.5',
         )}
       >
-        {agent.name === 'Sigma' ? (
+        {agent?.name === 'Sigma' ? (
           <Image
             src="/logo_light.svg"
             alt="logo"

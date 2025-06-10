@@ -13,7 +13,6 @@ import { LoggerService } from 'modules/logger/logger.service';
 import { PagesService } from 'modules/pages/pages.service';
 import { SyncGateway } from 'modules/sync/sync.gateway';
 import SyncActionsService from 'modules/sync-actions/sync-actions.service';
-import { TaskOccurenceService } from 'modules/task-occurrence/task-occurrence.service';
 import { TaskHooksService } from 'modules/tasks-hook/tasks-hook.service';
 
 import {
@@ -40,7 +39,6 @@ export default class ReplicationService {
     private pagesService: PagesService,
     private taskHooksService: TaskHooksService,
     private activity: ActivityService,
-    private taskOccurenceService: TaskOccurenceService,
   ) {
     this.client = new Client({
       user: configService.get('POSTGRES_USER'),
@@ -258,13 +256,6 @@ export default class ReplicationService {
                 modelId,
                 convertToActionType(isDeleted ? 'delete' : change.kind),
                 changedData,
-              );
-            }
-
-            if (ModelNameEnum.TaskOccurrence === modelName) {
-              this.taskOccurenceService.handleHooks(
-                modelId,
-                convertToActionType(isDeleted ? 'delete' : change.kind),
               );
             }
           }

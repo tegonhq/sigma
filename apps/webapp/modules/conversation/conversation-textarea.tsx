@@ -7,7 +7,7 @@ import { EditorContent, CodeBlockLowlight, Placeholder } from 'novel';
 import { useState } from 'react';
 import React from 'react';
 
-import { EditorRoot, lowlight, type EditorT } from 'common/editor';
+import { EditorRoot, lowlight, starterKit, type EditorT } from 'common/editor';
 
 import { CustomMention, useMentionSuggestions } from './suggestion-extension';
 
@@ -95,6 +95,7 @@ export function ConversationTextarea({
             CodeBlockLowlight.configure({
               lowlight,
             }),
+            starterKit,
             HardBreak.configure({
               keepMarks: true,
             }),
@@ -120,6 +121,16 @@ export function ConversationTextarea({
               class: `prose prose-lg dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full`,
             },
             handleKeyDown(view, event) {
+              if (event.key === 'Enter' && event.metaKey) {
+                const title = editor.getText();
+
+                onSend(text, agents, title);
+                editor.commands.clearContent(true);
+                setText('');
+
+                return true;
+              }
+
               // Block default Enter
               if (event.key === 'Enter' && !event.shiftKey) {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -131,15 +142,7 @@ export function ConversationTextarea({
 
                 event.preventDefault();
 
-                if (text) {
-                  const title = editor.getText();
-
-                  onSend(text, agents, title);
-                  editor.commands.clearContent(true);
-                  setText('');
-                }
-
-                return true;
+                return false;
               }
 
               // Allow Shift+Enter to insert hard break
@@ -179,7 +182,7 @@ export function ConversationTextarea({
             }
           }}
         >
-          {isLoading ? <>Generating...</> : <>Chat ↵</>}
+          {isLoading ? <>Generating...</> : <>Chat</>}
         </Button>
       </div>
     </div>

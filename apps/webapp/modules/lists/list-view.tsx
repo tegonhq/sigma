@@ -1,4 +1,5 @@
 import { Card, CardHeader } from '@redplanethq/ui';
+import { PlusIcon } from 'lucide-react';
 import { observer } from 'mobx-react-lite';
 
 import { getIcon } from 'common/icon-picker';
@@ -6,9 +7,9 @@ import { getIcon } from 'common/icon-picker';
 import { useApplication } from 'hooks/application';
 import { useLists } from 'hooks/list';
 
-import { TabViewType } from 'store/application';
 import { useCreateListMutation } from 'services/lists';
-import { PlusIcon } from 'lucide-react';
+
+import { TabViewType } from 'store/application';
 
 export const ListView = observer(() => {
   const lists = useLists();

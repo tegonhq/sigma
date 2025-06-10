@@ -1,5 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { addDays, isToday, isTomorrow, isWithinInterval } from 'date-fns';
+import {
+  addDays,
+  endOfDay,
+  isToday,
+  isTomorrow,
+  isWithinInterval,
+} from 'date-fns';
 import { sort } from 'fast-sort';
 import React from 'react';
 
@@ -60,7 +66,7 @@ export const useTaskRows = (collapsedHeader: Record<string, boolean>) => {
               return isTomorrow(startTime);
             case 'Rest of the week':
               return isWithinInterval(startTime, {
-                start: addDays(tomorrow, 1),
+                start: endOfDay(tomorrow),
                 end: endOfWeek,
               });
             default:

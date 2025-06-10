@@ -13,7 +13,7 @@ import React from 'react';
 
 import type { ListType } from 'common/types';
 
-import { useDeleteListMutation, useUpdateListMutation } from 'services/lists';
+import { useDeleteListMutation } from 'services/lists';
 
 import { useContextStore } from 'store/global-context-provider';
 

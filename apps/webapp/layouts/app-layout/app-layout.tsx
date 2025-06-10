@@ -1,9 +1,7 @@
 import { Button } from '@redplanethq/ui';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { useHotkeys } from 'react-hotkeys-hook';
 import { signOut } from 'supertokens-auth-react/recipe/session';
-import { Key } from 'ts-key-enum';
 
 import { AIThinking } from 'modules/ai-thinking';
 import { Updates } from 'modules/updates/updates';
@@ -65,7 +63,7 @@ export function AppLayout({ children }: AppLayoutProps) {
           </div>
         </div>
 
-        <div className="h-[calc(100vh_-_56px)] flex flex-col pb-2 overflow-hidden">
+        <div className="h-[calc(100vh_-_52px)] flex flex-col pb-2 overflow-hidden">
           <div className="h-full w-full overflow-hidden rounded-md">
             {children}
           </div>

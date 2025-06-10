@@ -1,4 +1,4 @@
-import { ArrowLeft, Button, useToast } from '@redplanethq/ui';
+import { useToast } from '@redplanethq/ui';
 import { sort } from 'fast-sort';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
@@ -142,7 +142,7 @@ export const InboxConversation = observer(
             <div className="max-w-[97ch] w-full">
               <ConversationTextarea
                 onSend={onSend}
-                className="bg-background-3 m-4 mt-0 w-full shadow border-gray-300 border-1"
+                className="bg-background-3 m-4 mt-0 w-full border-gray-300 border-1"
                 isLoading={!!conversationResponse}
               />
             </div>

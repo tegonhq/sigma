@@ -10,7 +10,7 @@ interface RightSideHeaderProps {
 
 export const RightSideHeader = observer(({ onClose }: RightSideHeaderProps) => {
   return (
-    <header className="flex h-[56px] shrink-0 items-center justify-between gap-2">
+    <header className="flex h-[52px] shrink-0 items-center justify-between gap-2">
       <div className="flex items-center justify-end gap-2 px-2 w-full">
         <div className="flex gap-1 items-center">
           <ConversationHeaderActions />

@@ -59,7 +59,7 @@ const heading = Heading.extend({
   },
 }).configure({ levels: [1, 2, 3] });
 
-const starterKit = StarterKit.configure({
+export const starterKit = StarterKit.configure({
   heading: false,
   history: false,
   bulletList: {

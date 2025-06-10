@@ -28,7 +28,7 @@ export function TooltipWrapper({
         <div className={cn(className, 'flex items-center')}>{children}</div>
       </TooltipTrigger>
       <TooltipContent className={cn('p-2', tooltipClassName)} side="bottom">
-        <span>{tooltip}</span>
+        <span className="font-mono">{tooltip}</span>
       </TooltipContent>
     </Tooltip>
   );

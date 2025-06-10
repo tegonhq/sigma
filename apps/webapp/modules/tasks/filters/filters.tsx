@@ -73,7 +73,7 @@ export const Filters = observer(() => {
   );
 
   return (
-    <div className="flex justify-between px-3 pt-1">
+    <div className="flex justify-between pl-5 pr-3 pt-1">
       <Popover open={open} onOpenChange={onPopoverChange}>
         <div className="flex flex-wrap gap-1 items-center">
           <AppliedFiltersView />
