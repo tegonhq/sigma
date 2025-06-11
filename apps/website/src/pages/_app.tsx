@@ -24,10 +24,17 @@ export const MyApp = ({ Component, pageProps }: AppLayoutProps) => {
       <TooltipProvider delayDuration={1000}>
         <div
           className={cn(
-            'relative flex min-h-screen flex-col bg-background-2',
+            'relative flex min-h-screen flex-col',
             GeistSans.variable,
             GeistMono.variable,
           )}
+          style={{
+            backgroundImage: 'url(/mars_bg3.png)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            backgroundAttachment: 'fixed'
+          }}
         >
           <main className="flex-1">
             {getLayout(<Component {...pageProps} />)}

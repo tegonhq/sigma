@@ -5,10 +5,13 @@ import {
   PopoverTrigger,
 } from '@redplanethq/ui';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 
 import { DownloadButton } from './utils';
 
 export const Header = () => {
+  const router = useRouter();
+  
   // Scroll handler for feature buttons
   const handleScroll = (id: string) => {
     const el = document.getElementById(id);
@@ -20,78 +23,50 @@ export const Header = () => {
   };
 
   return (
-    <header className="sticky z-1000 transition-all duration-300 ease-out top-0 translate-y-none bg-background-2">
-      <div className="pt-3 pb-6 md:pb-2 mx-auto max-w-5xl w-full flex gap-2 justify-between items-center bg-background-2">
-        {/* Logo */}
-        <div className="flex items-center gap-2">
-          <Image src="/logo_light.svg" alt="logo" width={30} height={30} />
-        </div>
-        {/* Nav Links */}
-        <nav className="flex-1 flex justify-start gap-2  items-center">
-          {/* Features Dropdown */}
-          <Popover>
-            <PopoverTrigger>
-              <Button variant="ghost"> Features </Button>
-            </PopoverTrigger>
-
-            <PopoverContent className="p-2 w-30">
-              <div className="flex flex-col gap-1 w-full">
-                <Button
-                  variant="ghost"
-                  className="w-full"
-                  onClick={() => handleScroll('personalisation')}
-                >
-                  Personalisation
-                </Button>
-
-                <Button
-                  variant="ghost"
-                  className="w-full"
-                  onClick={() => handleScroll('task_management')}
-                >
-                  Task management
-                </Button>
-
-                <Button
-                  variant="ghost"
-                  className="w-full"
-                  onClick={() => handleScroll('chat')}
-                >
-                  Chat
-                </Button>
-
-                <Button
-                  variant="ghost"
-                  className="w-full"
-                  onClick={() => handleScroll('opensource')}
-                >
-                  Opensource
-                </Button>
-              </div>
-            </PopoverContent>
-          </Popover>
-
-          <Button
-            variant="ghost"
-            onClick={() =>
-              window.open('https://github.com/tegonhq/sigma', '_blank')
-            }
+    <header className="sticky z-50 top-0 w-full border-b border-white/10 bg-transparent">
+      <div className="max-w-6xl mx-auto px-6 py-4">
+        <div className="flex items-center justify-between">
+          {/* Logo */}  
+          <button 
+            onClick={() => window.open('/', '_self')}
+            className="flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer"
           >
-            Github
-          </Button>
-
-          <Button
-            variant="ghost"
-            onClick={() =>
-              window.open('https://discord.gg/dVTC3BmgEq', '_blank')
-            }
-          >
-            Discord
-          </Button>
-        </nav>
-        {/* Right Side: Download only */}
-        <div className="flex items-center gap-2">
-          <DownloadButton />
+            <Image src="/sol_logo.png" alt="SOL Logo" width={32} height={32} className="rounded" />
+            <span className="font-bold text-2xl" style={{ color: '#FBFDFA' }}>SOL</span>
+          </button>
+          
+          {/* Nav Links - Hidden on mobile */}
+          <nav className="hidden md:flex items-center gap-8" style={{ color: '#FBFDFA' }}>
+            <Button 
+              variant="ghost" 
+              className={`text-base font-medium transition-colors ${
+                router.pathname === '/manifesto' 
+                  ? 'text-[#EE5B48] bg-[#EE5B48]/10 border border-[#EE5B48]/30' 
+                  : 'text-[#FBFDFA] hover:text-[#ffe6b0]'
+              }`}
+              onClick={() => window.open('/manifesto', '_self')}
+            >
+              Manifesto
+            </Button>
+            <Button variant="ghost" className="text-base font-medium hover:text-[#ffe6b0] transition-colors" style={{ color: '#FBFDFA' }} onClick={() => window.open('https://github.com/RedPlanetHQ/sol', '_blank')}>
+              GitHub
+            </Button>
+            <Button variant="ghost" className="text-base font-medium hover:text-[#ffe6b0] transition-colors" style={{ color: '#FBFDFA' }} onClick={() => window.open('https://discord.gg/dVTC3BmgEq', '_blank')}>
+              Discord
+            </Button>
+          </nav>
+          
+          {/* Talk to Human button */}
+          <div className="flex items-center">
+            <Button 
+              size="lg" 
+              variant="outline"
+              className="border-2 border-white/60 text-white font-semibold px-6 py-2.5 rounded-lg transition-colors hover:bg-white/10" 
+              onClick={() => window.open('https://cal.com/manik-aggarwal-f1mjhp/15min', '_blank')}
+            >
+              Chat with Founders
+            </Button>
+          </div>
         </div>
       </div>
     </header>
