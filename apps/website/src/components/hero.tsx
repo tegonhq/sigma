@@ -6,7 +6,7 @@ import { Container, DownloadButton } from './utils';
 
 export const Hero = () => {
   return (
-    <section className="w-full py-24 lg:py-32" style={{ background: 'linear-gradient(180deg, #0F1019 0%, #1a1520 100%)' }}>
+    <section className="w-full py-24 lg:py-32">
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex flex-col items-center justify-center text-center">
           <h1 className="text-[56px] sm:text-5xl lg:text-6xl xl:text-7xl text-[#efead7] font-bold leading-tight mb-6 tracking-tight max-w-5xl">

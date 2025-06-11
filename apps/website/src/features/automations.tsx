@@ -37,7 +37,7 @@ export const Automations = () => {
   return (
     <>
       {/* Never track tasks section */}
-      <section className="w-full py-24 lg:py-32" style={{ background: 'linear-gradient(180deg, #1a1520 0%, #2d1f25 100%)' }}>
+      <section className="w-full py-24 lg:py-32">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center">
             <h2 className="text-[46px] lg:text-5xl xl:text-6xl font-bold text-[#efead7] mb-8 tracking-tight">
@@ -51,7 +51,7 @@ export const Automations = () => {
       </section>
 
       {/* Automations in Action section */}
-      <section className="w-full py-24 lg:py-32" style={{ background: 'linear-gradient(180deg, #2d1f25 0%, #3d2519 100%)' }}>
+      <section className="w-full py-24 lg:py-32">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-12 lg:mb-16">
             <h2 className="text-[46px] lg:text-5xl xl:text-6xl font-bold text-[#efead7] mb-6 tracking-tight">

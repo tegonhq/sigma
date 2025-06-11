@@ -28,6 +28,13 @@ export const MyApp = ({ Component, pageProps }: AppLayoutProps) => {
             GeistSans.variable,
             GeistMono.variable,
           )}
+          style={{
+            backgroundImage: 'url(/mars_bg3.png)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            backgroundAttachment: 'fixed'
+          }}
         >
           <main className="flex-1">
             {getLayout(<Component {...pageProps} />)}

@@ -3,7 +3,7 @@ import Image from 'next/image';
 
 export const Integrations = () => {
   return (
-    <section id="integrations-section" className="w-full py-24 lg:py-32 relative overflow-hidden" style={{ background: 'linear-gradient(180deg, #3d2519 0%, #4a2e1a 100%)' }}>
+    <section id="integrations-section" className="w-full py-24 lg:py-32 relative overflow-hidden">
       <div className="max-w-6xl mx-auto px-6">
 
         {/* Main heading */}

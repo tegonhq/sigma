@@ -23,7 +23,7 @@ export const Header = () => {
   };
 
   return (
-    <header className="sticky z-50 top-0 w-full border-b border-white/10" style={{ background: '#0F1019' }}>
+    <header className="sticky z-50 top-0 w-full border-b border-white/10 bg-transparent">
       <div className="max-w-6xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}  
