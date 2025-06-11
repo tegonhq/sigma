@@ -1,14 +1,14 @@
 import { TaskItemBig } from '../components/utils';
 import Image from 'next/image';
 
-export const Tasks = () => {
+export const Integrations = () => {
   return (
-    <section id="integrations-section" className="w-full py-20 lg:py-24 relative overflow-hidden" style={{ background: 'linear-gradient(180deg, #3d2519 0%, #4a2e1a 100%)' }}>
+    <section id="integrations-section" className="w-full py-24 lg:py-32 relative overflow-hidden" style={{ background: 'linear-gradient(180deg, #3d2519 0%, #4a2e1a 100%)' }}>
       <div className="max-w-6xl mx-auto px-6">
 
         {/* Main heading */}
         <div className="text-center mb-16 lg:mb-20">
-          <h2 className="text-[46px] lg:text-5xl xl:text-6xl font-bold text-[#efead7] mb-4 tracking-tight">
+          <h2 className="text-[46px] lg:text-5xl xl:text-6xl font-bold text-[#efead7] mb-8 tracking-tight">
             Integrations that listen in real time
           </h2>
         </div>
@@ -71,7 +71,7 @@ export const Tasks = () => {
               {/* Integration grid */}
               <div className="grid grid-cols-2 gap-4 mb-8">
                 {[
-                  'Claude Code', 'Outlook', 'Jira', 'Notion', 'Google Docs', 'Sheets'
+                  'Claude Code', 'Gmail', 'Linear', 'Slack', 'Google Docs', 'Google Sheets'
                 ].map((integration) => (
                   <div key={integration} className="flex items-center gap-3">
                     <span className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0"></span>
@@ -108,4 +108,4 @@ export const Tasks = () => {
   );
 };
 
-export default Tasks;
+export default Integrations;

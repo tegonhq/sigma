@@ -1,20 +1,14 @@
 import { Footer, GitHubBanner, Header, Hero, Section } from '../components';
-import { DailyPlanner } from '../features/daily-planner';
-import { Lists } from '../features/lists';
-import { Personalisation } from '../features/personalisation';
-import { Tasks } from '../features/task';
-
-const TaskManagement = () => {
-  return <Tasks />;
-};
+import { Automations } from '../features/automations';
+import { Integrations } from '../features/integrations';
 
 const Index = () => {
   return (
     <div className="flex flex-col">
       <Header />
       <Hero />
-      <Personalisation />
-      <TaskManagement />
+      <Automations />
+      <Integrations />
       <Footer />
       <GitHubBanner />
     </div>

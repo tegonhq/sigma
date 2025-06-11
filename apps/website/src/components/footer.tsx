@@ -2,7 +2,7 @@ import { RiDiscordFill, RiGithubFill } from '@remixicon/react';
 
 export function Footer() {
   return (
-    <footer className="w-full py-16 lg:py-20" style={{ background: 'linear-gradient(180deg, #4a2e1a 0%, #0F1019 100%)' }}>
+    <footer className="w-full py-24 lg:py-32" style={{ background: 'linear-gradient(180deg, #4a2e1a 0%, #0F1019 100%)' }}>
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex flex-col items-center justify-center space-y-6">
           <div className="flex gap-8">
