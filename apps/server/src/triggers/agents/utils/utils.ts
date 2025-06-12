@@ -48,6 +48,7 @@ export interface RunChatPayload {
   userContextPageHTML: string;
   conversation: Conversation;
   conversationHistory: ConversationHistory;
+  isContinuation?: boolean;
   // Activity
   activity?: string;
   activityExecutionPlan?: string;
@@ -223,6 +224,9 @@ export const init = async (payload: InitChatPayload) => {
     if (config.url?.startsWith('/api')) {
       config.url = `${process.env.BACKEND_HOST}${config.url.replace('/api', '')}`;
       config.headers.Authorization = `Bearer ${pat?.token}`;
+    } else if (config.url?.startsWith('/search')) {
+      config.url = `${process.env.MEMORY_HOST}${config.url}`;
+      config.headers.Authorization = `Bearer rc_pat_vshc65tvkfmbb8qtyf232qk6w1irmfebwmj5h7f9`;
     }
 
     return config;
@@ -313,6 +317,7 @@ export const updateExecutionStep = async (
     skillInput,
     skillOutput,
     skillId,
+    skillStatus,
     ...metadata
   } = step;
 
@@ -329,6 +334,7 @@ export const updateExecutionStep = async (
           ? JSON.stringify(skillOutput)
           : skillOutput,
       actionId: skillId,
+      actionStatus: skillStatus,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       metadata: metadata as any,
       conversationHistoryId,
@@ -723,3 +729,19 @@ export const getUserContextHTML = async () => {
   const response = await axios('/api/v1/users/context');
   return response.data;
 };
+
+export async function getContinuationAgentConversationHistory(
+  conversationId: string,
+): Promise<ConversationHistory | null> {
+  return await prisma.conversationHistory.findFirst({
+    where: {
+      conversationId,
+      userType: 'Agent',
+      deleted: null,
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+    take: 1,
+  });
+}

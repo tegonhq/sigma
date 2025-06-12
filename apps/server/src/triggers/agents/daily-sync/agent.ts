@@ -6,7 +6,7 @@ import Handlebars from 'handlebars';
 
 import { generate } from './generate-utils';
 import { DAILY_SYNC_SYSTEM_PROMPT, DAILY_SYNC_USER_PROMPT } from './prompt';
-import { callSigmaTool, getSigmaTools } from '../sigma-tools/sigma-tools';
+import { callSolTool, getSolTools } from '../sigma-tools/sigma-tools';
 import { MCP } from '../utils/mcp';
 import {
   ExecutionState,
@@ -254,7 +254,7 @@ async function run(
   const tools = {
     ...(await mcp.vercelTools()),
     ...getFixedTools(),
-    ...(await getSigmaTools()),
+    ...(await getSolTools()),
   };
 
   const executionState: Partial<ExecutionState> = {
@@ -316,8 +316,8 @@ async function run(
 
         let result;
         try {
-          if (agent === 'sigma') {
-            result = await callSigmaTool(skillName, skillInput);
+          if (agent === 'sol') {
+            result = await callSolTool(skillName, skillInput);
           } else {
             result = await mcp.callTool(skillName, skillInput);
           }

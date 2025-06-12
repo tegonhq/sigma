@@ -5,12 +5,6 @@ import zodToJsonSchema from 'zod-to-json-schema';
 import { formatSolError, isSolError } from './errors';
 import { createList, getList, getLists } from './operations/list';
 import {
-  deletePage,
-  getPage,
-  searchPages,
-  updatePage,
-} from './operations/page';
-import {
   createTask,
   deleteTask,
   getTaskById,
@@ -18,12 +12,8 @@ import {
   updateTask,
 } from './operations/task';
 import { CreateListSchema, GetListsSchema, ListSchema } from './types/list';
-import {
-  DeletePageSchema,
-  GetPageSchema,
-  SearchPagesSchema,
-  UpdatePageSchema,
-} from './types/page';
+import { RetrieveMemorySchema } from './types/memory';
+import { SearchPagesSchema } from './types/page';
 import {
   CreateTaskSchema,
   DeleteTaskSchema,
@@ -31,31 +21,32 @@ import {
   SearchTasksSchema,
   UpdateTaskSchema,
 } from './types/task';
+import { retrieveMemory } from './operations/memory';
 
-export function getSigmaTools() {
+export function getSolTools() {
   const searchPagesJsonSchema = zodToJsonSchema(SearchPagesSchema);
   console.log(searchPagesJsonSchema);
 
   return {
-    'sigma--get_lists': tool({
+    'sol--get_lists': tool({
       description:
         'Retrieves ALL lists in the workspace with no filtering. PRIMARY TOOL for questions like "show me my lists", "what lists do I have", or when user wants to browse/see all lists. Returns list IDs, titles, icons, and metadata. NO PARAMETERS NEEDED - just call with empty object {}.',
       parameters: GetListsSchema,
     }),
 
-    'sigma--get_list_by_id': tool({
+    'sol--get_list_by_id': tool({
       description:
         "Gets a SPECIFIC list's complete details using its exact ID. ONLY use when you already have a specific list_id. Returns list details, associated page content and tasks. NOT for browsing or searching lists - use get_lists instead. REQUIRES list_id parameter.",
       parameters: ListSchema,
     }),
 
-    'sigma--create_list': tool({
+    'sol--create_list': tool({
       description:
         'Creates a brand new list with specified title and optional icon. Use when user explicitly asks to create a new list. NOT for adding items to existing lists (use update_page for that). REQUIRES title parameter, icon is optional.',
       parameters: CreateListSchema,
     }),
 
-    'sigma--search_tasks': tool({
+    'sol--search_tasks': tool({
       description: `Advanced task search using GitHub-like syntax. 
 PERFECT FOR FILTERING tasks by status, list, dates, etc.
 
@@ -73,58 +64,63 @@ Combine multiple filters with spaces, e.g.:
       parameters: SearchTasksSchema,
     }),
 
-    'sigma--get_task_by_id': tool({
+    'sol--get_task_by_id': tool({
       description:
         "Retrieves a SINGLE task's complete details using its exact ID. ONLY use when you have a specific task_id from previous results. Returns task properties, status, dates, and page content. NOT for searching or filtering tasks - use search_tasks instead. REQUIRES task_id parameter.",
       parameters: GetTaskSchema,
     }),
 
-    'sigma--create_task': tool({
+    'sol--create_task': tool({
       description:
         'Creates a standalone task not connected to any page. LAST RESORT for task creation - in most cases, prefer updating a page to add tasks (update_page). Use ONLY when no relevant page exists or explicitly creating a standalone task. REQUIRES title and status parameters, others optional.',
       parameters: CreateTaskSchema,
     }),
 
-    'sigma--update_task': tool({
+    'sol--update_task': tool({
       description:
         "Updates an existing task's properties like title, status, etc. PERFECT for status changes (marking complete) or updating task metadata. Does NOT modify page content - use update_page for that. REQUIRES taskId parameter and at least one property to change.",
       parameters: UpdateTaskSchema,
     }),
 
-    'sigma--delete_task': tool({
+    'sol--delete_task': tool({
       description:
         'Permanently deletes a task. DESTRUCTIVE ACTION - use with caution and confirmation. REQUIRES task_id parameter.',
       parameters: DeleteTaskSchema,
     }),
 
-    'sigma--search_pages': tool({
+    'sol--get_user_memory': tool({
       description:
-        'Searches for pages by title words ONLY. Use for finding specific pages when you don\'t know the ID. NOT for tasks or status searches - will NOT find tasks by status. Examples: "meeting notes" finds pages with those words in title. NOT SUITABLE for finding tasks by status, use search_tasks with status:X for that. REQUIRES query parameter with title words.',
-      parameters: SearchPagesSchema,
+        "Retrieves the user's memory. ONLY use when you need to access previously provided information. Returns memory content.",
+      parameters: RetrieveMemorySchema,
     }),
+    // 'sol--search_pages': tool({
+    //   description:
+    //     'Searches for pages by title words ONLY. Use for finding specific pages when you don\'t know the ID. NOT for tasks or status searches - will NOT find tasks by status. Examples: "meeting notes" finds pages with those words in title. NOT SUITABLE for finding tasks by status, use search_tasks with status:X for that. REQUIRES query parameter with title words.',
+    //   parameters: SearchPagesSchema,
+    // }),
 
-    'sigma--get_page_by_id': tool({
-      description:
-        "Retrieves a SPECIFIC page's complete content using its exact ID. ONLY use when you have a specific page_id. Returns page title, content, tasks, and metadata. NOT for searching pages - use search_pages instead. REQUIRES page_id parameter.",
-      parameters: GetPageSchema,
-    }),
+    // 'sol--get_page_by_id': tool({
+    //   description:
+    //     "Retrieves a SPECIFIC page's complete content using its exact ID. ONLY use when you have a specific page_id. Returns page title, content, tasks, and metadata. NOT for searching pages - use search_pages instead. REQUIRES page_id parameter.",
+    //   parameters: GetPageSchema,
+    // }),
 
-    'sigma--update_page': tool({
-      description:
-        "Updates an existing page's content. PRIMARY METHOD for adding tasks to pages, lists, or modifying content. BEST CHOICE when user asks to add tasks to a list or modify existing content. Use TipTap HTML format with taskItem tags for tasks. REQUIRES pageId parameter (must be a valid UUID, NOT a page title or date string) and either title or description update.",
-      parameters: UpdatePageSchema,
-    }),
+    // 'sol--update_page': tool({
+    //   description:
+    //     "Updates an existing page's content. PRIMARY METHOD for adding tasks to pages, lists, or modifying content. BEST CHOICE when user asks to add tasks to a list or modify existing content. Use TipTap HTML format with taskItem tags for tasks. REQUIRES pageId parameter (must be a valid UUID, NOT a page title or date string) and either title or description update.",
+    //   parameters: UpdatePageSchema,
+    // }),
 
-    'sigma--delete_page': tool({
-      description:
-        'Permanently deletes a page and its content. VERY DESTRUCTIVE ACTION - use with extreme caution and confirmation. Will also delete associated tasks, lists, etc. REQUIRES page_id parameter.',
-      parameters: DeletePageSchema,
-    }),
+    // 'sol--delete_page': tool({
+    //   description:
+    //     'Permanently deletes a page and its content. VERY DESTRUCTIVE ACTION - use with extreme caution and confirmation. Will also delete associated tasks, lists, etc. REQUIRES page_id parameter.',
+    //   parameters: DeletePageSchema,
+    // }),
   };
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function callSigmaTool(name: string, parameters: any) {
+export async function callSolTool(name: string, parameters: any) {
   try {
     if (!parameters) {
       throw new Error('Arguments are required');
@@ -133,11 +129,6 @@ export async function callSigmaTool(name: string, parameters: any) {
     const toolName = name.split('--')[1];
 
     switch (toolName) {
-      case 'search_pages': {
-        const args = SearchPagesSchema.parse(parameters);
-        const result = await searchPages(args);
-        return JSON.stringify(result, null, 2);
-      }
       case 'search_tasks': {
         const args = SearchTasksSchema.parse(parameters);
         const result = await searchTasks(args);
@@ -158,21 +149,6 @@ export async function callSigmaTool(name: string, parameters: any) {
         const result = await createList(args);
         return JSON.stringify(result, null, 2);
       }
-      case 'get_page_by_id': {
-        const args = GetPageSchema.parse(parameters);
-        const result = await getPage(args);
-        return JSON.stringify(result, null, 2);
-      }
-      case 'update_page': {
-        const args = UpdatePageSchema.parse(parameters);
-        const result = await updatePage(args);
-        return JSON.stringify(result, null, 2);
-      }
-      case 'delete_page': {
-        const args = DeletePageSchema.parse(parameters);
-        const result = await deletePage(args);
-        return JSON.stringify(result, null, 2);
-      }
       case 'get_task_by_id': {
         const args = GetTaskSchema.parse(parameters);
         const result = await getTaskById(args);
@@ -191,6 +167,11 @@ export async function callSigmaTool(name: string, parameters: any) {
       case 'delete_task': {
         const args = DeleteTaskSchema.parse(parameters);
         const result = await deleteTask(args);
+        return JSON.stringify(result, null, 2);
+      }
+      case 'get_user_memory': {
+        const args = RetrieveMemorySchema.parse(parameters);
+        const result = await retrieveMemory(args);
         return JSON.stringify(result, null, 2);
       }
       default:

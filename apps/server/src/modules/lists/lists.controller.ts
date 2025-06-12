@@ -28,8 +28,14 @@ export class ListsController {
     @Workspace() workspaceId: string,
     @Body('title') title?: string,
     @Body('favourite') favourite?: boolean,
+    @Body('htmlDescription') htmlDescription?: string,
   ): Promise<List> {
-    return await this.lists.createList(workspaceId, title, favourite, '');
+    return await this.lists.createList(
+      workspaceId,
+      title,
+      favourite,
+      htmlDescription,
+    );
   }
 
   @Post(':listId')

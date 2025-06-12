@@ -1,12 +1,17 @@
+import { PrismaClient } from '@prisma/client';
+import { ActionStatusEnum } from '@redplanethq/sol-sdk';
 import { idempotencyKeys, logger, metadata, task } from '@trigger.dev/sdk/v3';
 import { format } from 'date-fns';
 
 import { run } from './chat-utils';
 import { memoryUpdateSchedule } from '../memory/memory';
+import { callSolTool } from '../sigma-tools/sigma-tools';
 import { MCP } from '../utils/mcp';
+import { HistoryStep } from '../utils/types';
 import {
   createConversationHistoryForAgent,
   getActivityDetails,
+  getContinuationAgentConversationHistory,
   getCreditsForUser,
   getMemoryContext,
   getPreviousExecutionHistory,
@@ -17,6 +22,8 @@ import {
   updateExecutionStep,
   updateUserCredits,
 } from '../utils/utils';
+
+const prisma = new PrismaClient();
 
 /**
  * Main chat task that orchestrates the agent workflow
@@ -45,6 +52,8 @@ export const chat = task({
       }
 
       const { previousHistory, ...otherData } = payload.context;
+
+      const isContinuation = payload.isContinuation || false;
 
       const { agents = [] } = payload.context;
 
@@ -97,15 +106,27 @@ export const chat = task({
         previousHistory ?? [],
       );
 
-      // Prepare conversation history in agent-compatible format
-      const agentConversationHistory = await createConversationHistoryForAgent(
-        payload.conversationId,
-      );
       let agentUserMessage = '';
+      let agentConversationHistory;
+      let stepHistory: HistoryStep[] = [];
+      if (!isContinuation) {
+        // Prepare conversation history in agent-compatible format
+        agentConversationHistory = await createConversationHistoryForAgent(
+          payload.conversationId,
+        );
+      } else {
+        agentConversationHistory =
+          await getContinuationAgentConversationHistory(payload.conversationId);
+
+        stepHistory = await handleConfirmation(
+          mcp,
+          agentConversationHistory.id,
+        );
+      }
 
       await updateConversationHistoryMessage(
         agentUserMessage,
-        agentConversationHistory.id,
+        agentConversationHistory?.id,
         { memory: rawMemory, automation: automationContext },
       );
 
@@ -116,6 +137,7 @@ export const chat = task({
         previousExecutionHistory,
         mcp,
         automationContext,
+        stepHistory,
       );
 
       const stream = await metadata.stream('messages', llmResponse);
@@ -158,3 +180,84 @@ export const chat = task({
     }
   },
 });
+
+async function handleConfirmation(
+  mcp: MCP,
+  agentConversationHistoryId: string,
+): Promise<HistoryStep[]> {
+  const agentExecutionHistory = await prisma.conversationExecutionStep.findMany(
+    {
+      where: {
+        conversationHistoryId: agentConversationHistoryId,
+        deleted: null,
+      },
+    },
+  );
+
+  const history: HistoryStep[] = [];
+  for await (const step of agentExecutionHistory) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const stepMetadata = step.metadata as Record<string, any>;
+    const stepHistory: HistoryStep = {
+      agent: stepMetadata.agent,
+      skill: stepMetadata.skill,
+      skillId: step.actionId,
+      userMessage: step.message,
+      isQuestion: false,
+      isFinal: false,
+      tokenCount: stepMetadata.tokenCount || {},
+      skillInput: step.actionInput,
+      skillOutput: step.actionOutput,
+      skillStatus: step.actionStatus as ActionStatusEnum,
+    };
+
+    if (stepHistory.skillStatus === ActionStatusEnum.ACCEPT) {
+      let result;
+      try {
+        if (stepHistory.agent === 'sol') {
+          result = await callSolTool(
+            stepHistory.skill,
+            JSON.parse(stepHistory.skillInput),
+          );
+        } else {
+          result = await mcp.callTool(
+            stepHistory.skill,
+            JSON.parse(stepHistory.skillInput),
+          );
+        }
+      } catch (e) {
+        logger.error(e);
+        stepHistory.skillInput = stepHistory.skillInput;
+        stepHistory.observation = JSON.stringify(e);
+        stepHistory.isError = true;
+      }
+
+      stepHistory.skillOutput =
+        typeof result === 'object' ? JSON.stringify(result, null, 2) : result;
+      stepHistory.skillStatus = ActionStatusEnum.SUCCESS;
+      stepHistory.observation = stepHistory.skillOutput;
+
+      await prisma.conversationExecutionStep.update({
+        where: {
+          id: step.id,
+        },
+        data: {
+          actionStatus: stepHistory.skillStatus,
+          actionOutput: stepHistory.skillOutput,
+          metadata: {
+            ...stepMetadata,
+            observation: stepHistory.observation,
+          },
+        },
+      });
+    } else if (stepHistory.skillStatus === ActionStatusEnum.DECLINE) {
+      stepHistory.skillOutput =
+        'The user declined to execute this tool call. Please suggest an alternative approach or ask for clarification.';
+      stepHistory.observation = stepHistory.skillOutput;
+    }
+
+    history.push(stepHistory);
+  }
+
+  return history;
+}

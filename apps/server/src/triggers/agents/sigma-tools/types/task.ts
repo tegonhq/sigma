@@ -109,6 +109,43 @@ export const SearchTasksSchema = z.object({
   ),
 });
 
+export const createAssistantTaskSchema = z.object({
+  title: z.string().describe('Title of the task'),
+  htmlDescription: z
+    .string()
+    .optional()
+    .describe('Description of the task in HTML format'),
+  startTime: z
+    .string()
+    .optional()
+    .describe('Start time of the task in ISO 8601 format'),
+  endTime: z
+    .string()
+    .optional()
+    .describe('End time of the task in ISO 8601 format'),
+});
+
+export const updateAssistantTaskSchema = z.object({
+  taskId: z.string().uuid().describe('Unique identifier of the task to update'),
+  title: z.string().optional().describe('New title for the task'),
+  htmlDescription: z
+    .string()
+    .optional()
+    .describe('Description of the task in HTML format'),
+  startTime: z
+    .string()
+    .optional()
+    .describe('Start time of the task in ISO 8601 format'),
+  endTime: z
+    .string()
+    .optional()
+    .describe('End time of the task in ISO 8601 format'),
+});
+
+export const deleteAssistantTaskSchema = z.object({
+  taskId: z.string().uuid().describe('Unique identifier of the task to delete'),
+});
+
 export type Task = z.infer<typeof TaskSchema>;
 export type TaskStatus = z.infer<typeof TaskStatusEnum>;
 export type GetTaskParams = z.infer<typeof GetTaskSchema>;
@@ -116,3 +153,12 @@ export type CreateTaskParams = z.infer<typeof CreateTaskSchema>;
 export type UpdateTaskParams = z.infer<typeof UpdateTaskSchema>;
 export type DeleteTaskParams = z.infer<typeof DeleteTaskSchema>;
 export type SearchTasksParams = z.infer<typeof SearchTasksSchema>;
+export type CreateAssistantTaskParams = z.infer<
+  typeof createAssistantTaskSchema
+>;
+export type UpdateAssistantTaskParams = z.infer<
+  typeof updateAssistantTaskSchema
+>;
+export type DeleteAssistantTaskParams = z.infer<
+  typeof deleteAssistantTaskSchema
+>;

@@ -1,20 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { ActionStatusEnum } from '@redplanethq/sol-sdk';
 import { logger } from '@trigger.dev/sdk/v3';
-import { CoreMessage, ToolSet } from 'ai';
+import { CoreMessage, jsonSchema, tool, ToolSet } from 'ai';
 import Handlebars from 'handlebars';
 
 import {
   ACTIVITY_SYSTEM_PROMPT,
+  CONFIRMATION_CHECKER_PROMPT,
+  CONFIRMATION_CHECKER_USER_PROMPT,
   REACT_SYSTEM_PROMPT,
   REACT_USER_PROMPT,
 } from './prompt';
 import { generate, processTag } from './stream-utils';
 import { AgentMessage, AgentMessageType, Message } from './types';
-import { callSigmaTool, getSigmaTools } from '../sigma-tools/sigma-tools';
+import { callSolTool, getSolTools } from '../sigma-tools/sigma-tools';
 import { MCP } from '../utils/mcp';
 import { ExecutionState, HistoryStep, TotalCost } from '../utils/types';
 import { flattenObject } from '../utils/utils';
+
 interface LLMOutputInterface {
   response: AsyncGenerator<
     | string
@@ -29,6 +33,68 @@ interface LLMOutputInterface {
     any,
     any
   >;
+}
+
+const askConfirmationTool = tool({
+  description: 'Ask the user for confirmation',
+  parameters: jsonSchema({
+    type: 'object',
+    properties: {
+      message: {
+        type: 'string',
+        description: 'The message to ask the user for confirmation',
+      },
+      impact: {
+        type: 'string',
+        description: 'The impact of the action',
+      },
+    },
+    required: ['message', 'impact'],
+    additionalProperties: false,
+  }),
+});
+
+async function needConfirmation(
+  toolCalls: any[],
+  autonomy: number,
+  userQuery: string,
+): Promise<Record<string, any> | undefined> {
+  const userPromptHandler = Handlebars.compile(
+    CONFIRMATION_CHECKER_USER_PROMPT,
+  );
+
+  const userPrompt = userPromptHandler({
+    TOOL_CALLS: toolCalls,
+    AUTONOMY: autonomy,
+    USER_QUERY: userQuery,
+  });
+
+  const messages: CoreMessage[] = [];
+  messages.push({ role: 'system', content: CONFIRMATION_CHECKER_PROMPT });
+  messages.push({ role: 'user', content: userPrompt });
+
+  const response = generate(
+    messages,
+    (event) => {
+      console.log(event);
+    },
+    {
+      ask_confirmation: askConfirmationTool,
+    },
+    undefined,
+    'gpt-4.1-2025-04-14',
+  );
+
+  for await (const chunk of response) {
+    if (
+      typeof chunk === 'object' &&
+      chunk.type === 'tool-call' &&
+      chunk.toolName === 'ask_confirmation'
+    ) {
+      return chunk;
+    }
+  }
+  return undefined;
 }
 
 function toolToMessage(history: HistoryStep[], messages: CoreMessage[]) {
@@ -91,6 +157,9 @@ function makeNextCall(
     AUTO_MODE: String(autoMode).toLowerCase(),
     USER_MEMORY: executionState.userMemoryContext,
     AUTOMATION_CONTEXT: executionState.automationContext,
+    AUTONOMY_LEVEL: 20,
+    TONE_LEVEL: 50,
+    PLAYFULNESS_LEVEL: 50,
   };
 
   let messages: CoreMessage[] = [];
@@ -145,13 +214,14 @@ export async function* run(
   previousHistory: CoreMessage[],
   mcp: MCP,
   automationContext: string,
+  stepHistory: HistoryStep[],
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): AsyncGenerator<AgentMessage, any, any> {
   let guardLoop = 0;
 
   const tools = {
     ...(await mcp.vercelTools()),
-    ...getSigmaTools(),
+    ...getSolTools(),
   };
 
   logger.info('Tools have been formed');
@@ -169,7 +239,7 @@ export async function* run(
     userMemoryContext:
       userContext !== undefined ? userContext.join('\n') : undefined,
     automationContext,
-    history: [], // Track the full ReAct history
+    history: stepHistory, // Track the full ReAct history
     completed: false,
     autoMode: true,
   };
@@ -203,6 +273,7 @@ export async function* run(
       };
 
       let totalMessage = '';
+      let askConfirmation = false;
       const toolCalls = [];
 
       // LLM thought response
@@ -210,6 +281,9 @@ export async function* run(
         if (typeof chunk === 'object' && chunk.type === 'tool-call') {
           toolCallInfo = chunk;
           toolCalls.push(chunk);
+          if (!chunk.toolName.includes('sol--')) {
+            askConfirmation = true;
+          }
         }
 
         totalMessage += chunk;
@@ -246,6 +320,48 @@ export async function* run(
       }
 
       logger.info(`Cost for thought: ${JSON.stringify(totalCost)}`);
+
+      if (askConfirmation) {
+        const confirmation = await needConfirmation(toolCalls, 20, message);
+        if (confirmation) {
+          yield Message('', AgentMessageType.MESSAGE_START);
+          yield Message(
+            confirmation.args.message,
+            AgentMessageType.MESSAGE_CHUNK,
+          );
+          yield Message('', AgentMessageType.MESSAGE_END);
+
+          for (const toolCallInfo of toolCalls) {
+            const agent = toolCallInfo.toolName.split('--')[0];
+
+            const stepRecord: HistoryStep = {
+              agent,
+              thought: '',
+              skill: toolCallInfo.toolName,
+              skillId: toolCallInfo.toolCallId,
+              userMessage: '',
+              isQuestion: false,
+              isFinal: false,
+              tokenCount: totalCost,
+              skillInput: JSON.stringify(toolCallInfo.args),
+              skillOutput: '',
+              skillStatus: ActionStatusEnum.NEED_ATTENTION,
+            };
+            stepRecord.userMessage = `\n<skill id="${stepRecord.skillId}" name="${stepRecord.skill}" agent=${agent}></skill>\n`;
+
+            yield Message(JSON.stringify(stepRecord), AgentMessageType.STEP);
+
+            yield Message('', AgentMessageType.MESSAGE_START);
+            yield Message(
+              stepRecord.userMessage,
+              AgentMessageType.MESSAGE_CHUNK,
+            );
+            yield Message('', AgentMessageType.MESSAGE_END);
+            executionState.history.push(stepRecord);
+          }
+          break;
+        }
+      }
 
       // Replace the error-handling block with this self-correcting implementation
       if (
@@ -309,6 +425,7 @@ export async function* run(
         stepRecord.isFinal = true;
         stepRecord.userMessage = messageState.message;
         stepRecord.finalTokenCount = totalCost;
+        stepRecord.skillStatus = ActionStatusEnum.SUCCESS;
         yield Message(JSON.stringify(stepRecord), AgentMessageType.STEP);
         executionState.history.push(stepRecord);
         break;
@@ -319,6 +436,7 @@ export async function* run(
         stepRecord.isQuestion = true;
         stepRecord.userMessage = questionState.message;
         stepRecord.finalTokenCount = totalCost;
+        stepRecord.skillStatus = ActionStatusEnum.NEED_ATTENTION;
         yield Message(JSON.stringify(stepRecord), AgentMessageType.STEP);
         executionState.history.push(stepRecord);
         break;
@@ -327,17 +445,6 @@ export async function* run(
       if (toolCalls && toolCalls.length > 0) {
         // Run all tool calls in parallel
         for (const toolCallInfo of toolCalls) {
-          const stepRecord: HistoryStep = {
-            thought: '',
-            skill: '',
-            skillId: '',
-            userMessage: '',
-            isQuestion: false,
-            isFinal: false,
-            tokenCount: totalCost,
-            skillInput: '',
-          };
-
           const skillName = toolCallInfo.toolName;
           const skillId = toolCallInfo.toolCallId;
           const skillInput = toolCallInfo.args;
@@ -345,27 +452,32 @@ export async function* run(
           const toolName = skillName.split('--')[1];
           const agent = skillName.split('--')[0];
 
-          stepRecord.agent = agent;
-          stepRecord.skill = skillName;
-          stepRecord.skillId = skillId;
-          stepRecord.skillInput = JSON.stringify(skillInput);
+          const stepRecord: HistoryStep = {
+            agent,
+            thought: '',
+            skill: skillName,
+            skillId,
+            userMessage: '',
+            isQuestion: false,
+            isFinal: false,
+            tokenCount: totalCost,
+            skillInput: JSON.stringify(skillInput),
+          };
 
-          if (skillName) {
-            const skillMessageToSend = `\n<skill id="${skillId}" name="${toolName}" agent=${agent}></skill>\n`;
-            stepRecord.userMessage += skillMessageToSend;
+          const skillMessageToSend = `\n<skill id="${skillId}" name="${toolName}" agent=${agent}></skill>\n`;
+          stepRecord.userMessage += skillMessageToSend;
 
-            yield Message('', AgentMessageType.MESSAGE_START);
-            yield Message(skillMessageToSend, AgentMessageType.MESSAGE_CHUNK);
-            yield Message('', AgentMessageType.MESSAGE_END);
-          }
+          yield Message('', AgentMessageType.MESSAGE_START);
+          yield Message(skillMessageToSend, AgentMessageType.MESSAGE_CHUNK);
+          yield Message('', AgentMessageType.MESSAGE_END);
 
           let result;
           try {
             logger.info(
               `skillName: ${skillName} \n Parsed Input: ${JSON.stringify(skillInput)}`,
             );
-            if (agent === 'sigma') {
-              result = await callSigmaTool(skillName, skillInput);
+            if (agent === 'sol') {
+              result = await callSolTool(skillName, skillInput);
             } else {
               result = await mcp.callTool(skillName, skillInput);
             }

@@ -169,6 +169,7 @@ model ConversationExecutionStep {
   actionId     String?
   actionOutput String?
   actionInput  String?
+  actionStatus String?
 
   metadata Json? @default("{}")
 

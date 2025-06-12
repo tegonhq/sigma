@@ -1,3 +1,4 @@
+import { ActionStatusEnum } from '@redplanethq/sol-sdk';
 import { CoreMessage } from 'ai';
 
 // Define types for the MCP tool schema
@@ -90,6 +91,7 @@ export interface HistoryStep {
   skillId?: string;
   skillInput?: string;
   skillOutput?: string;
+  skillStatus?: ActionStatusEnum;
 
   // This is when the action has run and the output will be put here
   observation?: string;

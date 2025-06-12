@@ -7,6 +7,9 @@ import {
   DeleteTaskParams,
   SearchTasksParams,
   Task,
+  CreateAssistantTaskParams,
+  UpdateAssistantTaskParams,
+  DeleteAssistantTaskParams,
 } from '../types/task.js';
 
 /**
@@ -81,5 +84,23 @@ export async function searchTasks(params: SearchTasksParams): Promise<Task[]> {
     },
   });
 
+  return response.data;
+}
+
+export async function createAssistantTask(params: CreateAssistantTaskParams) {
+  const response = await axios.post(`/api/v1/tasks`, {
+    ...params,
+    metadata: { assignee: 'assistant' },
+  });
+  return response.data;
+}
+
+export async function updateAssistantTask(params: UpdateAssistantTaskParams) {
+  const response = await axios.put(`/api/v1/tasks/${params.taskId}`, params);
+  return response.data;
+}
+
+export async function deleteAssistantTask(params: DeleteAssistantTaskParams) {
+  const response = await axios.delete(`/api/v1/tasks/${params.taskId}`);
   return response.data;
 }

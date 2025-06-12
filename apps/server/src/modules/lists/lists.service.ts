@@ -26,7 +26,7 @@ export class ListsService {
     workspaceId: string,
     title?: string,
     favourite?: boolean,
-    defaultPageContent?: string,
+    htmlDescription?: string,
   ) {
     const list = await this.prisma.list.create({
       data: {
@@ -47,15 +47,15 @@ export class ListsService {
       },
     });
 
-    if (defaultPageContent) {
+    if (htmlDescription) {
       await this.page.updatePage(
         {
-          description: defaultPageContent,
+          htmlDescription,
         },
         list.pageId,
       );
 
-      list.page.description = defaultPageContent;
+      list.page.description = htmlDescription;
     }
 
     return list;
@@ -85,12 +85,27 @@ export class ListsService {
   }
 
   async updateList(listId: string, updateListDto: UpdateListDto) {
-    return await this.prisma.list.update({
+    const list = await this.prisma.list.update({
       where: {
         id: listId,
       },
       data: updateListDto,
+      include: {
+        page: true,
+      },
     });
+
+    if (updateListDto.htmlDescription) {
+      const page = await this.page.updatePage(
+        {
+          htmlDescription: updateListDto.htmlDescription,
+        },
+        list.pageId,
+      );
+      list.page.description = page.description;
+    }
+
+    return list;
   }
 
   async deleteList(listId: string) {

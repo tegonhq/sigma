@@ -8,4 +8,8 @@ export class UpdateListDto {
   @IsBoolean()
   @IsOptional()
   favourite?: boolean;
+
+  @IsString()
+  @IsOptional()
+  htmlDescription?: string;
 }
