@@ -5,7 +5,6 @@ import { getTaskItemContent } from 'modules/pages/pages.utils';
 export function getTaskListsInPage(page: Page) {
   const description = page.description;
 
-  console.log(JSON.stringify(page));
   try {
     const descriptionJson =
       typeof description === 'string' ? JSON.parse(description) : description;

@@ -111,7 +111,8 @@ export const SearchTasksSchema = z.object({
 
 export const createAssistantTaskSchema = z.object({
   title: z.string().describe('Title of the task'),
-  htmlDescription: z
+  status: TaskStatusEnum.describe('Status of the task'),
+  pageDescription: z
     .string()
     .optional()
     .describe('Description of the task in HTML format'),
@@ -128,7 +129,8 @@ export const createAssistantTaskSchema = z.object({
 export const updateAssistantTaskSchema = z.object({
   taskId: z.string().uuid().describe('Unique identifier of the task to update'),
   title: z.string().optional().describe('New title for the task'),
-  htmlDescription: z
+  status: TaskStatusEnum.optional().describe('Updated status of the task'),
+  pageDescription: z
     .string()
     .optional()
     .describe('Description of the task in HTML format'),

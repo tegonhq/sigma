@@ -54,6 +54,26 @@ const askConfirmationTool = tool({
   }),
 });
 
+const loadMCPTools = tool({
+  description:
+    'Load tools for a specific integration. Call this when you need to use a third-party service.',
+  parameters: jsonSchema({
+    type: 'object',
+    properties: {
+      integration: {
+        type: 'array',
+        items: {
+          type: 'string',
+        },
+        description:
+          'Array of integration names to load (e.g., ["github", "linear", "slack"])',
+      },
+    },
+    required: ['integration'],
+    additionalProperties: false,
+  }),
+});
+
 async function needConfirmation(
   toolCalls: any[],
   autonomy: number,
@@ -148,6 +168,7 @@ function makeNextCall(
   executionState: ExecutionState,
   TOOLS: ToolSet,
   totalCost: TotalCost,
+  availableMCPServers: string[],
 ): LLMOutputInterface {
   const { context, history, previousHistory, autoMode } = executionState;
 
@@ -160,6 +181,7 @@ function makeNextCall(
     AUTONOMY_LEVEL: 20,
     TONE_LEVEL: 50,
     PLAYFULNESS_LEVEL: 50,
+    AVAILABLE_MCP_TOOLS: availableMCPServers.join(', '),
   };
 
   let messages: CoreMessage[] = [];
@@ -215,13 +237,15 @@ export async function* run(
   mcp: MCP,
   automationContext: string,
   stepHistory: HistoryStep[],
+  availableMCPServers: Record<string, any>,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): AsyncGenerator<AgentMessage, any, any> {
   let guardLoop = 0;
 
-  const tools = {
+  let tools = {
     ...(await mcp.vercelTools()),
     ...getSolTools(),
+    load_mcp: loadMCPTools,
   };
 
   logger.info('Tools have been formed');
@@ -254,6 +278,7 @@ export async function* run(
         executionState,
         tools,
         totalCost,
+        Object.keys(availableMCPServers.mcpServers),
       );
 
       let toolCallInfo;
@@ -281,7 +306,10 @@ export async function* run(
         if (typeof chunk === 'object' && chunk.type === 'tool-call') {
           toolCallInfo = chunk;
           toolCalls.push(chunk);
-          if (!chunk.toolName.includes('sol--')) {
+          if (
+            chunk.toolName.includes('--') &&
+            !chunk.toolName.includes('sol--')
+          ) {
             askConfirmation = true;
           }
         }
@@ -478,6 +506,13 @@ export async function* run(
             );
             if (agent === 'sol') {
               result = await callSolTool(skillName, skillInput);
+            } else if (skillName === 'load_mcp') {
+              await mcp.load(skillInput.integration, availableMCPServers);
+              tools = {
+                ...tools,
+                ...(await mcp.vercelTools()),
+              };
+              result = 'MCP integration loaded successfully';
             } else {
               result = await mcp.callTool(skillName, skillInput);
             }

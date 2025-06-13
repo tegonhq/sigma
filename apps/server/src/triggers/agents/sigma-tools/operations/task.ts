@@ -96,7 +96,8 @@ export async function createAssistantTask(params: CreateAssistantTaskParams) {
 }
 
 export async function updateAssistantTask(params: UpdateAssistantTaskParams) {
-  const response = await axios.put(`/api/v1/tasks/${params.taskId}`, params);
+  const { taskId, ...data } = params;
+  const response = await axios.post(`/api/v1/tasks/${taskId}`, data);
   return response.data;
 }
 

@@ -233,9 +233,11 @@ export const init = async (payload: InitChatPayload) => {
   });
   const mcp = await createMCPConfig(user.mcp);
 
+  const mcpServers = { ...mcp.mcpServers, ...integrationMCPServers };
+
   const userContextPageHTML = await getUserContextHTML();
   logger.info(
-    `Found users, workspace, conversation, ${JSON.stringify({ mcpServers: { ...mcp.mcpServers, ...integrationMCPServers } })}`,
+    `Found users, workspace, conversation, ${JSON.stringify({ mcpServers })}`,
   );
 
   return {
@@ -243,7 +245,7 @@ export const init = async (payload: InitChatPayload) => {
     conversationHistory,
     token: pat?.token,
     userId: workspace.userId,
-    mcp: { mcpServers: { ...mcp.mcpServers, ...integrationMCPServers } },
+    mcp: { mcpServers },
     timezone,
     userContextPageHTML,
   };

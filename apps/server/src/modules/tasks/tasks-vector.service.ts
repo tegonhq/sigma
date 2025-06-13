@@ -25,7 +25,7 @@ export class TaskVectorService implements OnModuleInit {
    */
   async onModuleInit() {
     await this.ensureTaskCollection();
-    // await this.reindexWorkspaceTasks('87cc1c1d-ba89-4040-a91a-c2c19917d294');
+    // await this.reindexTasks();
   }
 
   /**
@@ -83,6 +83,11 @@ export class TaskVectorService implements OnModuleInit {
         field_schema: 'keyword',
       });
 
+      await this.vectorStore.getQdrantClient().createPayloadIndex('tasks', {
+        field_name: 'assignee',
+        field_schema: 'keyword',
+      });
+
       await this.reindexTasks();
     }
   }
@@ -96,6 +101,8 @@ export class TaskVectorService implements OnModuleInit {
     const embedding = await this.vectorStore.generateEmbedding(taskContent);
 
     const isPlanned = !!task.startTime || !!task.recurrence;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const metadata = task.metadata as Record<string, any>;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const payload: Record<string, any> = {
@@ -111,6 +118,7 @@ export class TaskVectorService implements OnModuleInit {
       parentId: task.parentId,
       unplanned: isPlanned,
       sourceURL: (task.source as Source)?.url,
+      assignee: metadata?.assignee || 'user',
     };
 
     // Upsert into Qdrant
@@ -197,6 +205,13 @@ export class TaskVectorService implements OnModuleInit {
       filter.must.push({
         key: 'sourceURL',
         match: { value: true },
+      });
+    }
+
+    if (parsedQuery.filters.assignee) {
+      filter.must.push({
+        key: 'assignee',
+        match: { value: parsedQuery.filters.assignee },
       });
     }
 

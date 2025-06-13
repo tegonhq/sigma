@@ -178,6 +178,10 @@ export function parseSearchQuery(query: string): ParsedQuery {
           result.filters.number = value;
           break;
 
+        case 'assignee':
+          result.filters.assignee = value;
+          break;
+
         default:
           // If it's not a recognized filter, treat it as text
           textParts.push(part);

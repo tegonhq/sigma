@@ -24,5 +24,6 @@ export interface ParsedQuery {
     number?: string;
     isUnplanned?: boolean;
     sourceURL?: string;
+    assignee?: string;
   };
 }

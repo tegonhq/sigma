@@ -1,9 +1,9 @@
 import { tool } from 'ai';
 import { z } from 'zod';
-import zodToJsonSchema from 'zod-to-json-schema';
 
 import { formatSolError, isSolError } from './errors';
 import { createList, getList, getLists } from './operations/list';
+import { retrieveMemory } from './operations/memory';
 import {
   createTask,
   deleteTask,
@@ -11,22 +11,25 @@ import {
   searchTasks,
   updateTask,
 } from './operations/task';
+import {
+  createAssistantTask,
+  updateAssistantTask,
+  deleteAssistantTask,
+} from './operations/task';
 import { CreateListSchema, GetListsSchema, ListSchema } from './types/list';
 import { RetrieveMemorySchema } from './types/memory';
-import { SearchPagesSchema } from './types/page';
 import {
+  createAssistantTaskSchema,
   CreateTaskSchema,
+  deleteAssistantTaskSchema,
   DeleteTaskSchema,
   GetTaskSchema,
   SearchTasksSchema,
+  updateAssistantTaskSchema,
   UpdateTaskSchema,
 } from './types/task';
-import { retrieveMemory } from './operations/memory';
 
 export function getSolTools() {
-  const searchPagesJsonSchema = zodToJsonSchema(SearchPagesSchema);
-  console.log(searchPagesJsonSchema);
-
   return {
     'sol--get_lists': tool({
       description:
@@ -58,6 +61,7 @@ Supported filters (ONLY these are allowed):
 - is:subtask — filter to show only subtasks (tasks that have a parent task)
 - is:unplanned or unplanned:true/false — filter for tasks that are not scheduled/planned (i.e., have no TaskOccurrence)
 - q:free_text — search in task titles (e.g., "meeting")
+- assignee:user/assistant - filter for tasks assigned to user or assistant
 DO NOT use unsupported fields such as "sourceId", "sourceUrl", etc. in queries.
 Combine multiple filters with spaces, e.g.:
 "meeting status:Todo list:abc-123 due:<2025-06-01"`,
@@ -93,29 +97,24 @@ Combine multiple filters with spaces, e.g.:
         "Retrieves the user's memory. ONLY use when you need to access previously provided information. Returns memory content.",
       parameters: RetrieveMemorySchema,
     }),
-    // 'sol--search_pages': tool({
-    //   description:
-    //     'Searches for pages by title words ONLY. Use for finding specific pages when you don\'t know the ID. NOT for tasks or status searches - will NOT find tasks by status. Examples: "meeting notes" finds pages with those words in title. NOT SUITABLE for finding tasks by status, use search_tasks with status:X for that. REQUIRES query parameter with title words.',
-    //   parameters: SearchPagesSchema,
-    // }),
 
-    // 'sol--get_page_by_id': tool({
-    //   description:
-    //     "Retrieves a SPECIFIC page's complete content using its exact ID. ONLY use when you have a specific page_id. Returns page title, content, tasks, and metadata. NOT for searching pages - use search_pages instead. REQUIRES page_id parameter.",
-    //   parameters: GetPageSchema,
-    // }),
+    'sol--create_assistant_task': tool({
+      description:
+        'Creates a task assigned to the assistant with instructions. Use when user explicitly asks to create a task for the assistant. REQUIRES title and instructions parameters, others optional.',
+      parameters: createAssistantTaskSchema,
+    }),
 
-    // 'sol--update_page': tool({
-    //   description:
-    //     "Updates an existing page's content. PRIMARY METHOD for adding tasks to pages, lists, or modifying content. BEST CHOICE when user asks to add tasks to a list or modify existing content. Use TipTap HTML format with taskItem tags for tasks. REQUIRES pageId parameter (must be a valid UUID, NOT a page title or date string) and either title or description update.",
-    //   parameters: UpdatePageSchema,
-    // }),
+    'sol--update_assistant_task': tool({
+      description:
+        'Updates an existing task assigned to the assistant. PERFECT for status changes (marking complete) or updating task metadata. Does NOT modify page content - use update_page for that. REQUIRES taskId parameter and at least one property to change.',
+      parameters: updateAssistantTaskSchema,
+    }),
 
-    // 'sol--delete_page': tool({
-    //   description:
-    //     'Permanently deletes a page and its content. VERY DESTRUCTIVE ACTION - use with extreme caution and confirmation. Will also delete associated tasks, lists, etc. REQUIRES page_id parameter.',
-    //   parameters: DeletePageSchema,
-    // }),
+    'sol--delete_assistant_task': tool({
+      description:
+        'Permanently deletes a task assigned to the assistant. DESTRUCTIVE ACTION - use with caution and confirmation. REQUIRES task_id parameter.',
+      parameters: deleteAssistantTaskSchema,
+    }),
   };
 }
 
@@ -172,6 +171,21 @@ export async function callSolTool(name: string, parameters: any) {
       case 'get_user_memory': {
         const args = RetrieveMemorySchema.parse(parameters);
         const result = await retrieveMemory(args);
+        return JSON.stringify(result, null, 2);
+      }
+      case 'create_assistant_task': {
+        const args = createAssistantTaskSchema.parse(parameters);
+        const result = await createAssistantTask(args);
+        return JSON.stringify(result, null, 2);
+      }
+      case 'update_assistant_task': {
+        const args = updateAssistantTaskSchema.parse(parameters);
+        const result = await updateAssistantTask(args);
+        return JSON.stringify(result, null, 2);
+      }
+      case 'delete_assistant_task': {
+        const args = deleteAssistantTaskSchema.parse(parameters);
+        const result = await deleteAssistantTask(args);
         return JSON.stringify(result, null, 2);
       }
       default:

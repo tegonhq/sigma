@@ -138,6 +138,7 @@ export const chat = task({
         mcp,
         automationContext,
         stepHistory,
+        init.mcp,
       );
 
       const stream = await metadata.stream('messages', llmResponse);
