@@ -51,12 +51,6 @@ export async function getWorkspaceId(
       });
       return taskOccurrence.workspaceId;
 
-    case ModelName.Template:
-      const template = await prisma.template.findUnique({
-        where: { id: modelId },
-      });
-      return template.workspaceId;
-
     case ModelName.IntegrationAccount:
       const integrationAccount = await prisma.integrationAccount.findUnique({
         where: { id: modelId },
@@ -125,7 +119,6 @@ export async function getModelData(
   const modelMap: Record<ModelName, any> = {
     Activity: prisma.activity,
     Workspace: prisma.workspace,
-    Template: prisma.template,
     Page: prisma.page,
     Task: prisma.task,
     TaskOccurrence: prisma.taskOccurrence,

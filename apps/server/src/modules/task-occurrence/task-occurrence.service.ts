@@ -3,7 +3,6 @@ import {
   CreateTaskOccurrenceDTO,
   DateFilterEnum,
   GetTaskOccurrenceDTO,
-  PageTypeEnum,
   Preferences,
   TaskOccurrence,
   UpdateTaskOccurenceDTO,
@@ -13,14 +12,9 @@ import { formatInTimeZone } from 'date-fns-tz';
 import { PrismaService } from 'nestjs-prisma';
 import { RRule } from 'rrule';
 
-import { PagesService } from 'modules/pages/pages.service';
-
 @Injectable()
 export class TaskOccurenceService {
-  constructor(
-    private prisma: PrismaService,
-    private pagesService: PagesService,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
   async getTaskOccurences(workspaceId: string, filters: GetTaskOccurrenceDTO) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -287,54 +281,28 @@ export class TaskOccurenceService {
       dateOccurrenceMap.get(formattedDate).push(date);
     });
 
-    // Step 2: Create or get all pages first
-
-    const pageMap = new Map<string, string>(); // Maps formatted date to {pageId, taskId}
-
-    await Promise.all(
-      Array.from(dateOccurrenceMap.keys()).map(async (formattedDate) => {
-        const page = await this.pagesService.getOrCreatePageByTitle(
-          task.workspaceId,
-          {
-            title: formattedDate,
-            type: PageTypeEnum.Daily,
-          },
-        );
-
-        if (page && page.id) {
-          pageMap.set(formattedDate, page.id);
-        }
-      }),
-    );
-
-    // Step 3: Create task occurrences with the correct page IDs and task ID
+    // Step 2: Create task occurrences with the correct task ID
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const taskOccurrenceData: any = [];
 
     futureOccurrences.forEach((date) => {
-      const formattedDate = formatInTimeZone(date, timezone, 'dd-MM-yyyy');
-      const pageId = pageMap.get(formattedDate);
+      const endTime = task.endTime
+        ? new Date(
+            date.getTime() +
+              (task.endTime.getTime() - taskStartTime!.getTime()),
+          )
+        : date;
 
-      if (pageId) {
-        const endTime = task.endTime
-          ? new Date(
-              date.getTime() +
-                (task.endTime.getTime() - taskStartTime!.getTime()),
-            )
-          : date;
-
-        taskOccurrenceData.push({
-          taskId,
-          pageId,
-          workspaceId: task.workspaceId,
-          startTime: date,
-          endTime,
-          status: 'Todo',
-        });
-      }
+      taskOccurrenceData.push({
+        taskId,
+        workspaceId: task.workspaceId,
+        startTime: date,
+        endTime,
+        status: 'Todo',
+      });
     });
 
-    // Step 4: Bulk upsert task occurrences
+    // Step 3: Bulk upsert task occurrences
     // Create a list of unique taskId_pageId combinations for upsert
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const upsertOperations = taskOccurrenceData.map((data: any) => {

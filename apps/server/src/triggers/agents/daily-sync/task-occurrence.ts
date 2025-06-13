@@ -1,6 +1,4 @@
 import { PrismaClient } from '@prisma/client';
-import { PageTypeEnum } from '@redplanethq/sol-sdk';
-import axios from 'axios';
 import { formatInTimeZone } from 'date-fns-tz';
 import { RRule } from 'rrule';
 
@@ -95,56 +93,28 @@ export async function processTaskOccurrences(
         dateOccurrenceMap.get(formattedDate).push(date);
       });
 
-      // Step 2: Create or get all pages first
-
-      const pageMap = new Map<string, string>(); // Maps formatted date to {pageId, taskId}
-
-      // we're updating page with tasks from here because in the task occurence hook
-      // it's updating page in parallel missing tasks in page.
-      await Promise.all(
-        Array.from(dateOccurrenceMap.keys()).map(async (formattedDate) => {
-          const page = (
-            await axios.post(`/api/v1/pages/get-create`, {
-              title: formattedDate,
-              type: PageTypeEnum.Daily,
-              taskIds: [task.id],
-            })
-          ).data;
-
-          if (page && page.id) {
-            pageMap.set(formattedDate, page.id);
-          }
-        }),
-      );
-
-      // Step 3: Create task occurrences with the correct page IDs and task ID
+      // Step 2: Create task occurrences with the correct page IDs and task ID
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const taskOccurrenceData: any = [];
 
       futureOccurrences.forEach((date) => {
-        const formattedDate = formatInTimeZone(date, timezone, 'dd-MM-yyyy');
-        const pageId = pageMap.get(formattedDate);
+        const endTime = task.endTime
+          ? new Date(
+              date.getTime() +
+                (task.endTime.getTime() - taskStartTime!.getTime()),
+            )
+          : date;
 
-        if (pageId) {
-          const endTime = task.endTime
-            ? new Date(
-                date.getTime() +
-                  (task.endTime.getTime() - taskStartTime!.getTime()),
-              )
-            : date;
-
-          taskOccurrenceData.push({
-            taskId: task.id,
-            pageId,
-            workspaceId: task.workspaceId,
-            startTime: date,
-            endTime,
-            status: 'Todo',
-          });
-        }
+        taskOccurrenceData.push({
+          taskId: task.id,
+          workspaceId: task.workspaceId,
+          startTime: date,
+          endTime,
+          status: 'Todo',
+        });
       });
 
-      // Step 4: Bulk upsert task occurrences
+      // Step 3: Bulk upsert task occurrences
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const upsertOperations = taskOccurrenceData.map((data: any) => {
         return prisma.taskOccurrence.create({

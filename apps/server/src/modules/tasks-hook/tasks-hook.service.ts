@@ -5,10 +5,11 @@ import {
   TaskHookAction,
   TaskHookContext,
 } from '@redplanethq/sol-sdk';
-import { schedules, tasks } from '@trigger.dev/sdk/v3';
+import { tasks } from '@trigger.dev/sdk/v3';
 import { endOfDay, subDays } from 'date-fns';
 import { PrismaService } from 'nestjs-prisma';
 import { beautifyTask } from 'triggers/task/beautify-task';
+import { taskActivityHandler } from 'triggers/task/task-update-activity';
 
 import { IntegrationsService } from 'modules/integrations/integrations.service';
 import { PagesService } from 'modules/pages/pages.service';
@@ -63,6 +64,10 @@ export class TaskHooksService {
       this.handleListTask(task, context),
       this.handleParentPageTask(task, context),
       this.handleTaskVector(task, context),
+      tasks.trigger<typeof taskActivityHandler>('task-activity-handler', {
+        task,
+        context,
+      }),
       // this.handleCalendarTask(task, context),
     ]);
   }
@@ -86,146 +91,6 @@ export class TaskHooksService {
           data: { parentId: null },
         });
       }
-    }
-  }
-
-  async handleScheduleTaskOnTrigger(task: Task, context: TaskHookContext) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const taskMetadata = task?.metadata as any;
-
-    switch (context.action) {
-      case 'create':
-        if (task.recurrence?.length) {
-          // Create daily schedule for recurring task
-          const scheduleId = await schedules.create({
-            task: `task-run-schedule`,
-            cron: '0 0 * * *', // Run daily at midnight
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            timezone: (task.workspace.preferences as any).timezone,
-            deduplicationKey: task.id,
-            externalId: task.id,
-          });
-
-          // Save scheduleId in task metadata
-          await this.prisma.task.update({
-            where: { id: task.id },
-            data: {
-              metadata: {
-                ...taskMetadata,
-                scheduleId,
-              },
-            },
-          });
-        } else if (task.startTime && task.endTime) {
-          // Create one-time delayed run
-          const startTime = new Date(task.startTime);
-          startTime.setMinutes(startTime.getMinutes() - 10);
-
-          const runId = await this.trigger.scheduleTask({
-            id: `task-${task.id}-run`,
-            runAt: startTime,
-          });
-
-          // Save runId in task metadata
-          await this.prisma.task.update({
-            where: { id: task.id },
-            data: {
-              metadata: {
-                ...taskMetadata,
-                runId,
-              },
-            },
-          });
-        }
-        return { message: 'Handled schedule create' };
-
-      case 'update':
-        if (
-          context.changeData &&
-          (context.changeData.recurrence?.newValue ||
-            context.changeData.startTime?.newValue ||
-            context.changeData.endTime?.newValue)
-        ) {
-          // Delete existing schedule/run if exists
-          if (task.metadata?.scheduleId) {
-            await this.trigger.deleteSchedule(task.metadata.scheduleId);
-
-            // Remove scheduleId from metadata
-            await this.prisma.task.update({
-              where: { id: task.id },
-              data: {
-                metadata: {
-                  ...task.metadata,
-                  scheduleId: undefined,
-                },
-              },
-            });
-          }
-
-          if (task.metadata?.runId) {
-            await this.trigger.deleteTask(task.metadata.runId);
-
-            // Remove runId from metadata
-            await this.prisma.task.update({
-              where: { id: task.id },
-              data: {
-                metadata: {
-                  ...task.metadata,
-                  runId: undefined,
-                },
-              },
-            });
-          }
-
-          // Create new schedule/run based on updated values
-          if (task.recurrence?.length) {
-            const scheduleId = await this.trigger.createSchedule({
-              id: `task-${task.id}-schedule`,
-              startTime: task.startTime,
-              endTime: task.endTime,
-              recurrence: 'daily',
-            });
-
-            await this.prisma.task.update({
-              where: { id: task.id },
-              data: {
-                metadata: {
-                  ...task.metadata,
-                  scheduleId,
-                },
-              },
-            });
-          } else if (task.startTime && task.endTime) {
-            const startTime = new Date(task.startTime);
-            startTime.setMinutes(startTime.getMinutes() - 10);
-
-            const runId = await this.trigger.scheduleTask({
-              id: `task-${task.id}-run`,
-              runAt: startTime,
-            });
-
-            await this.prisma.task.update({
-              where: { id: task.id },
-              data: {
-                metadata: {
-                  ...task.metadata,
-                  runId,
-                },
-              },
-            });
-          }
-        }
-        return { message: 'Handled schedule update' };
-
-      case 'delete':
-        // Delete existing schedule/run if exists
-        if (task.metadata?.scheduleId) {
-          await this.trigger.deleteSchedule(task.metadata.scheduleId);
-        }
-        if (task.metadata?.runId) {
-          await this.trigger.deleteTask(task.metadata.runId);
-        }
-        return { message: 'Handled schedule delete' };
     }
   }
 
