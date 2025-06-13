@@ -44,7 +44,7 @@ export const Lists = observer(({ entity_id }: TabsProps) => {
       <ResizablePanel
         collapsible
         collapsedSize={0}
-        className="flex flex-col w-full h-[calc(100vh_-_52px)]"
+        className="flex flex-col w-full h-[calc(100vh_-_56px)]"
       >
         {list && <ListPage list={list} />}
       </ResizablePanel>

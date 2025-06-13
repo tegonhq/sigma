@@ -289,21 +289,6 @@ model PersonalAccessToken {
   @@unique([name, userId, token])
 }
 
-model Prompt {
-  id        String    @id @default(uuid())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deleted   DateTime?
-
-  name        String
-  prompt      String
-  model       String
-  workspace   Workspace @relation(fields: [workspaceId], references: [id])
-  workspaceId String
-
-  @@unique([name, workspaceId])
-}
-
 model Sync {
   id        String    @id @default(uuid())
   createdAt DateTime  @default(now())
@@ -334,19 +319,6 @@ model SyncAction {
   workspaceId String
 
   @@unique([modelId, action])
-}
-
-model Summary {
-  id        String    @id @default(uuid())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deleted   DateTime?
-  archived  DateTime?
-
-  content String
-
-  taskId String
-  task   Task   @relation(fields: [taskId], references: [id])
 }
 
 model Task {
@@ -393,7 +365,6 @@ model Task {
 
   taskOccurrence TaskOccurrence[]
   conversation   Conversation[]
-  summary        Summary[]
   Activity       Activity[]
 }
 
@@ -416,21 +387,6 @@ model TaskOccurrence {
   workspaceId String
 }
 
-model Template {
-  id        String    @id @default(uuid())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deleted   DateTime?
-
-  name         String
-  templateData Json
-
-  createdBy   User      @relation(fields: [createdById], references: [id])
-  createdById String
-  workspace   Workspace @relation(fields: [workspaceId], references: [id])
-  workspaceId String
-}
-
 model User {
   id String @id @unique
 
@@ -449,7 +405,6 @@ model User {
   preferences Json?
   mcp         Json?
 
-  template            Template[]
   integrationAccount  IntegrationAccount[]
   attachment          Attachment[]
   personalAccessToken PersonalAccessToken[]
@@ -487,7 +442,6 @@ model Workspace {
   actionsEnabled Boolean @default(true)
   preferences    Json?
 
-  template              Template[]
   syncAction            SyncAction[]
   integrationAccount    IntegrationAccount[]
   integrationDefinition IntegrationDefinitionV2[]
@@ -497,7 +451,6 @@ model Workspace {
   tasks                 Task[]
   taskOccurrence        TaskOccurrence[]
   aIRequest             AIRequest[]
-  Prompt                Prompt[]
   List                  List[]
   agentWorklog          AgentWorklog[]
   Activity              Activity[]

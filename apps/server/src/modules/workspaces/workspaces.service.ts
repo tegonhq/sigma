@@ -1,11 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import {
-  PageTypeEnum,
-  Workspace,
-  WorkspaceRequestParamsDto,
-} from '@redplanethq/sol-sdk';
+import { Workspace, WorkspaceRequestParamsDto } from '@redplanethq/sol-sdk';
 import { schedules } from '@trigger.dev/sdk/v3';
-import { format } from 'date-fns';
 import { Request, Response } from 'express';
 import { PrismaService } from 'nestjs-prisma';
 import supertokens from 'supertokens-node';
@@ -80,29 +75,6 @@ export default class WorkspacesService {
           },
         },
       });
-
-      // Create daily pages for next 7 days
-      const today = new Date();
-      await Promise.all(
-        Array.from({ length: 7 }).map(async (_, i) => {
-          const date = new Date(today);
-          date.setDate(today.getDate() + i);
-          const formattedDate = format(date, 'dd-MM-yyyy');
-
-          await prisma.page.create({
-            data: {
-              title: formattedDate,
-              type: PageTypeEnum.Daily,
-              workspace: { connect: { id: workspace.id } },
-              sortOrder: '',
-              description: JSON.stringify({
-                type: 'doc',
-                content: [],
-              }),
-            },
-          });
-        }),
-      );
 
       return workspace;
     });

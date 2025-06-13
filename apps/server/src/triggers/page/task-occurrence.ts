@@ -1,10 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import {
-  PageTypeEnum,
-  Preferences,
-  TaskOccurrence,
-} from '@redplanethq/sol-sdk';
-import { getOrCreatePageByTitle } from '@redplanethq/sol-sdk';
+import { Preferences, TaskOccurrence } from '@redplanethq/sol-sdk';
 import { task } from '@trigger.dev/sdk/v3';
 import { formatInTimeZone } from 'date-fns-tz';
 import { RRule } from 'rrule';
@@ -113,51 +108,25 @@ export const processTaskOccurrences = task({
           dateOccurrenceMap.get(formattedDate).push(date);
         });
 
-        // Step 2: Create or get all pages first
-
-        const pageMap = new Map<string, string>(); // Maps formatted date to {pageId, taskId}
-
-        await Promise.all(
-          Array.from(dateOccurrenceMap.keys()).map(async (formattedDate) => {
-            const page = await getOrCreatePageByTitle({
-              title: formattedDate,
-              // TODO: check build of sdk
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              type: PageTypeEnum.Daily as any,
-              taskIds: [taskId],
-            });
-
-            if (page && page.id) {
-              pageMap.set(formattedDate, page.id);
-            }
-          }),
-        );
-
-        // Step 3: Create task occurrences with the correct page IDs and task ID
+        // Step 2: Create task occurrences with the correct task ID
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const taskOccurrenceData: any = [];
 
         futureOccurrences.forEach((date) => {
-          const formattedDate = formatInTimeZone(date, timezone, 'dd-MM-yyyy');
-          const pageId = pageMap.get(formattedDate);
+          const endTime = task.endTime
+            ? new Date(
+                date.getTime() +
+                  (task.endTime.getTime() - taskStartTime!.getTime()),
+              )
+            : date;
 
-          if (pageId) {
-            const endTime = task.endTime
-              ? new Date(
-                  date.getTime() +
-                    (task.endTime.getTime() - taskStartTime!.getTime()),
-                )
-              : date;
-
-            taskOccurrenceData.push({
-              taskId,
-              pageId,
-              workspaceId: task.workspaceId,
-              startTime: date,
-              endTime,
-              status: 'Todo',
-            });
-          }
+          taskOccurrenceData.push({
+            taskId,
+            workspaceId: task.workspaceId,
+            startTime: date,
+            endTime,
+            status: 'Todo',
+          });
         });
 
         // Step 4: Bulk upsert task occurrences

@@ -24,7 +24,6 @@ import { IntegrationsModule } from 'modules/integrations/integrations.module';
 import { ListsModule } from 'modules/lists/lists.module';
 import { OAuthCallbackModule } from 'modules/oauth-callback/oauth-callback.module';
 import { PagesModule } from 'modules/pages/pages.module';
-import { PromptsModule } from 'modules/prompts/prompts.module';
 import { ReplicationModule } from 'modules/replication/replication.module';
 import { SyncActionsModule } from 'modules/sync-actions/sync-actions.module';
 import { TaskOccurenceModule } from 'modules/task-occurrence/task-occurrence.model';
@@ -111,7 +110,6 @@ import { AppService } from './app.service';
     TriggerdevModule,
 
     AIRequestsModule,
-    PromptsModule,
     ActivityModule,
     VectorStoreModule,
 
