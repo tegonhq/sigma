@@ -6,6 +6,9 @@ interface Workspace {
   preferences?: {
     timezone?: string;
     scheduleId?: string;
+    autonomy?: number;
+    tone?: number;
+    playfulness?: number;
   };
 }
 

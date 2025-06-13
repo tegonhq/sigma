@@ -15,7 +15,6 @@ import { SessionContainer } from 'supertokens-node/recipe/session';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
 import { Session as SessionDecorator } from 'modules/auth/session.decorator';
-import { Workspace as WorkspaceDecorator } from 'modules/auth/session.decorator';
 
 import {
   CreateInitialResourcesDto,
@@ -53,15 +52,6 @@ export class WorkspacesController {
     @Param('workspaceSlug') workspaceSlug: string,
   ): Promise<Workspace> {
     return await this.workspacesService.getWorkspaceBySlug(workspaceSlug);
-  }
-
-  @Post('sync')
-  @UseGuards(AuthGuard)
-  async toggleSync(
-    @WorkspaceDecorator() workspaceId: string,
-    @Body() body: { value: boolean },
-  ) {
-    return await this.workspacesService.toggleSync(workspaceId, body.value);
   }
 
   @Get(':workspaceId')

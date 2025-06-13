@@ -13,7 +13,6 @@ import {
 import {
   IntegrationDefinition,
   LLMModelEnum,
-  Preferences,
   UserTypeEnum,
 } from '@redplanethq/sol-sdk';
 import { logger } from '@trigger.dev/sdk/v3';
@@ -24,8 +23,6 @@ import { HistoryStep } from './types';
 import {
   AUTOMATION_SYSTEM_PROMPT,
   AUTOMATIONS_USER_PROMPT,
-  MEMORY_SYSTEM_PROMPT,
-  RETRIEVAL_USER_PROMPT,
 } from '../chat/prompt';
 
 const prisma = new PrismaClient();
@@ -36,6 +33,17 @@ export interface InitChatPayload {
   autoMode: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   context: any;
+}
+
+export class Preferences {
+  timezone?: string;
+  autonomy?: number;
+  tone?: number;
+  playfulness?: number;
+
+  // Memory details
+  memory_host?: string;
+  memory_apiKey?: string;
 }
 
 export interface RunChatPayload {
@@ -131,6 +139,8 @@ export const init = async (payload: InitChatPayload) => {
     return { conversation, conversationHistory };
   }
 
+  const workspacePreferences = workspace.preferences as Preferences;
+
   const timezone = (workspace.preferences as Preferences).timezone;
 
   const pat = await prisma.personalAccessToken.findFirst({
@@ -223,9 +233,9 @@ export const init = async (payload: InitChatPayload) => {
     if (config.url?.startsWith('/api')) {
       config.url = `${process.env.BACKEND_HOST}${config.url.replace('/api', '')}`;
       config.headers.Authorization = `Bearer ${pat?.token}`;
-    } else if (config.url?.startsWith('/search')) {
-      config.url = `${process.env.MEMORY_HOST}${config.url}`;
-      config.headers.Authorization = `Bearer rc_pat_vshc65tvkfmbb8qtyf232qk6w1irmfebwmj5h7f9`;
+    } else if (config.url?.startsWith('https://sol::core_memory')) {
+      config.url = `${workspacePreferences.memory_host}/search`;
+      config.headers.Authorization = `Bearer ${workspacePreferences.memory_apiKey}`;
     }
 
     return config;
@@ -246,6 +256,7 @@ export const init = async (payload: InitChatPayload) => {
     userId: workspace.userId,
     mcp: { mcpServers },
     timezone,
+    preferences: workspace.preferences as Preferences,
     userContextPageHTML,
   };
 };
@@ -477,35 +488,6 @@ export async function getContext(
   }
 
   return [];
-}
-
-export async function getMemoryContext(
-  query: string,
-  userContextPageHTML: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-): Promise<Record<string, any>> {
-  try {
-    return await getContext({
-      messages: [
-        {
-          role: 'system',
-          content: MEMORY_SYSTEM_PROMPT,
-        },
-        {
-          role: 'user',
-          content: RETRIEVAL_USER_PROMPT.replace(
-            '{{USER_PREFERENCES}}',
-            userContextPageHTML,
-          ).replace('{{CURRENT_CONVERSATION_MESSAGE}}', query),
-        },
-      ],
-      llmModel: LLMModelEnum.GPT41,
-      model: 'memoryContext',
-    });
-  } catch (e) {
-    logger.error(e);
-  }
-  return {};
 }
 
 export async function getAutomationContext(

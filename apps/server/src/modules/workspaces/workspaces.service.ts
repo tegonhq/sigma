@@ -79,6 +79,9 @@ export default class WorkspacesService {
       return workspace;
     });
 
+    // Start daily run which moves yesterday tasks to today automatically
+    await this.startDailyRun(workspace);
+
     // Create onboarding list and tasks
     await this.createOnboardingListAndTasks(workspace.id);
 
@@ -129,14 +132,22 @@ export default class WorkspacesService {
 
   async updateWorkspace(
     WorkspaceIdRequestBody: WorkspaceRequestParamsDto,
-    { timezone, ...updateWorkspaceData }: UpdateWorkspaceInput,
+    { timezone, preferences, ...updateWorkspaceData }: UpdateWorkspaceInput,
   ): Promise<Workspace> {
+    // Build the new preferences object
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let newPreferences: Record<string, any> = {};
+    if (typeof preferences === 'object' && preferences !== null) {
+      newPreferences = { ...preferences };
+    }
+    if (typeof timezone !== 'undefined') {
+      newPreferences.timezone = timezone;
+    }
+
     return await this.prisma.workspace.update({
       data: {
         ...updateWorkspaceData,
-        preferences: {
-          timezone,
-        },
+        preferences: newPreferences,
       },
       where: {
         id: WorkspaceIdRequestBody.workspaceId,
@@ -154,22 +165,7 @@ export default class WorkspacesService {
     });
   }
 
-  async toggleSync(workspaceId: string, value: boolean) {
-    const workspace = await this.prisma.workspace.findUnique({
-      where: { id: workspaceId },
-    });
-
-    if (!value) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const scheduleId = (workspace.preferences as any).scheduleId;
-
-      if (scheduleId) {
-        await schedules.del(scheduleId);
-      }
-
-      return;
-    }
-
+  async startDailyRun(workspace: Workspace) {
     // This moved yesterday's tasks to today
     const createdRunSchedule = await schedules.create({
       // The id of the scheduled task you want to attach to.

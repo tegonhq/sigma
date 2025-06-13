@@ -67,14 +67,17 @@ export const Workspace = observer(() => {
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4 max-w-4xl mx-auto px-4 py-6">
       <SettingSection
         title="Workspace"
         description="Manage all the settings for your organization"
       >
-        <div className="max-w-[500px]">
+        <div className="w-full">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-6 min-w-[500px]"
+            >
               <FormField
                 control={form.control}
                 name="name"

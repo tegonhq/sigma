@@ -64,22 +64,24 @@ export function Integrations() {
   }
 
   return (
-    <SettingSection
-      title="Integrations"
-      description="Manage your workspace integrations"
-    >
-      <div className="flex flex-col gap-2">
-        {integrations.map((integration) => (
-          <IntegrationCard
-            key={integration.id}
-            name={toProperCase(integration.name)}
-            description={integration.description}
-            href={integration.id}
-            icon={integration.icon}
-            onView={() => setIntegration(integration.id)}
-          />
-        ))}
-      </div>
-    </SettingSection>
+    <div className="flex flex-col gap-4 max-w-3xl mx-auto px-4 py-6">
+      <SettingSection
+        title="Integrations"
+        description="Manage your workspace integrations"
+      >
+        <div className="flex flex-col gap-2">
+          {integrations.map((integration) => (
+            <IntegrationCard
+              key={integration.id}
+              name={toProperCase(integration.name)}
+              description={integration.description}
+              href={integration.id}
+              icon={integration.icon}
+              onView={() => setIntegration(integration.id)}
+            />
+          ))}
+        </div>
+      </SettingSection>
+    </div>
   );
 }

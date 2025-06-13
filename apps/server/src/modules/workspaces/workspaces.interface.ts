@@ -1,4 +1,4 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsObject, IsOptional, IsString } from 'class-validator';
 
 export class CreateWorkspaceInput {
   @IsString()
@@ -30,11 +30,16 @@ export class UpdateWorkspaceInput {
 
   @IsOptional()
   @IsString()
-  icon: string;
+  icon?: string;
+
+  @IsString()
+  @IsOptional()
+  timezone?: string;
 
   @IsOptional()
-  @IsString()
-  timezone?: string;
+  @IsObject()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  preferences?: Record<string, any> | null;
 }
 
 export class UserBody {

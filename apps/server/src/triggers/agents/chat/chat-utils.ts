@@ -17,7 +17,7 @@ import { AgentMessage, AgentMessageType, Message } from './types';
 import { callSolTool, getSolTools } from '../sigma-tools/sigma-tools';
 import { MCP } from '../utils/mcp';
 import { ExecutionState, HistoryStep, TotalCost } from '../utils/types';
-import { flattenObject } from '../utils/utils';
+import { flattenObject, Preferences } from '../utils/utils';
 
 interface LLMOutputInterface {
   response: AsyncGenerator<
@@ -169,6 +169,7 @@ function makeNextCall(
   TOOLS: ToolSet,
   totalCost: TotalCost,
   availableMCPServers: string[],
+  preferences: Preferences,
 ): LLMOutputInterface {
   const { context, history, previousHistory, autoMode } = executionState;
 
@@ -178,10 +179,10 @@ function makeNextCall(
     AUTO_MODE: String(autoMode).toLowerCase(),
     USER_MEMORY: executionState.userMemoryContext,
     AUTOMATION_CONTEXT: executionState.automationContext,
-    AUTONOMY_LEVEL: 20,
-    TONE_LEVEL: 50,
-    PLAYFULNESS_LEVEL: 50,
     AVAILABLE_MCP_TOOLS: availableMCPServers.join(', '),
+    AUTONOMY_LEVEL: preferences.autonomy ?? 50,
+    TONE_LEVEL: preferences.tone ?? 50,
+    PLAYFULNESS_LEVEL: preferences.playfulness ?? 50,
   };
 
   let messages: CoreMessage[] = [];
@@ -232,19 +233,19 @@ export async function* run(
   message: string,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   context: Record<string, any>,
-  userContext: string[],
   previousHistory: CoreMessage[],
   mcp: MCP,
   automationContext: string,
   stepHistory: HistoryStep[],
   availableMCPServers: Record<string, any>,
+  preferences: Preferences,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): AsyncGenerator<AgentMessage, any, any> {
   let guardLoop = 0;
 
   let tools = {
-    ...(await mcp.vercelTools()),
-    ...getSolTools(),
+    ...(await mcp.allTools()),
+    ...getSolTools(!!preferences?.memory_host && !!preferences?.memory_apiKey),
     load_mcp: loadMCPTools,
   };
 
@@ -260,8 +261,6 @@ export async function* run(
     query: message,
     context: contextText,
     previousHistory,
-    userMemoryContext:
-      userContext !== undefined ? userContext.join('\n') : undefined,
     automationContext,
     history: stepHistory, // Track the full ReAct history
     completed: false,
@@ -279,6 +278,7 @@ export async function* run(
         tools,
         totalCost,
         Object.keys(availableMCPServers.mcpServers),
+        preferences,
       );
 
       let toolCallInfo;
@@ -350,7 +350,11 @@ export async function* run(
       logger.info(`Cost for thought: ${JSON.stringify(totalCost)}`);
 
       if (askConfirmation) {
-        const confirmation = await needConfirmation(toolCalls, 20, message);
+        const confirmation = await needConfirmation(
+          toolCalls,
+          preferences.autonomy,
+          message,
+        );
         if (confirmation) {
           yield Message('', AgentMessageType.MESSAGE_START);
           yield Message(
@@ -510,7 +514,7 @@ export async function* run(
               await mcp.load(skillInput.integration, availableMCPServers);
               tools = {
                 ...tools,
-                ...(await mcp.vercelTools()),
+                ...(await mcp.allTools()),
               };
               result = 'MCP integration loaded successfully';
             } else {

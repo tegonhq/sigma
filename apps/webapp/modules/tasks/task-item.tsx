@@ -147,7 +147,7 @@ export const TaskListItem = observer(
             className={cn(
               'flex grow items-start gap-2 pl-2 ml-1 pr-2 group-hover:bg-grayAlpha-100 rounded-xl shrink min-w-[0px]',
               taskSelected && 'bg-primary/10',
-              minimal && '-ml-2',
+              minimal && '-ml-2 gap-1',
             )}
           >
             <div

@@ -43,7 +43,7 @@ export class MCP {
     return StdioClientTransport;
   }
 
-  async vercelTools(): Promise<ToolSet> {
+  async allTools(): Promise<ToolSet> {
     const clientEntries = Object.entries(this.clients);
 
     // Fetch all tools in parallel

@@ -29,7 +29,7 @@ import {
   UpdateTaskSchema,
 } from './types/task';
 
-export function getSolTools() {
+export function getSolTools(isMemoryConfigured = false) {
   return {
     'sol--get_lists': tool({
       description:
@@ -92,12 +92,6 @@ Combine multiple filters with spaces, e.g.:
       parameters: DeleteTaskSchema,
     }),
 
-    'sol--get_user_memory': tool({
-      description:
-        "Retrieves the user's memory. ONLY use when you need to access previously provided information. Returns memory content.",
-      parameters: RetrieveMemorySchema,
-    }),
-
     'sol--create_assistant_task': tool({
       description:
         'Creates a task assigned to the assistant with instructions. Use when user explicitly asks to create a task for the assistant. REQUIRES title and instructions parameters, others optional.',
@@ -115,6 +109,15 @@ Combine multiple filters with spaces, e.g.:
         'Permanently deletes a task assigned to the assistant. DESTRUCTIVE ACTION - use with caution and confirmation. REQUIRES task_id parameter.',
       parameters: deleteAssistantTaskSchema,
     }),
+    ...(isMemoryConfigured
+      ? {
+          'sol--get_user_memory': tool({
+            description:
+              "Retrieves the user's memory. ONLY use when you need to access previously provided information. Returns memory content.",
+            parameters: RetrieveMemorySchema,
+          }),
+        }
+      : {}),
   };
 }
 

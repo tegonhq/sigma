@@ -48,7 +48,7 @@ export const MCP = () => {
   };
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-4 max-w-3xl mx-auto px-4 py-6">
       <SettingSection title="MCP" description="Edit mcp config">
         {error && <p> JSON parsing error </p>}
         <JSONEditor

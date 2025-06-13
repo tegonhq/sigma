@@ -1,6 +1,6 @@
 interface SettingSectionProps {
   title: React.ReactNode | string;
-  description: string;
+  description: React.ReactNode | string;
   metadata?: React.ReactNode;
   actions?: React.ReactNode;
   children: React.ReactNode;

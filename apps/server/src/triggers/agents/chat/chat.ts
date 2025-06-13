@@ -1,10 +1,9 @@
 import { PrismaClient } from '@prisma/client';
 import { ActionStatusEnum } from '@redplanethq/sol-sdk';
-import { idempotencyKeys, logger, metadata, task } from '@trigger.dev/sdk/v3';
+import { logger, metadata, task } from '@trigger.dev/sdk/v3';
 import { format } from 'date-fns';
 
 import { run } from './chat-utils';
-import { memoryUpdateSchedule } from '../memory/memory';
 import { callSolTool } from '../sigma-tools/sigma-tools';
 import { MCP } from '../utils/mcp';
 import { HistoryStep } from '../utils/types';
@@ -13,7 +12,6 @@ import {
   getActivityDetails,
   getContinuationAgentConversationHistory,
   getCreditsForUser,
-  getMemoryContext,
   getPreviousExecutionHistory,
   init,
   RunChatPayload,
@@ -62,22 +60,9 @@ export const chat = task({
       await mcp.init();
       await mcp.load(agents, init.mcp);
 
-      let userContext: string[] = [];
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      let rawMemory: Record<string, any> = {};
       let automationContext: string;
       if (activity) {
         automationContext = payload.activityExecutionPlan;
-        userContext = [];
-      } else {
-        rawMemory = await getMemoryContext(
-          init?.conversationHistory?.message,
-          init?.userContextPageHTML,
-        );
-
-        userContext = rawMemory
-          ? [...rawMemory.newFacts, ...rawMemory.existingFacts]
-          : [];
       }
 
       // Prepare context with additional metadata
@@ -127,18 +112,18 @@ export const chat = task({
       await updateConversationHistoryMessage(
         agentUserMessage,
         agentConversationHistory?.id,
-        { memory: rawMemory, automation: automationContext },
+        { automation: automationContext },
       );
 
       const llmResponse = run(
         message,
         context,
-        userContext,
         previousExecutionHistory,
         mcp,
         automationContext,
         stepHistory,
         init.mcp,
+        init.preferences,
       );
 
       const stream = await metadata.stream('messages', llmResponse);
@@ -166,15 +151,6 @@ export const chat = task({
 
       await updateUserCredits(usageCredits, creditForChat);
       await updateConversationStatus('success', payload.conversationId);
-
-      const idempotencyKey = await idempotencyKeys.create(
-        payload.conversationId,
-      );
-
-      await memoryUpdateSchedule.trigger(
-        { conversationId: payload.conversationId },
-        { delay: '10m', idempotencyKey, idempotencyKeyTTL: '8m' },
-      );
     } catch (e) {
       await updateConversationStatus('failed', payload.conversationId);
       throw new Error(e);
