@@ -81,7 +81,7 @@ export const AppTabs = observer(() => {
       <div className="flex rounded-md items-center px-2 h-11">
         <WorkspaceDropdown />
       </div>
-      <div className="flex gap-1 items-center shrink-0 p-2 px-2 bg-background-3 rounded-md shadow">
+      <div className="flex gap-1 items-center shrink-0 p-1.5 px-1.5 bg-background-3 rounded-md shadow">
         <TooltipWrapper tooltip="G then H">
           <Button
             variant="ghost"

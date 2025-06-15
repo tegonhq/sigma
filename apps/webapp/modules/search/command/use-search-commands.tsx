@@ -98,34 +98,6 @@ export const useSearchCommands = (
     ];
 
     if (value) {
-      commands['create_tasks'] = [
-        {
-          Icon: AddLine,
-          text: (
-            <>
-              {value} - <span className="text-muted-foreground">Task</span>
-            </>
-          ),
-          command: () => {
-            // TODO fix this by creating task occurrence directly
-            if (!value.toLowerCase().includes('today')) {
-              createTask({
-                status: 'Todo',
-                title: `${value}`,
-              });
-            } else {
-              createTask({
-                status: 'Todo',
-                title: value,
-              });
-            }
-            onClose();
-          },
-        },
-      ];
-    }
-
-    if (value) {
       commands['settings'] = [
         {
           Icon: Workflow,

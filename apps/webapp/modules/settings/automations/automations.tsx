@@ -49,6 +49,7 @@ export const Automation = observer(
               automationId: automation.id,
             });
           }}
+          className="min-w-3xl"
           onClose={() => setUpdate(false)}
         />
       );
@@ -118,6 +119,7 @@ export const Automations = observer(() => {
               createAutomation({ text: value, mcps: agents });
             }}
             onClose={() => setAddAutomation(false)}
+            className="min-w-[500px]"
           />
         )}
         {automationsStore.automations.map((automation, index) => (

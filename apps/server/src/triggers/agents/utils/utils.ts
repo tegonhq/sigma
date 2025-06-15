@@ -43,7 +43,7 @@ export class Preferences {
 
   // Memory details
   memory_host?: string;
-  memory_apiKey?: string;
+  memory_api_key?: string;
 }
 
 export interface RunChatPayload {
@@ -235,7 +235,7 @@ export const init = async (payload: InitChatPayload) => {
       config.headers.Authorization = `Bearer ${pat?.token}`;
     } else if (config.url?.startsWith('https://sol::core_memory')) {
       config.url = `${workspacePreferences.memory_host}/search`;
-      config.headers.Authorization = `Bearer ${workspacePreferences.memory_apiKey}`;
+      config.headers.Authorization = `Bearer ${workspacePreferences.memory_api_key}`;
     }
 
     return config;
@@ -600,11 +600,6 @@ export const createConversation = async (
     data: {
       workspaceId: activity.workspaceId,
       userId: workspace.userId,
-      Activity: {
-        connect: {
-          id: activity.id,
-        },
-      },
       title: activity.text.substring(0, 100),
       ConversationHistory: {
         create: {

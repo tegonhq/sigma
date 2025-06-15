@@ -245,7 +245,7 @@ export async function* run(
 
   let tools = {
     ...(await mcp.allTools()),
-    ...getSolTools(!!preferences?.memory_host && !!preferences?.memory_apiKey),
+    ...getSolTools(!!preferences?.memory_host && !!preferences?.memory_api_key),
     load_mcp: loadMCPTools,
   };
 

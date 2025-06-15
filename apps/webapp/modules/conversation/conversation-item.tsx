@@ -45,7 +45,7 @@ export const ConversationItem = observer(
     }
 
     return (
-      <div className={cn('flex gap-2 pb-2 mx-5', isUser && 'justify-end my-4')}>
+      <div className={cn('flex gap-2 pb-2 mx-3', isUser && 'justify-end my-4')}>
         <div
           className={cn(
             'flex flex-col',

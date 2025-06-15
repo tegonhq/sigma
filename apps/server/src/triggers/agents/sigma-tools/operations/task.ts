@@ -9,7 +9,6 @@ import {
   Task,
   CreateAssistantTaskParams,
   UpdateAssistantTaskParams,
-  DeleteAssistantTaskParams,
 } from '../types/task.js';
 
 /**
@@ -98,10 +97,5 @@ export async function createAssistantTask(params: CreateAssistantTaskParams) {
 export async function updateAssistantTask(params: UpdateAssistantTaskParams) {
   const { taskId, ...data } = params;
   const response = await axios.post(`/api/v1/tasks/${taskId}`, data);
-  return response.data;
-}
-
-export async function deleteAssistantTask(params: DeleteAssistantTaskParams) {
-  const response = await axios.delete(`/api/v1/tasks/${params.taskId}`);
   return response.data;
 }

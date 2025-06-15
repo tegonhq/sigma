@@ -64,9 +64,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         </div>
 
         <div className="h-[calc(100vh_-_56px)] flex flex-col pb-2 overflow-hidden">
-          <div className="h-full w-full overflow-hidden rounded-md">
-            {children}
-          </div>
+          <div className="h-full w-full overflow-hidden">{children}</div>
         </div>
         <AIThinking />
         <Navigation />

@@ -27,7 +27,7 @@
     "@sentry/nextjs": "^7.105.0",
     "@sol/services": "workspace:*",
     "@sol/types": "workspace:*",
-    "@redplanethq/ui": "0.2.43",
+    "@redplanethq/ui": "0.2.44",
     "@tiptap/core": "^2.11.9",
     "@tiptap/extension-code-block": "2.11.9",
     "@tiptap/extension-code-block-lowlight": "^2.11.9",

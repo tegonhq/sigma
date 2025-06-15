@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { CreateActivityDto, UserTypeEnum } from '@redplanethq/sol-sdk';
+import { CreateActivityDto } from '@redplanethq/sol-sdk';
 import { convertTiptapJsonToHtml } from '@sol/editor-extensions';
 import { tasks } from '@trigger.dev/sdk/v3';
 import { PrismaService } from 'nestjs-prisma';
-import { createConversationTitle } from 'triggers/conversation/create-conversation-title';
 
 import { UsersService } from 'modules/users/users.service';
 
@@ -36,7 +35,6 @@ export default class ActivityService {
         createdAt: 'desc',
       },
       include: {
-        conversation: true,
         integrationAccount: {
           include: {
             integrationDefinition: true,
@@ -45,51 +43,7 @@ export default class ActivityService {
       },
     });
 
-    const conversation = exisitingActivity?.conversation;
-    const pat = await this.users.getOrCreatePat(userId, workspaceId);
-
-    if (exisitingActivity && conversation) {
-      // Create just conversation history for the existing conversation and add a new message to that
-      const integrationDefinition =
-        exisitingActivity.integrationAccount?.integrationDefinition;
-
-      const context = { agents: [integrationDefinition.slug] };
-
-      const conversationHistory = await this.prisma.conversationHistory.create({
-        data: {
-          conversationId: conversation.id,
-          userId,
-          message: `Activity from ${integrationDefinition.name} \n Content: ${createActivity.text}`,
-          userType: UserTypeEnum.User,
-          context,
-        },
-      });
-
-      // Trigger conversation title task
-      await tasks.trigger<typeof createConversationTitle>(
-        createConversationTitle.id,
-        {
-          conversationId: conversation.id,
-          message: createActivity.text,
-          pat,
-        },
-        { tags: [conversation.id, workspaceId] },
-      );
-
-      await tasks.trigger(
-        'chat',
-        {
-          conversationHistoryId: conversationHistory.id,
-          conversationId: conversation.id,
-          autoMode: true,
-          activity: exisitingActivity.id,
-          context,
-        },
-        { tags: [conversationHistory.id, workspaceId, exisitingActivity.id] },
-      );
-
-      return exisitingActivity;
-    }
+    console.log(exisitingActivity, userId);
 
     return await this.prisma.activity.create({
       data: {

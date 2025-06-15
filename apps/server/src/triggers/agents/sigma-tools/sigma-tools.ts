@@ -11,17 +11,12 @@ import {
   searchTasks,
   updateTask,
 } from './operations/task';
-import {
-  createAssistantTask,
-  updateAssistantTask,
-  deleteAssistantTask,
-} from './operations/task';
+import { createAssistantTask, updateAssistantTask } from './operations/task';
 import { CreateListSchema, GetListsSchema, ListSchema } from './types/list';
 import { RetrieveMemorySchema } from './types/memory';
 import {
   createAssistantTaskSchema,
   CreateTaskSchema,
-  deleteAssistantTaskSchema,
   DeleteTaskSchema,
   GetTaskSchema,
   SearchTasksSchema,
@@ -62,7 +57,7 @@ Supported filters (ONLY these are allowed):
 - is:unplanned or unplanned:true/false — filter for tasks that are not scheduled/planned (i.e., have no TaskOccurrence)
 - q:free_text — search in task titles (e.g., "meeting")
 - assignee:user/assistant - filter for tasks assigned to user or assistant
-DO NOT use unsupported fields such as "sourceId", "sourceUrl", etc. in queries.
+DO NOT use unsupported fields such as "sourceUrl", etc. in queries.
 Combine multiple filters with spaces, e.g.:
 "meeting status:Todo list:abc-123 due:<2025-06-01"`,
       parameters: SearchTasksSchema,
@@ -104,11 +99,6 @@ Combine multiple filters with spaces, e.g.:
       parameters: updateAssistantTaskSchema,
     }),
 
-    'sol--delete_assistant_task': tool({
-      description:
-        'Permanently deletes a task assigned to the assistant. DESTRUCTIVE ACTION - use with caution and confirmation. REQUIRES task_id parameter.',
-      parameters: deleteAssistantTaskSchema,
-    }),
     ...(isMemoryConfigured
       ? {
           'sol--get_user_memory': tool({
@@ -184,11 +174,6 @@ export async function callSolTool(name: string, parameters: any) {
       case 'update_assistant_task': {
         const args = updateAssistantTaskSchema.parse(parameters);
         const result = await updateAssistantTask(args);
-        return JSON.stringify(result, null, 2);
-      }
-      case 'delete_assistant_task': {
-        const args = deleteAssistantTaskSchema.parse(parameters);
-        const result = await deleteAssistantTask(args);
         return JSON.stringify(result, null, 2);
       }
       default:

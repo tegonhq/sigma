@@ -1,11 +1,11 @@
-import { AI, Button, cn } from '@redplanethq/ui';
+import { Button, cn } from '@redplanethq/ui';
 import { Command, CommandItem, CommandList } from '@redplanethq/ui';
 import { Document } from '@tiptap/extension-document';
 import HardBreak from '@tiptap/extension-hard-break';
 import { Paragraph } from '@tiptap/extension-paragraph';
 import { Text } from '@tiptap/extension-text';
 import { EditorContent, CodeBlockLowlight, Placeholder } from 'novel';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import React from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 
@@ -96,52 +96,25 @@ export function AssistantEditor({
     setAgents(mentionAgents);
   };
 
+  const handleSend = useCallback(() => {
+    if (!editor || !text) {
+      return;
+    }
+    onSend(html, agents, text);
+    editor.commands.clearContent(true);
+    setText('');
+    setHTML('');
+  }, [editor, text, onSend, html, agents]);
+
   const pagesCommands = () => {
     const pagesCommands = commands['Pages'];
-    const create_task_commands = commands['create_tasks'];
 
-    if (
-      pagesCommands &&
-      create_task_commands &&
-      pagesCommands?.length === 0 &&
-      create_task_commands.length === 0
-    ) {
+    if (pagesCommands && pagesCommands?.length === 0) {
       return null;
     }
 
     return (
       <>
-        <CommandItem
-          onSelect={() => {
-            onSend(html, agents, text);
-            editor.commands.clearContent(true);
-            setText('');
-            setHTML('');
-          }}
-          key={`page__${pagesCommands.length + 1}`}
-          className="flex gap-1 items-center py-2 aria-selected:bg-grayAlpha-100"
-        >
-          <div className="inline-flex items-center gap-2 min-w-[0px]">
-            <AI size={16} className="shrink-0" />
-            <div className="truncate"> {text} - Chat </div>
-          </div>
-        </CommandItem>
-
-        {create_task_commands.map((command, index) => {
-          return (
-            <CommandItem
-              onSelect={command.command}
-              key={`page__c${index}`}
-              className="flex gap-1 items-center py-2 aria-selected:bg-grayAlpha-100"
-            >
-              <div className="inline-flex items-center gap-2 min-w-[0px]">
-                <command.Icon size={16} className="shrink-0" />
-                <div className="truncate"> {command.text}</div>
-              </div>
-            </CommandItem>
-          );
-        })}
-
         {pagesCommands.splice(0, 5).map((command, index: number) => {
           return (
             <CommandItem
@@ -197,7 +170,6 @@ export function AssistantEditor({
               HardBreak.configure({
                 keepMarks: true,
               }),
-              starterKit,
               Placeholder.configure({
                 placeholder: () => {
                   return placeholder ?? 'Ask sol...';
@@ -220,14 +192,6 @@ export function AssistantEditor({
                 class: `prose prose-lg dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full`,
               },
               handleKeyDown(view, event) {
-                if (event.key === 'Enter' && event.metaKey) {
-                  onSend(html, agents, text);
-                  editor.commands.clearContent(true);
-                  setText('');
-                  setHTML('');
-                  return true;
-                }
-
                 // Block default Enter
                 if (event.key === 'Enter' && !event.shiftKey) {
                   const mentionItem = document.querySelector(
@@ -245,6 +209,11 @@ export function AssistantEditor({
 
                   if (activeItem) {
                     activeItem.click();
+                    return true;
+                  }
+
+                  if (html) {
+                    handleSend();
                     return true;
                   }
 
@@ -282,16 +251,7 @@ export function AssistantEditor({
             type="submit"
             size="lg"
             isLoading={isLoading}
-            onClick={() => {
-              if (html) {
-                const title = editor.getText();
-
-                onSend(html, agents, title);
-                editor.commands.clearContent(true);
-                setText('');
-                setHTML('');
-              }
-            }}
+            onClick={handleSend}
           >
             {isLoading ? <>Generating...</> : <>Chat</>}
           </Button>

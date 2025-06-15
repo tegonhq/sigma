@@ -15,7 +15,6 @@ export async function saveActivityData(
         createdAt: record.data.createdAt,
         updatedAt: record.data.updatedAt,
         text: record.data.text,
-        sourceId: record.data.sourceId,
         sourceURL: record.data.sourceURL,
         taskId: record.data.taskId,
         workspaceId: record.data.workspaceId,

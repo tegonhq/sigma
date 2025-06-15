@@ -8,7 +8,6 @@ import {
   FormMessage,
   Input,
   Button,
-  Loader,
   useToast,
 } from '@redplanethq/ui';
 import { observer } from 'mobx-react-lite';
@@ -16,7 +15,9 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import { useGetIntegrationDefinitions } from 'services/integration-definition';
+import { useUpdateWorkspaceMutation } from 'services/workspace';
+
+import { UserContext } from 'store/user-context';
 
 import { SettingSection } from '../setting-section';
 
@@ -26,14 +27,23 @@ const MemoryFormSchema = z.object({
 });
 
 export const Memory = observer(() => {
-  const { isLoading } = useGetIntegrationDefinitions();
+  const user = React.useContext(UserContext);
+  const preferences = user.workspace.preferences;
+
+  const { mutate: updateWorkspace } = useUpdateWorkspaceMutation({});
   const { toast } = useToast();
 
+  // State to control whether we are editing or just showing the host
+  const [editing, setEditing] = React.useState(
+    !preferences.memory_host, // If no host, show form by default
+  );
+
+  // Prefill form with memory_host if present, else default
   const form = useForm<z.infer<typeof MemoryFormSchema>>({
     resolver: zodResolver(MemoryFormSchema),
     defaultValues: {
-      url: 'https://core.heysol.ai',
-      apiKey: '',
+      url: preferences.memory_host || 'https://core.heysol.ai',
+      apiKey: preferences.memory_api_key || '',
     },
   });
 
@@ -43,7 +53,7 @@ export const Memory = observer(() => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': values.apiKey,
+          Authorization: `Bearer ${values.apiKey}`,
         },
         body: JSON.stringify({ query: 'name' }),
       });
@@ -53,12 +63,24 @@ export const Memory = observer(() => {
         throw new Error(error?.message || 'Failed to connect to API');
       }
 
-      const data = await res.json();
-      console.log('API Success:', data);
+      await res.json();
+
+      updateWorkspace({
+        name: user.workspace.name,
+        workspaceId: user.workspace.id,
+        preferences: {
+          ...preferences,
+          memory_host: values.url,
+          memory_api_key: values.apiKey,
+        },
+      });
+
       toast({
         title: 'Success!',
         description: 'Successfully connected to the Memory API.',
       });
+
+      setEditing(false);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       toast({
@@ -69,55 +91,86 @@ export const Memory = observer(() => {
     }
   };
 
-  if (isLoading) {
-    return <Loader />;
-  }
-
   return (
     <div className="flex flex-col gap-4 max-w-3xl mx-auto px-4 py-6">
       <SettingSection title="Memory" description="Edit user preferences/memory">
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-4 flex flex-col max-w-md min-w-[500px]"
-          >
-            <FormField
-              control={form.control}
-              name="url"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Memory API URL</FormLabel>
-                  <FormControl>
-                    <Input placeholder="https://core.heysol.ai" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="apiKey"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>API Key</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter your API Key"
-                      type="password"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+        {preferences.memory_host && !editing ? (
+          <div className="flex gap-4 max-w-md min-w-[500px] bg-background-3 justify-between rounded p-3 items-center">
+            <div>
+              <span className="font-semibold">Memory:</span>{' '}
+              <span>{preferences.memory_host}</span>
+            </div>
             <div className="flex justify-end">
-              <Button type="submit" variant="secondary" className="w-fit">
-                Save
+              <Button
+                variant="secondary"
+                className="w-fit"
+                onClick={() => setEditing(true)}
+              >
+                Edit
               </Button>
             </div>
-          </form>
-        </Form>
+          </div>
+        ) : (
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-4 flex flex-col max-w-md min-w-[500px]"
+            >
+              <FormField
+                control={form.control}
+                name="url"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Memory API URL</FormLabel>
+                    <FormControl>
+                      <Input placeholder="https://core.heysol.ai" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="apiKey"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>API Key</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter your API Key"
+                        type="password"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="flex justify-end gap-2">
+                {preferences.memory_host && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="w-fit"
+                    onClick={() => {
+                      setEditing(false);
+                      // Reset form to current preferences in case user cancels
+                      form.reset({
+                        url: preferences.memory_host,
+                        apiKey: '',
+                      });
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                )}
+                <Button type="submit" variant="secondary" className="w-fit">
+                  Save
+                </Button>
+              </div>
+            </form>
+          </Form>
+        )}
       </SettingSection>
     </div>
   );

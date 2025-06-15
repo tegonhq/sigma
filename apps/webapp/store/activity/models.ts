@@ -6,7 +6,6 @@ export const Activity = types.model({
   updatedAt: types.string,
 
   text: types.string,
-  sourceId: types.union(types.undefined, types.null, types.string),
   sourceURL: types.union(types.undefined, types.null, types.string),
   taskId: types.union(types.undefined, types.null, types.string),
   integrationAccountId: types.union(types.undefined, types.null, types.string),

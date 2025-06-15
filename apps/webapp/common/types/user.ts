@@ -9,6 +9,9 @@ interface Workspace {
     autonomy?: number;
     tone?: number;
     playfulness?: number;
+
+    memory_host?: string;
+    memory_api_key?: string;
   };
 }
 

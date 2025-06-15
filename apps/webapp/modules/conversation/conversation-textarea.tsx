@@ -4,7 +4,7 @@ import HardBreak from '@tiptap/extension-hard-break';
 import { Paragraph } from '@tiptap/extension-paragraph';
 import { Text } from '@tiptap/extension-text';
 import { EditorContent, CodeBlockLowlight, Placeholder } from 'novel';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import React from 'react';
 
 import { EditorRoot, lowlight, starterKit, type EditorT } from 'common/editor';
@@ -65,6 +65,17 @@ export function ConversationTextarea({
     setAgents(mentionAgents);
   };
 
+  // Memoized send handler
+  const handleSend = useCallback(() => {
+    if (!editor || !text) {
+      return;
+    }
+    const title = editor.getText();
+    onSend(text, agents, title);
+    editor.commands.clearContent(true);
+    setText('');
+  }, [editor, text, agents, onSend]);
+
   return (
     <div
       className={cn('flex flex-col rounded-md pt-2 bg-transparent', className)}
@@ -121,16 +132,6 @@ export function ConversationTextarea({
               class: `prose prose-lg dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full`,
             },
             handleKeyDown(view, event) {
-              if (event.key === 'Enter' && event.metaKey) {
-                const title = editor.getText();
-
-                onSend(text, agents, title);
-                editor.commands.clearContent(true);
-                setText('');
-
-                return true;
-              }
-
               // Block default Enter
               if (event.key === 'Enter' && !event.shiftKey) {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -142,7 +143,11 @@ export function ConversationTextarea({
 
                 event.preventDefault();
 
-                return false;
+                if (text) {
+                  handleSend();
+                }
+
+                return true;
               }
 
               // Allow Shift+Enter to insert hard break
@@ -174,11 +179,7 @@ export function ConversationTextarea({
           isLoading={isLoading}
           onClick={() => {
             if (text) {
-              const title = editor.getText();
-
-              onSend(text, agents, title);
-              editor.commands.clearContent(true);
-              setText('');
+              handleSend();
             }
           }}
         >

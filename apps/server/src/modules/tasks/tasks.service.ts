@@ -110,6 +110,8 @@ export class TasksService {
       listId,
       pageDescription,
       parentId,
+      startTime,
+      endTime,
       ...otherTaskData
     } = createTaskDto;
 
@@ -150,6 +152,14 @@ export class TasksService {
       return task;
     }
 
+    // If there is startTime and no endTime, set endTime to 15 minutes after startTime
+    let computedEndTime = endTime;
+    if (startTime && !endTime) {
+      const start = new Date(startTime);
+      start.setMinutes(start.getMinutes() + 15);
+      computedEndTime = start.toISOString();
+    }
+
     // Create the task first
     const task = await prismaClient.task.create({
       data: {
@@ -173,6 +183,8 @@ export class TasksService {
         ...(integrationAccountId && {
           integrationAccount: { connect: { id: integrationAccountId } },
         }),
+        ...(startTime && { startTime }),
+        ...(computedEndTime && { endTime: computedEndTime }),
       },
       include: {
         page: true,

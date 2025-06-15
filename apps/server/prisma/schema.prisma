@@ -15,19 +15,30 @@ model Activity {
   deleted   DateTime?
 
   text      String
-  sourceId  String?
+  // Used to link the task or activity to external apps
   sourceURL String?
 
   integrationAccount   IntegrationAccount? @relation(fields: [integrationAccountId], references: [id])
   integrationAccountId String?
 
-  conversation   Conversation? @relation(fields: [conversationId], references: [id])
-  conversationId String?
-
   task   Task?   @relation(fields: [taskId], references: [id])
   taskId String?
 
   rejectionReason String?
+
+  workspace           Workspace             @relation(fields: [workspaceId], references: [id])
+  workspaceId         String
+  ConversationHistory ConversationHistory[]
+}
+
+model Command {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  command     String
+  description String
 
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
   workspaceId String
@@ -135,7 +146,6 @@ model Conversation {
 
   ConversationHistory ConversationHistory[]
   syncs               Sync[]
-  Activity            Activity[]
 }
 
 model ConversationHistory {
@@ -146,6 +156,9 @@ model ConversationHistory {
 
   message  String
   userType UserType
+
+  activity   Activity? @relation(fields: [activityId], references: [id])
+  activityId String?
 
   context Json?
 
@@ -455,6 +468,7 @@ model Workspace {
   agentWorklog          AgentWorklog[]
   Activity              Activity[]
   Sync                  Sync[]
+  Command               Command[]
 }
 
 enum ModelName {
@@ -490,7 +504,7 @@ enum AttachmentStatus {
 }
 
 enum PageType {
-  Daily
+  Daily // deprecated
   List
   Default
   Context

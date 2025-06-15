@@ -6,6 +6,75 @@ import { taskReminder } from './task-reminder';
 
 const prisma = new PrismaClient();
 
+/**
+ * Generates a human-readable activity text for task create, update, and delete actions.
+ * For update, it uses the changeData to be specific about what changed.
+ */
+function getActivityText(
+  action: 'create' | 'update' | 'delete',
+  task: Task,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  changeData?: Record<string, { oldValue: any; newValue: any }>,
+): string | undefined {
+  const title = task.page?.title;
+  const id = task.id;
+  const display = title ? `${title} (${id})` : id;
+
+  if (action === 'create') {
+    let details = `Created task "${display}" with status "${task.status || 'N/A'}"`;
+
+    if (task.startTime) {
+      details += `, starts on ${new Date(task.startTime).toLocaleString()}`;
+    }
+    if (task.dueDate) {
+      details += `, due on ${new Date(task.dueDate).toLocaleString()}`;
+    }
+    if (task.recurrence?.length) {
+      details += `, recurring: ${task.recurrence.join(', ')}`;
+    }
+
+    return `${details}.`;
+  }
+
+  if (action === 'delete') {
+    return `Deleted task "${display}".`;
+  }
+
+  if (action === 'update' && changeData) {
+    const changes: string[] = [];
+
+    for (const [key, { oldValue, newValue }] of Object.entries(changeData)) {
+      if (key === 'status') {
+        changes.push(`status changed from "${oldValue}" to "${newValue}"`);
+      } else if (key === 'dueDate') {
+        changes.push(
+          `due date changed from "${oldValue ? new Date(oldValue).toLocaleString() : 'none'}" to "${
+            newValue ? new Date(newValue).toLocaleString() : 'none'
+          }"`,
+        );
+      } else if (key === 'recurrence') {
+        changes.push(
+          `recurrence changed from "${(oldValue || []).join(', ')}" to "${(newValue || []).join(', ')}"`,
+        );
+      } else if (key === 'startTime') {
+        changes.push(
+          `start time changed from "${oldValue ? new Date(oldValue).toLocaleString() : 'none'}" to "${
+            newValue ? new Date(newValue).toLocaleString() : 'none'
+          }"`,
+        );
+      }
+    }
+
+    if (changes.length === 0) {
+      return undefined;
+    }
+
+    return `Updated task "${display}": ${changes.join('; ')}.`;
+  }
+
+  return undefined;
+}
+
 async function createReminders(task: Task) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const taskMetadata = task.metadata as any;
@@ -104,7 +173,13 @@ export const taskActivityHandler = task({
 
     if (context.action === 'create') {
       await createReminders(task);
-      return { message: 'Handled schedule create' };
+
+      // Create activity text for creation
+      const activityText = getActivityText('create', task);
+
+      // You can now use activityText to create an Activity record if needed
+      // e.g. await prisma.activity.create({ data: { text: activityText, ... } });
+      return { message: 'Handled schedule create', activityText };
     }
 
     if (context.action === 'update') {
@@ -118,10 +193,19 @@ export const taskActivityHandler = task({
         // Create new schedule/run based on updated values
         await createReminders(task);
       }
-      return { message: 'Handled schedule update' };
+
+      // Create activity text for update, specifying what changed
+      const activityText = getActivityText('update', task, context.changeData);
+
+      // You can now use activityText to create an Activity record if needed
+      return { message: 'Handled schedule update', activityText };
     }
 
+    // For delete
     await clearReminders(task);
-    return { message: 'Handled schedule delete' };
+    const activityText = getActivityText('delete', task);
+
+    // You can now use activityText to create an Activity record if needed
+    return { message: 'Handled schedule delete', activityText };
   },
 });

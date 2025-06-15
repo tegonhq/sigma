@@ -1,11 +1,6 @@
 import { z } from 'zod';
 // Task schemas
-export const TaskStatusEnum = z.enum([
-  'Todo',
-  'In-progress',
-  'Done',
-  'Cancelled',
-]);
+export const TaskStatusEnum = z.enum(['Todo', 'In-progress', 'Done']);
 
 export const TaskSchema = z.object({
   id: z.string().uuid(),
@@ -102,7 +97,7 @@ export const SearchTasksSchema = z.object({
     - is:unplanned or unplanned:true/false — filter for tasks that are not scheduled/planned (i.e., have no TaskOccurrence)
     - q:free_text — search in task titles (e.g., "meeting")
   
-    DO NOT use unsupported fields such as "sourceId", "assignee", etc. in queries.
+    DO NOT use unsupported fields such as "sourceURL", "assignee", etc. in queries.
   
     Combine multiple filters with spaces, e.g.:
     "q:meeting status:Todo list:abc-123 due:<2025-06-01"`,
@@ -144,10 +139,6 @@ export const updateAssistantTaskSchema = z.object({
     .describe('End time of the task in ISO 8601 format'),
 });
 
-export const deleteAssistantTaskSchema = z.object({
-  taskId: z.string().uuid().describe('Unique identifier of the task to delete'),
-});
-
 export type Task = z.infer<typeof TaskSchema>;
 export type TaskStatus = z.infer<typeof TaskStatusEnum>;
 export type GetTaskParams = z.infer<typeof GetTaskSchema>;
@@ -160,7 +151,4 @@ export type CreateAssistantTaskParams = z.infer<
 >;
 export type UpdateAssistantTaskParams = z.infer<
   typeof updateAssistantTaskSchema
->;
-export type DeleteAssistantTaskParams = z.infer<
-  typeof deleteAssistantTaskSchema
 >;

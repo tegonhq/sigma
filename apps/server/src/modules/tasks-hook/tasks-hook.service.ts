@@ -9,7 +9,7 @@ import { tasks } from '@trigger.dev/sdk/v3';
 import { endOfDay, subDays } from 'date-fns';
 import { PrismaService } from 'nestjs-prisma';
 import { beautifyTask } from 'triggers/task/beautify-task';
-import { taskActivityHandler } from 'triggers/task/task-update-activity';
+import { taskActivityHandler } from 'triggers/task/task-activity-handler';
 
 import { IntegrationsService } from 'modules/integrations/integrations.service';
 import { PagesService } from 'modules/pages/pages.service';
@@ -43,6 +43,7 @@ export class TaskHooksService {
       include: {
         workspace: true,
         subIssue: true,
+        page: true,
       },
     });
 

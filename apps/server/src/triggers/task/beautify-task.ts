@@ -133,9 +133,12 @@ export const beautifyTask = task({
           ...(outputData.recurrenceRule && {
             recurrence: outputData.recurrenceRule,
           }),
-          ...(outputData.scheduleText && {
-            scheduleText: outputData.scheduleText,
-          }),
+
+          ...(Array.isArray(outputData.recurrenceRule) &&
+            outputData.recurrenceRule.length > 0 &&
+            outputData.scheduleText && {
+              scheduleText: outputData.scheduleText,
+            }),
 
           ...(outputData.listId &&
             !solTask.listId && {

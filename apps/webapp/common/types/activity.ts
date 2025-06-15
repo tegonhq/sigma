@@ -4,7 +4,6 @@ export interface ActivityType {
   updatedAt: string;
 
   text: string;
-  sourceId?: string;
   sourceURL?: string;
 
   conversationId?: string;

@@ -73,20 +73,20 @@ export const activityRun = task({
       { tags: [conversation.id, activity.workspace.id] },
     );
 
-    const conversationHistory = conversation.ConversationHistory[0];
+    // const conversationHistory = conversation.ConversationHistory[0];
 
-    await tasks.trigger(
-      'chat',
-      {
-        conversationHistoryId: conversationHistory.id,
-        conversationId: conversation.id,
-        autoMode: true,
-        activity: activity.id,
-        activityExecutionPlan: automationsToRun.executionPlan,
-        context: {},
-      },
-      { tags: [conversationHistory.id, activity.workspaceId, activity.id] },
-    );
+    // await tasks.trigger(
+    //   'chat',
+    //   {
+    //     conversationHistoryId: conversationHistory.id,
+    //     conversationId: conversation.id,
+    //     autoMode: true,
+    //     activity: activity.id,
+    //     activityExecutionPlan: automationsToRun.executionPlan,
+    //     context: {},
+    //   },
+    //   { tags: [conversationHistory.id, activity.workspaceId, activity.id] },
+    // );
 
     return 'Ran a conversation';
   },

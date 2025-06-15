@@ -187,8 +187,8 @@ importers:
         specifier: ^1.14.0
         version: 1.14.1(typescript@5.8.3)
       '@redplanethq/sol-sdk':
-        specifier: 0.2.11
-        version: 0.2.11
+        specifier: 0.2.12
+        version: 0.2.12
       '@sol/editor-extensions':
         specifier: workspace:*
         version: link:../../packages/editor-extensions
@@ -446,8 +446,8 @@ importers:
         specifier: ^1.1.4
         version: 1.1.7(@types/react-dom@18.3.7(@types/react@18.3.23))(@types/react@18.3.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@redplanethq/ui':
-        specifier: 0.2.43
-        version: 0.2.43(@opentelemetry/api@1.9.0)(@tiptap/extension-code-block@2.11.9(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0))(@types/react-dom@18.3.7(@types/react@18.3.23))(@types/react@18.3.23)(encoding@0.1.13)(highlight.js@11.11.1)(javascript-time-ago@2.5.11)(lowlight@3.3.0)(react-dom@18.3.1(react@18.3.1))(react-hook-form@7.49.3(react@18.3.1))(react@18.3.1)(sswr@2.2.0(svelte@5.33.14))(svelte@5.33.14)(tailwindcss@3.4.17(ts-node@10.9.2(@types/node@20.16.11)(typescript@5.8.3)))(vue@3.5.16(typescript@5.8.3))(zod@3.23.8)
+        specifier: 0.2.44
+        version: 0.2.44(@opentelemetry/api@1.9.0)(@tiptap/extension-code-block@2.11.9(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0))(@types/react-dom@18.3.7(@types/react@18.3.23))(@types/react@18.3.23)(encoding@0.1.13)(highlight.js@11.11.1)(javascript-time-ago@2.5.11)(lowlight@3.3.0)(react-dom@18.3.1(react@18.3.1))(react-hook-form@7.49.3(react@18.3.1))(react@18.3.1)(sswr@2.2.0(svelte@5.33.14))(svelte@5.33.14)(tailwindcss@3.4.17(ts-node@10.9.2(@types/node@20.16.11)(typescript@5.8.3)))(vue@3.5.16(typescript@5.8.3))(zod@3.23.8)
       '@remixicon/react':
         specifier: ^4.2.0
         version: 4.6.0(react@18.3.1)
@@ -4046,8 +4046,8 @@ packages:
   '@radix-ui/rect@1.1.1':
     resolution: {integrity: sha512-HPwpGIzkl28mWyZqG52jiqDJ12waP11Pa1lGoiyUkIEuMLBP0oeK/C89esbXrxsky5we7dfd8U58nm0SgAWpVw==}
 
-  '@redplanethq/sol-sdk@0.2.11':
-    resolution: {integrity: sha512-dv23jBzGJcKsuN5/3mbJI2lKJF3TQFT4G7R61KAJ8oK8Np5FMUEGoCq0hRUBh1NSSl4KSvW3H09tgXmAk13Y0Q==}
+  '@redplanethq/sol-sdk@0.2.12':
+    resolution: {integrity: sha512-uarvY1W63bla22TfJQdWWcL70gXeVkJWJk0V0GfN0pVaQ/3uWm/DFx3oV7/GzFj0tmsg09xgks2mFCNqPFTPoA==}
     engines: {node: '>=18.0.0'}
 
   '@redplanethq/ui@0.2.41':
@@ -4056,8 +4056,8 @@ packages:
       react: ^18
       react-hook-form: 7.49.3
 
-  '@redplanethq/ui@0.2.43':
-    resolution: {integrity: sha512-T6mDwHaHaoySweAZWkvxlGhQB7ViYnnJGD2iN8SDIYGRQO/0+HhGZf8eC/aogaO/c6uNRjAOOp04+yoqUTyVCA==}
+  '@redplanethq/ui@0.2.44':
+    resolution: {integrity: sha512-A86t2adfHavMC2NCGoJ5GOzK3Iww18EXGX75f5NPuuZIwRJ09gf+BFOHY2mpN3v5UlIY3zyXSx9uAIGOmU+KTQ==}
     peerDependencies:
       react: ^18
       react-hook-form: 7.49.3
@@ -16597,7 +16597,7 @@ snapshots:
 
   '@radix-ui/rect@1.1.1': {}
 
-  '@redplanethq/sol-sdk@0.2.11': {}
+  '@redplanethq/sol-sdk@0.2.12': {}
 
   '@redplanethq/ui@0.2.41(@opentelemetry/api@1.9.0)(@tiptap/extension-code-block@2.12.0(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0))(@types/react-dom@18.3.7(@types/react@18.3.23))(@types/react@18.3.23)(highlight.js@11.11.1)(javascript-time-ago@2.5.11)(lowlight@3.3.0)(react-dom@18.3.1(react@18.3.1))(react-hook-form@7.49.3(react@18.3.1))(react@18.3.1)(sswr@2.2.0(svelte@5.33.14))(svelte@5.33.14)(tailwindcss@3.4.17(ts-node@10.9.2(@types/node@20.16.11)(typescript@5.8.3)))(zod@3.23.8)':
     dependencies:
@@ -16675,7 +16675,7 @@ snapshots:
       - vue
       - zod
 
-  '@redplanethq/ui@0.2.43(@opentelemetry/api@1.9.0)(@tiptap/extension-code-block@2.11.9(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0))(@types/react-dom@18.3.7(@types/react@18.3.23))(@types/react@18.3.23)(encoding@0.1.13)(highlight.js@11.11.1)(javascript-time-ago@2.5.11)(lowlight@3.3.0)(react-dom@18.3.1(react@18.3.1))(react-hook-form@7.49.3(react@18.3.1))(react@18.3.1)(sswr@2.2.0(svelte@5.33.14))(svelte@5.33.14)(tailwindcss@3.4.17(ts-node@10.9.2(@types/node@20.16.11)(typescript@5.8.3)))(vue@3.5.16(typescript@5.8.3))(zod@3.23.8)':
+  '@redplanethq/ui@0.2.44(@opentelemetry/api@1.9.0)(@tiptap/extension-code-block@2.11.9(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0))(@types/react-dom@18.3.7(@types/react@18.3.23))(@types/react@18.3.23)(encoding@0.1.13)(highlight.js@11.11.1)(javascript-time-ago@2.5.11)(lowlight@3.3.0)(react-dom@18.3.1(react@18.3.1))(react-hook-form@7.49.3(react@18.3.1))(react@18.3.1)(sswr@2.2.0(svelte@5.33.14))(svelte@5.33.14)(tailwindcss@3.4.17(ts-node@10.9.2(@types/node@20.16.11)(typescript@5.8.3)))(vue@3.5.16(typescript@5.8.3))(zod@3.23.8)':
     dependencies:
       '@hello-pangea/dnd': 16.6.0(@types/react-dom@18.3.7(@types/react@18.3.23))(@types/react@18.3.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@radix-ui/react-accordion': 1.2.11(@types/react-dom@18.3.7(@types/react@18.3.23))(@types/react@18.3.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
