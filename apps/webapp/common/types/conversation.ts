@@ -20,6 +20,7 @@ export interface ConversationHistoryType {
   createdAt: string;
   updatedAt: string;
 
+  activityId?: string;
   message: string;
   userType: UserType;
   context: string;

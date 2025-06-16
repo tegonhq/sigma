@@ -94,16 +94,26 @@ export class TaskOccurenceService {
 
     // Create each task occurrence in parallel
     return await Promise.all(
-      taskIds.map((taskId: string) =>
-        this.prisma.taskOccurrence.create({
+      taskIds.map(async (taskId: string) => {
+        await this.prisma.task.update({
+          where: {
+            id: taskId,
+          },
+          data: {
+            startTime: startTime ? new Date(startTime) : null,
+            endTime: endTime ? new Date(endTime) : null,
+          },
+        });
+
+        return this.prisma.taskOccurrence.create({
           data: {
             taskId,
             startTime: startTime ? new Date(startTime) : null,
             endTime: endTime ? new Date(endTime) : null,
             workspaceId,
           },
-        }),
-      ),
+        });
+      }),
     );
   }
 

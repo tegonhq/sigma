@@ -12,7 +12,7 @@ import {
 } from '@prisma/client';
 import {
   IntegrationDefinition,
-  LLMModelEnum,
+  LLMMappings,
   UserTypeEnum,
 } from '@redplanethq/sol-sdk';
 import { logger } from '@trigger.dev/sdk/v3';
@@ -24,6 +24,7 @@ import {
   AUTOMATION_SYSTEM_PROMPT,
   AUTOMATIONS_USER_PROMPT,
 } from '../chat/prompt';
+import { generate } from '../chat/stream-utils';
 
 const prisma = new PrismaClient();
 
@@ -384,15 +385,6 @@ export const getExecutionStepsForConversation = async (
   return lastExecutionSteps;
 };
 
-export const getContextPage = async (workspaceId: string) => {
-  return await prisma.page.findFirst({
-    where: {
-      workspaceId,
-      type: 'Context',
-    },
-  });
-};
-
 export const getCreditsForUser = async (userId: string) => {
   return await prisma.userUsage.findUnique({
     where: {
@@ -468,12 +460,24 @@ export function flattenObject(obj: Record<string, any>, prefix = ''): string[] {
   }, []);
 }
 
-export async function getContext(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  requestBody: Record<string, any>,
-) {
-  const contextResponse = (await axios.post(`/api/v1/ai_requests`, requestBody))
-    .data;
+export async function getContext(messages: CoreMessage[]) {
+  let contextResponse = '';
+
+  const gen = generate(
+    messages,
+    () => {},
+    undefined,
+    '',
+    LLMMappings.CLAUDESONNET,
+  );
+
+  for await (const chunk of gen) {
+    if (typeof chunk === 'string') {
+      contextResponse += chunk;
+    } else if (chunk && typeof chunk === 'object' && chunk.message) {
+      contextResponse += chunk.message;
+    }
+  }
 
   const outputRegex = /<output>\s*(.*?)\s*<\/output>/s;
   const match = contextResponse.match(outputRegex);
@@ -520,25 +524,21 @@ export async function getAutomationContext(
     reason?: string;
   } = {};
   try {
-    automationContext = await getContext({
-      messages: [
-        {
-          role: 'system',
-          content: AUTOMATION_SYSTEM_PROMPT,
-        },
-        {
-          role: 'user',
-          content: AUTOMATIONS_USER_PROMPT.replace(
-            '{{USER_MEMORY}}',
-            userContextPageHTML,
-          )
-            .replace('{{USER_AUTOMATIONS}}', automationsList)
-            .replace('{{CURRENT_CONVERSATION_MESSAGE}}', query),
-        },
-      ],
-      llmModel: LLMModelEnum.GPT41MINI,
-      model: 'automationContext',
-    });
+    automationContext = await getContext([
+      {
+        role: 'system',
+        content: AUTOMATION_SYSTEM_PROMPT,
+      },
+      {
+        role: 'user',
+        content: AUTOMATIONS_USER_PROMPT.replace(
+          '{{USER_MEMORY}}',
+          userContextPageHTML,
+        )
+          .replace('{{USER_AUTOMATIONS}}', automationsList)
+          .replace('{{CURRENT_CONVERSATION_MESSAGE}}', query),
+      },
+    ]);
   } catch (e) {
     logger.error(e);
   }
@@ -606,6 +606,7 @@ export const createConversation = async (
           userId: workspace.userId,
           message: `Activity from ${integrationDefinition.name} \n Content: ${activity.text}`,
           userType: UserTypeEnum.User,
+          activityId: activity.id,
           thoughts: { ...automationContext },
         },
       },

@@ -4,14 +4,9 @@ import { convertTiptapJsonToHtml } from '@sol/editor-extensions';
 import { tasks } from '@trigger.dev/sdk/v3';
 import { PrismaService } from 'nestjs-prisma';
 
-import { UsersService } from 'modules/users/users.service';
-
 @Injectable()
 export default class ActivityService {
-  constructor(
-    private prisma: PrismaService,
-    private users: UsersService,
-  ) {}
+  constructor(private prisma: PrismaService) {}
   async createActivity(
     createActivity: CreateActivityDto,
     workspaceId: string,
@@ -73,17 +68,11 @@ export default class ActivityService {
       ? convertTiptapJsonToHtml(JSON.parse(userContextPage.description))
       : '';
 
-    const pat = await this.users.getOrCreatePat(
-      activity.workspace.userId,
-      activity.workspaceId,
-    );
-
     await tasks.trigger(
       'activity',
       {
         activityId,
         userContextPage: userContextPageHTML,
-        pat,
       },
       { tags: [activityId, activity.workspaceId, activity.id] },
     );

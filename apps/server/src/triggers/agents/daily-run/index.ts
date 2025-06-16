@@ -3,7 +3,6 @@ import { Preferences } from '@redplanethq/sol-sdk';
 import { schedules } from '@trigger.dev/sdk/v3';
 import axios from 'axios';
 
-import { pageGroomTask } from './page-groom';
 import { processTaskOccurrences } from './task-occurrence';
 
 const prisma = new PrismaClient();
@@ -34,8 +33,6 @@ export const dailyRunSchedule = schedules.task({
       return config;
     });
 
-    await processTaskOccurrences(externalId, timezone);
-
-    return await pageGroomTask(externalId, timezone);
+    return await processTaskOccurrences(externalId, timezone);
   },
 });

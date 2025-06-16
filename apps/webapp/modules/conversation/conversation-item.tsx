@@ -24,7 +24,9 @@ export const ConversationItem = observer(
       conversationHistoryStore.getConversationHistoryForId(
         conversationHistoryId,
       );
-    const isUser = conversationHistory.userType === UserTypeEnum.User;
+    const isUser =
+      conversationHistory.userType === UserTypeEnum.User ||
+      conversationHistory.userType === UserTypeEnum.System;
 
     const id = `a${conversationHistory.id.replace(/-/g, '')}`;
 
@@ -45,7 +47,7 @@ export const ConversationItem = observer(
     }
 
     return (
-      <div className={cn('flex gap-2 pb-2 mx-3', isUser && 'justify-end my-4')}>
+      <div className={cn('flex gap-2 pb-2 px-4', isUser && 'justify-end my-4')}>
         <div
           className={cn(
             'flex flex-col',

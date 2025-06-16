@@ -15,7 +15,8 @@ export interface ActivityRow {
 }
 
 export const useActivities = () => {
-  const { activitiesStore, conversationsStore } = useContextStore();
+  const { activitiesStore, conversationsStore, conversationHistoryStore } =
+    useContextStore();
 
   const getRows = (): ActivityRow[] => {
     const activities = activitiesStore.getActivities;
@@ -23,7 +24,12 @@ export const useActivities = () => {
 
     // Filter activities and create mapped items in one pass
     const activityItems = activities
-      .filter((activity) => !activity.conversationId)
+      .filter(
+        (activity) =>
+          !conversationHistoryStore.getConversationHistoryForActivity(
+            activity.id,
+          ),
+      )
       .map((item) => ({
         id: item.id,
         updatedAt: item.updatedAt,
@@ -38,6 +44,7 @@ export const useActivities = () => {
       rowType: 'conversation' as const,
       item,
     }));
+
     // Combine and sort
     const allItems = [...activityItems, ...conversationItems]
       .filter((item) => {

@@ -16,14 +16,9 @@ import { auth, runs, tasks } from '@trigger.dev/sdk/v3';
 import { PrismaService } from 'nestjs-prisma';
 import { createConversationTitle } from 'triggers/conversation/create-conversation-title';
 
-import { UsersService } from 'modules/users/users.service';
-
 @Injectable()
 export class ConversationService {
-  constructor(
-    private prisma: PrismaService,
-    private users: UsersService,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
   async createConversation(
     workspaceId: string,
@@ -95,15 +90,12 @@ export class ConversationService {
     const conversationHistory = conversation.ConversationHistory[0];
     const context = await this.getConversationContext(conversationHistory.id);
 
-    const pat = await this.users.getOrCreatePat(userId, workspaceId);
-
     // Trigger conversation title task
     await tasks.trigger<typeof createConversationTitle>(
       createConversationTitle.id,
       {
         conversationId: conversation.id,
         message: conversationData.message,
-        pat,
       },
       { tags: [conversation.id, workspaceId] },
     );

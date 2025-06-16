@@ -20,6 +20,7 @@ export async function saveConversationHistorytData(
         userId: record.data.userId,
         userType: record.data.userType,
         conversationId: record.data.conversationId,
+        activityId: record.data.activityId,
       };
 
       switch (record.action) {

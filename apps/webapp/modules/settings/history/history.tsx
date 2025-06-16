@@ -11,7 +11,7 @@ import { useGetIntegrationDefinitions } from 'services/integration-definition';
 
 import { ActivityList } from './activity-list';
 
-export const Activities = () => {
+export const History = () => {
   const [selected, setSelected] = React.useState<
     { type: string; id: string } | undefined
   >(undefined);
@@ -48,9 +48,7 @@ export const Activities = () => {
         collapsedSize={0}
         className="flex flex-col w-full h-[calc(100vh_-_10px)]"
       >
-        {selected && (
-          <InboxConversation conversationId={getConversationId()} inLogs />
-        )}
+        {selected && <InboxConversation conversationId={getConversationId()} />}
       </ResizablePanel>
     </ResizablePanelGroup>
   );

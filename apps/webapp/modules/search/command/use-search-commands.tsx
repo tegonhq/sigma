@@ -1,5 +1,4 @@
 import {
-  AddLine,
   AI,
   CalendarLine,
   DeleteLine,
@@ -8,15 +7,13 @@ import {
   Project,
   SettingsLine,
 } from '@redplanethq/ui';
-import { Brain, Check, Workflow } from 'lucide-react';
+import { Brain, Check, Settings, Workflow } from 'lucide-react';
 import React from 'react';
 
 import { DailogViewsContext, DialogType } from 'modules/dialog-views-provider';
 import { useSettings } from 'modules/settings';
 
 import { useApplication } from 'hooks/application';
-
-import { useCreateTaskMutation } from 'services/tasks';
 
 import { TabViewType } from 'store/application';
 import { useContextStore } from 'store/global-context-provider';
@@ -41,7 +38,6 @@ export const useSearchCommands = (
 
   const { openDialog } = React.useContext(DailogViewsContext);
   const { markComplete, deleteTasks } = useTaskOperations();
-  const { mutate: createTask } = useCreateTaskMutation({});
   const { openSettings } = useSettings();
 
   const getTasks = () => {
@@ -124,10 +120,10 @@ export const useSearchCommands = (
           },
         },
         {
-          Icon: AI,
-          text: 'Activities',
+          Icon: Settings,
+          text: 'History',
           command: () => {
-            openSettings('Activities');
+            openSettings('History');
             onClose();
           },
         },

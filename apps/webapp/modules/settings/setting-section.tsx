@@ -14,7 +14,7 @@ export function SettingSection({
   actions,
 }: SettingSectionProps) {
   return (
-    <div className="flex flex-col gap-6 p-3">
+    <div className="flex flex-col gap-6 p-3 w-3xl">
       <div className="flex justify-between">
         <div className="shrink-0 flex flex-col">
           <h3 className="text-lg"> {title} </h3>

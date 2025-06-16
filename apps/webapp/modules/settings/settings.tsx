@@ -27,8 +27,8 @@ import { Provider } from 'modules/provider';
 import { SCOPES } from 'common/shortcut-scopes';
 import { AllProviders } from 'common/wrappers/all-providers';
 
-import { Activities } from './activity';
 import { Automations } from './automations';
+import { History } from './history';
 import { Integrations } from './integrations';
 import { MCP } from './mcp';
 import { Memory } from './memory';
@@ -42,7 +42,7 @@ const COMPONENTS_MAP = {
   MCP,
   Memory,
   Automations,
-  Activities,
+  History,
 };
 
 export const Settings = observer(() => {
@@ -61,7 +61,7 @@ export const Settings = observer(() => {
       { name: 'MCP', icon: AI },
       { name: 'Memory', icon: Brain },
       { name: 'Automations', icon: Workflow },
-      { name: 'Activities', icon: Clock },
+      { name: 'History', icon: Clock },
     ],
   };
 

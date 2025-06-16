@@ -15,11 +15,8 @@ export class TasksAIController {
 
   @Post('recurrence')
   @UseGuards(AuthGuard)
-  async aiFilters(
-    @Body() reccurenceInput: ReccurenceInput,
-    @Workspace() workspaceId: string,
-  ) {
-    return await this.tasksAiService.recurrence(reccurenceInput, workspaceId);
+  async aiFilters(@Body() reccurenceInput: ReccurenceInput) {
+    return await this.tasksAiService.recurrence(reccurenceInput);
   }
 
   @Post('schedule')

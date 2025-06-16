@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { PrismaModule, PrismaService } from 'nestjs-prisma';
 
-import AIRequestsService from 'modules/ai-requests/ai-requests.services';
 import { ContentModule } from 'modules/content/content.module';
 import { ConversationModule } from 'modules/conversation/conversation.module';
 import { IntegrationsService } from 'modules/integrations/integrations.service';
@@ -32,7 +31,6 @@ import { TasksService } from './tasks.service';
     TasksAIService,
     UsersService,
     TaskOccurenceService,
-    AIRequestsService,
     IntegrationsService,
     PagesService,
     TaskVectorService,

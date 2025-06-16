@@ -2,13 +2,14 @@ import { PrismaClient } from '@prisma/client';
 import {
   AgentWorklogStateEnum,
   beautifyPrompt,
-  LLMModelEnum,
+  LLMMappings,
   ModelNameEnum,
   Preferences,
 } from '@redplanethq/sol-sdk';
 import { logger, task } from '@trigger.dev/sdk/v3';
 import axios from 'axios';
 import { addMinutes } from 'date-fns';
+import { generate } from 'triggers/agents/chat/stream-utils';
 
 const prisma = new PrismaClient();
 
@@ -58,9 +59,10 @@ export const beautifyTask = task({
 
     try {
       const timezone = (solTask.workspace.preferences as Preferences).timezone;
+      let beautifyOutput = '';
 
       // Run both API requests in parallel
-      const [recurrenceData, beautifyOutput] = await Promise.all([
+      const [recurrenceData] = await Promise.all([
         axios
           .post(
             `${process.env.BACKEND_HOST}/v1/tasks/ai/recurrence`,
@@ -74,25 +76,30 @@ export const beautifyTask = task({
             { headers: { Authorization: `Bearer ${payload.pat}` } },
           )
           .then((response) => response.data),
-        axios
-          .post(
-            `${process.env.BACKEND_HOST}/v1/ai_requests`,
-            {
-              messages: [
-                {
-                  role: 'user',
-                  content: beautifyPrompt
-                    .replace('{{text}}', solTask.page.title)
-                    .replace('{{lists}}', lists.join('\n')),
-                },
-              ],
-              llmModel: LLMModelEnum.CLAUDESONNET,
-              model: 'beautify',
-            },
-            { headers: { Authorization: `Bearer ${payload.pat}` } },
-          )
-          .then((response) => response.data),
       ]);
+
+      const gen = generate(
+        [
+          {
+            role: 'user',
+            content: beautifyPrompt
+              .replace('{{text}}', solTask.page.title)
+              .replace('{{lists}}', lists.join('\n')),
+          },
+        ],
+        () => {},
+        undefined,
+        '',
+        LLMMappings.CLAUDESONNET,
+      );
+
+      for await (const chunk of gen) {
+        if (typeof chunk === 'string') {
+          beautifyOutput += chunk;
+        } else if (chunk && typeof chunk === 'object' && chunk.message) {
+          beautifyOutput += chunk.message;
+        }
+      }
 
       const outputMatch = beautifyOutput.match(/<output>(.*?)<\/output>/s);
 

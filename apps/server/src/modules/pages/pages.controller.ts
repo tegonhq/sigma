@@ -10,7 +10,6 @@ import {
 } from '@nestjs/common';
 import {
   CreatePageDto,
-  EnhancePageResponse,
   GetPageByTitleDto,
   PublicPage,
   PageRequestParamsDto,
@@ -74,14 +73,6 @@ export class PagesController {
     @Body() pageData: UpdatePageDto,
   ): Promise<PublicPage> {
     return await this.pagesService.updatePage(pageData, pageParams.pageId);
-  }
-
-  @Post(':pageId/enhance')
-  @UseGuards(AuthGuard)
-  async enhancePage(
-    @Param() pageParams: PageRequestParamsDto,
-  ): Promise<EnhancePageResponse[]> {
-    return await this.pagesService.enhancePage(pageParams.pageId);
   }
 
   @Delete(':pageId')

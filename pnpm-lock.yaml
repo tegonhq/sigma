@@ -187,8 +187,8 @@ importers:
         specifier: ^1.14.0
         version: 1.14.1(typescript@5.8.3)
       '@redplanethq/sol-sdk':
-        specifier: 0.2.12
-        version: 0.2.12
+        specifier: 0.2.13
+        version: 0.2.13
       '@sol/editor-extensions':
         specifier: workspace:*
         version: link:../../packages/editor-extensions
@@ -4046,8 +4046,8 @@ packages:
   '@radix-ui/rect@1.1.1':
     resolution: {integrity: sha512-HPwpGIzkl28mWyZqG52jiqDJ12waP11Pa1lGoiyUkIEuMLBP0oeK/C89esbXrxsky5we7dfd8U58nm0SgAWpVw==}
 
-  '@redplanethq/sol-sdk@0.2.12':
-    resolution: {integrity: sha512-uarvY1W63bla22TfJQdWWcL70gXeVkJWJk0V0GfN0pVaQ/3uWm/DFx3oV7/GzFj0tmsg09xgks2mFCNqPFTPoA==}
+  '@redplanethq/sol-sdk@0.2.13':
+    resolution: {integrity: sha512-SA5sGN7HR0ATQev6ozGyyBrMcbatYgdt0f/dIrql7PInB9kRVgPHQ8cEwP+bMe+KW6GMBrT+zFL7vTHtW4dt+w==}
     engines: {node: '>=18.0.0'}
 
   '@redplanethq/ui@0.2.41':
@@ -16597,7 +16597,7 @@ snapshots:
 
   '@radix-ui/rect@1.1.1': {}
 
-  '@redplanethq/sol-sdk@0.2.12': {}
+  '@redplanethq/sol-sdk@0.2.13': {}
 
   '@redplanethq/ui@0.2.41(@opentelemetry/api@1.9.0)(@tiptap/extension-code-block@2.12.0(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0))(@types/react-dom@18.3.7(@types/react@18.3.23))(@types/react@18.3.23)(highlight.js@11.11.1)(javascript-time-ago@2.5.11)(lowlight@3.3.0)(react-dom@18.3.1(react@18.3.1))(react-hook-form@7.49.3(react@18.3.1))(react@18.3.1)(sswr@2.2.0(svelte@5.33.14))(svelte@5.33.14)(tailwindcss@3.4.17(ts-node@10.9.2(@types/node@20.16.11)(typescript@5.8.3)))(zod@3.23.8)':
     dependencies:

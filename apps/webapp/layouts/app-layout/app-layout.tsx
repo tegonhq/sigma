@@ -53,7 +53,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   return (
     <RightSideLayout>
       <div className="h-[100vh]">
-        <div className="top-0 z-10 w-full flex justify-start px-2">
+        <div className="top-0 z-10 w-full flex justify-start">
           <div className="flex items-center w-full">
             <div className="flex items-center justify-center overflow-hidden pb-1 w-full">
               <div className="flex items-center w-full rounded-md">

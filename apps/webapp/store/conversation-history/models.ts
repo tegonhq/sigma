@@ -10,6 +10,7 @@ export const ConversationHistory = types.model({
   context: types.union(types.null, types.string),
   thoughts: types.union(types.null, types.string),
   userId: types.union(types.null, types.string),
+  activityId: types.union(types.null, types.string, types.undefined),
   userType: types.enumeration(['Agent', 'User', 'System']),
   conversationId: types.string,
 });
@@ -20,6 +21,9 @@ export interface ConversationHistoryStoreType {
     id: string,
   ) => ConversationHistoryType[];
   getConversationHistoryForId: (id: string) => ConversationHistoryType;
+  getConversationHistoryForActivity: (
+    activityId: string,
+  ) => ConversationHistoryType;
   update: (
     conversation: Partial<ConversationHistoryType>,
     id: string,

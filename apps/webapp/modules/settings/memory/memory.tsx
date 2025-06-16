@@ -92,10 +92,10 @@ export const Memory = observer(() => {
   };
 
   return (
-    <div className="flex flex-col gap-4 max-w-3xl mx-auto px-4 py-6">
+    <div className="flex flex-col gap-4 w-3xl mx-auto px-4 py-6">
       <SettingSection title="Memory" description="Edit user preferences/memory">
         {preferences.memory_host && !editing ? (
-          <div className="flex gap-4 max-w-md min-w-[500px] bg-background-3 justify-between rounded p-3 items-center">
+          <div className="flex gap-4 w-full min-w-[500px] bg-background-3 justify-between rounded p-3 items-center">
             <div>
               <span className="font-semibold">Memory:</span>{' '}
               <span>{preferences.memory_host}</span>
@@ -114,7 +114,7 @@ export const Memory = observer(() => {
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-4 flex flex-col max-w-md min-w-[500px]"
+              className="space-y-4 flex flex-col w-full min-w-[500px]"
             >
               <FormField
                 control={form.control}

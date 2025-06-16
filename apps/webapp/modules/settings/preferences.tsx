@@ -80,7 +80,7 @@ export function Preferences() {
   };
 
   return (
-    <div className="flex flex-col gap-4 max-w-3xl mx-auto px-4 py-6">
+    <div className="flex flex-col gap-4 w-3xl mx-auto px-4 py-6">
       <SettingSection
         title="Theme"
         description="Choose a preferred theme for the app."

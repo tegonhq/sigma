@@ -72,9 +72,7 @@ export const PagesStore: IAnyStateTreeNode = types
         (page: PageType) => dates.includes(page.title) && page.type === 'Daily',
       );
     },
-    getContextPage() {
-      return self.pages.find((page: PageType) => page.type === 'Context');
-    },
+
     get getSortOrderForNewPage() {
       const lastPage = self.pages[self.pages.length - 1];
 
@@ -141,5 +139,4 @@ export interface PagesStoreType {
     sortOrder?: string;
   }>;
   searchPages: (query: string, strict?: boolean) => PageType[];
-  getContextPage: () => PageType;
 }

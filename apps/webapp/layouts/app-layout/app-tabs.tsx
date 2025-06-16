@@ -77,18 +77,17 @@ export const AppTabs = observer(() => {
   };
 
   return (
-    <div className="tabs-list rounded-none flex gap-2 w-full justify-between items-center mt-2">
-      <div className="flex rounded-md items-center px-2 h-11">
+    <div className="tabs-list rounded-none flex gap-2 w-full items-center pt-1">
+      <div className="flex rounded-md items-center px-3 h-11 grow gap-0.5">
         <WorkspaceDropdown />
-      </div>
-      <div className="flex gap-1 items-center shrink-0 p-1.5 px-1.5 bg-background-3 rounded-md shadow">
         <TooltipWrapper tooltip="G then H">
           <Button
             variant="ghost"
             onClick={() => goTo(TabViewType.ASSISTANT)}
             className={cn(
-              'gap-1',
-              activeTab.type === TabViewType.ASSISTANT && 'bg-grayAlpha-100',
+              'gap-1 ml-1.5',
+              activeTab.type === TabViewType.ASSISTANT &&
+                '!bg-background-3 shadow',
             )}
           >
             <Inbox size={20} /> Home
@@ -100,7 +99,8 @@ export const AppTabs = observer(() => {
             onClick={() => goTo(TabViewType.MY_TASKS)}
             className={cn(
               'gap-1',
-              activeTab.type === TabViewType.MY_TASKS && 'bg-grayAlpha-100',
+              activeTab.type === TabViewType.MY_TASKS &&
+                '!bg-background-3 shadow',
             )}
           >
             <IssuesLine size={18} /> Tasks
@@ -112,29 +112,26 @@ export const AppTabs = observer(() => {
             onClick={() => goTo(TabViewType.LIST)}
             className={cn(
               'gap-1',
-              activeTab.type === TabViewType.LIST && 'bg-grayAlpha-100',
+              activeTab.type === TabViewType.LIST && '!bg-background-3 shadow',
             )}
           >
             <Project size={18} /> List
           </Button>
         </TooltipWrapper>
-
-        <AIThinking />
       </div>
 
-      <div
-        className={cn(
-          'flex items-center h-9 rounded-md px-1 py-1 mr-1 w-[40px] bg-background-3',
-          activeTab.type === TabViewType.ASSISTANT && 'bg-transparent',
-        )}
-      >
+      <div className="flex">
+        <AIThinking />
         {activeTab.type !== TabViewType.ASSISTANT && (
           <Button
-            variant={collapsed ? 'ghost' : 'secondary'}
-            className="gap-1 items-center h-7"
+            variant="ghost"
+            className={cn(
+              'gap-1 items-center h-7 mr-2',
+              !collapsed && '!bg-background-3 shadow',
+            )}
             onClick={() => (collapsed ? onOpen('') : onClose())}
           >
-            <MessageSquare size={16} />
+            <MessageSquare size={16} /> chat
           </Button>
         )}
       </div>

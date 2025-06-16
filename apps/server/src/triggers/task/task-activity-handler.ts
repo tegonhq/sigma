@@ -1,8 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import { Task, TaskHookContext } from '@redplanethq/sol-sdk';
-import { runs, schedules, task, tasks } from '@trigger.dev/sdk/v3';
-
-import { taskReminder } from './task-reminder';
+import { schedules, task as triggerTask } from '@trigger.dev/sdk/v3';
+import { createActivity } from 'triggers/utils';
 
 const prisma = new PrismaClient();
 
@@ -79,51 +78,30 @@ async function createReminders(task: Task) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const taskMetadata = task.metadata as any;
 
-  if (task.recurrence?.length) {
-    // Create schedule to run daily 10 minutes before task start time
-    const startTime = new Date(task.startTime);
-    const cronMinutes = startTime.getMinutes() - 10;
-    const cronHours = startTime.getHours();
+  // Create schedule to run daily 10 minutes before task start time
+  const startTime = new Date(task.startTime);
+  const cronMinutes = startTime.getMinutes() - 15;
+  const cronHours = startTime.getHours();
 
-    const scheduleId = await schedules.create({
-      task: `task-run-schedule`,
-      cron: `${cronMinutes} ${cronHours} * * *`, // Run daily at startTime - 10min
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      timezone: (task.workspace.preferences as any).timezone,
-      deduplicationKey: task.id,
-      externalId: task.id,
-    });
+  const scheduleId = await schedules.create({
+    task: `task-run-schedule`,
+    cron: `${cronMinutes} ${cronHours} * * *`, // Run daily at startTime - 15min
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    timezone: (task.workspace.preferences as any).timezone,
+    deduplicationKey: task.id,
+    externalId: task.id,
+  });
 
-    // Save scheduleId in task metadata
-    await prisma.task.update({
-      where: { id: task.id },
-      data: {
-        metadata: {
-          ...taskMetadata,
-          scheduleId,
-        },
+  // Save scheduleId in task metadata
+  await prisma.task.update({
+    where: { id: task.id },
+    data: {
+      metadata: {
+        ...taskMetadata,
+        scheduleId,
       },
-    });
-  } else if (task.startTime && task.endTime) {
-    // Create one-time delayed run
-    const startTime = new Date(task.startTime);
-    startTime.setMinutes(startTime.getMinutes() - 10);
-
-    const runId = await tasks.trigger<typeof taskReminder>('task-reminder', {
-      taskId: task.id,
-    });
-
-    // Save runId in task metadata
-    await prisma.task.update({
-      where: { id: task.id },
-      data: {
-        metadata: {
-          ...taskMetadata,
-          runId,
-        },
-      },
-    });
-  }
+    },
+  });
 }
 
 async function clearReminders(task: Task) {
@@ -145,24 +123,9 @@ async function clearReminders(task: Task) {
       },
     });
   }
-
-  if (taskMetadata?.runId) {
-    await runs.cancel(taskMetadata.runId);
-
-    // Remove runId from metadata
-    await prisma.task.update({
-      where: { id: task.id },
-      data: {
-        metadata: {
-          ...taskMetadata,
-          runId: undefined,
-        },
-      },
-    });
-  }
 }
 
-export const taskActivityHandler = task({
+export const taskActivityHandler = triggerTask({
   id: 'task-activity-handler',
   queue: {
     name: 'task-activity-handler',
@@ -176,13 +139,21 @@ export const taskActivityHandler = task({
 
       // Create activity text for creation
       const activityText = getActivityText('create', task);
-
+      if (activityText) {
+        await createActivity({
+          text: activityText,
+          workspaceId: task.workspaceId,
+          taskId: task.id,
+        });
+      }
       // You can now use activityText to create an Activity record if needed
       // e.g. await prisma.activity.create({ data: { text: activityText, ... } });
       return { message: 'Handled schedule create', activityText };
     }
 
     if (context.action === 'update') {
+      console.log(context);
+
       if (
         context.changeData &&
         (context.changeData.recurrence?.newValue ||
@@ -197,6 +168,14 @@ export const taskActivityHandler = task({
       // Create activity text for update, specifying what changed
       const activityText = getActivityText('update', task, context.changeData);
 
+      if (activityText) {
+        await createActivity({
+          text: activityText,
+          workspaceId: task.workspaceId,
+          taskId: task.id,
+        });
+      }
+
       // You can now use activityText to create an Activity record if needed
       return { message: 'Handled schedule update', activityText };
     }
@@ -204,6 +183,14 @@ export const taskActivityHandler = task({
     // For delete
     await clearReminders(task);
     const activityText = getActivityText('delete', task);
+
+    if (activityText) {
+      await createActivity({
+        text: activityText,
+        workspaceId: task.workspaceId,
+        taskId: task.id,
+      });
+    }
 
     // You can now use activityText to create an Activity record if needed
     return { message: 'Handled schedule delete', activityText };

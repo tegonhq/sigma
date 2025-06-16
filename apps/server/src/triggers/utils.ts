@@ -30,3 +30,16 @@ export const init = async (payload: any) => {
 
   return payload;
 };
+
+export const createActivity = async (activity: {
+  taskId?: string;
+  text: string;
+  sourceURL?: string;
+  integrationAccountId?: string;
+  rejectionReason?: string;
+  workspaceId: string;
+}) => {
+  return await prisma.activity.create({
+    data: activity,
+  });
+};

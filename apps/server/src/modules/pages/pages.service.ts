@@ -3,14 +3,11 @@ import { ConfigService } from '@nestjs/config';
 import { Prisma } from '@prisma/client';
 import {
   CreatePageDto,
-  EnhancePageResponse,
   GetPageByTitleDto,
-  LLMModelEnum,
   OutlinkType,
   Outlink,
   PageSelect,
   UpdatePageDto,
-  enchancePrompt,
   JsonObject,
   Task,
   CreateTaskDto,
@@ -21,10 +18,11 @@ import {
   convertHtmlToTiptapJson,
   convertTiptapJsonToHtml,
 } from '@sol/editor-extensions';
+import { tasks } from '@trigger.dev/sdk/v3';
 import { CohereClientV2 } from 'cohere-ai';
 import { PrismaService } from 'nestjs-prisma';
+import { pageActivityHandler } from 'triggers/page/page-activity-handler';
 
-import AIRequestsService from 'modules/ai-requests/ai-requests.services';
 import { ContentService } from 'modules/content/content.service';
 import { TransactionClient } from 'modules/tasks/tasks.utils';
 
@@ -42,7 +40,7 @@ import {
 export class PagesService {
   constructor(
     private prisma: PrismaService,
-    private aiRequestService: AIRequestsService,
+
     private contentService: ContentService,
     private configService: ConfigService,
   ) {}
@@ -235,52 +233,6 @@ export class PagesService {
       page.description = convertTiptapJsonToHtml(descriptionJson);
     }
     return page;
-  }
-
-  async enhancePage(pageId: string): Promise<EnhancePageResponse[]> {
-    // Get the existing page
-    const page = await this.prisma.page.findUnique({
-      where: { id: pageId },
-      select: PageSelect,
-    });
-
-    if (!page) {
-      throw new Error('Page not found');
-    }
-
-    if (page?.description) {
-      const descriptionJson = JSON.parse(page.description);
-      page.description = convertTiptapJsonToHtml(descriptionJson);
-    }
-
-    const enhanceResponse = await this.aiRequestService.getLLMRequest(
-      {
-        messages: [
-          // { role: 'user', content: enhanceExample },
-          {
-            role: 'user',
-            content: enchancePrompt.replace('{{TASK_LIST}}', page.description),
-          },
-        ],
-        llmModel: LLMModelEnum.CLAUDESONNET,
-        model: 'enchance',
-      },
-      page.workspaceId,
-    );
-
-    const outputMatch = enhanceResponse.match(/<output>([\s\S]*?)<\/output>/);
-    const outputContent = outputMatch ? outputMatch[1].trim() : '';
-    let tasks = [];
-    try {
-      tasks = JSON.parse(outputContent);
-      if (!Array.isArray(tasks)) {
-        tasks = [];
-      }
-    } catch (e) {
-      tasks = [];
-    }
-
-    return tasks;
   }
 
   async removeTaskFromPageById(pageId: string, taskIds: string[]) {
@@ -668,7 +620,17 @@ export class PagesService {
     }
   }
 
-  async handleHooks(payload: { pageId: string; changedData: JsonObject }) {
+  async handleHooks(payload: {
+    pageId: string;
+    changedData: JsonObject;
+    action: 'create' | 'update' | 'delete';
+  }) {
+    const page = await this.prisma.page.findUnique({
+      where: {
+        id: payload.pageId,
+      },
+    });
+
     if (dataChanged(payload.changedData, 'description')) {
       const pageDescription = (
         payload.changedData.description as {
@@ -685,6 +647,12 @@ export class PagesService {
 
     if (dataChanged(payload.changedData, 'title')) {
       await this.handleTitleChange(payload.pageId, payload.changedData);
+      await tasks.trigger<typeof pageActivityHandler>('page-activity-handler', {
+        action: payload.action,
+        page,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        changeData: payload.changedData as any,
+      });
     }
   }
 

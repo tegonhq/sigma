@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ModelNameEnum, TaskHookAction } from '@redplanethq/sol-sdk';
+import { tasks } from '@trigger.dev/sdk/v3';
 import { Client } from 'pg';
 import {
   LogicalReplicationService,
   Wal2JsonPlugin,
 } from 'pg-logical-replication';
+import { listActivityHandler } from 'triggers/list/list-activity-handler';
 import { v4 as uuidv4 } from 'uuid';
 
 import ActivityService from 'modules/activity/activity.service';
@@ -241,7 +243,11 @@ export default class ReplicationService {
           if (tableHooks.has(modelName)) {
             const changedData = this.getChangedData(change);
             if (ModelNameEnum.Page === modelName) {
-              this.pagesService.handleHooks({ pageId: modelId, changedData });
+              this.pagesService.handleHooks({
+                pageId: modelId,
+                changedData,
+                action: convertToActionType(isDeleted ? 'delete' : change.kind),
+              });
             }
 
             if (
@@ -249,6 +255,18 @@ export default class ReplicationService {
               change.kind === 'insert'
             ) {
               this.activity.runActivity(modelId);
+            }
+
+            if (ModelNameEnum.List === modelName) {
+              await tasks.trigger<typeof listActivityHandler>(
+                'list-activity-handler',
+                {
+                  listId: modelId,
+                  action: convertToActionType(
+                    isDeleted ? 'delete' : change.kind,
+                  ),
+                },
+              );
             }
 
             if (ModelNameEnum.Task === modelName) {

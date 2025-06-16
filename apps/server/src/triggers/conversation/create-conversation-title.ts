@@ -1,35 +1,36 @@
 import { PrismaClient } from '@prisma/client';
-import { conversationTitlePrompt, LLMModelEnum } from '@redplanethq/sol-sdk';
+import { conversationTitlePrompt, LLMMappings } from '@redplanethq/sol-sdk';
 import { logger, task } from '@trigger.dev/sdk/v3';
-import axios from 'axios';
+import { generate } from 'triggers/agents/chat/stream-utils';
 
 const prisma = new PrismaClient();
 export const createConversationTitle = task({
   id: 'create-conversation-title',
-  run: async (payload: {
-    conversationId: string;
-    message: string;
-    pat: string;
-  }) => {
-    const conversationTitleResponse = (
-      await axios.post(
-        `${process.env.BACKEND_HOST}/v1/ai_requests`,
+  run: async (payload: { conversationId: string; message: string }) => {
+    let conversationTitleResponse = '';
+    const gen = generate(
+      [
         {
-          messages: [
-            {
-              role: 'user',
-              content: conversationTitlePrompt.replace(
-                '{{message}}',
-                payload.message,
-              ),
-            },
-          ],
-          llmModel: LLMModelEnum.CLAUDESONNET,
-          model: 'beautify',
+          role: 'user',
+          content: conversationTitlePrompt.replace(
+            '{{message}}',
+            payload.message,
+          ),
         },
-        { headers: { Authorization: `Bearer ${payload.pat}` } },
-      )
-    ).data;
+      ],
+      () => {},
+      undefined,
+      '',
+      LLMMappings.CLAUDESONNET,
+    );
+
+    for await (const chunk of gen) {
+      if (typeof chunk === 'string') {
+        conversationTitleResponse += chunk;
+      } else if (chunk && typeof chunk === 'object' && chunk.message) {
+        conversationTitleResponse += chunk.message;
+      }
+    }
 
     const outputMatch = conversationTitleResponse.match(
       /<output>(.*?)<\/output>/s,

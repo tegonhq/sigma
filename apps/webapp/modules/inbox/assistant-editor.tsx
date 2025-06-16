@@ -15,7 +15,7 @@ import {
 } from 'modules/conversation/suggestion-extension';
 import { useSearchCommands } from 'modules/search/command/use-search-commands';
 
-import { EditorRoot, lowlight, starterKit, type EditorT } from 'common/editor';
+import { EditorRoot, lowlight, type EditorT } from 'common/editor';
 import { SCOPES } from 'common/shortcut-scopes';
 
 interface ConversationTextareaProps {
@@ -245,6 +245,13 @@ export function AssistantEditor({
         {text && text.slice(-1) !== '@' && pagesCommands()}
 
         <div className={cn('flex justify-end pt-2 items-center')}>
+          {/* <Button variant="link" size="sm" className="px-0 gap-1">
+            <AddLine
+              size={16}
+              className="text-muted-foreground/60 hover:text-muted-foreground"
+            />
+            <span className="text-muted-foreground/60">Add tasks/lists</span>
+          </Button> */}
           <Button
             variant="default"
             className="transition-all duration-500 ease-in-out gap-1"

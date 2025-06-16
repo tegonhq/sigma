@@ -7,7 +7,7 @@ import { EditorContent, CodeBlockLowlight, Placeholder } from 'novel';
 import { useCallback, useState } from 'react';
 import React from 'react';
 
-import { EditorRoot, lowlight, starterKit, type EditorT } from 'common/editor';
+import { EditorRoot, lowlight, type EditorT } from 'common/editor';
 
 import { CustomMention, useMentionSuggestions } from './suggestion-extension';
 
@@ -106,7 +106,6 @@ export function ConversationTextarea({
             CodeBlockLowlight.configure({
               lowlight,
             }),
-            starterKit,
             HardBreak.configure({
               keepMarks: true,
             }),

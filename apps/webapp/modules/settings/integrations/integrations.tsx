@@ -64,7 +64,7 @@ export function Integrations() {
   }
 
   return (
-    <div className="flex flex-col gap-4 max-w-3xl mx-auto px-4 py-6">
+    <div className="flex flex-col gap-4 w-3xl mx-auto px-4 py-6">
       <SettingSection
         title="Integrations"
         description="Manage your workspace integrations"

@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import {
   AgentWorklogStateEnum,
-  LLMModelEnum,
+  LLMMappings,
   ReccurenceInput,
   recurrencePrompt,
 } from '@redplanethq/sol-sdk';
 import { addMinutes, endOfDay, startOfDay } from 'date-fns';
 import { PrismaService } from 'nestjs-prisma';
+import { generate } from 'triggers/agents/chat/stream-utils';
 
-import AIRequestsService from 'modules/ai-requests/ai-requests.services';
 import { LoggerService } from 'modules/logger/logger.service';
 import { TaskOccurenceService } from 'modules/task-occurrence/task-occurrence.service';
 
@@ -17,7 +17,6 @@ export default class TasksAIService {
   private readonly logger: LoggerService = new LoggerService('TasksAIService');
 
   constructor(
-    private aiRequestsService: AIRequestsService,
     private prisma: PrismaService,
     private taskOccurrence: TaskOccurenceService,
   ) {}
@@ -33,7 +32,7 @@ export default class TasksAIService {
       },
     });
 
-    const data = await this.recurrence(recurrenceInput, workspaceId);
+    const data = await this.recurrence(recurrenceInput);
 
     await this.prisma.taskOccurrence.updateMany({
       where: {
@@ -87,22 +86,32 @@ export default class TasksAIService {
     });
   }
 
-  async recurrence(reccurenceInput: ReccurenceInput, workspaceId: string) {
-    const recurrenceOutput = await this.aiRequestsService.getLLMRequest(
-      {
-        messages: [
-          {
-            role: 'user',
-            content: recurrencePrompt
-              .replace('{{text}}', reccurenceInput.text)
-              .replace('{{currentTime}}', reccurenceInput.currentTime),
-          },
-        ],
-        llmModel: LLMModelEnum.CLAUDESONNET,
-        model: 'recurrence',
-      },
-      workspaceId,
+  async recurrence(reccurenceInput: ReccurenceInput) {
+    let recurrenceOutput = '';
+
+    const gen = generate(
+      [
+        {
+          role: 'user',
+          content: recurrencePrompt
+            .replace('{{text}}', reccurenceInput.text)
+            .replace('{{currentTime}}', reccurenceInput.currentTime),
+        },
+      ],
+      () => {},
+      undefined,
+      '',
+      LLMMappings.CLAUDESONNET,
     );
+
+    for await (const chunk of gen) {
+      if (typeof chunk === 'string') {
+        recurrenceOutput += chunk;
+      } else if (chunk && typeof chunk === 'object' && chunk.message) {
+        recurrenceOutput += chunk.message;
+      }
+    }
+
     const outputMatch = recurrenceOutput.match(/<output>(.*?)<\/output>/s);
 
     if (!outputMatch) {
@@ -138,7 +147,7 @@ export default class TasksAIService {
       },
     });
 
-    const data = await this.recurrence(recurrenceInput, workspaceId);
+    const data = await this.recurrence(recurrenceInput);
 
     if (data.dueDate) {
       await this.prisma.task.updateMany({

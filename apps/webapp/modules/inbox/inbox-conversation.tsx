@@ -125,7 +125,7 @@ export const InboxConversation = observer(
     };
 
     return (
-      <div className="relative flex flex-col h-full justify-center w-full items-center overflow-auto">
+      <div className="relative flex flex-col h-full justify-center w-full items-center overflow-auto px-2">
         <div className="flex flex-col justify-end overflow-hidden h-full w-full">
           <ScrollAreaWithAutoScroll>
             {getConversations()}
@@ -142,7 +142,7 @@ export const InboxConversation = observer(
             <div className="max-w-[97ch] w-full">
               <ConversationTextarea
                 onSend={onSend}
-                className="bg-background-3 m-4 mt-0 w-full border-gray-300 border-1"
+                className="bg-background-3 mb-4 w-full border-gray-300 border-1"
                 isLoading={!!conversationResponse}
               />
             </div>

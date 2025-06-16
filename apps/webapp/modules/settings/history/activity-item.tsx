@@ -15,7 +15,7 @@ export const ActivityItem = observer(
     return (
       <div
         className={cn(
-          'mx-2 px-3 mb-0.5 mb-0.5 flex gap-1 items-center hover:bg-grayAlpha-100 rounded',
+          'mx-3 px-2 mb-0.5 mb-0.5 flex gap-1 items-center hover:bg-grayAlpha-100 rounded',
           selected && 'bg-grayAlpha-200',
         )}
         onClick={onSelect}
@@ -25,7 +25,7 @@ export const ActivityItem = observer(
             <div className="truncate">
               {activity.data.rowType === 'conversation'
                 ? activity.data.item.title
-                : activity.data.item.title}
+                : activity.data.item.text}
             </div>
           </div>
         </div>

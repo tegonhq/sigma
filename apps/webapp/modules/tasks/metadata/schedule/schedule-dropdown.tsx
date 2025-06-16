@@ -45,6 +45,7 @@ export const ScheduleDropdown = observer(
     ).by([{ asc: (u) => u.startTime }]);
 
     const firstOccurrence = sortedOccurrences[0];
+
     const passedTaskOccurrence = taskOccurrenceId
       ? occurrences.find((occ) => occ.id === taskOccurrenceId)
       : undefined;
@@ -91,7 +92,11 @@ export const ScheduleDropdown = observer(
     };
 
     const getSchedule = () => {
-      if (firstOccurrence && !task.startTime && firstOccurrence?.startTime) {
+      if (
+        firstOccurrence &&
+        task.recurrence?.length === 0 &&
+        firstOccurrence?.startTime
+      ) {
         return getScheduleForOccurrence(firstOccurrence);
       }
 
@@ -151,7 +156,6 @@ export const ScheduleDropdown = observer(
             ? getScheduleForOccurrence(passedTaskOccurrence)
             : schedule}
         </div>
-        {passedTaskOccurrence && <div>{schedule}</div>}
       </div>
     );
   },
