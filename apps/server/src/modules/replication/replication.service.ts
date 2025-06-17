@@ -27,7 +27,7 @@ export default class ReplicationService {
   private readonly logger: LoggerService = new LoggerService(
     'ReplicationService',
   );
-  private replicationSlotName = `sigma_replication_slot_${uuidv4().replace(/-/g, '')}`;
+  private replicationSlotName = `sol_replication_slot_${uuidv4().replace(/-/g, '')}`;
 
   constructor(
     private configService: ConfigService,

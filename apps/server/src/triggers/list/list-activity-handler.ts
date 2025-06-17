@@ -51,6 +51,10 @@ export const listActivityHandler = task({
       },
     });
 
+    if (list.updatedBy === 'assistant') {
+      return 'Created by assistant';
+    }
+
     if (action === 'create' || action === 'delete') {
       const activityText = getListActivityText(action, list);
 

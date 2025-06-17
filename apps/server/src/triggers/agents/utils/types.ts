@@ -60,7 +60,6 @@ export interface ExecutionState {
   userMemoryContext?: string;
   automationContext?: string;
   completed: boolean;
-  autoMode: boolean;
 }
 
 export interface TokenCount {

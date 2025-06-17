@@ -57,3 +57,10 @@ export const Role = createParamDecorator(
     }
   },
 );
+
+export const UpdatedBy = createParamDecorator(
+  (_data: unknown, ctx: ExecutionContext) => {
+    const request = ctx.switchToHttp().getRequest();
+    return request.headers['x-updated-by'];
+  },
+);

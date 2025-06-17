@@ -49,7 +49,6 @@ export class ConversationService {
         {
           conversationHistoryId: conversationHistory.id,
           conversationId: conversationHistory.conversation.id,
-          autoMode: true,
           context,
         },
         { tags: [conversationHistory.id, workspaceId, conversationId] },
@@ -102,7 +101,6 @@ export class ConversationService {
       {
         conversationHistoryId: conversationHistory.id,
         conversationId: conversation.id,
-        autoMode: true,
         context,
       },
       { tags: [conversationHistory.id, workspaceId, conversation.id] },
@@ -222,22 +220,62 @@ export class ConversationService {
     });
   }
 
-  async getConversationActions(conversationId: string, workspaceId: string) {
-    const conversationHistory = await this.prisma.conversation.findFirst({
+  async approveOrDecline(
+    conversationId: string,
+    workspaceId: string,
+    approved: boolean,
+  ) {
+    // Find the latest two conversationHistory records for this conversation and workspace
+    const conversationHistories =
+      await this.prisma.conversationHistory.findMany({
+        where: {
+          conversationId,
+          conversation: {
+            workspaceId,
+          },
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+        take: 2,
+      });
+
+    // The most recent is at index 0, the previous one (last - 1) is at index 1
+    const previousConversationHistory = conversationHistories[1];
+    const latestConversationHistory = conversationHistories[0];
+
+    await this.prisma.conversationExecutionStep.updateMany({
       where: {
-        id: conversationId,
-        workspaceId,
+        conversationHistoryId: latestConversationHistory.id,
+        actionStatus: { in: [ActionStatusEnum.TOOL_REQUEST] },
       },
-      orderBy: {
-        createdAt: 'desc',
+      data: {
+        actionStatus: approved
+          ? ActionStatusEnum.ACCEPT
+          : ActionStatusEnum.DECLINE,
       },
     });
 
-    return this.prisma.conversationExecutionStep.findMany({
-      where: {
-        conversationHistoryId: conversationHistory.id,
-        actionStatus: { in: [ActionStatusEnum.TOOL_REQUEST] },
+    const context = await this.getConversationContext(
+      previousConversationHistory.id,
+    );
+
+    const handler = await tasks.trigger(
+      'chat',
+      {
+        conversationHistoryId: previousConversationHistory.id,
+        conversationId,
+        isContinuation: true,
+        context,
       },
-    });
+      { tags: [previousConversationHistory.id, workspaceId, conversationId] },
+    );
+
+    return {
+      id: handler.id,
+      token: handler.publicAccessToken,
+      conversationId,
+      conversationHistoryId: previousConversationHistory.id,
+    };
   }
 }

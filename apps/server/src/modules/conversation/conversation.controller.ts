@@ -26,6 +26,19 @@ import { ConversationService } from './conversation.service';
 export class ConversationController {
   constructor(private conversationService: ConversationService) {}
 
+  @Post('approval')
+  @UseGuards(AuthGuard)
+  async approveOrDecline(
+    @Workspace() workspaceId: string,
+    @Body() conversationData: { conversationId: string; approved: boolean },
+  ) {
+    return await this.conversationService.approveOrDecline(
+      conversationData.conversationId,
+      workspaceId,
+      conversationData.approved,
+    );
+  }
+
   @Post(':conversationId/read')
   @UseGuards(AuthGuard)
   async readConversation(@Param() conversationParams: ConversationParamsDto) {
@@ -55,18 +68,6 @@ export class ConversationController {
     @Param() conversationData: { conversationId: string },
   ) {
     return await this.conversationService.getCurrentConversationRun(
-      conversationData.conversationId,
-      workspaceId,
-    );
-  }
-
-  @Get(':conversationId/actions')
-  @UseGuards(AuthGuard)
-  async getConversationActions(
-    @Workspace() workspaceId: string,
-    @Param() conversationData: { conversationId: string },
-  ) {
-    return await this.conversationService.getConversationActions(
       conversationData.conversationId,
       workspaceId,
     );

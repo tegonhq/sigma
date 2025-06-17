@@ -55,10 +55,21 @@ export const pageActivityHandler = task({
     const { action, page, changeData } = payload;
 
     if (action === 'update') {
-      // Try to find a task with this pageId
-      const task = await prisma.task.findFirst({
-        where: { pageId: page.id },
-      });
+      // Try to find a task or list with this pageId in parallel
+      const [task, list] = await Promise.all([
+        prisma.task.findFirst({ where: { pageId: page.id } }),
+        prisma.list.findFirst({ where: { pageId: page.id } }),
+      ]);
+
+      // If task exists and was updated by assistant, skip
+      if (task && task.updatedBy === 'assistant') {
+        return 'Updated by assistant';
+      }
+
+      // If list exists and was updated by assistant, skip
+      if (list && list.updatedBy === 'assistant') {
+        return 'Updated by assistant';
+      }
 
       const activityText = await getPageActivityTextForUpdate(page, changeData);
 
@@ -70,7 +81,6 @@ export const pageActivityHandler = task({
         });
       }
 
-      // You can now use activityText to create an Activity record if needed
       return { message: 'Handled page update', activityText };
     }
 

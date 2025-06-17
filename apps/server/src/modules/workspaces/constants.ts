@@ -243,7 +243,7 @@ export const OnboardingContent = {
                     {
                       type: 'link',
                       attrs: {
-                        href: 'https://github.com/tegonhq/sigma',
+                        href: 'https://github.com/redplanethq/sol',
                         target: '_blank',
                         rel: 'noopener noreferrer nofollow',
                         class: 'text-primary cursor-pointer',

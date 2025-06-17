@@ -1,4 +1,4 @@
-import { useToast } from '@redplanethq/ui';
+import { Button, useToast } from '@redplanethq/ui';
 import { sort } from 'fast-sort';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
@@ -22,6 +22,7 @@ import {
   useCreateConversationMutation,
   useGetCurrentConversationRun,
 } from 'services/conversations';
+import { useApproveOrDeclineMutation } from 'services/conversations/approve-or-decline';
 
 import { useContextStore } from 'store/global-context-provider';
 
@@ -47,6 +48,7 @@ export const InboxConversation = observer(
 
     const { conversationHistory } = useConversationHistory(conversation?.id);
     useConversationRead(conversationId);
+    const { mutate: approval, isLoading } = useApproveOrDeclineMutation({});
 
     React.useEffect(() => {
       if (initialRunResponse) {
@@ -90,6 +92,18 @@ export const InboxConversation = observer(
       );
     };
 
+    const sendApproval = (approved: boolean) => {
+      approval(
+        { approved, conversationId: conversation.id },
+        {
+          onSuccess: (data) => {
+            updateConversationId(data.conversationId);
+            setConversationResponse(data);
+          },
+        },
+      );
+    };
+
     const getConversations = () => {
       const lastConversationHistoryId =
         conversationResponse?.conversationHistoryId;
@@ -122,6 +136,24 @@ export const InboxConversation = observer(
               );
             },
           )}
+          {conversation.status === 'need_approval' && (
+            <div className="flex justify-start gap-2 mx-4">
+              <Button
+                variant="destructive"
+                disabled={isLoading}
+                onClick={() => sendApproval(false)}
+              >
+                Decline
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => sendApproval(true)}
+                disabled={isLoading}
+              >
+                Accept
+              </Button>
+            </div>
+          )}
         </>
       );
     };
@@ -142,12 +174,15 @@ export const InboxConversation = observer(
 
           <div className="flex flex-col w-full items-center">
             <div className="max-w-[97ch] w-full">
-              <ConversationTextarea
-                disabled
-                onSend={onSend}
-                className="bg-background-3 mb-4 w-full border-gray-300 border-1"
-                isLoading={!!conversationResponse}
-              />
+              {conversation.status !== 'need_approval' && (
+                <ConversationTextarea
+                  onSend={onSend}
+                  className="bg-background-3 mb-4 w-full border-gray-300 border-1"
+                  isLoading={
+                    !!conversationResponse || conversation.status === 'running'
+                  }
+                />
+              )}
             </div>
           </div>
         </div>

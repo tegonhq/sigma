@@ -49,12 +49,6 @@ export class UsersController {
     return user;
   }
 
-  @Get('context')
-  @UseGuards(AuthGuard)
-  async getUserContext(@Workspace() workspaceId: string) {
-    return await this.users.getUserContext(workspaceId);
-  }
-
   @Post('pat')
   @UseGuards(AuthGuard)
   async createPersonalAccessToken(

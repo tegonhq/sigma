@@ -95,8 +95,9 @@ async function needConfirmation(
 
   const response = generate(
     messages,
-    (event) => {
-      console.log(event);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    (_event) => {
+      // console.log(event);
     },
     {
       ask_confirmation: askConfirmationTool,
@@ -171,12 +172,11 @@ function makeNextCall(
   availableMCPServers: string[],
   preferences: Preferences,
 ): LLMOutputInterface {
-  const { context, history, previousHistory, autoMode } = executionState;
+  const { context, history, previousHistory } = executionState;
 
   const promptInfo = {
     USER_MESSAGE: executionState.query,
     CONTEXT: context,
-    AUTO_MODE: String(autoMode).toLowerCase(),
     USER_MEMORY: executionState.userMemoryContext,
     AUTOMATION_CONTEXT: executionState.automationContext,
     AVAILABLE_MCP_TOOLS: availableMCPServers.join(', '),
@@ -264,7 +264,6 @@ export async function* run(
     automationContext,
     history: stepHistory, // Track the full ReAct history
     completed: false,
-    autoMode: true,
   };
 
   const totalCost: TotalCost = { inputTokens: 0, outputTokens: 0, cost: 0 };
@@ -496,12 +495,15 @@ export async function* run(
             skillInput: JSON.stringify(skillInput),
           };
 
-          const skillMessageToSend = `\n<skill id="${skillId}" name="${toolName}" agent=${agent}></skill>\n`;
-          stepRecord.userMessage += skillMessageToSend;
+          if (toolName !== 'load_mcp') {
+            const skillMessageToSend = `\n<skill id="${skillId}" name="${toolName}" agent=${agent}></skill>\n`;
 
-          yield Message('', AgentMessageType.MESSAGE_START);
-          yield Message(skillMessageToSend, AgentMessageType.MESSAGE_CHUNK);
-          yield Message('', AgentMessageType.MESSAGE_END);
+            stepRecord.userMessage += skillMessageToSend;
+
+            yield Message('', AgentMessageType.MESSAGE_START);
+            yield Message(skillMessageToSend, AgentMessageType.MESSAGE_CHUNK);
+            yield Message('', AgentMessageType.MESSAGE_END);
+          }
 
           let result;
           try {

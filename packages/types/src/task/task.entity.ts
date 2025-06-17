@@ -53,6 +53,7 @@ export class Task {
   number?: number;
   completedAt?: Date;
 
+  updatedBy: string;
   status?: string;
   metadata?: JsonValue;
 

@@ -101,6 +101,7 @@ export const chat = task({
         stepHistory = await handleConfirmation(
           mcp,
           agentConversationHistory.id,
+          init.mcp,
         );
       }
 
@@ -123,17 +124,18 @@ export const chat = task({
 
       const stream = await metadata.stream('messages', llmResponse);
 
-      let needAttention = false;
+      let conversationStatus = 'success';
       for await (const step of stream) {
         if (step.type === 'STEP') {
           creditForChat += 1;
           const stepDetails = JSON.parse(step.message);
 
-          if (
-            stepDetails.skillStatus === ActionStatusEnum.TOOL_REQUEST ||
-            stepDetails.skillStatus === ActionStatusEnum.QUESTION
-          ) {
-            needAttention = true;
+          if (stepDetails.skillStatus === ActionStatusEnum.TOOL_REQUEST) {
+            conversationStatus = 'need_approval';
+          }
+
+          if (stepDetails.skillStatus === ActionStatusEnum.QUESTION) {
+            conversationStatus = 'need_attention';
           }
 
           await updateExecutionStep(
@@ -154,7 +156,7 @@ export const chat = task({
 
       await updateUserCredits(usageCredits, creditForChat);
       await updateConversationStatus(
-        needAttention ? 'need_attention' : 'success',
+        conversationStatus,
         payload.conversationId,
       );
 
@@ -175,6 +177,10 @@ export const chat = task({
 async function handleConfirmation(
   mcp: MCP,
   agentConversationHistoryId: string,
+  mcpConfig: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mcpServers: any;
+  },
 ): Promise<HistoryStep[]> {
   const agentExecutionHistory = await prisma.conversationExecutionStep.findMany(
     {
@@ -204,6 +210,9 @@ async function handleConfirmation(
 
     if (stepHistory.skillStatus === ActionStatusEnum.ACCEPT) {
       let result;
+
+      await mcp.load([stepHistory.agent], mcpConfig);
+
       try {
         if (stepHistory.agent === 'sol') {
           result = await callSolTool(
@@ -217,6 +226,7 @@ async function handleConfirmation(
           );
         }
       } catch (e) {
+        console.log(e);
         logger.error(e);
         stepHistory.skillInput = stepHistory.skillInput;
         stepHistory.observation = JSON.stringify(e);

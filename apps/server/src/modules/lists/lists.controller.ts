@@ -11,7 +11,7 @@ import {
 import { List, UpdateListDto, ListIdDto, Task } from '@redplanethq/sol-sdk';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
-import { Workspace } from 'modules/auth/session.decorator';
+import { UpdatedBy, Workspace } from 'modules/auth/session.decorator';
 
 import { ListsService } from './lists.service';
 
@@ -26,12 +26,14 @@ export class ListsController {
   @UseGuards(AuthGuard)
   async createList(
     @Workspace() workspaceId: string,
+    @UpdatedBy() updatedBy: string,
     @Body('title') title?: string,
     @Body('favourite') favourite?: boolean,
     @Body('htmlDescription') htmlDescription?: string,
   ): Promise<List> {
     return await this.lists.createList(
       workspaceId,
+      updatedBy,
       title,
       favourite,
       htmlDescription,
@@ -43,14 +45,22 @@ export class ListsController {
   async updateList(
     @Param() listIdDto: ListIdDto,
     @Body() updateListDto: UpdateListDto,
+    @UpdatedBy() updatedBy: string,
   ): Promise<List> {
-    return await this.lists.updateList(listIdDto.listId, updateListDto);
+    return await this.lists.updateList(
+      listIdDto.listId,
+      updateListDto,
+      updatedBy,
+    );
   }
 
   @Delete(':listId')
   @UseGuards(AuthGuard)
-  async deleteList(@Param() listIdDto: ListIdDto): Promise<List> {
-    return await this.lists.deleteList(listIdDto.listId);
+  async deleteList(
+    @Param() listIdDto: ListIdDto,
+    @UpdatedBy() updatedBy: string,
+  ): Promise<List> {
+    return await this.lists.deleteList(listIdDto.listId, updatedBy);
   }
 
   @Get()

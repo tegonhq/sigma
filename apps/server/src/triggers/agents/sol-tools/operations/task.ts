@@ -33,9 +33,11 @@ export async function createTask(params: CreateTaskParams) {
     status: params.status,
     integrationAccountId: params.integrationAccountId,
     pageDescription: params.pageDescription,
+    // Temp fix by we need to know who does all edits on a overall basis
     source: {
       url: params.sourceUrl,
       type: 'external',
+      by: 'assistant',
     },
   });
   return response.data;

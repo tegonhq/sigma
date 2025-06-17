@@ -50,6 +50,13 @@ export const History = observer(() => {
       return (
         <div className="relative flex flex-col h-full justify-center w-full items-center overflow-auto px-2">
           <div className="flex flex-col justify-center items-center overflow-hidden h-full w-full mt-2">
+            <p className="w-full text-start max-w-[400px] mb-1 text-md">
+              Activity
+            </p>
+            <p className="w-full text-start max-w-[400px] mb-1 text-muted-foreground">
+              I haven&apos;t found anything in memory that can help you with
+              this activity.
+            </p>
             <Card className="max-w-[400px] p-3">
               <CardContent>
                 <div>{activity.text}</div>

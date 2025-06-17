@@ -24,6 +24,7 @@ export class ListsService {
 
   async createList(
     workspaceId: string,
+    updatedBy: string = 'user',
     title?: string,
     favourite?: boolean,
     htmlDescription?: string,
@@ -32,6 +33,7 @@ export class ListsService {
       data: {
         workspace: { connect: { id: workspaceId } },
         favourite,
+        updatedBy,
         page: {
           create: {
             sortOrder: '',
@@ -84,12 +86,16 @@ export class ListsService {
     return list;
   }
 
-  async updateList(listId: string, updateListDto: UpdateListDto) {
+  async updateList(
+    listId: string,
+    updateListDto: UpdateListDto,
+    updatedBy: string = 'user',
+  ) {
     const list = await this.prisma.list.update({
       where: {
         id: listId,
       },
-      data: updateListDto,
+      data: { ...updateListDto, updatedBy },
       include: {
         page: true,
       },
@@ -108,7 +114,7 @@ export class ListsService {
     return list;
   }
 
-  async deleteList(listId: string) {
+  async deleteList(listId: string, updatedBy: string = 'user') {
     // First check if the list exists
     const list = await this.prisma.list.findUnique({
       where: {
@@ -142,6 +148,7 @@ export class ListsService {
       },
       data: {
         deleted: new Date().toISOString(),
+        updatedBy,
       },
     });
   }

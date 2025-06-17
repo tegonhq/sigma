@@ -137,6 +137,10 @@ export const taskActivityHandler = triggerTask({
     if (context.action === 'create') {
       await createReminders(task);
 
+      if (task.updatedBy === 'assistant') {
+        return 'Created by assistant';
+      }
+
       // Create activity text for creation
       const activityText = getActivityText('create', task);
       if (activityText) {
@@ -146,8 +150,6 @@ export const taskActivityHandler = triggerTask({
           taskId: task.id,
         });
       }
-      // You can now use activityText to create an Activity record if needed
-      // e.g. await prisma.activity.create({ data: { text: activityText, ... } });
       return { message: 'Handled schedule create', activityText };
     }
 
@@ -161,6 +163,10 @@ export const taskActivityHandler = triggerTask({
         await clearReminders(task);
         // Create new schedule/run based on updated values
         await createReminders(task);
+      }
+
+      if (task.updatedBy === 'assistant') {
+        return 'Updated by assistant';
       }
 
       // Create activity text for update, specifying what changed
@@ -180,6 +186,11 @@ export const taskActivityHandler = triggerTask({
 
     // For delete
     await clearReminders(task);
+
+    if (task.updatedBy === 'assistant') {
+      return 'Deleted by assistant';
+    }
+
     const activityText = getActivityText('delete', task);
 
     if (activityText) {

@@ -217,7 +217,7 @@ export const TaskListItem = observer(
                   {conversationForTask &&
                     conversationForTask.status === 'need_attention' &&
                     conversationForTask.unread && (
-                      <Badge className="font-mono h-5">SOL</Badge>
+                      <Badge className="font-mono h-5 bg-warning">!</Badge>
                     )}
                 </div>
               </div>

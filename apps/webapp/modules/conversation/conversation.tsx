@@ -1,4 +1,4 @@
-import { Loader, useToast } from '@redplanethq/ui';
+import { Button, Loader, useToast } from '@redplanethq/ui';
 import { sort } from 'fast-sort';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
@@ -10,6 +10,7 @@ import { useApplication } from 'hooks/application';
 import { useConversationHistory } from 'hooks/conversations';
 
 import { useCreateConversationMutation } from 'services/conversations';
+import { useApproveOrDeclineMutation } from 'services/conversations/approve-or-decline';
 import { useGetIntegrationDefinitions } from 'services/integration-definition';
 
 import { useContextStore } from 'store/global-context-provider';
@@ -24,7 +25,7 @@ export const Conversation = observer(() => {
   const { activeTab, updateConversationId } = useApplication();
   const { toast } = useToast();
   const { tasksStore, listsStore } = useContextStore();
-  const { conversationHistory } = useConversationHistory(
+  const { conversationHistory, conversation } = useConversationHistory(
     activeTab.conversation_id,
   );
   const { isLoading: integrationsLoading } = useGetIntegrationDefinitions();
@@ -37,6 +38,7 @@ export const Conversation = observer(() => {
     React.useState(undefined);
 
   const { mutate: createConversation } = useCreateConversationMutation({});
+  const { mutate: approval, isLoading } = useApproveOrDeclineMutation({});
 
   const onSend = (text: string, agents: string[], title: string) => {
     if (conversationResponse) {
@@ -61,6 +63,18 @@ export const Conversation = observer(() => {
             title: 'Conversation error',
             description: errorMessage ?? 'Conversation creation failed',
           });
+        },
+      },
+    );
+  };
+
+  const sendApproval = (approved: boolean) => {
+    approval(
+      { approved, conversationId: conversation.id },
+      {
+        onSuccess: (data) => {
+          updateConversationId(data.conversationId);
+          setConversationResponse(data);
         },
       },
     );
@@ -97,6 +111,24 @@ export const Conversation = observer(() => {
               <ConversationItem key={index} conversationHistoryId={ch.id} />
             );
           },
+        )}
+        {conversation?.status === 'need_approval' && (
+          <div className="flex justify-start gap-2 mx-4">
+            <Button
+              variant="destructive"
+              disabled={isLoading}
+              onClick={() => sendApproval(false)}
+            >
+              Decline
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => sendApproval(true)}
+              disabled={isLoading}
+            >
+              Accept
+            </Button>
+          </div>
         )}
       </>
     );

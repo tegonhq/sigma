@@ -1,10 +1,14 @@
 import { useRealtimeRunWithStreams } from '@trigger.dev/react-hooks';
+import getConfig from 'next/config';
 import React from 'react';
+const { publicRuntimeConfig } = getConfig();
 
 export const useTriggerStream = (runId: string, token: string) => {
   const { error, streams, run } = useRealtimeRunWithStreams(runId, {
     accessToken: token,
-    baseURL: 'https://trigger.heysol.ai', // Optional if you are using a self-hosted Trigger.dev instance
+    baseURL:
+      publicRuntimeConfig.NEXT_PUBLIC_TRIGGER_URL ??
+      'https://trigger.heysol.ai', // Optional if you are using a self-hosted Trigger.dev instance
   });
 
   const isEnd = React.useMemo(() => {

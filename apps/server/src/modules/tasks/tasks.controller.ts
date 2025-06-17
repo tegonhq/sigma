@@ -11,7 +11,7 @@ import {
 import { CreateTaskDto, UnifiedSearchOptionsDto } from '@redplanethq/sol-sdk';
 
 import { AuthGuard } from 'modules/auth/auth.guard';
-import { UserId, Workspace } from 'modules/auth/session.decorator';
+import { UpdatedBy, UserId, Workspace } from 'modules/auth/session.decorator';
 
 import { TaskVectorService } from './tasks-vector.service';
 import { TasksService } from './tasks.service';
@@ -58,8 +58,9 @@ export class TasksController {
   async createTask(
     @Workspace() workspaceId: string,
     @Body() taskData: CreateTaskDto,
+    @UpdatedBy() updatedBy: string,
   ) {
-    return await this.tasksService.createTask(taskData, workspaceId);
+    return await this.tasksService.createTask(taskData, workspaceId, updatedBy);
   }
 
   @Post('source')
@@ -76,14 +77,18 @@ export class TasksController {
   async updateTask(
     @Param('taskId') taskId: string,
     @Body() taskData: Partial<CreateTaskDto>,
+    @UpdatedBy() updatedBy: string,
   ) {
-    return await this.tasksService.updateTask(taskId, taskData);
+    return await this.tasksService.updateTask(taskId, taskData, updatedBy);
   }
 
   @Delete(':taskId')
   @UseGuards(AuthGuard)
-  async deleteTask(@Param('taskId') taskId: string) {
-    return await this.tasksService.deleteTask(taskId);
+  async deleteTask(
+    @Param('taskId') taskId: string,
+    @UpdatedBy() updatedBy: string,
+  ) {
+    return await this.tasksService.deleteTask(taskId, updatedBy);
   }
 
   @Delete('source/:sourceURL')

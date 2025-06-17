@@ -89,16 +89,17 @@ export class TasksService {
 
     // If we found a task, update it
     if (externalTask) {
-      return await this.updateTask(externalTask.id, createTaskDto, tx);
+      return await this.updateTask(externalTask.id, createTaskDto, 'user', tx);
     }
 
     // If no existing task found, create a new one
-    return await this.createTask(createTaskDto, workspaceId, tx);
+    return await this.createTask(createTaskDto, workspaceId, 'user', tx);
   }
 
   async createTask(
     createTaskDto: CreateTaskDto,
     workspaceId: string,
+    updatedBy: string = 'user',
     tx?: TransactionClient,
   ) {
     const prismaClient = tx || this.prisma;
@@ -134,6 +135,7 @@ export class TasksService {
         data: {
           deleted: null,
           source: source ? { ...source } : undefined,
+          updatedBy,
         },
         include: {
           page: { select: PageSelect },
@@ -205,6 +207,7 @@ export class TasksService {
   async updateTask(
     taskId: string,
     updateTaskDto: UpdateTaskDto,
+    updatedBy: string = 'user',
     tx?: TransactionClient,
   ) {
     const prismaClient = tx || this.prisma;
@@ -238,6 +241,7 @@ export class TasksService {
       ...('recurrence' in updateTaskDto && {
         recurrence: updateTaskDto.recurrence || [],
       }),
+      updatedBy,
     };
 
     // Get existing task and update in a single transaction
@@ -262,7 +266,7 @@ export class TasksService {
     return updatedTask;
   }
 
-  async deleteTask(taskId: string) {
+  async deleteTask(taskId: string, updatedBy: string) {
     // Get task and update in a single transaction
     const task = await this.prisma.task.findUnique({
       where: { id: taskId },
@@ -292,6 +296,7 @@ export class TasksService {
         scheduleText: null,
         startTime: null,
         endTime: null,
+        updatedBy,
       },
     });
   }

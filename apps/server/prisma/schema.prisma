@@ -234,6 +234,8 @@ model List {
   updatedAt DateTime  @updatedAt
   deleted   DateTime?
 
+  updatedBy String @default("user")
+
   favourite Boolean @default(false)
 
   icon String?
@@ -317,6 +319,8 @@ model Task {
   updatedAt DateTime  @updatedAt
   deleted   DateTime?
   archived  DateTime?
+
+  updatedBy String @default("user")
 
   number      Int?
   completedAt DateTime?

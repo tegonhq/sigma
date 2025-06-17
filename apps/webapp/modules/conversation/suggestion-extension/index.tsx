@@ -32,7 +32,7 @@ export const MentionComponent = observer((props: NodeViewProps) => {
     <NodeViewWrapper className="inline w-fit">
       <span
         className={cn(
-          'items-center gap-1 max-w-[100px] text-left bg-transparent hover:bg-grayAlpha-100 p-1 px-2 inline-flex mention bg-grayAlpha-100 h-6 rounded relative top-0.5',
+          'items-center gap-1 max-w-[150px] text-left bg-transparent hover:bg-grayAlpha-100 p-1 px-2 inline-flex mention bg-grayAlpha-100 h-6 rounded relative top-0.5',
         )}
         onClick={() => {}}
         data-item="mention"

@@ -32,7 +32,6 @@ const prisma = new PrismaClient();
 export interface InitChatPayload {
   conversationId: string;
   conversationHistoryId: string;
-  autoMode: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   context: any;
 }
@@ -51,10 +50,8 @@ export class Preferences {
 export interface RunChatPayload {
   conversationId: string;
   conversationHistoryId: string;
-  autoMode: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   context: any;
-  userContextPageHTML: string;
   conversation: Conversation;
   conversationHistory: ConversationHistory;
   isContinuation?: boolean;
@@ -235,6 +232,7 @@ export const init = async (payload: InitChatPayload) => {
     if (config.url?.startsWith('/api')) {
       config.url = `${process.env.BACKEND_HOST}${config.url.replace('/api', '')}`;
       config.headers.Authorization = `Bearer ${pat?.token}`;
+      config.headers['x-updated-by'] = 'assistant';
     } else if (config.url?.startsWith('https://sol::core_memory')) {
       config.url = `${workspacePreferences.memory_host}/search`;
       config.headers.Authorization = `Bearer ${workspacePreferences.memory_api_key}`;
@@ -246,7 +244,6 @@ export const init = async (payload: InitChatPayload) => {
 
   const mcpServers = { ...mcp.mcpServers, ...integrationMCPServers };
 
-  const userContextPageHTML = await getUserContextHTML();
   logger.info(
     `Found users, workspace, conversation, ${JSON.stringify({ mcpServers })}`,
   );
@@ -260,7 +257,6 @@ export const init = async (payload: InitChatPayload) => {
     mcp: { mcpServers },
     timezone,
     preferences: workspace.preferences as Preferences,
-    userContextPageHTML,
   };
 };
 
@@ -499,7 +495,6 @@ export async function getContext(messages: CoreMessage[]) {
 export async function getAutomationContext(
   workspaceId: string,
   query: string,
-  userContextPageHTML: string,
 ): Promise<{
   found?: boolean;
   automations?: [];
@@ -526,6 +521,7 @@ export async function getAutomationContext(
     reason?: string;
   } = {};
   try {
+    // Update this later and give memory access to this
     automationContext = await getContext([
       {
         role: 'system',
@@ -533,10 +529,7 @@ export async function getAutomationContext(
       },
       {
         role: 'user',
-        content: AUTOMATIONS_USER_PROMPT.replace(
-          '{{USER_MEMORY}}',
-          userContextPageHTML,
-        )
+        content: AUTOMATIONS_USER_PROMPT.replace('{{USER_MEMORY}}', '')
           .replace('{{USER_AUTOMATIONS}}', automationsList)
           .replace('{{CURRENT_CONVERSATION_MESSAGE}}', query),
       },
@@ -640,11 +633,6 @@ export const updateAutomations = async (ids: string[]) => {
   } catch (e) {
     logger.error(e);
   }
-};
-
-export const getUserContextHTML = async () => {
-  const response = await axios('/api/v1/users/context');
-  return response.data;
 };
 
 export async function getContinuationAgentConversationHistory(

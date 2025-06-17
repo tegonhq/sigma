@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CodeDto, User } from '@redplanethq/sol-sdk';
-import { convertTiptapJsonToHtml } from '@sol/editor-extensions';
+
 import { PrismaService } from 'nestjs-prisma';
 
 import {
@@ -326,20 +326,5 @@ export class UsersService {
     }
 
     return userUsage.availableCredits > 0;
-  }
-
-  async getUserContext(workspaceId: string) {
-    const userContextPage = await this.prisma.page.findFirst({
-      where: {
-        workspaceId,
-        type: 'Context',
-      },
-    });
-
-    const userContextPageHTML = userContextPage.description
-      ? convertTiptapJsonToHtml(JSON.parse(userContextPage.description))
-      : '';
-
-    return userContextPageHTML;
   }
 }

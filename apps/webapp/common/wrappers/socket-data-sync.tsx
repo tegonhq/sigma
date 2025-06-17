@@ -33,7 +33,7 @@ export const SocketDataSyncWrapper: React.FC<Props> = observer(
       conversationHistoryStore,
       listsStore,
       agentWorklogsStore,
-      activitesStore,
+      activitiesStore,
       automationsStore,
     } = useContextStore();
     const user = React.useContext(UserContext);
@@ -77,7 +77,7 @@ export const SocketDataSyncWrapper: React.FC<Props> = observer(
         [MODELS.ConversationHistory]: conversationHistoryStore,
         [MODELS.List]: listsStore,
         [MODELS.AgentWorklog]: agentWorklogsStore,
-        [MODELS.Activity]: activitesStore,
+        [MODELS.Activity]: activitiesStore,
         [MODELS.Automation]: automationsStore,
       };
 

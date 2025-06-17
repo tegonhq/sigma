@@ -231,10 +231,6 @@ This information may or may not be relevant to the user message, it's up to you 
 {{CONTEXT}}
 </context>
 
-<auto_mode>
-{{AUTO_MODE}}
-</auto_mode>
-
 
 <tool_calling>
 You have tools at your disposal to solve the user message. Follow these rules regarding tool calls:

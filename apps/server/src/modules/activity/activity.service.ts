@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { CreateActivityDto } from '@redplanethq/sol-sdk';
-import { convertTiptapJsonToHtml } from '@sol/editor-extensions';
 import { tasks } from '@trigger.dev/sdk/v3';
 import { PrismaService } from 'nestjs-prisma';
 
@@ -25,22 +24,11 @@ export default class ActivityService {
         workspace: true,
       },
     });
-    const userContextPage = await this.prisma.page.findFirst({
-      where: {
-        workspaceId: activity.workspaceId,
-        type: 'Context',
-      },
-    });
-
-    const userContextPageHTML = userContextPage.description
-      ? convertTiptapJsonToHtml(JSON.parse(userContextPage.description))
-      : '';
 
     await tasks.trigger(
       'activity',
       {
         activityId,
-        userContextPage: userContextPageHTML,
       },
       { tags: [activityId, activity.workspaceId, activity.id] },
     );

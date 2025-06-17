@@ -25,6 +25,7 @@ export default class WorkspacesService {
     // Create the onboarding list
     const list = await this.listsService.createList(
       workspaceId,
+      'user',
       'Getting started with Sol',
       true,
       JSON.stringify(OnboardingContent),

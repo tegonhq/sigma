@@ -15,7 +15,6 @@ import {
 
 interface RunActivityPayload {
   activityId: string;
-  userContextPage: string;
 }
 
 export const activityRun = task({
@@ -30,7 +29,6 @@ export const activityRun = task({
     const automationContext = await getAutomationContext(
       activity.workspace.id,
       activity.text,
-      payload.userContextPage,
     );
 
     const automationsToRun = automationContext;
@@ -61,7 +59,6 @@ export const activityRun = task({
         {
           conversationHistoryId: conversationHistory.id,
           conversationId: conversation.id,
-          autoMode: true,
           activity: activity.id,
           activityExecutionPlan: automationsToRun.executionPlan,
           context: {},
@@ -109,7 +106,6 @@ export const activityRun = task({
       {
         conversationHistoryId: conversationHistory.id,
         conversationId: conversation.id,
-        autoMode: true,
         activity: activity.id,
         activityExecutionPlan: automationsToRun.executionPlan,
         context: {},

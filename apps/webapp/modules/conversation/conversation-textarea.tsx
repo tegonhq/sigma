@@ -29,7 +29,6 @@ export function ConversationTextarea({
   placeholder,
   className,
   onChange,
-  disabled,
   onStop,
 }: ConversationTextareaProps) {
   const [text, setText] = useState(defaultValue ?? '');
