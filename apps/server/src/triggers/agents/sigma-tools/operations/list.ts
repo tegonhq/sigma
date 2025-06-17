@@ -5,6 +5,7 @@ import {
   DeleteListParams,
   GetListsParams,
   ListParams,
+  UpdateListParams,
 } from '../types/list.js';
 
 /**
@@ -21,6 +22,14 @@ export async function createList(params: CreateListParams) {
 
 export async function getList(params: ListParams) {
   const response = await axios.get(`/api/v1/lists/${params.listId}`);
+  return response.data;
+}
+
+export async function updateList(params: UpdateListParams) {
+  const response = await axios.post(`/api/v1/lists/${params.listId}`, {
+    title: params.title,
+    htmlDescription: params.htmlDescription,
+  });
   return response.data;
 }
 

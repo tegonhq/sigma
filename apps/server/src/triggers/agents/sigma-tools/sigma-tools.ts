@@ -12,7 +12,12 @@ import {
   updateTask,
 } from './operations/task';
 import { createAssistantTask, updateAssistantTask } from './operations/task';
-import { CreateListSchema, GetListsSchema, ListSchema } from './types/list';
+import {
+  CreateListSchema,
+  GetListsSchema,
+  ListSchema,
+  UpdateListSchema,
+} from './types/list';
 import { RetrieveMemorySchema } from './types/memory';
 import {
   createAssistantTaskSchema,
@@ -42,6 +47,12 @@ export function getSolTools(isMemoryConfigured = false) {
       description:
         'Creates a brand new list with specified title and optional icon. Use when user explicitly asks to create a new list. NOT for adding items to existing lists (use update_page for that). REQUIRES title parameter, icon is optional.',
       parameters: CreateListSchema,
+    }),
+
+    'sol--update_list': tool({
+      description:
+        'Updates an existing list with specified title and optional icon. Use when user explicitly asks to update a list. NOT for adding items to existing lists (use update_page for that). REQUIRES title parameter, icon is optional.',
+      parameters: UpdateListSchema,
     }),
 
     'sol--search_tasks': tool({

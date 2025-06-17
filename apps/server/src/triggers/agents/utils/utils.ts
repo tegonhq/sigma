@@ -5,6 +5,7 @@ import {
   Activity,
   Conversation,
   ConversationHistory,
+  Prisma,
   PrismaClient,
   UserType,
   UserUsage,
@@ -550,13 +551,16 @@ export const updateConversationStatus = async (
   status: string,
   conversationId: string,
 ) => {
+  const data: Prisma.ConversationUpdateInput = { status };
+  if (status === 'need_attention') {
+    data.unread = true;
+  }
+
   return await prisma.conversation.update({
     where: {
       id: conversationId,
     },
-    data: {
-      status,
-    },
+    data,
   });
 };
 

@@ -139,6 +139,14 @@ export const SOL_DOMAIN_KNOWLEDGE = `# SOL Domain Knowledge
   - When creating both a user task and an assistant reminder task for the same purpose, FIRST create the main user task, THEN create the assistant task as a subtask of that main user task
 - **Task Description Requirements**: Always include clear, step-by-step next action steps in the description of assistant tasks, so the assistant knows exactly what to do when the task activates
 - **Task Status Management**: When an assistant task is completed, mark it as "Done" in the assistant's task list. If the assistant task is part of a larger user task, update the user task's status based on the completion of its subtasks
+- **Task Scheduling Awareness**:
+  - When a user task has a schedule (startTime/endTime) or dueDate, the app automatically creates reminders 15 minutes before the task
+  - Do NOT ask users if they want reminders for scheduled tasks - these are handled automatically
+  - Only ask about scheduling if a task has no startTime/endTime or dueDate
+- **Proactive Task Assistance**:
+  - Based on task title and description, proactively offer relevant help (e.g., breaking down complex tasks, gathering information)
+  - Suggest specific actions that would help the user complete their task more effectively
+  - Tailor assistance offers to the task context without requiring explicit user requests
 `;
 
 export const SOL_PERSONALITY = `

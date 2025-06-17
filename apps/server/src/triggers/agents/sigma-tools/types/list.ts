@@ -12,6 +12,17 @@ export const ListSchema = z.object({
 
 export type ListParams = z.infer<typeof ListSchema>;
 
+export const UpdateListSchema = z.object({
+  listId: z.string().uuid().describe('Unique identifier of the list'),
+  title: z.string().optional().describe('New title for the list'),
+  htmlDescription: z
+    .string()
+    .optional()
+    .describe('New description for the list'),
+});
+
+export type UpdateListParams = z.infer<typeof UpdateListSchema>;
+
 export const DeleteListSchema = z.object({
   listId: z.string().uuid().describe('Unique identifier of the list to delete'),
 });

@@ -128,11 +128,15 @@ export const chat = task({
 
       const stream = await metadata.stream('messages', llmResponse);
 
+      let needAttention = false;
       for await (const step of stream) {
         if (step.type === 'STEP') {
           creditForChat += 1;
           const stepDetails = JSON.parse(step.message);
 
+          if (stepDetails.skillStatus === ActionStatusEnum.NEED_ATTENTION) {
+            needAttention = true;
+          }
           await updateExecutionStep(
             { ...stepDetails },
             agentConversationHistory.id,
@@ -150,7 +154,10 @@ export const chat = task({
       }
 
       await updateUserCredits(usageCredits, creditForChat);
-      await updateConversationStatus('success', payload.conversationId);
+      await updateConversationStatus(
+        needAttention ? 'need_attention' : 'success',
+        payload.conversationId,
+      );
 
       // Update memory here
     } catch (e) {
