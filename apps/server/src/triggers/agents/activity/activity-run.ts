@@ -10,6 +10,7 @@ import {
   getActivity,
   getAutomationContext,
   updateActivity,
+  updateAutomations,
 } from '../utils/utils';
 
 interface RunActivityPayload {
@@ -100,6 +101,8 @@ export const activityRun = task({
     );
 
     const conversationHistory = conversation.ConversationHistory[0];
+
+    await updateAutomations(automationContext.automations);
 
     await tasks.trigger(
       'chat',

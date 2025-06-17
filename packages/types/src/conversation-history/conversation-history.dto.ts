@@ -10,6 +10,7 @@ export class ConversationHistoryParamsDto {
 
 export class ConversationContextData {
   pages?: string[];
+  lists?: string[];
   tasks?: string[];
   agents?: string[];
   repository?: string;

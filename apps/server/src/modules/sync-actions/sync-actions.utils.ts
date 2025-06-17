@@ -2,6 +2,7 @@ import {
   SyncActionTypeEnum,
   ModelName,
   SyncAction,
+  TaskHookAction,
 } from '@redplanethq/sol-sdk';
 import { PrismaService } from 'nestjs-prisma';
 
@@ -13,6 +14,19 @@ export function convertToActionType(action: string): SyncActionTypeEnum {
       return SyncActionTypeEnum.U;
     case 'delete':
       return SyncActionTypeEnum.D;
+  }
+
+  return null;
+}
+
+export function convertToActionTypeForUser(action: string): TaskHookAction {
+  switch (action.toLowerCase()) {
+    case 'insert':
+      return 'create';
+    case 'update':
+      return 'update';
+    case 'delete':
+      return 'delete';
   }
 
   return null;

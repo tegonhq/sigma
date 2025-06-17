@@ -159,7 +159,7 @@ export const OnboardingContent = {
                     {
                       type: 'link',
                       attrs: {
-                        href: 'https://github.com/tegonhq/sigma/wiki',
+                        href: 'https://github.com/RedPlanetHQ/sol/wiki',
                         target: '_blank',
                         rel: 'noopener noreferrer nofollow',
                         class: 'text-primary cursor-pointer',
@@ -186,7 +186,7 @@ export const OnboardingContent = {
                     {
                       type: 'link',
                       attrs: {
-                        href: 'https://github.com/tegonhq/sigma/wiki/keyboard-shortcuts',
+                        href: 'https://github.com/RedplanetHQ/sol/wiki/keyboard-shortcuts',
                         target: '_blank',
                         rel: 'noopener noreferrer nofollow',
                         class: 'text-primary cursor-pointer',

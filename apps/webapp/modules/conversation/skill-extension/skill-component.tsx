@@ -46,7 +46,7 @@ export const SkillComponent = observer((props: any) => {
   }, [conversationContext?.conversationHistoryId]);
 
   const getIcon = () => {
-    if (agent === 'sigma') {
+    if (agent === 'sol') {
       return (
         <Image
           src="/logo_light.svg"

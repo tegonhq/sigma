@@ -16,7 +16,7 @@ import TableHeader from '@tiptap/extension-table-header';
 import TableRow from '@tiptap/extension-table-row';
 import { skillExtension } from './skill-extension';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
-import { AgentMention } from './agent-mention';
+import { ContextMention } from './context-mention';
 
 export const defaultExtensions = [
   fileExtension,
@@ -42,7 +42,7 @@ export const defaultExtensions = [
   TableHeader,
   TableCell,
   skillExtension,
-  AgentMention,
+  ContextMention,
 ];
 
 export const getSchema = () => fetchSchema(defaultExtensions as any);

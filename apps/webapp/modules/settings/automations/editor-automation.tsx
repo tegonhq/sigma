@@ -9,7 +9,7 @@ import React from 'react';
 
 import {
   CustomMention,
-  useMentionSuggestions,
+  useContextSuggestions,
 } from 'modules/conversation/suggestion-extension';
 
 import { EditorRoot, lowlight, type EditorT } from 'common/editor';
@@ -33,7 +33,7 @@ export function EditorAutomation({
   const [editor, setEditor] = React.useState<EditorT>();
   const [agents, setAgents] = React.useState<string[]>([]);
 
-  const suggestion = useMentionSuggestions();
+  const suggestion = useContextSuggestions();
 
   const onCommentUpdate = (editor: EditorT) => {
     setText(editor.getHTML());
@@ -124,8 +124,6 @@ export function EditorAutomation({
                     const title = editor.getText();
 
                     onSend(text, agents, title);
-                    editor.commands.clearContent(true);
-                    setText('');
                   }
 
                   return true;
@@ -167,8 +165,6 @@ export function EditorAutomation({
                 const title = editor.getText();
 
                 onSend(text, agents, title);
-                editor.commands.clearContent(true);
-                setText('');
               }
             }}
           >

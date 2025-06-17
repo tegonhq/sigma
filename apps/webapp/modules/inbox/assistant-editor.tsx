@@ -11,7 +11,7 @@ import { useHotkeys } from 'react-hotkeys-hook';
 
 import {
   CustomMention,
-  useMentionSuggestions,
+  useContextSuggestions,
 } from 'modules/conversation/suggestion-extension';
 import { useSearchCommands } from 'modules/search/command/use-search-commands';
 
@@ -61,7 +61,7 @@ export function AssistantEditor({
     },
   );
 
-  const suggestion = useMentionSuggestions();
+  const suggestion = useContextSuggestions();
 
   const onCommentUpdate = (editor: EditorT) => {
     setHTML(editor.getHTML());

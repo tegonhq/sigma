@@ -15,8 +15,10 @@ export interface logType {
 }
 
 export const tablesToSendMessagesFor = new Map([
+  [ModelNameEnum.Activity, true],
   [ModelNameEnum.AgentWorklog, true],
   [ModelNameEnum.Automation, true],
+  [ModelNameEnum.Command, true],
   [ModelNameEnum.Conversation, true],
   [ModelNameEnum.ConversationHistory, true],
   [ModelNameEnum.IntegrationAccount, true],

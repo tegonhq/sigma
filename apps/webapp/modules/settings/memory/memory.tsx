@@ -26,6 +26,36 @@ const MemoryFormSchema = z.object({
   apiKey: z.string().min(1, { message: 'API Key is required' }),
 });
 
+const memoryInfo = (
+  <div className="mb-4 p-3 rounded bg-background-3">
+    <div className="mb-2 font-semibold">About Memory</div>
+    <div>
+      We are building an{' '}
+      <a
+        href="https://github.com/RedPlanetHQ/core"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="underline text-primary"
+      >
+        open source memory product
+      </a>{' '}
+      that is more private, pluggable, and gives you full control. You can
+      self-host your own instance, or use our managed cloud service at{' '}
+      <a
+        href="https://core.heysol.ai"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="underline text-primary"
+      >
+        https://core.heysol.ai
+      </a>
+      .
+      <br />
+      Our system integrates seamlessly with this product.
+    </div>
+  </div>
+);
+
 export const Memory = observer(() => {
   const user = React.useContext(UserContext);
   const preferences = user.workspace.preferences;
@@ -94,6 +124,7 @@ export const Memory = observer(() => {
   return (
     <div className="flex flex-col gap-4 w-3xl mx-auto px-4 py-6">
       <SettingSection title="Memory" description="Edit user preferences/memory">
+        {memoryInfo}
         {preferences.memory_host && !editing ? (
           <div className="flex gap-4 w-full min-w-[500px] bg-background-3 justify-between rounded p-3 items-center">
             <div>

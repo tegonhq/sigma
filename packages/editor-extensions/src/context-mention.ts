@@ -1,19 +1,20 @@
 import Mention from '@tiptap/extension-mention';
 import { mergeAttributes } from '@tiptap/react';
 
-export const AgentMention = Mention.extend({
+export const ContextMention = Mention.extend({
   parseHTML() {
     return [
       {
-        tag: 'agent',
+        tag: 'mention',
       },
     ];
   },
   renderHTML({ HTMLAttributes }) {
     return [
-      'agent',
+      'mention',
       mergeAttributes(HTMLAttributes),
       HTMLAttributes['data-id'],
+      HTMLAttributes['data-type'],
     ];
   },
 });

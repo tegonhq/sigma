@@ -16,6 +16,7 @@ import { ConversationItem } from './conversation-item';
 import { ConversationTextarea } from './conversation-textarea';
 import { StreamingConversation } from './streaming-conversation';
 import { useConversationContext } from './use-conversation-context';
+import { useContextStore } from 'store/global-context-provider';
 
 interface ConversationProps {
   defaultValue?: string;
@@ -24,17 +25,19 @@ interface ConversationProps {
 export const Conversation = observer(({ defaultValue }: ConversationProps) => {
   const { activeTab, updateConversationId } = useApplication();
   const { toast } = useToast();
-
+  const { tasksStore, listsStore } = useContextStore();
   const { conversationHistory } = useConversationHistory(
     activeTab.conversation_id,
   );
   const { isLoading: integrationsLoading } = useGetIntegrationDefinitions();
+  const pageId = useConversationContext();
+  const task = tasksStore.getTaskForPage(pageId);
+  const list = listsStore.getListWithPageId(pageId);
+
   const [conversationResponse, setConversationResponse] =
     React.useState(undefined);
 
   const { mutate: createConversation } = useCreateConversationMutation({});
-
-  const pageId = useConversationContext();
 
   const onSend = (text: string, agents: string[], title: string) => {
     if (conversationResponse) {
@@ -44,7 +47,6 @@ export const Conversation = observer(({ defaultValue }: ConversationProps) => {
     createConversation(
       {
         message: text,
-        pageId,
         context: { agents },
         title,
         conversationId: activeTab.conversation_id,
@@ -100,7 +102,6 @@ export const Conversation = observer(({ defaultValue }: ConversationProps) => {
       </>
     );
   };
-
   if (integrationsLoading) {
     return <Loader />;
   }
@@ -123,7 +124,13 @@ export const Conversation = observer(({ defaultValue }: ConversationProps) => {
           <div className="flex flex-col">
             <ConversationTextarea
               onSend={onSend}
-              defaultValue={defaultValue}
+              defaultValue={
+                task
+                  ? `<mention data-id='${task.id}' data-label='task'></mention>`
+                  : list
+                    ? `<mention data-id='${list.id}' data-label='list'></mention>`
+                    : undefined
+              }
               isLoading={conversationResponse}
               className="bg-background-2"
             />

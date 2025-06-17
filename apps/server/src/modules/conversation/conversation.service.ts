@@ -7,11 +7,7 @@ import {
 import {
   ConversationContext,
   ConversationContextData,
-  Page,
-  Task,
 } from '@redplanethq/sol-sdk';
-import { defaultExtensions } from '@sol/editor-extensions';
-import { generateHTML } from '@tiptap/html';
 import { auth, runs, tasks } from '@trigger.dev/sdk/v3';
 import { PrismaService } from 'nestjs-prisma';
 import { createConversationTitle } from 'triggers/conversation/create-conversation-title';
@@ -134,75 +130,10 @@ export class ConversationService {
     const context =
       (conversationHistory.context as ConversationContextData) || {};
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { pages, tasks, agents = [], ...otherContextData } = context;
-
-    // Add page/task from conversation if they exist
-    if (conversationHistory.conversation.pageId) {
-      if (!context.pages) {
-        context.pages = [];
-      }
-
-      if (!context.pages.includes(conversationHistory.conversation.pageId)) {
-        context.pages.push(conversationHistory.conversation.pageId);
-      }
-    }
-
-    // Get pages data if pageIds exist
-    let page: Array<Partial<Page>> = [];
-    if (context.pages?.length) {
-      page = await Promise.all(
-        context.pages.map(async (pageId: string) => {
-          const page = await this.prisma.page.findUnique({
-            where: {
-              id: pageId,
-            },
-          });
-
-          const pageData: Record<string, string> = {
-            title: page.title,
-            id: page.id,
-            descrition: page.description
-              ? generateHTML(JSON.parse(page.description), defaultExtensions)
-              : undefined,
-            type: page.type,
-          };
-
-          // If page type is List, fetch the list and add listId
-          if (page.type === 'List') {
-            const list = await this.prisma.list.findFirst({
-              where: {
-                pageId: page.id,
-              },
-            });
-            if (list) {
-              pageData['listId'] = list.id;
-            }
-          }
-
-          // If page type is Default, fetch tasks for that page and add taskId
-          if (page.type === 'Default') {
-            const task = await this.prisma.task.findFirst({
-              where: {
-                pageId: page.id,
-              },
-            });
-            if (task) {
-              pageData['taskId'] = task.id;
-            }
-          }
-
-          return pageData;
-        }),
-      );
-    }
-
-    // Get pages data if pageIds exist
-    // eslint-disable-next-line prefer-const
-    let task: Array<Partial<Task>> = [];
+    const { agents = [], ...otherContextData } = context;
 
     // Get previous conversation history message and response
     let previousHistory = null;
-    const uniqueAgents = new Set(agents);
     if (conversationHistory.conversationId) {
       previousHistory = await this.prisma.conversationHistory.findMany({
         where: {
@@ -216,21 +147,11 @@ export class ConversationService {
           createdAt: 'asc',
         },
       });
-
-      // Add agents from previous conversations to uniqueAgents set
-      previousHistory.forEach((history) => {
-        const historyContext = history.context as ConversationContextData;
-        if (historyContext?.agents?.length) {
-          historyContext.agents.forEach((agent) => uniqueAgents.add(agent));
-        }
-      });
     }
 
     return {
-      page,
-      task,
       previousHistory,
-      agents: Array.from(uniqueAgents),
+      agents: [],
       ...otherContextData,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any;

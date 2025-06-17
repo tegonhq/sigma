@@ -7,39 +7,7 @@ import { PrismaService } from 'nestjs-prisma';
 @Injectable()
 export default class ActivityService {
   constructor(private prisma: PrismaService) {}
-  async createActivity(
-    createActivity: CreateActivityDto,
-    workspaceId: string,
-    userId: string,
-  ) {
-    const exisitingActivity = await this.prisma.activity.findFirst({
-      where: {
-        AND: [
-          { workspaceId },
-          {
-            OR: [
-              createActivity.sourceURL
-                ? { sourceURL: createActivity.sourceURL }
-                : {},
-              createActivity.taskId ? { taskId: createActivity.taskId } : {},
-            ],
-          },
-        ],
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-      include: {
-        integrationAccount: {
-          include: {
-            integrationDefinition: true,
-          },
-        },
-      },
-    });
-
-    console.log(exisitingActivity, userId);
-
+  async createActivity(createActivity: CreateActivityDto, workspaceId: string) {
     return await this.prisma.activity.create({
       data: {
         ...createActivity,

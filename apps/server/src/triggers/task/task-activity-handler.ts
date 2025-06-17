@@ -152,8 +152,6 @@ export const taskActivityHandler = triggerTask({
     }
 
     if (context.action === 'update') {
-      console.log(context);
-
       if (
         context.changeData &&
         (context.changeData.recurrence?.newValue ||

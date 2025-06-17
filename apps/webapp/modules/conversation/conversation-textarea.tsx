@@ -9,7 +9,7 @@ import React from 'react';
 
 import { EditorRoot, lowlight, type EditorT } from 'common/editor';
 
-import { CustomMention, useMentionSuggestions } from './suggestion-extension';
+import { CustomMention, useContextSuggestions } from './suggestion-extension';
 
 interface ConversationTextareaProps {
   onSend: (value: string, agents: string[], title: string) => void;
@@ -32,10 +32,11 @@ export function ConversationTextarea({
   const [editor, setEditor] = React.useState<EditorT>();
   const [agents, setAgents] = React.useState<string[]>([]);
 
-  const suggestion = useMentionSuggestions();
+  const suggestion = useContextSuggestions();
 
-  const onCommentUpdate = (editor: EditorT) => {
+  const onUpdate = (editor: EditorT) => {
     setText(editor.getHTML());
+
     onChange && onChange(editor.getText());
     const json = editor.getJSON();
 
@@ -82,20 +83,8 @@ export function ConversationTextarea({
     >
       <EditorRoot>
         <EditorContent
-          initialContent={{
-            type: 'doc',
-            content: [
-              {
-                type: 'paragraph',
-                content: [
-                  {
-                    type: 'text',
-                    text: defaultValue,
-                  },
-                ],
-              },
-            ],
-          }}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          initialContent={defaultValue as any}
           extensions={[
             Document,
             Paragraph,
@@ -123,7 +112,7 @@ export function ConversationTextarea({
             editor.commands.focus('end');
           }}
           onUpdate={({ editor }) => {
-            onCommentUpdate(editor);
+            onUpdate(editor);
           }}
           shouldRerenderOnTransaction={false}
           editorProps={{

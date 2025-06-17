@@ -4,7 +4,7 @@ import React from 'react';
 export const useTriggerStream = (runId: string, token: string) => {
   const { error, streams, run } = useRealtimeRunWithStreams(runId, {
     accessToken: token,
-    baseURL: 'https://trigger.mysigma.ai', // Optional if you are using a self-hosted Trigger.dev instance
+    baseURL: 'https://trigger.heysol.ai', // Optional if you are using a self-hosted Trigger.dev instance
   });
 
   const isEnd = React.useMemo(() => {

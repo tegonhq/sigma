@@ -14,7 +14,7 @@ import {
 } from './prompt';
 import { generate, processTag } from './stream-utils';
 import { AgentMessage, AgentMessageType, Message } from './types';
-import { callSolTool, getSolTools } from '../sigma-tools/sigma-tools';
+import { callSolTool, getSolTools } from '../sol-tools/sol-tools';
 import { MCP } from '../utils/mcp';
 import { ExecutionState, HistoryStep, TotalCost } from '../utils/types';
 import { flattenObject, Preferences } from '../utils/utils';

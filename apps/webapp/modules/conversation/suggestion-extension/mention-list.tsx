@@ -1,5 +1,4 @@
-import { cn } from '@redplanethq/ui';
-import Image from 'next/image';
+import { cn, IssuesLine, Project } from '@redplanethq/ui';
 import React, {
   forwardRef,
   useEffect,
@@ -7,28 +6,32 @@ import React, {
   useState,
 } from 'react';
 
-import { getIcon, type IconType } from 'common/icon-utils';
+import type { PageType } from 'common/types';
 
-export interface Agent {
-  name: string;
-  key: string;
-}
+import { useContextStore } from 'store/global-context-provider';
 
 interface MentionListProps {
-  items: Agent[];
-  command: (args: { id: string }) => void;
+  items: PageType[];
+  command: (args: { id: string; label: string }) => void;
 }
 
 export const MentionList = forwardRef(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (props: MentionListProps, ref: React.Ref<any>) => {
+    const { tasksStore, listsStore } = useContextStore();
+
     const [selectedIndex, setSelectedIndex] = useState(0);
 
     const selectItem = (index: number) => {
       const item = props.items[index];
+      const task = tasksStore.getTaskForPage(item.id);
+      const list = listsStore.getListWithPageId(item.id);
 
       if (item) {
-        props.command({ id: item.key });
+        props.command({
+          id: task ? task.id : list.id,
+          label: task ? 'task' : 'list',
+        });
       }
     };
 
@@ -73,7 +76,7 @@ export const MentionList = forwardRef(
       <div className="bg-popover border border-border rounded shadow flex flex-col gap-0.5 overflow-auto p-1 relative">
         {props.items.length > 0 ? (
           props.items.map((item, index) => {
-            const Icon = getIcon(item.key as IconType);
+            const task = tasksStore.getTaskForPage(item.id);
 
             return (
               <button
@@ -86,18 +89,15 @@ export const MentionList = forwardRef(
                 data-selected={index === selectedIndex}
                 data-item="mention"
               >
-                {item.name === 'Sigma' ? (
-                  <Image
-                    src="/logo_light.svg"
-                    alt="logo"
-                    key={1}
-                    width={16}
-                    height={16}
-                  />
+                {task ? (
+                  <IssuesLine size={14} className="shrink-0" />
                 ) : (
-                  <Icon size={14} className="rounded-sm" />
+                  <Project size={14} className="rounded-sm shrink-0" />
                 )}
-                {item.name}
+
+                <div className="inline-flex items-center justify-start shrink min-w-[0px] min-h-[24px]">
+                  <div className={cn('text-left truncate')}>{item.title}</div>
+                </div>
               </button>
             );
           })

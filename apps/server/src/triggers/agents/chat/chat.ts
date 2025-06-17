@@ -4,7 +4,8 @@ import { logger, metadata, task } from '@trigger.dev/sdk/v3';
 import { format } from 'date-fns';
 
 import { run } from './chat-utils';
-import { callSolTool } from '../sigma-tools/sigma-tools';
+import { addToMemory } from './memory-utils';
+import { callSolTool } from '../sol-tools/sol-tools';
 import { MCP } from '../utils/mcp';
 import { HistoryStep } from '../utils/types';
 import {
@@ -53,12 +54,9 @@ export const chat = task({
 
       const isContinuation = payload.isContinuation || false;
 
-      const { agents = [] } = payload.context;
-
       // Initialise mcp
       const mcp = new MCP();
       await mcp.init();
-      await mcp.load(agents, init.mcp);
 
       let automationContext: string;
       if (activity) {
@@ -80,9 +78,6 @@ export const chat = task({
         ),
         workpsaceId: init?.conversation.workspaceId,
       };
-
-      // Log which agents will be used for this conversation
-      logger.info(`Agents passed: ${JSON.stringify(agents)}`);
 
       // Extract user's goal from conversation history
       const message = init?.conversationHistory?.message;
@@ -159,7 +154,13 @@ export const chat = task({
         payload.conversationId,
       );
 
-      // Update memory here
+      await addToMemory(
+        init.conversation.id,
+        message,
+        agentUserMessage,
+        init.preferences,
+        init.userName,
+      );
     } catch (e) {
       await updateConversationStatus('failed', payload.conversationId);
       throw new Error(e);

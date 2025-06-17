@@ -256,6 +256,7 @@ export const init = async (payload: InitChatPayload) => {
     conversationHistory,
     token: pat?.token,
     userId: workspace.userId,
+    userName: user.fullname,
     mcp: { mcpServers },
     timezone,
     preferences: workspace.preferences as Preferences,
@@ -624,17 +625,21 @@ export const createConversation = async (
 };
 
 export const updateAutomations = async (ids: string[]) => {
-  // Use updateMany to update all matching records in a single query
-  await prisma.automation.updateMany({
-    where: {
-      id: { in: ids },
-    },
-    data: {
-      usedCount: {
-        increment: 1,
+  try {
+    // Use updateMany to update all matching records in a single query
+    await prisma.automation.updateMany({
+      where: {
+        id: { in: ids },
       },
-    },
-  });
+      data: {
+        usedCount: {
+          increment: 1,
+        },
+      },
+    });
+  } catch (e) {
+    logger.error(e);
+  }
 };
 
 export const getUserContextHTML = async () => {

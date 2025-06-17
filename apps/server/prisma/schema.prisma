@@ -126,7 +126,7 @@ model Conversation {
   task   Task?   @relation(fields: [taskId], references: [id])
   taskId String?
 
-  status String @default("pending") // Can be "pending", "running", "completed", "failed"
+  status String @default("pending") // Can be "pending", "running", "completed", "failed", "need_attension"
 
   ConversationHistory ConversationHistory[]
   syncs               Sync[]

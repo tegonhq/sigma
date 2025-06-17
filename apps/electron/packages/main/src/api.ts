@@ -7,7 +7,7 @@ import fastifyStatic from '@fastify/static';
 import {PORT} from '../utils';
 
 const isDev = process.env.NODE_ENV === 'development';
-const apiBaseUrl = isDev ? 'http://localhost:3001' : 'https://server.mysigma.ai';
+const apiBaseUrl = isDev ? 'http://localhost:3001' : 'https://server.heysol.ai';
 
 const fastify = Fastify();
 
@@ -43,7 +43,7 @@ fastify.register(fastifyHttpProxy, {
   websocket: true,
   preHandler: (request, _reply, done) => {
     // Modify headers before the proxy forwards the request
-    request.headers['origin'] = 'https://app.mysigma.ai';
+    request.headers['origin'] = 'https://app.heysol.ai';
 
     // Special handling for file upload endpoints
     if (request.url.includes('/upload') && request.method === 'POST') {
@@ -65,7 +65,7 @@ fastify.register(fastifyHttpProxy, {
   websocket: true,
   preHandler: (request, _reply, done) => {
     // Modify headers before the proxy forwards the request
-    request.headers['origin'] = 'https://app.mysigma.ai';
+    request.headers['origin'] = 'https://app.heysol.ai';
 
     done();
   },

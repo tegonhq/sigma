@@ -2,8 +2,9 @@ import { Editor } from '@tiptap/core';
 import { ReactRenderer } from '@tiptap/react';
 import tippy, { type Instance as TippyInstance } from 'tippy.js';
 
+import { useContextStore } from 'store/global-context-provider';
+
 import { MentionList } from './mention-list';
-import { useMCPServers } from './use-mcp';
 
 interface SuggestionProps {
   editor: Editor;
@@ -15,16 +16,12 @@ interface SuggestionProps {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const useMentionSuggestions = (): any => {
-  const mcpServers = useMCPServers();
+export const useContextSuggestions = (): any => {
+  const { pagesStore } = useContextStore();
 
   return {
     items: async ({ query }: { query: string }) => {
-      return mcpServers
-        .filter((item) =>
-          item.key.toLowerCase().startsWith(query.toLowerCase()),
-        )
-        .slice(0, 5);
+      return pagesStore.searchPages(query, true).slice(0, 5);
     },
     render: () => {
       let reactRenderer: ReactRenderer | null = null;

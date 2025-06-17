@@ -57,7 +57,7 @@ async function bootstrap() {
   // Cors
   if (corsConfig.enabled) {
     app.enableCors({
-      origin: ['https://app.mysigma.ai'],
+      origin: ['https://app.heysol.ai'],
       allowedHeaders: ['content-type', ...supertokens.getAllCORSHeaders()],
       credentials: true,
     });

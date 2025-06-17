@@ -48,6 +48,7 @@ export const Automation = observer(
               mcps: agents,
               automationId: automation.id,
             });
+            setUpdate(false);
           }}
           className="min-w-3xl"
           onClose={() => setUpdate(false)}
@@ -117,6 +118,7 @@ export const Automations = observer(() => {
           <EditorAutomation
             onSend={(value, agents) => {
               createAutomation({ text: value, mcps: agents });
+              setAddAutomation(false);
             }}
             onClose={() => setAddAutomation(false)}
             className="min-w-[500px]"

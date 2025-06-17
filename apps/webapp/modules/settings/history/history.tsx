@@ -1,21 +1,29 @@
 import {
+  Button,
+  Card,
+  CardContent,
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from '@redplanethq/ui';
 import React from 'react';
+import copy from 'copy-to-clipboard';
 
 import { InboxConversation } from 'modules/inbox/inbox-conversation';
 
 import { useGetIntegrationDefinitions } from 'services/integration-definition';
 
 import { ActivityList } from './activity-list';
+import { observer } from 'mobx-react-lite';
+import { useContextStore } from 'store/global-context-provider';
 
-export const History = () => {
+export const History = observer(() => {
   const [selected, setSelected] = React.useState<
     { type: string; id: string } | undefined
   >(undefined);
   const { isLoading } = useGetIntegrationDefinitions();
+  const { activitiesStore } = useContextStore();
+  const [copied, setCopied] = React.useState(false);
 
   const getConversationId = () => {
     if (selected && selected.type === 'conversation') {
@@ -28,6 +36,36 @@ export const History = () => {
   if (isLoading) {
     return null;
   }
+  const getRightSideComponent = () => {
+    if (selected && selected.type === 'activity') {
+      const activity = activitiesStore.getActivityById(selected.id);
+
+      const handleCopy = () => {
+        copy(activity.text);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      };
+
+      return (
+        <div className="relative flex flex-col h-full justify-center w-full items-center overflow-auto px-2">
+          <div className="flex flex-col justify-center items-center overflow-hidden h-full w-full mt-2">
+            <Card className="max-w-[400px] p-3">
+              <CardContent>
+                <div>{activity.text}</div>
+              </CardContent>
+            </Card>
+            <div className="flex justify-end mt-2 w-full max-w-[400px]">
+              <Button variant="secondary" onClick={handleCopy}>
+                {copied ? 'Copied!' : 'Copy'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    return <InboxConversation conversationId={getConversationId()} />;
+  };
 
   return (
     <ResizablePanelGroup direction="horizontal">
@@ -48,8 +86,8 @@ export const History = () => {
         collapsedSize={0}
         className="flex flex-col w-full h-[calc(100vh_-_10px)]"
       >
-        {selected && <InboxConversation conversationId={getConversationId()} />}
+        {selected && getRightSideComponent()}
       </ResizablePanel>
     </ResizablePanelGroup>
   );
-};
+});

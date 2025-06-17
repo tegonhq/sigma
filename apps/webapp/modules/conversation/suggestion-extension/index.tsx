@@ -1,6 +1,4 @@
-import type { Agent } from './mention-list';
-
-import { cn } from '@redplanethq/ui';
+import { cn, IssuesLine, Project } from '@redplanethq/ui';
 import Mention from '@tiptap/extension-mention';
 import {
   mergeAttributes,
@@ -9,38 +7,45 @@ import {
   ReactNodeViewRenderer,
 } from '@tiptap/react';
 import { observer } from 'mobx-react-lite';
-import Image from 'next/image';
 
-import { getIcon, type IconType } from 'common/icon-utils';
+import { useContextStore } from 'store/global-context-provider';
 
-import { useMentionSuggestions } from './use-agent-suggestions';
-import { useMCPServers } from './use-mcp';
+import { useContextSuggestions } from './use-context-suggestions';
 
 export const MentionComponent = observer((props: NodeViewProps) => {
-  const mcpServers = useMCPServers();
+  const { tasksStore, listsStore, pagesStore } = useContextStore();
+  const id = props.node.attrs.id;
+  const label = props.node.attrs.label;
 
-  const agent = mcpServers.find((ag) => ag.key === props.node.attrs.id);
-  const Icon = getIcon(agent?.key as IconType);
+  const entity =
+    label === 'list'
+      ? listsStore.getListWithId(id)
+      : tasksStore.getTaskWithId(id);
+
+  if (!entity) {
+    return null;
+  }
+
+  const page = pagesStore.getPageWithId(entity.pageId);
 
   return (
     <NodeViewWrapper className="inline w-fit">
       <span
         className={cn(
-          'mention bg-grayAlpha-100 px-1 rounded-sm text-foreground inline-flex w-fit items-center gap-1 h-5 relative top-0.5',
+          'items-center gap-1 max-w-[100px] text-left bg-transparent hover:bg-grayAlpha-100 p-1 px-2 inline-flex mention bg-grayAlpha-100 h-6 rounded relative top-0.5',
         )}
+        onClick={() => {}}
+        data-item="mention"
       >
-        {agent?.name === 'Sigma' ? (
-          <Image
-            src="/logo_light.svg"
-            alt="logo"
-            key={1}
-            width={14}
-            height={14}
-          />
+        {label === 'task' ? (
+          <IssuesLine size={14} className="shrink-0" />
         ) : (
-          <Icon size={14} className="rounded-sm" />
+          <Project size={14} className="rounded-sm shrink-0" />
         )}
-        {agent?.name}
+
+        <div className="inline-flex items-center justify-start shrink min-w-[0px] min-h-[24px]">
+          <div className={cn('text-left truncate')}>{page.title}</div>
+        </div>
       </span>
     </NodeViewWrapper>
   );
@@ -50,21 +55,16 @@ export const CustomMention = Mention.extend({
   parseHTML() {
     return [
       {
-        tag: 'agent',
+        tag: 'mention',
       },
     ];
   },
   renderHTML({ HTMLAttributes }) {
-    return [
-      'agent',
-      mergeAttributes(HTMLAttributes),
-      HTMLAttributes['data-id'],
-    ];
+    return ['mention', mergeAttributes(HTMLAttributes)];
   },
   addNodeView() {
     return ReactNodeViewRenderer(MentionComponent);
   },
 });
 
-export { useMentionSuggestions };
-export type { Agent };
+export { useContextSuggestions };

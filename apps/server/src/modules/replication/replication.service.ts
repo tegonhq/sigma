@@ -1,21 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ModelNameEnum, TaskHookAction } from '@redplanethq/sol-sdk';
-import { tasks } from '@trigger.dev/sdk/v3';
+import { ModelNameEnum } from '@redplanethq/sol-sdk';
 import { Client } from 'pg';
 import {
   LogicalReplicationService,
   Wal2JsonPlugin,
 } from 'pg-logical-replication';
-import { listActivityHandler } from 'triggers/list/list-activity-handler';
 import { v4 as uuidv4 } from 'uuid';
 
-import ActivityService from 'modules/activity/activity.service';
 import { LoggerService } from 'modules/logger/logger.service';
-import { PagesService } from 'modules/pages/pages.service';
 import { SyncGateway } from 'modules/sync/sync.gateway';
 import SyncActionsService from 'modules/sync-actions/sync-actions.service';
-import { TaskHooksService } from 'modules/tasks-hook/tasks-hook.service';
 
 import {
   logChangeType,
@@ -38,9 +33,6 @@ export default class ReplicationService {
     private configService: ConfigService,
     private syncGateway: SyncGateway,
     private syncActionsService: SyncActionsService,
-    private pagesService: PagesService,
-    private taskHooksService: TaskHooksService,
-    private activity: ActivityService,
   ) {
     this.client = new Client({
       user: configService.get('POSTGRES_USER'),
@@ -231,6 +223,7 @@ export default class ReplicationService {
                 isDeleted ? 'delete' : change.kind,
                 modelName,
                 modelId,
+                this.getChangedData(change),
               );
 
             const recipientId = syncActionData.workspaceId;
@@ -238,45 +231,6 @@ export default class ReplicationService {
             this.syncGateway.wss
               .to(recipientId)
               .emit('message', JSON.stringify(syncActionData));
-          }
-
-          // this will create problem in scaling
-          if (tableHooks.has(modelName)) {
-            const changedData = this.getChangedData(change);
-            if (ModelNameEnum.Page === modelName) {
-              this.pagesService.handleHooks({
-                pageId: modelId,
-                changedData,
-                action: convertToActionType(isDeleted ? 'delete' : change.kind),
-              });
-            }
-
-            if (
-              ModelNameEnum.Activity === modelName &&
-              change.kind === 'insert'
-            ) {
-              this.activity.runActivity(modelId);
-            }
-
-            if (ModelNameEnum.List === modelName) {
-              await tasks.trigger<typeof listActivityHandler>(
-                'list-activity-handler',
-                {
-                  listId: modelId,
-                  action: convertToActionType(
-                    isDeleted ? 'delete' : change.kind,
-                  ),
-                },
-              );
-            }
-
-            if (ModelNameEnum.Task === modelName) {
-              this.taskHooksService.executeHookWithId(
-                modelId,
-                convertToActionType(isDeleted ? 'delete' : change.kind),
-                changedData,
-              );
-            }
           }
         });
       } else {
@@ -303,17 +257,4 @@ export default class ReplicationService {
       });
     }
   }
-}
-
-function convertToActionType(action: string): TaskHookAction {
-  switch (action.toLowerCase()) {
-    case 'insert':
-      return 'create';
-    case 'update':
-      return 'update';
-    case 'delete':
-      return 'delete';
-  }
-
-  return null;
 }
