@@ -12,12 +12,14 @@ export const Conversation = types.model({
   pageId: types.union(types.null, types.string, types.undefined),
   taskId: types.union(types.null, types.string, types.undefined),
   unread: types.union(types.null, types.boolean, types.undefined),
+  status: types.union(types.null, types.string, types.undefined),
 });
 
 export interface ConversationStoreType {
   conversations: ConversationType[];
   getConversations: ConversationType[];
   getConversationWithId: (id: string) => ConversationType;
+  getConversationForTask: (taskId: string) => ConversationType;
   update: (
     conversation: Partial<ConversationType>,
     id: string,

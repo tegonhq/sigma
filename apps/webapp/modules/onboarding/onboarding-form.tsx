@@ -26,6 +26,7 @@ import {
 export const OnboardingSchema = z.object({
   fullname: z.string().min(5),
   timezone: z.string().min(5),
+  inviteCode: z.string(),
 });
 
 export function OnboardingForm() {
@@ -35,10 +36,12 @@ export function OnboardingForm() {
     useCreateInitialResourcesMutation({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       onError: (e: any) => {
+        console.log(e);
         toast({
           variant: 'destructive',
           title: 'Error!',
-          description: e.message,
+          description:
+            'We are currently an invite-only platform. If you need an invite, please contact harshith@tegon.ai.',
         });
       },
     });
@@ -48,6 +51,7 @@ export function OnboardingForm() {
     defaultValues: {
       fullname: '',
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      inviteCode: '',
     },
   });
 
@@ -56,6 +60,7 @@ export function OnboardingForm() {
       fullname: values.fullname,
       workspaceName: values.fullname,
       timezone: values.timezone,
+      inviteCode: values.inviteCode,
     });
   };
 
@@ -100,6 +105,22 @@ export function OnboardingForm() {
                   ))}
                 </SelectContent>
               </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="inviteCode"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Invite code</FormLabel>
+
+              <FormControl>
+                <Input placeholder="Invite code" className="h-9" {...field} />
+              </FormControl>
+
               <FormMessage />
             </FormItem>
           )}

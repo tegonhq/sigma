@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { ActionStatusEnum } from '@redplanethq/sol-sdk';
+import { ActionStatusEnum, LLMMappings } from '@redplanethq/sol-sdk';
 import { logger } from '@trigger.dev/sdk/v3';
 import { CoreMessage, jsonSchema, tool, ToolSet } from 'ai';
 import Handlebars from 'handlebars';
@@ -102,7 +102,7 @@ async function needConfirmation(
       ask_confirmation: askConfirmationTool,
     },
     undefined,
-    'gpt-4.1-2025-04-14',
+    LLMMappings.GPT41,
   );
 
   for await (const chunk of response) {
@@ -377,7 +377,7 @@ export async function* run(
               tokenCount: totalCost,
               skillInput: JSON.stringify(toolCallInfo.args),
               skillOutput: '',
-              skillStatus: ActionStatusEnum.NEED_ATTENTION,
+              skillStatus: ActionStatusEnum.TOOL_REQUEST,
             };
             stepRecord.userMessage = `\n<skill id="${stepRecord.skillId}" name="${stepRecord.skill}" agent=${agent}></skill>\n`;
 
@@ -468,7 +468,7 @@ export async function* run(
         stepRecord.isQuestion = true;
         stepRecord.userMessage = questionState.message;
         stepRecord.finalTokenCount = totalCost;
-        stepRecord.skillStatus = ActionStatusEnum.NEED_ATTENTION;
+        stepRecord.skillStatus = ActionStatusEnum.QUESTION;
         yield Message(JSON.stringify(stepRecord), AgentMessageType.STEP);
         executionState.history.push(stepRecord);
         break;

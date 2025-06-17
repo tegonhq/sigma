@@ -6,16 +6,17 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from '@redplanethq/ui';
-import React from 'react';
 import copy from 'copy-to-clipboard';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
 
 import { InboxConversation } from 'modules/inbox/inbox-conversation';
 
 import { useGetIntegrationDefinitions } from 'services/integration-definition';
 
-import { ActivityList } from './activity-list';
-import { observer } from 'mobx-react-lite';
 import { useContextStore } from 'store/global-context-provider';
+
+import { ActivityList } from './activity-list';
 
 export const History = observer(() => {
   const [selected, setSelected] = React.useState<

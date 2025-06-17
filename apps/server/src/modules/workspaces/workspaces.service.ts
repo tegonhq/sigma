@@ -39,6 +39,18 @@ export default class WorkspacesService {
     res: Response,
     req: Request,
   ) {
+    const inviteCode = await this.prisma.invitationCode.findFirst({
+      where: {
+        code: workspaceData.inviteCode,
+      },
+    });
+
+    if (!inviteCode) {
+      throw new BadRequestException(
+        'We are currently an invite-only platform. If you need an invite, please contact harshith@tegon.ai.',
+      );
+    }
+
     const existingWorkspace = await this.prisma.workspace.findFirst({
       where: { userId },
     });
@@ -52,6 +64,7 @@ export default class WorkspacesService {
         where: { id: userId },
         data: {
           fullname: workspaceData.fullname,
+          invitationCodeId: inviteCode.id,
         },
       });
 
@@ -64,14 +77,6 @@ export default class WorkspacesService {
             .replace(/[^a-z0-9]/g, ''),
           preferences: {
             timezone: workspaceData.timezone,
-          },
-          pages: {
-            create: {
-              title: 'Context',
-              type: 'Context',
-              sortOrder: '',
-              description: '',
-            },
           },
         },
       });

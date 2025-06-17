@@ -28,7 +28,7 @@ interface RightSideLayoutProps {
 
 export interface ContextType {
   collapsed: boolean;
-  onOpen: (defaultValue: string) => void;
+  onOpen: () => void;
   onClose: () => void;
 }
 
@@ -39,7 +39,7 @@ export const RightSideLayout = observer(
     useScope(SCOPES.AI);
 
     const [size, setSize] = useLocalCommonState('panelSize', 15);
-    const [defaultValue, setDefaultValue] = React.useState(undefined);
+
     const [rightSideCollapsed, setRightSideCollapsed] = React.useState(true);
 
     const { activeTab } = useApplication();
@@ -94,12 +94,10 @@ export const RightSideLayout = observer(
 
     const onClose = () => {
       setRightSideCollapsed(true);
-      setDefaultValue(undefined);
     };
 
-    const onOpen = (value: string) => {
+    const onOpen = () => {
       setRightSideCollapsed(false);
-      setDefaultValue(value);
     };
 
     return (
@@ -136,7 +134,7 @@ export const RightSideLayout = observer(
                 id="rightScreen"
               >
                 <RightSideHeader onClose={onClose} />
-                <Conversation defaultValue={defaultValue} />
+                <Conversation />
               </ResizablePanel>
             </>
           )}

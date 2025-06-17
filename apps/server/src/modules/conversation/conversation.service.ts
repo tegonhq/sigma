@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import {
+  ActionStatusEnum,
   Conversation,
   CreateConversationDto,
   UserTypeEnum,
@@ -221,11 +222,21 @@ export class ConversationService {
     });
   }
 
-  async getConversationSyncs(conversationId: string, workspaceId: string) {
-    return this.prisma.sync.findMany({
+  async getConversationActions(conversationId: string, workspaceId: string) {
+    const conversationHistory = await this.prisma.conversation.findFirst({
       where: {
-        conversationId,
+        id: conversationId,
         workspaceId,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    return this.prisma.conversationExecutionStep.findMany({
+      where: {
+        conversationHistoryId: conversationHistory.id,
+        actionStatus: { in: [ActionStatusEnum.TOOL_REQUEST] },
       },
     });
   }

@@ -6,6 +6,7 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
 
 import { SCOPES } from 'common/shortcut-scopes';
+import { RightSideViewContext } from 'layouts/right-side-layout';
 
 import { useApplication } from 'hooks/application';
 import { useScope } from 'hooks/use-scope';
@@ -30,11 +31,15 @@ export const SingleTaskWithoutLayout = observer(
   ({ taskId }: SingleTaskProps) => {
     useScope(SCOPES.Task);
 
-    const { tasksStore, pagesStore, taskOccurrencesStore } = useContextStore();
+    const { tasksStore, pagesStore, taskOccurrencesStore, conversationsStore } =
+      useContextStore();
     const task = tasksStore.getTaskWithId(taskId);
     const page = pagesStore.getPageWithId(task?.pageId);
-    const { changeActiveTab } = useApplication();
+    const { changeActiveTab, updateConversationId } = useApplication();
     const { mutate: updateTask } = useUpdateTaskMutation({});
+    const { onOpen } = React.useContext(RightSideViewContext);
+    const conversationForTask =
+      conversationsStore.getConversationForTask(taskId);
 
     useHotkeys(
       [Key.Escape],
@@ -45,6 +50,18 @@ export const SingleTaskWithoutLayout = observer(
         scopes: [SCOPES.Task],
       },
     );
+
+    React.useEffect(() => {
+      if (
+        conversationForTask &&
+        conversationForTask.status === 'need_attention' &&
+        conversationForTask.unread
+      ) {
+        updateConversationId(conversationForTask.id);
+        onOpen();
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const onChange = (title: string) => {
       updateTask({

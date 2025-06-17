@@ -20,6 +20,7 @@ export async function saveConversationData(
         pageId: record.data.pageId,
         taskId: record.data.taskId,
         unread: record.data.unread,
+        status: record.data.status,
       };
 
       switch (record.action) {

@@ -37,7 +37,7 @@ export class SolDatabase extends Dexie {
   constructor(databaseName: string) {
     super(databaseName);
 
-    this.version(41).stores({
+    this.version(42).stores({
       [MODELS.Workspace]: 'id,createdAt,updatedAt,name,slug,userId',
       [MODELS.IntegrationAccount]:
         'id,createdAt,updatedAt,accountId,settings,integratedById,integrationDefinitionId,workspaceId',
@@ -49,7 +49,7 @@ export class SolDatabase extends Dexie {
         'id,createdAt,updatedAt,workspaceId,taskId,startTime,endTime,status',
 
       [MODELS.Conversation]:
-        'id,createdAt,updatedAt,title,userId,workspaceId,pageId,taskId,unread',
+        'id,createdAt,updatedAt,title,userId,workspaceId,pageId,taskId,unread,status',
       [MODELS.ConversationHistory]:
         'id,createdAt,updatedAt,message,userType,context,thoughts,userId,conversationId,activityId',
       [MODELS.List]: 'id,createdAt,updatedAt,pageId,icon,favourite',

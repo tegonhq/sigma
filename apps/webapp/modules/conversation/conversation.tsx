@@ -12,17 +12,15 @@ import { useConversationHistory } from 'hooks/conversations';
 import { useCreateConversationMutation } from 'services/conversations';
 import { useGetIntegrationDefinitions } from 'services/integration-definition';
 
+import { useContextStore } from 'store/global-context-provider';
+
 import { ConversationItem } from './conversation-item';
 import { ConversationTextarea } from './conversation-textarea';
 import { StreamingConversation } from './streaming-conversation';
 import { useConversationContext } from './use-conversation-context';
-import { useContextStore } from 'store/global-context-provider';
+import { useConversationRead } from './use-conversation-read';
 
-interface ConversationProps {
-  defaultValue?: string;
-}
-
-export const Conversation = observer(({ defaultValue }: ConversationProps) => {
+export const Conversation = observer(() => {
   const { activeTab, updateConversationId } = useApplication();
   const { toast } = useToast();
   const { tasksStore, listsStore } = useContextStore();
@@ -33,6 +31,7 @@ export const Conversation = observer(({ defaultValue }: ConversationProps) => {
   const pageId = useConversationContext();
   const task = tasksStore.getTaskForPage(pageId);
   const list = listsStore.getListWithPageId(pageId);
+  useConversationRead(activeTab.conversation_id);
 
   const [conversationResponse, setConversationResponse] =
     React.useState(undefined);

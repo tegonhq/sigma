@@ -1,4 +1,4 @@
-import { Checkbox, cn } from '@redplanethq/ui';
+import { Badge, Checkbox, cn } from '@redplanethq/ui';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
@@ -23,8 +23,13 @@ interface TaskListItemProps {
 
 export const TaskListItem = observer(
   ({ taskId: taskIdWithOccurrence, minimal }: TaskListItemProps) => {
-    const { tasksStore, pagesStore, taskOccurrencesStore, agentWorklogsStore } =
-      useContextStore();
+    const {
+      tasksStore,
+      pagesStore,
+      taskOccurrencesStore,
+      agentWorklogsStore,
+      conversationsStore,
+    } = useContextStore();
 
     const {
       selectedTasks,
@@ -38,6 +43,8 @@ export const TaskListItem = observer(
     const taskOccurrenceId = taskIdWithOccurrence.split('__')[1];
     const agentWorklogForTask =
       agentWorklogsStore.getAgentWorklogForTask(taskId);
+    const conversationForTask =
+      conversationsStore.getConversationForTask(taskId);
 
     const taskOccurrence = taskOccurrencesStore.getTaskOccurrenceWithTaskAndId(
       taskId,
@@ -206,6 +213,12 @@ export const TaskListItem = observer(
                       Thinking...
                     </span>
                   )}
+
+                  {conversationForTask &&
+                    conversationForTask.status === 'need_attention' &&
+                    conversationForTask.unread && (
+                      <Badge className="font-mono h-5">SOL</Badge>
+                    )}
                 </div>
               </div>
             </div>

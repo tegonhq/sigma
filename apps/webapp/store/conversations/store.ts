@@ -59,4 +59,9 @@ export const ConversationsStore: IAnyStateTreeNode = types
         (conversation: ConversationType) => conversation.id === id,
       );
     },
+    getConversationForTask(taskId: string) {
+      return self.conversations.find(
+        (conversation: ConversationType) => conversation.taskId === taskId,
+      );
+    },
   }));

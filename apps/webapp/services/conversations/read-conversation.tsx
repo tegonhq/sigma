@@ -7,11 +7,11 @@ interface MutationParams {
   onError?: (error: string) => void;
 }
 
-const deleteNotification = async (notificationId: string) => {
-  return axios.delete(`/api/v1/notifications/${notificationId}`);
+const readConversation = async (conversationId: string) => {
+  return axios.post(`/api/v1/conversation/${conversationId}/read`);
 };
 
-export function useDeleteNotificationMutation({
+export function useReadConversationtMutation({
   onMutate,
   onSuccess,
   onError,
@@ -31,7 +31,7 @@ export function useDeleteNotificationMutation({
     onSuccess && onSuccess();
   };
 
-  return useMutation(deleteNotification, {
+  return useMutation(readConversation, {
     onError: onMutationError,
     onMutate: onMutationTriggered,
     onSuccess: onMutationSuccess,

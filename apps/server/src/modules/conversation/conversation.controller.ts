@@ -26,6 +26,14 @@ import { ConversationService } from './conversation.service';
 export class ConversationController {
   constructor(private conversationService: ConversationService) {}
 
+  @Post(':conversationId/read')
+  @UseGuards(AuthGuard)
+  async readConversation(@Param() conversationParams: ConversationParamsDto) {
+    return await this.conversationService.readConversation(
+      conversationParams.conversationId,
+    );
+  }
+
   @Post()
   @UseGuards(AuthGuard, CreditsGuard)
   async createConversation(
@@ -52,13 +60,13 @@ export class ConversationController {
     );
   }
 
-  @Get(':conversationId/syncs')
-  @UseGuards(AuthGuard, CreditsGuard)
-  async getConversationSync(
+  @Get(':conversationId/actions')
+  @UseGuards(AuthGuard)
+  async getConversationActions(
     @Workspace() workspaceId: string,
     @Param() conversationData: { conversationId: string },
   ) {
-    return await this.conversationService.getConversationSyncs(
+    return await this.conversationService.getConversationActions(
       conversationData.conversationId,
       workspaceId,
     );
@@ -80,14 +88,6 @@ export class ConversationController {
     @Param() conversationParams: ConversationParamsDto,
   ): Promise<Conversation> {
     return await this.conversationService.deleteConversation(
-      conversationParams.conversationId,
-    );
-  }
-
-  @Post(':conversationId/read')
-  @UseGuards(AuthGuard)
-  async readConversation(@Param() conversationParams: ConversationParamsDto) {
-    return await this.conversationService.readConversation(
       conversationParams.conversationId,
     );
   }

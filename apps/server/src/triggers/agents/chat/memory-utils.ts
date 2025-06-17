@@ -1,3 +1,4 @@
+import { logger } from '@trigger.dev/sdk/v3';
 import axios from 'axios';
 
 export const addToMemory = async (
@@ -10,6 +11,11 @@ export const addToMemory = async (
 ) => {
   const memoryHost = preferences.memory_host;
   const apiKey = preferences.memory_api_key;
+
+  if (!memoryHost || !apiKey) {
+    logger.error('Memory is not configured');
+    return 'Memory is not configured';
+  }
 
   // Create episodeBody in string format
   const episodeBody = `user(${userName}): ${message}\nassistant: ${agentMessage}`;

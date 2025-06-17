@@ -5,6 +5,7 @@ export interface ConversationType {
   createdAt: string;
   updatedAt: string;
 
+  status: string;
   title: string;
   userId: string;
   workspaceId: string;

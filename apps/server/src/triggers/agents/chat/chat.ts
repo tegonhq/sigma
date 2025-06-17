@@ -129,9 +129,13 @@ export const chat = task({
           creditForChat += 1;
           const stepDetails = JSON.parse(step.message);
 
-          if (stepDetails.skillStatus === ActionStatusEnum.NEED_ATTENTION) {
+          if (
+            stepDetails.skillStatus === ActionStatusEnum.TOOL_REQUEST ||
+            stepDetails.skillStatus === ActionStatusEnum.QUESTION
+          ) {
             needAttention = true;
           }
+
           await updateExecutionStep(
             { ...stepDetails },
             agentConversationHistory.id,

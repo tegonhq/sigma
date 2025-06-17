@@ -9,6 +9,7 @@ export interface CreateInitialResourcesDto {
   workspaceName: string;
   fullname: string;
   timezone: string;
+  inviteCode: string;
 }
 
 export function createInitialResources(

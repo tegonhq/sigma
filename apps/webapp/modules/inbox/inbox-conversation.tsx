@@ -8,6 +8,7 @@ import { Key } from 'ts-key-enum';
 import { ConversationItem } from 'modules/conversation/conversation-item';
 import { ConversationTextarea } from 'modules/conversation/conversation-textarea';
 import { StreamingConversation } from 'modules/conversation/streaming-conversation';
+import { useConversationRead } from 'modules/conversation/use-conversation-read';
 
 import { SCOPES } from 'common/shortcut-scopes';
 import type { ConversationHistoryType } from 'common/types';
@@ -45,6 +46,7 @@ export const InboxConversation = observer(
     const { toast } = useToast();
 
     const { conversationHistory } = useConversationHistory(conversation?.id);
+    useConversationRead(conversationId);
 
     React.useEffect(() => {
       if (initialRunResponse) {
@@ -141,6 +143,7 @@ export const InboxConversation = observer(
           <div className="flex flex-col w-full items-center">
             <div className="max-w-[97ch] w-full">
               <ConversationTextarea
+                disabled
                 onSend={onSend}
                 className="bg-background-3 mb-4 w-full border-gray-300 border-1"
                 isLoading={!!conversationResponse}

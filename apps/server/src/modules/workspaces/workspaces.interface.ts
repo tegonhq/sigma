@@ -21,6 +21,9 @@ export class CreateInitialResourcesDto {
 
   @IsString()
   timezone: string;
+
+  @IsString()
+  inviteCode: string;
 }
 
 export class UpdateWorkspaceInput {

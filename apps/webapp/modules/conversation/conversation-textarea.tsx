@@ -18,6 +18,8 @@ interface ConversationTextareaProps {
   isLoading?: boolean;
   className?: string;
   onChange?: (text: string) => void;
+  disabled?: boolean;
+  onStop?: () => void;
 }
 
 export function ConversationTextarea({
@@ -27,6 +29,8 @@ export function ConversationTextarea({
   placeholder,
   className,
   onChange,
+  disabled,
+  onStop,
 }: ConversationTextareaProps) {
   const [text, setText] = useState(defaultValue ?? '');
   const [editor, setEditor] = React.useState<EditorT>();
@@ -160,18 +164,21 @@ export function ConversationTextarea({
 
       <div className={cn('flex justify-end p-2 pt-0 pb-2 items-center')}>
         <Button
-          variant="default"
+          variant={isLoading ? 'secondary' : 'default'}
           className="transition-all duration-500 ease-in-out gap-1"
           type="submit"
           size="lg"
-          isLoading={isLoading}
           onClick={() => {
+            if (isLoading) {
+              onStop && onStop();
+            }
+
             if (text) {
               handleSend();
             }
           }}
         >
-          {isLoading ? <>Generating...</> : <>Chat</>}
+          {isLoading ? <>Stop</> : <>Chat</>}
         </Button>
       </div>
     </div>

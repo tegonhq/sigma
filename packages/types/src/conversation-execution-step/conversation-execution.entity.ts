@@ -3,7 +3,8 @@ import { ConversationHistory } from '../conversation-history';
 export enum ActionStatusEnum {
   ACCEPT = 'ACCEPT',
   DECLINE = 'DECLINE',
-  NEED_ATTENTION = 'NEED_ATTENTION',
+  QUESTION = 'QUESTION',
+  TOOL_REQUEST = 'TOOL_REQUEST',
   SUCCESS = 'SUCCESS',
   FAILED = 'FAILED',
 }
@@ -11,7 +12,8 @@ export enum ActionStatusEnum {
 export const ActionStatus = {
   ACCEPT: 'ACCEPT',
   DECLINE: 'DECLINE',
-  NEED_ATTENTION: 'NEED_ATTENTION',
+  QUESTION: 'QUESTION',
+  TOOL_REQUEST: 'TOOL_REQUEST',
   SUCCESS: 'SUCCESS',
   FAILED: 'FAILED',
 };

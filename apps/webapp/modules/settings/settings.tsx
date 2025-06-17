@@ -121,7 +121,7 @@ export const Settings = observer(() => {
                 </SidebarGroup>
 
                 <SidebarGroup>
-                  <h3 className="text-sm text-muted-foreground mb-1 flex justify-between items-center">
+                  <h3 className="text-sm text-muted-foreground mb-1 flex justify-between items-center pl-1">
                     <p>AI</p>
                   </h3>
                   <SidebarGroupContent>
