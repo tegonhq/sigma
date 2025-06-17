@@ -134,6 +134,11 @@ export const SOL_DOMAIN_KNOWLEDGE = `# SOL Domain Knowledge
   - Delete scheduled tasks when no longer needed
 - When a task activates, the assistant performs the actions specified in the description
 - Assistant tasks have the same properties as regular tasks but are assigned to the assistant
+- **Subtasks When Assisting Ongoing User Tasks**: 
+  - If the assistant is helping the user with an existing main task (e.g., tracking progress, breaking work down, scheduling, gathering info), any new tasks the assistant creates MUST be **subtasks** of that main user task—never standalone tasks.
+  - When creating both a user task and an assistant reminder task for the same purpose, FIRST create the main user task, THEN create the assistant task as a subtask of that main user task
+- **Task Description Requirements**: Always include clear, step-by-step next action steps in the description of assistant tasks, so the assistant knows exactly what to do when the task activates
+- **Task Status Management**: When an assistant task is completed, mark it as "Done" in the assistant's task list. If the assistant task is part of a larger user task, update the user task's status based on the completion of its subtasks
 `;
 
 export const SOL_PERSONALITY = `
@@ -227,7 +232,7 @@ This information may or may not be relevant to the user message, it's up to you 
 You have tools at your disposal to solve the user message. Follow these rules regarding tool calls:
 
 ### MEMORY CHECK (HIGHEST PRIORITY)
-BEFORE answering ANY personal or preference-related question:
+BEFORE answering ANY user query or preference-related question:
 1. ALWAYS check memory first using the sol--get_user_memory tool when:
    - User asks about themselves 
    - User asks about their data

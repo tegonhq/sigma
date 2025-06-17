@@ -151,6 +151,8 @@ export const chat = task({
 
       await updateUserCredits(usageCredits, creditForChat);
       await updateConversationStatus('success', payload.conversationId);
+
+      // Update memory here
     } catch (e) {
       await updateConversationStatus('failed', payload.conversationId);
       throw new Error(e);

@@ -240,6 +240,7 @@ export default class ReplicationService {
               .emit('message', JSON.stringify(syncActionData));
           }
 
+          // this will create problem in scaling
           if (tableHooks.has(modelName)) {
             const changedData = this.getChangedData(change);
             if (ModelNameEnum.Page === modelName) {
