@@ -129,7 +129,7 @@ export const AppTabs = observer(() => {
               'gap-1 items-center h-7 mr-2',
               !collapsed && '!bg-background-3 shadow',
             )}
-            onClick={() => (collapsed ? onOpen('') : onClose())}
+            onClick={() => (collapsed ? onOpen() : onClose())}
           >
             <MessageSquare size={16} /> chat
           </Button>

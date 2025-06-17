@@ -31,7 +31,7 @@ jobs:
           file: apps/webapp/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: tegonhq/sigma-webapp:${{ github.ref_name }}
+          tags: redplanethq/sol-webapp:${{ github.ref_name }}
           build-args: |
             SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
 
@@ -59,4 +59,4 @@ jobs:
           file: apps/server/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: tegonhq/sigma-server:${{ github.ref_name }}
+          tags: redplanethq/sol-server:${{ github.ref_name }}

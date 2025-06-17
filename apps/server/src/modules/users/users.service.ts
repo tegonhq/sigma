@@ -1,6 +1,5 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CodeDto, User } from '@redplanethq/sol-sdk';
-
 import { PrismaService } from 'nestjs-prisma';
 
 import {

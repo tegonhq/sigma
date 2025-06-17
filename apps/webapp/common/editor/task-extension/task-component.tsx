@@ -108,7 +108,11 @@ export const TaskComponent = observer((props: any) => {
             contentEditable={false}
           >
             <TaskMetadata taskId={task.id} />
-            <TaskInfo task={task} inEditor={source.type === SourceType.PAGE} />
+            <TaskInfo
+              task={task}
+              inEditor={source.type === SourceType.PAGE}
+              minimal={false}
+            />
           </div>
         )}
       </div>

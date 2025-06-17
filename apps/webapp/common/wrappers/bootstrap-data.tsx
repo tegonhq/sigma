@@ -35,7 +35,7 @@ export function BootstrapWrapper({ children }: Props) {
     listsStore,
     taskOccurrencesStore,
     agentWorklogsStore,
-    activitesStore,
+    activitiesStore,
     automationsStore,
   } = useContextStore();
 
@@ -49,7 +49,7 @@ export function BootstrapWrapper({ children }: Props) {
     [MODELS.List]: listsStore,
     [MODELS.TaskOccurrence]: taskOccurrencesStore,
     [MODELS.AgentWorklog]: agentWorklogsStore,
-    [MODELS.Activity]: activitesStore,
+    [MODELS.Activity]: activitiesStore,
     [MODELS.Automation]: automationsStore,
   };
 
