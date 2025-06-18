@@ -100,7 +100,7 @@ export const ScheduleDropdown = observer(
         return getScheduleForOccurrence(firstOccurrence);
       }
 
-      if (task.startTime) {
+      if (task.startTime && task.recurrence.length > 0) {
         if (variant === ScheduleDropdownVariant.SHORT) {
           return (
             <TooltipWrapper tooltip={task.scheduleText}>
