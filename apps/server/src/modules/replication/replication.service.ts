@@ -176,8 +176,12 @@ export default class ReplicationService {
   async setupReplication() {
     const dbSchema = this.configService.get('DB_SCHEMA');
 
+    const connectionString =
+      this.configService.get('REPLICATION_DATABASE_URL') ||
+      this.configService.get('DATABASE_URL');
+
     const service = new LogicalReplicationService({
-      connectionString: this.configService.get('DATABASE_URL'),
+      connectionString,
     });
     const plugin = new Wal2JsonPlugin({});
     service

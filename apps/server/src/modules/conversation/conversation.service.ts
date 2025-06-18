@@ -13,9 +13,14 @@ import { auth, runs, tasks } from '@trigger.dev/sdk/v3';
 import { PrismaService } from 'nestjs-prisma';
 import { createConversationTitle } from 'triggers/conversation/create-conversation-title';
 
+import { UsersService } from 'modules/users/users.service';
+
 @Injectable()
 export class ConversationService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private user: UsersService,
+  ) {}
 
   async createConversation(
     workspaceId: string,
@@ -23,6 +28,8 @@ export class ConversationService {
     conversationData: CreateConversationDto,
   ) {
     const { pageId, title, conversationId, ...otherData } = conversationData;
+    // TODO: see where to add this later
+    await this.user.getOrCreatePat(userId, workspaceId);
 
     if (conversationId) {
       const conversationHistory = await this.prisma.conversationHistory.create({
