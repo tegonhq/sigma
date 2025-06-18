@@ -99,8 +99,9 @@ export const Automations = observer(() => {
     return null;
   }
 
+  // TODO: need to fix width to w-3xl
   return (
-    <div className="flex flex-col gap-4 w-3xl mx-auto px-4 py-6">
+    <div className="flex flex-col gap-4 w-3xl mx-auto px-4 py-6 min-w-[500px]">
       <SettingSection
         title="Automations"
         description="Edit user automations"
