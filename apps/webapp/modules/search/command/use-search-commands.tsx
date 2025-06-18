@@ -1,4 +1,5 @@
 import {
+  AddLine,
   AI,
   CalendarLine,
   DeleteLine,
@@ -14,6 +15,8 @@ import { DailogViewsContext, DialogType } from 'modules/dialog-views-provider';
 import { useSettings } from 'modules/settings';
 
 import { useApplication } from 'hooks/application';
+
+import { useCreateTaskMutation } from 'services/tasks';
 
 import { TabViewType } from 'store/application';
 import { useContextStore } from 'store/global-context-provider';
@@ -39,6 +42,7 @@ export const useSearchCommands = (
   const { openDialog } = React.useContext(DailogViewsContext);
   const { markComplete, deleteTasks } = useTaskOperations();
   const { openSettings } = useSettings();
+  const { mutate: createTask } = useCreateTaskMutation({});
 
   const getTasks = () => {
     if (selectedTasks.length > 0) {
@@ -92,6 +96,27 @@ export const useSearchCommands = (
         },
       },
     ];
+
+    if (value) {
+      commands['create_tasks'] = [
+        {
+          Icon: AddLine,
+          text: (
+            <>
+              {value} - <span className="text-muted-foreground">Task</span>
+            </>
+          ),
+          command: () => {
+            createTask({
+              status: 'Todo',
+              title: value,
+            });
+
+            onClose();
+          },
+        },
+      ];
+    }
 
     if (value) {
       commands['settings'] = [

@@ -43,10 +43,8 @@ export const useTaskRows = (collapsedHeader: Record<string, boolean>) => {
       ); // Get end of current week (Sunday)
 
       if (plan === 'Later') {
-        // For Later, return all tasks that don't have occurrences in other time periods
-        const tasksWithOccurrences = taskOccurrences.map((occ) => occ.taskId);
         return tasks
-          .filter((task) => !tasksWithOccurrences.includes(task.id))
+
           .map((task) => ({
             ...task,
             taskOccurrenceId: '', // Empty string since these tasks don't have occurrences

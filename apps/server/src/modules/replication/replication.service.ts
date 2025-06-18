@@ -35,11 +35,7 @@ export default class ReplicationService {
     private syncActionsService: SyncActionsService,
   ) {
     this.client = new Client({
-      user: configService.get('POSTGRES_USER'),
-      host: configService.get('DB_HOST'),
-      database: configService.get('POSTGRES_DB'),
-      password: configService.get('POSTGRES_PASSWORD'),
-      port: configService.get('DB_PORT'),
+      connectionString: configService.get('DATABASE_URL'),
     });
   }
 
