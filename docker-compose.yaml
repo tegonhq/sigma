@@ -145,13 +145,13 @@ services:
 
   server:
     image: "redplanethq/server:${VERSION}"
-    container_name: sigma-server
+    container_name: sol-server
     depends_on:
       - supertokens
       - redis
     restart: unless-stopped
     networks:
-      - sigma
+      - sol
     env_file:
       - .env
     environment:
@@ -179,13 +179,13 @@ services:
       - ./certs:/app/apps/server/certs
 
   webapp:
-    image: "tegonhq/sigma-webapp:${VERSION}"
-    container_name: sigma-webapp
+    image: "redplanethq/webapp:${VERSION}"
+    container_name: sol-webapp
     restart: unless-stopped
     depends_on:
       - server
     networks:
-      - sigma
+      - sol
     environment:
       - BACKEND_URL=${BACKEND_URL}
       - NEXT_PUBLIC_BASE_HOST=${NEXT_PUBLIC_BASE_HOST}

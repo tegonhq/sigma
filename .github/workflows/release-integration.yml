@@ -111,17 +111,14 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Integration version: $VERSION"
 
-      - name: Setup Google Authentication
-        uses: google-github-actions/auth@v2
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          credentials_json: "${{ secrets.GCP_SA_KEY }}"
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: "Set up Cloud SDK"
-        uses: "google-github-actions/setup-gcloud@v2"
-        with:
-          version: ">= 363.0.0"
-
-      - name: Check if version already exists
+      - name: Check if version already exists in S3
         id: check_version
         uses: actions/github-script@v7
         with:
@@ -129,7 +126,6 @@ jobs:
           script: |
             const integration = '${{ steps.extract.outputs.integration }}';
             const version = '${{ steps.version.outputs.version }}';
-            const octokit = github.rest;
             const { execSync } = require('child_process');
 
             const commentId = context.payload.comment.id;
@@ -141,12 +137,12 @@ jobs:
 
             return new Promise((resolve) => {
               try {
-                const stdout = execSync(`gsutil ls gs://sigma-integrations/${integration}/${version}`).toString();
+                const stdout = execSync(`aws s3 ls s3://sigma-integrations/${integration}/${version}/`).toString();
                 if (stdout.trim()) {
-                  core.setFailed('Version already exists in bucket');
+                  core.setFailed('Version already exists in S3 bucket');
                   
                   // Update the triggering comment with failure message
-                  const updatedBody = existingComment.data.body + `\n\n⚠️ Build failed: Version ${version} of ${integration} integration already exists in bucket`;
+                  const updatedBody = existingComment.data.body + `\n\n⚠️ Build failed: Version ${version} of ${integration} integration already exists in S3 bucket`;
                   github.rest.issues.updateComment({
                     owner: context.repo.owner,
                     repo: context.repo.repo,
@@ -192,7 +188,7 @@ jobs:
             exit 1
           fi
 
-      - name: Upload to GCP bucket
+      - name: Upload to S3 bucket
         if: steps.check_version.outputs.result != 'exists'
         run: |
           INTEGRATION="${{ steps.extract.outputs.integration }}"
@@ -205,10 +201,10 @@ jobs:
           fi
 
           # Upload files
-          gsutil -m cp -r "$DIST_DIR"/* gs://sigma-integrations/$INTEGRATION/$VERSION/
+          aws s3 cp "$DIST_DIR" s3://sigma-integrations/$INTEGRATION/$VERSION/ --recursive
 
           # Verify upload was successful
-          gsutil ls gs://sigma-integrations/$INTEGRATION/$VERSION/ || { echo "Error: Upload verification failed"; exit 1; }
+          aws s3 ls s3://sigma-integrations/$INTEGRATION/$VERSION/ || { echo "Error: Upload verification failed"; exit 1; }
 
       - name: Comment on PR
         if: steps.check_version.outputs.result != 'exists'
@@ -226,7 +222,7 @@ jobs:
               comment_id: commentId
             });
 
-            const updatedBody = existingComment.data.body + `\n\n✅ Successfully built and uploaded ${integration} integration v${version} to GCP bucket`;
+            const updatedBody = existingComment.data.body + `\n\n✅ Successfully built and uploaded ${integration} integration v${version} to S3 bucket`;
 
             await github.rest.issues.updateComment({
               owner: context.repo.owner,

@@ -175,14 +175,10 @@ export default class ReplicationService {
 
   async setupReplication() {
     const dbSchema = this.configService.get('DB_SCHEMA');
-    const clientConfig = {
-      host: this.configService.get('DB_HOST'),
-      database: this.configService.get('POSTGRES_DB'),
-      user: this.configService.get('POSTGRES_USER'),
-      password: this.configService.get('POSTGRES_PASSWORD'),
-      port: this.configService.get('DB_PORT'),
-    };
-    const service = new LogicalReplicationService(clientConfig);
+
+    const service = new LogicalReplicationService({
+      connectionString: this.configService.get('DATABASE_URL'),
+    });
     const plugin = new Wal2JsonPlugin({});
     service
       .subscribe(plugin, this.replicationSlotName)
@@ -238,7 +234,7 @@ export default class ReplicationService {
   async setupReplicationIdentity() {
     try {
       for (const [tableName] of tableHooks) {
-        const query = `ALTER TABLE sigma."${tableName}" REPLICA IDENTITY FULL;`;
+        const query = `ALTER TABLE ${this.configService.get('DB_SCHEMA')}."${tableName}" REPLICA IDENTITY FULL;`;
         await this.client.query(query);
         this.logger.info({
           message: `Set REPLICA IDENTITY FULL for table ${tableName}`,
