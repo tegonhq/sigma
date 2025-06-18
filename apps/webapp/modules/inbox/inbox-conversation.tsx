@@ -177,7 +177,7 @@ export const InboxConversation = observer(
               {conversation.status !== 'need_approval' && (
                 <ConversationTextarea
                   onSend={onSend}
-                  className="bg-background-3 mb-4 w-full border-gray-300 border-1"
+                  className="bg-background-3 w-full border-gray-300 border-1"
                   isLoading={
                     !!conversationResponse || conversation.status === 'running'
                   }

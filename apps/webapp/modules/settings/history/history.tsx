@@ -92,7 +92,7 @@ export const History = observer(() => {
       <ResizablePanel
         collapsible
         collapsedSize={0}
-        className="flex flex-col w-full h-[calc(100vh_-_10px)]"
+        className="flex flex-col w-full h-[calc(100vh_-_24px)]"
       >
         {selected && getRightSideComponent()}
       </ResizablePanel>

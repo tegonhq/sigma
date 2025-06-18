@@ -171,6 +171,7 @@ export class TasksService {
         ...(listId && {
           list: { connect: { id: listId } },
         }),
+        updatedBy,
         ...(parentId && { parent: { connect: { id: parentId } } }),
         page: {
           create: {

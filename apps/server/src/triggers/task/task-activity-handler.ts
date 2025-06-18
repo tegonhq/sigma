@@ -83,7 +83,7 @@ async function createReminders(task: Task) {
   const cronMinutes = startTime.getMinutes() - 15;
   const cronHours = startTime.getHours();
 
-  const scheduleId = await schedules.create({
+  const { id: scheduleId } = await schedules.create({
     task: `task-run-schedule`,
     cron: `${cronMinutes} ${cronHours} * * *`, // Run daily at startTime - 15min
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

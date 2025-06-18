@@ -1,4 +1,4 @@
-import { Badge, cn, Cycle } from '@redplanethq/ui';
+import { Badge, cn, Cycle, Separator } from '@redplanethq/ui';
 import { format, isThisWeek, isToday, isTomorrow } from 'date-fns';
 import { sort } from 'fast-sort';
 import { Clock } from 'lucide-react';
@@ -78,16 +78,28 @@ export const ScheduleDropdown = observer(
 
     const getScheduleForOccurrence = (taskOccurrence: TaskOccurrenceType) => {
       return (
-        <Badge
-          variant="secondary"
-          className={cn(
-            'flex items-center gap-1 shrink min-w-[0px] text-sm',
-            variant !== ScheduleDropdownVariant.SHORT && 'h-7 px-2 text-base',
-          )}
+        <TooltipWrapper
+          tooltip={task.recurrence?.length > 0 ? task.scheduleText : undefined}
         >
-          <Clock size={variant === ScheduleDropdownVariant.SHORT ? 12 : 14} />
-          {formatStartTime(taskOccurrence.startTime)}
-        </Badge>
+          <Badge
+            variant="secondary"
+            className={cn(
+              'flex items-center gap-1 shrink min-w-[0px] text-sm',
+              variant !== ScheduleDropdownVariant.SHORT && 'h-7 px-2 text-base',
+            )}
+          >
+            <Clock size={variant === ScheduleDropdownVariant.SHORT ? 12 : 14} />
+            {formatStartTime(taskOccurrence.startTime)}
+            {task.recurrence?.length > 0 ? (
+              <>
+                <Separator orientation="vertical" />
+                <Cycle size={14} className="mx-0.5" />
+              </>
+            ) : (
+              <></>
+            )}
+          </Badge>
+        </TooltipWrapper>
       );
     };
 

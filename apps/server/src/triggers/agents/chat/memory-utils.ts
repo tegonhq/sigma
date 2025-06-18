@@ -21,7 +21,7 @@ export const addToMemory = async (
   const episodeBody = `user(${userName}): ${message}\nassistant: ${agentMessage}`;
 
   const response = await axios.post(
-    `https://${memoryHost}/ingest`,
+    `${memoryHost}/ingest`,
     {
       episodeBody,
       referenceTime: new Date().toISOString(),
