@@ -1,5 +1,9 @@
+import { LLMMappings } from '@redplanethq/sol-sdk';
 import { logger } from '@trigger.dev/sdk/v3';
 import axios from 'axios';
+
+import { SOL_MEMORY_EXTRACTION } from './prompt';
+import { generate } from './stream-utils';
 
 export const addToMemory = async (
   conversationId: string,
@@ -20,22 +24,46 @@ export const addToMemory = async (
   // Create episodeBody in string format
   const episodeBody = `user(${userName}): ${message}\nassistant: ${agentMessage}`;
 
-  const response = await axios.post(
-    `${memoryHost}/ingest`,
-    {
-      episodeBody,
-      referenceTime: new Date().toISOString(),
-      metadata: {
-        type: 'Conversation',
-      },
-      source: 'sol',
-      sessionId: conversationId,
+  let responseText = '';
+
+  await generate(
+    [
+      { role: 'system', content: SOL_MEMORY_EXTRACTION },
+      { role: 'user', content: episodeBody },
+    ],
+    (text) => {
+      responseText = text;
     },
-    {
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-      },
-    },
+    undefined,
+    undefined,
+    LLMMappings.GPT41,
   );
-  return response.data;
+
+  const outputMatch = responseText.match(/<output>\s*(.*?)\s*<\/output>/s);
+  const memoryString =
+    outputMatch && outputMatch[1] ? outputMatch[1].trim() : '';
+
+  if (memoryString !== 'NOTHING_TO_REMEMBER') {
+    const response = await axios.post(
+      `${memoryHost}/ingest`,
+      {
+        episodeBody: responseText,
+        referenceTime: new Date().toISOString(),
+        metadata: {
+          type: 'Conversation',
+        },
+        source: 'sol',
+        sessionId: conversationId,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+        },
+      },
+    );
+
+    return response.data;
+  }
+
+  return 'NOTHING_TO_REMEMBER';
 };
