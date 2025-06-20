@@ -40,7 +40,17 @@ export const Conversation = observer(() => {
   const { mutate: createConversation } = useCreateConversationMutation({});
   const { mutate: approval, isLoading } = useApproveOrDeclineMutation({});
 
-  const onSend = (text: string, agents: string[], title: string) => {
+  const onSend = (
+    text: string,
+    agents: string[],
+    title: string,
+    resources?: Array<{
+      type: 'image' | 'pdf';
+      name: string;
+      data: string;
+      size: number;
+    }>,
+  ) => {
     if (conversationResponse) {
       return;
     }
@@ -48,7 +58,7 @@ export const Conversation = observer(() => {
     createConversation(
       {
         message: text,
-        context: { agents },
+        context: { agents, resources: resources || [] },
         title,
         conversationId: activeTab.conversation_id,
       },
@@ -138,7 +148,7 @@ export const Conversation = observer(() => {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh_-_66px)] items-center pr-2">
+    <div className="flex flex-col h-[calc(100vh_-_58px)] items-center pr-2">
       <div className="overflow-hidden w-full grow">
         <div className="flex flex-col h-full justify-start overflow-hidden">
           <ScrollAreaWithAutoScroll>
@@ -153,18 +163,20 @@ export const Conversation = observer(() => {
           </ScrollAreaWithAutoScroll>
 
           <div className="flex flex-col">
-            <ConversationTextarea
-              onSend={onSend}
-              defaultValue={
-                task
-                  ? `<mention data-id='${task.id}' data-label='task'></mention>`
-                  : list
-                    ? `<mention data-id='${list.id}' data-label='list'></mention>`
-                    : undefined
-              }
-              isLoading={conversationResponse}
-              className="bg-background-2"
-            />
+            {conversation?.status !== 'need_approval' && (
+              <ConversationTextarea
+                onSend={onSend}
+                defaultValue={
+                  task
+                    ? `<mention data-id='${task.id}' data-label='task'></mention>`
+                    : list
+                      ? `<mention data-id='${list.id}' data-label='list'></mention>`
+                      : undefined
+                }
+                isLoading={conversationResponse}
+                className="bg-background-2"
+              />
+            )}
           </div>
         </div>
       </div>

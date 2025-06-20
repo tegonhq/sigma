@@ -4,9 +4,9 @@ import { Document } from '@tiptap/extension-document';
 import HardBreak from '@tiptap/extension-hard-break';
 import { Paragraph } from '@tiptap/extension-paragraph';
 import { Text } from '@tiptap/extension-text';
-import { MessageSquare } from 'lucide-react';
+import { MessageSquare, Plus } from 'lucide-react';
 import { EditorContent, CodeBlockLowlight, Placeholder } from 'novel';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import React from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 
@@ -20,12 +20,24 @@ import { EditorRoot, lowlight, type EditorT } from 'common/editor';
 import { SCOPES } from 'common/shortcut-scopes';
 
 interface ConversationTextareaProps {
-  onSend: (value: string, agents: string[], title: string) => void;
+  onSend: (
+    value: string,
+    agents: string[],
+    title: string,
+    resources?: Resource[],
+  ) => void;
   defaultValue?: string;
   placeholder?: string;
   isLoading?: boolean;
   className?: string;
   onChange?: (text: string) => void;
+}
+
+interface Resource {
+  type: 'image' | 'pdf';
+  name: string;
+  data: string; // base64 encoded
+  size: number;
 }
 
 export function AssistantEditor({
@@ -40,6 +52,9 @@ export function AssistantEditor({
   const [html, setHTML] = useState(defaultValue ?? '');
   const [editor, setEditor] = React.useState<EditorT>();
   const [agents, setAgents] = React.useState<string[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [resources, setResources] = React.useState<Resource[]>([]);
+
   const commands = useSearchCommands(
     text,
     () => {
@@ -63,6 +78,41 @@ export function AssistantEditor({
   );
 
   const suggestion = useContextSuggestions();
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files) {
+      return;
+    }
+
+    Array.from(files).forEach((file) => {
+      // Check file type
+      const isImage = file.type.startsWith('image/');
+      const isPdf = file.type === 'application/pdf';
+
+      if (!isImage && !isPdf) {
+        return; // Skip unsupported files
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const base64 = e.target?.result as string;
+        const resource: Resource = {
+          type: isImage ? 'image' : 'pdf',
+          name: file.name,
+          data: base64,
+          size: file.size,
+        };
+        setResources((prev) => [...prev, resource]);
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Reset input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
 
   const onCommentUpdate = (editor: EditorT) => {
     setHTML(editor.getHTML());
@@ -101,11 +151,11 @@ export function AssistantEditor({
     if (!editor || !text) {
       return;
     }
-    onSend(html, agents, text);
+    onSend(html, agents, text, resources);
     editor.commands.clearContent(true);
     setText('');
     setHTML('');
-  }, [editor, text, onSend, html, agents]);
+  }, [editor, text, onSend, html, agents, resources]);
 
   const pagesCommands = () => {
     const pagesCommands = commands['Pages'];
@@ -126,7 +176,7 @@ export function AssistantEditor({
       <>
         <CommandItem
           onSelect={() => {
-            onSend(html, agents, text);
+            onSend(html, agents, text, resources);
             editor.commands.clearContent(true);
             setText('');
             setHTML('');
@@ -284,14 +334,23 @@ export function AssistantEditor({
       <CommandList className="p-2 pt-0 pb-2">
         {text && text.slice(-1) !== '@' && pagesCommands()}
 
-        <div className={cn('flex justify-end pt-2 items-center')}>
-          {/* <Button variant="link" size="sm" className="px-0 gap-1">
-            <AddLine
-              size={16}
-              className="text-muted-foreground/60 hover:text-muted-foreground"
+        <div className={cn('flex justify-between pt-2 items-center')}>
+          <Button
+            variant="link"
+            size="sm"
+            onClick={() => fileInputRef.current?.click()}
+            className="gap-1 text-muted-foreground hover:text-foreground px-0 text-sm"
+          >
+            <Plus className="h-4 w-4" /> Add files
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*,application/pdf"
+              multiple
+              onChange={handleFileUpload}
+              className="hidden"
             />
-            <span className="text-muted-foreground/60">Add tasks/lists</span>
-          </Button> */}
+          </Button>
           <Button
             variant="default"
             className="transition-all duration-500 ease-in-out gap-1"

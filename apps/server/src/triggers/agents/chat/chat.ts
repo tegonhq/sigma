@@ -119,7 +119,11 @@ export const chat = task({
         automationContext,
         stepHistory,
         init.mcp,
-        init.preferences,
+        {
+          workspaceId: init.conversation.workspaceId,
+          userId: init.userId,
+          preferences: init.preferences,
+        },
       );
 
       const stream = await metadata.stream('messages', llmResponse);

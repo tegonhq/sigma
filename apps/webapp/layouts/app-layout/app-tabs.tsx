@@ -122,6 +122,7 @@ export const AppTabs = observer(() => {
 
       <div className="flex">
         <AIThinking />
+
         {activeTab.type !== TabViewType.ASSISTANT && (
           <Button
             variant="ghost"
@@ -131,7 +132,7 @@ export const AppTabs = observer(() => {
             )}
             onClick={() => (collapsed ? onOpen() : onClose())}
           >
-            <MessageSquare size={16} /> chat
+            <MessageSquare size={16} /> Chat
           </Button>
         )}
       </div>

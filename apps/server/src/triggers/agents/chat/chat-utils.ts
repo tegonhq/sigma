@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { ActionStatusEnum, LLMMappings } from '@redplanethq/sol-sdk';
-import { logger } from '@trigger.dev/sdk/v3';
+import { logger, runs, tasks } from '@trigger.dev/sdk/v3';
 import { CoreMessage, jsonSchema, tool, ToolSet } from 'ai';
 import Handlebars from 'handlebars';
+import { claudeCode } from 'triggers/coding/claude-code';
 
+import { claudeCodeTool } from './code-tools';
 import {
   ACTIVITY_SYSTEM_PROMPT,
   CONFIRMATION_CHECKER_PROMPT,
@@ -238,7 +240,11 @@ export async function* run(
   automationContext: string,
   stepHistory: HistoryStep[],
   availableMCPServers: Record<string, any>,
-  preferences: Preferences,
+  {
+    preferences,
+    userId,
+    workspaceId,
+  }: { preferences: Preferences; workspaceId: string; userId: string },
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): AsyncGenerator<AgentMessage, any, any> {
   let guardLoop = 0;
@@ -247,6 +253,7 @@ export async function* run(
     ...(await mcp.allTools()),
     ...getSolTools(!!preferences?.memory_host && !!preferences?.memory_api_key),
     load_mcp: loadMCPTools,
+    claude_code: claudeCodeTool,
   };
 
   logger.info('Tools have been formed');
@@ -519,6 +526,41 @@ export async function* run(
                 ...(await mcp.allTools()),
               };
               result = 'MCP integration loaded successfully';
+            } else if (skillName === 'claude_code') {
+              const run = await tasks.trigger(claudeCode.id, {
+                workspaceId,
+                userId,
+                ...skillInput,
+              });
+
+              result = [];
+              for await (const part of runs
+                .subscribeToRun<typeof claudeCode>(run.id)
+                .withStreams()) {
+                if (part.type === 'run') {
+                  if (
+                    [
+                      'FAILED',
+                      'CRASHED',
+                      'INTERRUPTED',
+                      'SYSTEM_FAILURE',
+                    ].includes(part.run.status)
+                  ) {
+                    result = part.run.error;
+                    break;
+                  }
+                } else if (part.type === 'messages') {
+                  yield Message('', AgentMessageType.SKILL_START);
+                  yield Message(part.chunk, AgentMessageType.SKILL_CHUNK);
+                  yield Message('', AgentMessageType.SKILL_END);
+
+                  result.push(part.chunk);
+
+                  if (part.chunk.type === 'complete') {
+                    break;
+                  }
+                }
+              }
             } else {
               result = await mcp.callTool(skillName, skillInput);
             }

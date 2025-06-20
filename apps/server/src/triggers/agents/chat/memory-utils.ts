@@ -1,5 +1,5 @@
 import { LLMMappings } from '@redplanethq/sol-sdk';
-import { logger } from '@trigger.dev/sdk/v3';
+// import { logger } from '@trigger.dev/sdk/v3';
 import axios from 'axios';
 
 import { SOL_MEMORY_EXTRACTION } from './prompt';
@@ -16,28 +16,36 @@ export const addToMemory = async (
   const memoryHost = preferences.memory_host;
   const apiKey = preferences.memory_api_key;
 
-  if (!memoryHost || !apiKey) {
-    logger.error('Memory is not configured');
-    return 'Memory is not configured';
-  }
+  // if (!memoryHost || !apiKey) {
+  //   logger.error('Memory is not configured');
+  //   return 'Memory is not configured';
+  // }
 
   // Create episodeBody in string format
-  const episodeBody = `user(${userName}): ${message}\nassistant: ${agentMessage}`;
+  const episodeBody = `user(${userName}): ${message}\n\nassistant: ${agentMessage}`;
 
   let responseText = '';
 
-  await generate(
+  const gen = generate(
     [
       { role: 'system', content: SOL_MEMORY_EXTRACTION },
       { role: 'user', content: episodeBody },
     ],
-    (text) => {
-      responseText = text;
-    },
+    () => {},
     undefined,
     undefined,
     LLMMappings.GPT41,
   );
+
+  for await (const chunk of gen) {
+    if (typeof chunk === 'string') {
+      responseText += chunk;
+    } else if (chunk && typeof chunk === 'object' && chunk.message) {
+      responseText += chunk.message;
+    }
+  }
+
+  console.log(responseText);
 
   const outputMatch = responseText.match(/<output>\s*(.*?)\s*<\/output>/s);
   const memoryString =
