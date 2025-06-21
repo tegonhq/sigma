@@ -38,9 +38,7 @@ async function* generateClaudeMessages(
         cwd: repoPath,
         // model: LLMMappings.CLAUDESONNET,
         permissionMode: 'bypassPermissions',
-        // pathToClaudeCodeExecutable: '/usr/local/bin/claude',
-        pathToClaudeCodeExecutable:
-          '/Users/harshithmullapudi/.nvm/versions/node/v20.18.3/bin/claude',
+        pathToClaudeCodeExecutable: '/usr/local/bin/claude',
       },
     })) {
       if (message.type === 'system' && message.subtype === 'init') {
@@ -125,54 +123,60 @@ export async function* claudeCode(payload: ClaudeCodeParams) {
 
     // Construct enhanced prompt
     const enhancedPrompt = `
-        Please analyze and modify the code following these guidelines:
+    Please analyze and modify the code following these guidelines:
 
-        1. Best Practices Summary:
-        - Follow language-specific conventions and style guides
-        - Write clean, maintainable, and well-documented code
-        - Consider performance implications
-        - Add appropriate error handling
-        - Follow SOLID principles where applicable
-        - Use appropriate design patterns
-        - Write testable code
-        - Follow security best practices
-        - Optimize for readability and maintainability
-        - Use meaningful variable/function names
-        - Add comments for complex logic
-        - Keep functions small and focused
-        - Avoid code duplication
-        - Handle edge cases appropriately
+    1. Best Practices Summary (prioritized):
+    - HIGH: Write clean, maintainable code with proper error handling
+    - HIGH: Follow language-specific conventions and best practices
+    - HIGH: Use meaningful variable/function names and add comments for complex logic
+    - MEDIUM: Consider performance implications and optimize where necessary
+    - MEDIUM: Follow SOLID principles and appropriate design patterns
+    - MEDIUM: Keep functions small, focused, and avoid code duplication
+    - LOW: Add comprehensive documentation where beneficial
 
-        2. Repository Context:
-        - Repository: ${payload.repo_url}
-        - Branch: ${branchName}
+    2. Repository Context:
+    - Repository: ${payload.repo_url}
+    - Branch: ${branchName}
 
-        3. Code Quality:
-        - Ensure proper error handling and logging
-        - Add input validation where needed
-        - Follow async/await best practices
-        - Use TypeScript types/interfaces appropriately
-        - Add JSDoc comments for public APIs
-        - Consider backwards compatibility
-        - Follow semantic versioning
-        - Add unit tests for new functionality
+    3. Code Quality:
+    - Ensure proper error handling and logging
+    - Add input validation where needed
+    - Follow async/await best practices
+    - Use TypeScript types/interfaces appropriately
+    - Add JSDoc comments for public APIs
+    - Consider backwards compatibility
+    - Follow semantic versioning
+    - Add unit tests for new functionality
 
-        4. User Query:
-        ${payload.query}
+    4. User Query:
+    ${payload.query}
 
-        Important: If you make ANY changes to files, even minor ones:
-        1. Stage and commit the changes with clear commit messages
-        2. Push to the branch
-        3. Explain what was changed and why, including:
-           - Specific files modified
-           - Nature of changes
-           - Reasoning behind changes
-           - Any potential impacts
-        4. If you need additional input:
-           - Push current changes
-           - Clearly state what information is needed
-           - Explain why it's needed
-           - Suggest possible options
+    Important Instructions:
+    1. Make Changes:
+       - Focus on changes directly addressing the user query
+       - Prefer minimal, targeted changes unless comprehensive refactoring is requested
+       - If multiple approaches are possible, choose the most maintainable one
+    
+    2. After Making Changes:
+       a. Stage and commit with a descriptive message
+       b. CRITICAL: Always push your changes to the branch after committing
+       c. Verify the push was successful before proceeding
+       d. Explain what was changed and why, including:
+          - Specific files modified
+          - Nature of changes
+          - Reasoning behind changes
+          - Any potential impacts or considerations
+
+    3. If You Encounter Problems:
+       - If you face errors, try to resolve them if possible
+       - Document any errors you couldn't resolve
+       - Explain the nature of the problem and potential solutions
+
+    4. If you need additional input:
+      - Always push current changes
+      - Clearly state what information is needed
+      - Explain why it's needed
+      - Suggest possible options
       `;
 
     const messageStream = generateClaudeMessages(repoPath, enhancedPrompt);
