@@ -4,12 +4,13 @@ import { Document } from '@tiptap/extension-document';
 import HardBreak from '@tiptap/extension-hard-break';
 import { Paragraph } from '@tiptap/extension-paragraph';
 import { Text } from '@tiptap/extension-text';
-import { MessageSquare, Plus } from 'lucide-react';
+import { MessageSquare } from 'lucide-react';
 import { EditorContent, CodeBlockLowlight, Placeholder } from 'novel';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import React from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 
+import { ResourceUploader } from 'modules/conversation/resource';
 import {
   CustomMention,
   useContextSuggestions,
@@ -52,7 +53,6 @@ export function AssistantEditor({
   const [html, setHTML] = useState(defaultValue ?? '');
   const [editor, setEditor] = React.useState<EditorT>();
   const [agents, setAgents] = React.useState<string[]>([]);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [resources, setResources] = React.useState<Resource[]>([]);
 
   const commands = useSearchCommands(
@@ -78,41 +78,6 @@ export function AssistantEditor({
   );
 
   const suggestion = useContextSuggestions();
-
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (!files) {
-      return;
-    }
-
-    Array.from(files).forEach((file) => {
-      // Check file type
-      const isImage = file.type.startsWith('image/');
-      const isPdf = file.type === 'application/pdf';
-
-      if (!isImage && !isPdf) {
-        return; // Skip unsupported files
-      }
-
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const base64 = e.target?.result as string;
-        const resource: Resource = {
-          type: isImage ? 'image' : 'pdf',
-          name: file.name,
-          data: base64,
-          size: file.size,
-        };
-        setResources((prev) => [...prev, resource]);
-      };
-      reader.readAsDataURL(file);
-    });
-
-    // Reset input
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-  };
 
   const onCommentUpdate = (editor: EditorT) => {
     setHTML(editor.getHTML());
@@ -225,132 +190,11 @@ export function AssistantEditor({
 
   return (
     <Command className="rounded-lg border bg-background-3 mt-0 w-full p-1 rounded-xl border-gray-300 border-1 !h-auto">
-      <div
-        className={cn(
-          'flex flex-col rounded-md pt-1 bg-transparent',
-          className,
-        )}
-      >
-        <EditorRoot>
-          <EditorContent
-            initialContent={{
-              type: 'doc',
-              content: [
-                {
-                  type: 'paragraph',
-                  content: [
-                    {
-                      type: 'text',
-                      text: defaultValue,
-                    },
-                  ],
-                },
-              ],
-            }}
-            extensions={[
-              Document,
-              Paragraph,
-              Text,
-              CustomMention.configure({
-                suggestion,
-              }),
-              CodeBlockLowlight.configure({
-                lowlight,
-              }),
-              HardBreak.configure({
-                keepMarks: true,
-              }),
-              Placeholder.configure({
-                placeholder: () => {
-                  return placeholder ?? 'Ask sol...';
-                },
-                includeChildren: true,
-              }),
-            ]}
-            onCreate={async ({ editor }) => {
-              setEditor(editor);
-              await new Promise((resolve) => setTimeout(resolve, 100));
-
-              editor.commands.focus('end');
-            }}
-            onUpdate={({ editor }) => {
-              onCommentUpdate(editor);
-            }}
-            shouldRerenderOnTransaction={false}
-            editorProps={{
-              attributes: {
-                class: `prose prose-lg dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full`,
-              },
-              handleKeyDown(view, event) {
-                // Block default Enter
-                if (event.key === 'Enter' && !event.shiftKey) {
-                  const mentionItem = document.querySelector(
-                    '[data-selected="true"]',
-                  ) as HTMLElement;
-
-                  if (mentionItem) {
-                    mentionItem.click();
-                    return true;
-                  }
-
-                  const activeItem = document.querySelector(
-                    '[aria-selected="true"]',
-                  ) as HTMLElement;
-
-                  if (activeItem) {
-                    activeItem.click();
-                    return true;
-                  }
-
-                  if (html) {
-                    handleSend();
-                    return true;
-                  }
-
-                  return false;
-                }
-
-                // Allow Shift+Enter to insert hard break
-                if (event.key === 'Enter' && event.shiftKey) {
-                  view.dispatch(
-                    view.state.tr.replaceSelectionWith(
-                      view.state.schema.nodes.hardBreak.create(),
-                    ),
-                  );
-                  return true;
-                }
-
-                return false;
-              },
-            }}
-            immediatelyRender={false}
-            className={cn(
-              'editor-container w-full min-w-full text-base sm:rounded-lg px-3 max-h-[400px] pt-1 min-h-[30px] overflow-auto',
-            )}
-          ></EditorContent>
-        </EditorRoot>
-      </div>
-
-      <CommandList className="p-2 pt-0 pb-2">
-        {text && text.slice(-1) !== '@' && pagesCommands()}
-
-        <div className={cn('flex justify-between pt-2 items-center')}>
-          <Button
-            variant="link"
-            size="sm"
-            onClick={() => fileInputRef.current?.click()}
-            className="gap-1 text-muted-foreground hover:text-foreground px-0 text-sm"
-          >
-            <Plus className="h-4 w-4" /> Add files
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*,application/pdf"
-              multiple
-              onChange={handleFileUpload}
-              className="hidden"
-            />
-          </Button>
+      <ResourceUploader
+        onResourcesChange={setResources}
+        className={className}
+        inHome
+        actionComponent={
           <Button
             variant="default"
             className="transition-all duration-500 ease-in-out gap-1"
@@ -361,8 +205,118 @@ export function AssistantEditor({
           >
             {isLoading ? <>Generating...</> : <>Chat</>}
           </Button>
+        }
+      >
+        <div
+          className={cn(
+            'flex flex-col rounded-md pt-1 bg-transparent',
+            className,
+          )}
+        >
+          <EditorRoot>
+            <EditorContent
+              initialContent={{
+                type: 'doc',
+                content: [
+                  {
+                    type: 'paragraph',
+                    content: [
+                      {
+                        type: 'text',
+                        text: defaultValue,
+                      },
+                    ],
+                  },
+                ],
+              }}
+              extensions={[
+                Document,
+                Paragraph,
+                Text,
+                CustomMention.configure({
+                  suggestion,
+                }),
+                CodeBlockLowlight.configure({
+                  lowlight,
+                }),
+                HardBreak.configure({
+                  keepMarks: true,
+                }),
+                Placeholder.configure({
+                  placeholder: () => {
+                    return placeholder ?? 'Ask sol...';
+                  },
+                  includeChildren: true,
+                }),
+              ]}
+              onCreate={async ({ editor }) => {
+                setEditor(editor);
+                await new Promise((resolve) => setTimeout(resolve, 100));
+
+                editor.commands.focus('end');
+              }}
+              onUpdate={({ editor }) => {
+                onCommentUpdate(editor);
+              }}
+              shouldRerenderOnTransaction={false}
+              editorProps={{
+                attributes: {
+                  class: `prose prose-lg dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full`,
+                },
+                handleKeyDown(view, event) {
+                  // Block default Enter
+                  if (event.key === 'Enter' && !event.shiftKey) {
+                    const mentionItem = document.querySelector(
+                      '[data-selected="true"]',
+                    ) as HTMLElement;
+
+                    if (mentionItem) {
+                      mentionItem.click();
+                      return true;
+                    }
+
+                    const activeItem = document.querySelector(
+                      '[aria-selected="true"]',
+                    ) as HTMLElement;
+
+                    if (activeItem) {
+                      activeItem.click();
+                      return true;
+                    }
+
+                    if (html) {
+                      handleSend();
+                      return true;
+                    }
+
+                    return false;
+                  }
+
+                  // Allow Shift+Enter to insert hard break
+                  if (event.key === 'Enter' && event.shiftKey) {
+                    view.dispatch(
+                      view.state.tr.replaceSelectionWith(
+                        view.state.schema.nodes.hardBreak.create(),
+                      ),
+                    );
+                    return true;
+                  }
+
+                  return false;
+                },
+              }}
+              immediatelyRender={false}
+              className={cn(
+                'editor-container w-full min-w-full text-base sm:rounded-lg px-3 max-h-[400px] pt-1 min-h-[30px] overflow-auto',
+              )}
+            ></EditorContent>
+          </EditorRoot>
         </div>
-      </CommandList>
+
+        <CommandList className="p-2">
+          {text && text.slice(-1) !== '@' && pagesCommands()}
+        </CommandList>
+      </ResourceUploader>
     </Command>
   );
 }

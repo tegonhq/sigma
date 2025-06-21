@@ -19,8 +19,8 @@ export const claudeCodeTool = tool({
       },
       branch_name: {
         type: 'string',
-        description:
-          'Optional branch name to analyze or modify (defaults to main/master)',
+        description: 'Optional branch name to analyze or modify',
+        default: 'main',
       },
       query: {
         type: 'string',

@@ -11,11 +11,12 @@ import React from 'react';
 
 import { ConversationHeaderActions } from 'modules/conversation';
 
+import { TooltipWrapper } from 'common/tooltip';
+
 import { useApplication } from 'hooks/application';
 
 import { TabViewType } from 'store/application';
 import { useContextStore } from 'store/global-context-provider';
-import { TooltipWrapper } from 'common/tooltip';
 
 interface RightSideHeaderProps {
   onClose: () => void;

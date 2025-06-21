@@ -45,8 +45,6 @@ export const addToMemory = async (
     }
   }
 
-  console.log(responseText);
-
   const outputMatch = responseText.match(/<output>\s*(.*?)\s*<\/output>/s);
   const memoryString =
     outputMatch && outputMatch[1] ? outputMatch[1].trim() : '';

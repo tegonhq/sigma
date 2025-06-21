@@ -30,6 +30,7 @@ const prisma = new PrismaClient();
  */
 export const chat = task({
   id: 'chat',
+  maxDuration: 3000,
   queue: {
     name: 'chat',
     concurrencyLimit: 30,
@@ -77,6 +78,7 @@ export const chat = task({
           "yyyy-MM-dd'T'HH:mm:ss.SSSxxx",
         ),
         workpsaceId: init?.conversation.workspaceId,
+        resources: otherData.resources,
       };
 
       // Extract user's goal from conversation history

@@ -5,14 +5,12 @@ import path from 'path';
 import util from 'util';
 
 import { query } from '@anthropic-ai/claude-code';
-import { task, metadata } from '@trigger.dev/sdk/v3';
 import axios from 'axios';
 import {
   getGithubIntegrationToken,
   CheckErrors,
   checkUserSessions,
 } from 'triggers/agents/chat/code-tools';
-// import { LLMMappings } from '@redplanethq/sol-sdk';
 
 const execAsync = util.promisify(exec);
 
@@ -68,73 +66,65 @@ async function* generateClaudeMessages(
   }
 }
 
-export const claudeCode = task({
-  id: 'claude-code',
-  queue: {
-    name: 'claude-code',
-    concurrencyLimit: 30,
-  },
-  run: async (payload: ClaudeCodeParams) => {
-    const githubIntegrationToken = await getGithubIntegrationToken(
-      payload.workspaceId,
+export async function* claudeCode(payload: ClaudeCodeParams) {
+  const githubIntegrationToken = await getGithubIntegrationToken(
+    payload.workspaceId,
+  );
+
+  if ((githubIntegrationToken as CheckErrors).error) {
+    throw new Error(JSON.stringify(githubIntegrationToken));
+  }
+
+  const GITHUB_API_KEY = githubIntegrationToken;
+
+  const sessions = await checkUserSessions(payload.userId);
+
+  if ((sessions as CheckErrors).error) {
+    throw new Error(JSON.stringify(sessions));
+  }
+
+  // Create temp directory
+  const tempDir = path.join(os.tmpdir(), `repo-${Date.now()}`);
+  const branchName = payload.branch_name ?? 'main';
+  await fs.promises.mkdir(tempDir, { recursive: true });
+
+  try {
+    // Extract owner and repo from repo_url
+    const urlParts = payload.repo_url.split('/');
+    const owner = urlParts[urlParts.length - 2];
+    const repo = urlParts[urlParts.length - 1];
+
+    // Get GitHub user info
+    const { data: githubUser } = await axios.get(
+      'https://api.github.com/user',
+      {
+        headers: {
+          Authorization: `token ${GITHUB_API_KEY}`,
+        },
+      },
     );
 
-    if ((githubIntegrationToken as CheckErrors).error) {
-      throw new Error(JSON.stringify(githubIntegrationToken));
-    }
+    // Clone repository using token
+    const remoteUrl = `https://${GITHUB_API_KEY}:x-oauth-basic@github.com/${owner}/${repo}.git`;
+    await execAsync(`git clone --branch ${branchName} ${remoteUrl}`, {
+      cwd: tempDir,
+    });
 
-    const GITHUB_API_KEY = githubIntegrationToken;
+    const repoPath = path.join(tempDir, repo);
 
-    const sessions = await checkUserSessions(payload.userId);
-
-    if ((sessions as CheckErrors).error) {
-      throw new Error(JSON.stringify(sessions));
-    }
-
-    // Create temp directory
-    const tempDir = path.join(os.tmpdir(), `repo-${Date.now()}`);
-    await fs.promises.mkdir(tempDir, { recursive: true });
-
-    try {
-      // Extract owner and repo from repo_url
-      const urlParts = payload.repo_url.split('/');
-      const owner = urlParts[urlParts.length - 2];
-      const repo = urlParts[urlParts.length - 1];
-
-      // Get GitHub user info
-      const { data: githubUser } = await axios.get(
-        'https://api.github.com/user',
-        {
-          headers: {
-            Authorization: `token ${GITHUB_API_KEY}`,
-          },
-        },
-      );
-
-      // Clone repository using token
-      const remoteUrl = `https://${GITHUB_API_KEY}:x-oauth-basic@github.com/${owner}/${repo}.git`;
-      await execAsync(
-        `git clone --branch ${payload.branch_name} ${remoteUrl}`,
-        {
-          cwd: tempDir,
-        },
-      );
-
-      const repoPath = path.join(tempDir, repo);
-
-      // Configure git user
-      await execAsync(
-        `git config user.name "${githubUser.name || githubUser.login}"`,
-        {
-          cwd: repoPath,
-        },
-      );
-      await execAsync(`git config user.email "${githubUser.email}"`, {
+    // Configure git user
+    await execAsync(
+      `git config user.name "${githubUser.name || githubUser.login}"`,
+      {
         cwd: repoPath,
-      });
+      },
+    );
+    await execAsync(`git config user.email "${githubUser.email}"`, {
+      cwd: repoPath,
+    });
 
-      // Construct enhanced prompt
-      const enhancedPrompt = `
+    // Construct enhanced prompt
+    const enhancedPrompt = `
         Please analyze and modify the code following these guidelines:
 
         1. Best Practices Summary:
@@ -155,7 +145,7 @@ export const claudeCode = task({
 
         2. Repository Context:
         - Repository: ${payload.repo_url}
-        - Branch: ${payload.branch_name}
+        - Branch: ${branchName}
 
         3. Code Quality:
         - Ensure proper error handling and logging
@@ -185,16 +175,12 @@ export const claudeCode = task({
            - Suggest possible options
       `;
 
-      const messageStream = generateClaudeMessages(repoPath, enhancedPrompt);
-      const stream = await metadata.stream('messages', messageStream);
-      const steps = [];
-      for await (const step of stream) {
-        steps.push(step);
-      }
+    const messageStream = generateClaudeMessages(repoPath, enhancedPrompt);
 
-      return steps;
-    } catch (error) {
-      throw new Error(error);
+    for await (const step of messageStream) {
+      yield step;
     }
-  },
-});
+  } catch (error) {
+    throw new Error(error);
+  }
+}

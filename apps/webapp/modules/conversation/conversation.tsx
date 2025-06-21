@@ -1,3 +1,5 @@
+import type { Resource } from './resource';
+
 import { Button, Loader, useToast } from '@redplanethq/ui';
 import { sort } from 'fast-sort';
 import { observer } from 'mobx-react-lite';
@@ -9,7 +11,10 @@ import { ScrollAreaWithAutoScroll } from 'common/use-auto-scroll';
 import { useApplication } from 'hooks/application';
 import { useConversationHistory } from 'hooks/conversations';
 
-import { useCreateConversationMutation } from 'services/conversations';
+import {
+  useCreateConversationMutation,
+  useGetCurrentConversationRun,
+} from 'services/conversations';
 import { useApproveOrDeclineMutation } from 'services/conversations/approve-or-decline';
 import { useGetIntegrationDefinitions } from 'services/integration-definition';
 
@@ -28,6 +33,10 @@ export const Conversation = observer(() => {
   const { conversationHistory, conversation } = useConversationHistory(
     activeTab.conversation_id,
   );
+  const { data: initialRunResponse } = useGetCurrentConversationRun(
+    activeTab.conversation_id,
+  );
+
   const { isLoading: integrationsLoading } = useGetIntegrationDefinitions();
   const pageId = useConversationContext();
   const task = tasksStore.getTaskForPage(pageId);
@@ -37,28 +46,30 @@ export const Conversation = observer(() => {
   const [conversationResponse, setConversationResponse] =
     React.useState(undefined);
 
-  const { mutate: createConversation } = useCreateConversationMutation({});
+  const { mutate: createConversation, isLoading: conversationLoading } =
+    useCreateConversationMutation({});
   const { mutate: approval, isLoading } = useApproveOrDeclineMutation({});
+
+  React.useEffect(() => {
+    if (initialRunResponse) {
+      setConversationResponse(initialRunResponse);
+    }
+  }, [initialRunResponse]);
 
   const onSend = (
     text: string,
     agents: string[],
     title: string,
-    resources?: Array<{
-      type: 'image' | 'pdf';
-      name: string;
-      data: string;
-      size: number;
-    }>,
+    resources?: Resource[],
   ) => {
-    if (conversationResponse) {
+    if (!!conversationResponse || conversation?.status === 'running') {
       return;
     }
 
     createConversation(
       {
         message: text,
-        context: { agents, resources: resources || [] },
+        context: { agents, resources: resources.map((res) => res.publicURL) },
         title,
         conversationId: activeTab.conversation_id,
       },
@@ -157,6 +168,9 @@ export const Conversation = observer(() => {
               <StreamingConversation
                 runId={conversationResponse.id}
                 token={conversationResponse.token}
+                conversationHistoryId={
+                  conversationResponse?.conversationHistoryId
+                }
                 afterStreaming={() => setConversationResponse(undefined)}
               />
             )}
@@ -173,7 +187,7 @@ export const Conversation = observer(() => {
                       ? `<mention data-id='${list.id}' data-label='list'></mention>`
                       : undefined
                 }
-                isLoading={conversationResponse}
+                isLoading={conversationResponse || conversationLoading}
                 className="bg-background-2"
               />
             )}
