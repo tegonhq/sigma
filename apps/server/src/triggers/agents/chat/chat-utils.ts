@@ -103,9 +103,7 @@ async function needConfirmation(
   const response = generate(
     messages,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    (_event) => {
-      // console.log(event);
-    },
+    (_event) => {},
     {
       ask_confirmation: askConfirmationTool,
     },
